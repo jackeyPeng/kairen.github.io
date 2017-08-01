@@ -8,6 +8,7 @@
       <url>https://kairen.github.io/2017/05/27/blockchain/browser-solidity/</url>
       <content type="html"><![CDATA[<p>Browser Solidity 是一個 Web-based 的 Solidity 編譯器與 IDE。本節將說明如何安裝於 Linux 與 Docker 中。</p>
 <p>這邊可以連結官方的 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="external">https://ethereum.github.io/browser-solidity</a> 來使用; 該網站會是該專案的最新版本預覽。</p>
+<a id="more"></a>
 <h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
 <pre><code class="sh">$ sudo apt-get install -y apache2 make g++ git
 </code></pre>
@@ -63,6 +64,7 @@ $ sudo npm run build
       <url>https://kairen.github.io/2017/05/26/blockchain/geth-monitoring/</url>
       <content type="html"><![CDATA[<p>Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。</p>
 <p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="external">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
+<a id="more"></a>
 <h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
 <ul>
 <li><a href="#monitoring-site">Monitoring site</a></li>
@@ -4470,9 +4472,9 @@ clean
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -4938,9 +4940,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -5295,11 +5297,11 @@ This is my object.
         
         <tags>
             
-            <tag> Java </tag>
-            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
+            
+            <tag> Java </tag>
             
         </tags>
         
@@ -5340,9 +5342,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -5400,9 +5402,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Spark </tag>
-            
             <tag> Java </tag>
+            
+            <tag> Spark </tag>
             
             <tag> Concurrent </tag>
             
@@ -5852,9 +5854,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
@@ -7819,11 +7821,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -8884,13 +8886,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> OpenStack </tag>
-            
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
             
             <tag> File System </tag>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
