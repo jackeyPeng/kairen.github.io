@@ -1,0 +1,977 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>建立 Go Ethereum 私有網路鏈 | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="建立 Go Ethereum 私有網路鏈"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">13</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Blockchain/">Blockchain</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>建立 Go Ethereum 私有網路鏈</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2017-05-25T09:08:54.000Z"><a href="/2017/05/25/blockchain/multi-node-geth/">2017-05-25</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ethereum/" class="chip pink lighten-1">Ethereum</a>
+        
+            <a href="/tags/Blockchain/" class="chip pink lighten-1">Blockchain</a>
+        
+            <a href="/tags/Go-lang/" class="chip pink lighten-1">Go lang</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#建立-Ethereum-環境"><span class="section table-of-contents-text">建立 Ethereum 環境</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#驗證服務"><span class="section table-of-contents-text">驗證服務</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#簡單的-Contract"><span class="section table-of-contents-text">簡單的 Contract</span></a></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>Ethereum 專案是以區塊鏈原理，並進一步增加容納值、儲存資料，並且能封裝程式碼來建立智能合約(Smart Contracts)，形成區塊鏈應用程式，來執行運算任務。類似於比特幣(Bitcoin)，Ethereum 也具有一種貨幣，它叫做<code>乙太幣(Ether)</code>。乙太幣是開採於儲存在共享一致性的區塊鏈前驗證交易節點。乙太幣可以在賬戶(公有金鑰, Pubilc keys)與智能合約(Smart Contracts)之間進行轉移。</p>
+<center><img src="/images/blockchain/ethereum-logo.png" alt="ethereum-logo"></center>
+
+<p>本節將說明如何透過 Ubuntu 部署 Go Ethereum。並利用簡單的指令來進行 Demo。</p>
+<a id="more"></a>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>本次會使用到兩個節點來建立 Geth Instances，其規格如下：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>CPUs</th>
+<th>RAM</th>
+<th>Disk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>geth-1</td>
+<td>2vCPU</td>
+<td>4 GB</td>
+<td>40 GB</td>
+</tr>
+<tr>
+<td>geth-2</td>
+<td>2vCPU</td>
+<td>4 GB</td>
+<td>40 GB</td>
+</tr>
+</tbody>
+</table>
+<p>首先在每個節點安裝 Ethereum 最新版本，可以依照官方透過以下方式快速安裝：</p>
+<pre><code class="sh">$ sudo apt-get install -y software-properties-common
+$ sudo add-apt-repository -y ppa:ethereum/ethereum
+$ sudo apt-get update &amp;&amp; sudo apt-get install ethereum
+</code></pre>
+<p>在每個節點建立一個<code>private.json</code>檔案來定義起源區塊(Genesis Block)，內容如下：</p>
+<pre><code class="json">{
+  &quot;coinbase&quot; : &quot;0x0000000000000000000000000000000000000000&quot;,
+  &quot;difficulty&quot; : &quot;0x40000&quot;,
+  &quot;extraData&quot; : &quot;Custem Ethereum Genesis Block&quot;,
+  &quot;gasLimit&quot; : &quot;0xffffffff&quot;,
+  &quot;nonce&quot; : &quot;0x0000000000000042&quot;,
+  &quot;mixhash&quot; : &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;parentHash&quot; : &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;timestamp&quot; : &quot;0x00&quot;,
+  &quot;config&quot;: {
+        &quot;chainId&quot;: 123,
+        &quot;homesteadBlock&quot;: 0,
+        &quot;eip155Block&quot;: 0,
+        &quot;eip158Block&quot;: 0
+    },
+    &quot;alloc&quot;: { }
+}
+</code></pre>
+<p>初始化創世區塊：</p>
+<pre><code class="sh">$ geth init --datadir=data/ private.json
+</code></pre>
+<p>在每個節點新增一名稱為<code>geth-private.sh</code>的腳本程式，將用於啟動 geth，並放置背景：</p>
+<pre><code class="sh">#!/bin/bash
+# Program:
+#       This program is a private geth runner.
+# History:
+# 2016/05/22 Kyle Bai Release
+#
+echo &quot;Starting private geth&quot;
+screen -dmS geth /usr/bin/geth \
+            --datadir data/ \
+            --networkid 123 \
+            --nodiscover \
+            --maxpeers 5 \
+            --port 30301 \
+            --rpc \
+            --rpcaddr &quot;0.0.0.0&quot; \
+            --rpcport &quot;8545&quot; \
+            --rpcapi &quot;admin,db,eth,debug,miner,net,shh,txpool,personal,web3&quot; \
+            --rpccorsdomain &quot;*&quot; \
+            -verbosity 6
+</code></pre>
+<blockquote>
+<p>更多的參數，請參考 <a href="https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options" target="_blank" rel="external">Command-Line-Options</a>。</p>
+</blockquote>
+<p>建立完成後，修改執行權限：</p>
+<pre><code class="sh">$ chmod u+x geth-private.sh
+</code></pre>
+<h2 id="建立-Ethereum-環境"><a href="#建立-Ethereum-環境" class="headerlink" title="建立 Ethereum 環境"></a>建立 Ethereum 環境</h2><p>首先進入到<code>geth-1</code>節點透過以下方式來啟動：</p>
+<pre><code class="sh">$ ./geth-private.sh
+Starting private geth
+</code></pre>
+<blockquote>
+<p>這時候會透過 screen 執行於背景，我們可以透過<code>screen -x geth</code>來進行前景。若要回到背景則透過<code>[Ctrl-A] + [Ctrl-D]</code>來 detached。要關閉 screen 則透過 <code>[Ctrl-C]</code>。</p>
+</blockquote>
+<p>接著為了確認是否正確啟動，我們可以透過 geth 的 attach 指令來連接 console：</p>
+<pre><code class="sh">$ geth attach ipc:data/geth.ipc
+</code></pre>
+<blockquote>
+<p>也可以透過 HTTP 方式 attach，<code>geth attach http://localhost:8545</code>。</p>
+<p>若一開始建立沒有 RPC，但想要加入 RPC 可以 attach 後，輸入以下 function：</p>
+<pre><code class="sh">admin.startRPC(&quot;0.0.0.0&quot;, 8545, &quot;*&quot;, &quot;web3,db,net,eth&quot;)
+</code></pre>
+</blockquote>
+<p>進入後透過 admin API 來取得節點的資訊：</p>
+<pre><code class="sh">&gt; admin.nodeInfo.enode
+&quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@[::]:30301?discport=0&quot;
+</code></pre>
+<blockquote>
+<p>這邊要取代<code>[::]</code>為主機 IP，如以下：</p>
+<pre><code>&quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@172.16.1.99:30301?discport=0&quot;
+</code></pre></blockquote>
+<p>上面沒問題後，接著進入到<code>geth-2</code>節點，然後透過以下指令開啟 console：</p>
+<pre><code class="sh">$ geth init --datadir=data/ private.json
+$ geth --datadir data/ \
+       --networkid 123 \
+       --nodiscover \
+       --maxpeers 5 \
+       --port 30301 \
+       --rpc \
+       --rpcaddr &quot;0.0.0.0&quot; \
+       --rpcport &quot;8545&quot; \
+       --rpcapi &quot;admin,db,eth,debug,miner,net,shh,txpool,personal,web3&quot; \
+      --rpccorsdomain &quot;*&quot; \
+      -verbosity 6 \
+       console
+</code></pre>
+<blockquote>
+<p>也可以透過上一個節點的方式將服務放到背景，在 attach。</p>
+</blockquote>
+<p>完成上面指令會直接進入 console，接著透過以下方式來連接<code>geth-1</code>：</p>
+<pre><code class="sh">&gt; admin.addPeer(&quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@172.16.1.99:30301?discport=0&quot;)
+true
+
+I0525 12:56:40.623642 eth/downloader/downloader.go:239] Registering peer e3dd0392a2971c4b
+I0525 12:57:10.622920 p2p/server.go:467] &lt;-taskdone: wait for dial hist expire (29.99999387s)
+</code></pre>
+<p>接著透過 net API 進行查看連接狀態：</p>
+<pre><code class="sh">&gt; net.peerCount
+1
+
+&gt; admin.peers
+[{
+    caps: [&quot;eth/61&quot;, &quot;eth/62&quot;, &quot;eth/63&quot;],
+    id: &quot;e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257&quot;,
+    name: &quot;Geth/v1.4.5-stable/linux/go1.5.1&quot;,
+    network: {
+      localAddress: &quot;172.16.1.100:51038&quot;,
+      remoteAddress: &quot;172.16.1.99:30301&quot;
+    },
+    protocols: {
+      eth: {
+        difficulty: 131072,
+        head: &quot;882048e0d045ea48903eddb4c50825a4e3c6c1a055df6a32244e9a9239f8c5e8&quot;,
+        version: 63
+      }
+    }
+}]
+</code></pre>
+<h2 id="驗證服務"><a href="#驗證服務" class="headerlink" title="驗證服務"></a>驗證服務</h2><p>這部分將透過幾個指令與流程來驗證服務，首先在<code>geth-1</code>透過 attach 進入，並建立一個賬戶與查看乙太幣：</p>
+<pre><code class="sh">$ geth attach http://localhost:8545
+
+&gt; kairen = personal.newAccount();
+Passphrase:
+Repeat passphrase:
+&quot;0xcb41ad8ba28c4b8b52eee159ef3bb6da197ff60b&quot;
+
+&gt; personal.listAccounts
+[&quot;0xcb41ad8ba28c4b8b52eee159ef3bb6da197ff60b&quot;]
+
+&gt; web3.fromWei(eth.getBalance(kairen), &quot;ether&quot;);
+0
+</code></pre>
+<blockquote>
+<p>P.S. 若要移除帳號，可以刪除<code>data/keystore</code>底下的檔案。</p>
+</blockquote>
+<p>接著在<code>geth-2</code>透過以下指令建立一個賬戶與查看乙太幣：</p>
+<pre><code class="sh">&gt; pingyu = personal.newAccount();
+Passphrase:
+Repeat passphrase:
+&quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
+
+&gt; personal.listAccounts
+[&quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;]
+
+&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
+0
+</code></pre>
+<p>接著回到<code>geth-1</code>來賺取一些要交易的乙太幣：</p>
+<pre><code class="sh">&gt; miner.setEtherbase(kairen)
+true
+</code></pre>
+<p>當賬戶設定完成後，就可以執行以下指令進行採礦：</p>
+<pre><code class="sh">&gt; miner.start(1)
+true
+</code></pre>
+<blockquote>
+<p>這邊需要一點時間產生 DAG，可以開一個新的命令列透過<code>screen -x geth</code>查看。</p>
+<p>經過一段時間後，當 DAG 完成並開始採擴時就可以<code>miner.stop()</code>。</p>
+</blockquote>
+<p>接著在<code>geth-1</code>查看賬戶的乙太幣：</p>
+<pre><code class="sh">&gt; web3.fromWei(eth.getBalance(kairen), &quot;ether&quot;);
+40.78125
+</code></pre>
+<p>當成開採區塊後，就可以查看<code>geth-1</code>共採集的 ether balance 的數值：</p>
+<pre><code>&gt; eth.getBalance(eth.coinbase).toNumber()
+40781250000000000000
+</code></pre><blockquote>
+<p>即為<code>40.78125</code>乙太幣。</p>
+</blockquote>
+<p>接著我們要在將<code>geth-1</code>的賬戶乙太幣轉移到<code>geth-2</code>上，首先在<code>geth-1</code>上建立一個變數來存<code>geth-2</code>的賬戶位址：</p>
+<pre><code class="sh">&gt; consumer = &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
+&quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
+</code></pre>
+<p>完成上述後，首先要將賬戶解鎖：</p>
+<pre><code class="sh">&gt; personal.unlockAccount(kairen)
+true
+</code></pre>
+<blockquote>
+<p>輸入當初建立賬戶的密碼。</p>
+</blockquote>
+<p>並透過 eth API 的交易函式還將 ether balance 數值轉移：</p>
+<pre><code class="sh">$ eth.sendTransaction({from: kairen, to: consumer, value: web3.toWei(10, &quot;ether&quot;)})
+&quot;0x1aee9082a55751c59077a273e7b08acd028d5099a4986f002518b0c8919d9e36&quot;
+</code></pre>
+<p>若有在每一台 geth 節點上進入 debug 模式的話，會發現該交易資訊被存到一個區塊，這邊也可以透過 txpool 與 eth API 來查看：</p>
+<pre><code class="sh">&gt; txpool.status
+{
+  pending: 1,
+  queued: 0
+}
+
+&gt; eth.getBlock(&quot;pending&quot;, true).transactions
+[{
+    blockHash: &quot;0x0b58d0b17e02f56746b0b5b22f195b6ae71d47343bf778763c4c476386ad7db7&quot;,
+    blockNumber: 112,
+    from: &quot;0xcb41ad8ba28c4b8b52eee159ef3bb6da197ff60b&quot;,
+    gas: 90000,
+    gasPrice: 20000000000,
+    hash: &quot;0x1aee9082a55751c59077a273e7b08acd028d5099a4986f002518b0c8919d9e36&quot;,
+    input: &quot;0x&quot;,
+    nonce: 0,
+    to: &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;,
+    transactionIndex: 0,
+    value: 10000000000000000000
+}]
+</code></pre>
+<blockquote>
+<p>這邊的<code>pending</code>表示目前還沒有被驗證，因此我們需要一些節點來進行採礦驗證。這邊也可以發現該交易資訊被存在區塊編號<code>112</code>，可以提供往後查詢之用。</p>
+</blockquote>
+<p>接著回到<code>geth-2</code>節點，查看目前的數值變化：</p>
+<pre><code class="sh">&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
+0
+</code></pre>
+<p>這邊會發現沒有任何錢進來，Why? so sad。其實是因為該區塊還沒有被採集與認證，因此該交易不會被執行。</p>
+<p>因此我們需要在任一節點提供運算，這邊在<code>geth-1</code>執行以下指令來進行採礦，這樣就可以看到該交易被驗證與接受：</p>
+<pre><code class="sh">&gt; miner.start(1)
+true
+
+TX(1aee9082a55751c59077a273e7b08acd028d5099a4986f002518b0c8919d9e36)
+Contract: false
+From:     cb41ad8ba28c4b8b52eee159ef3bb6da197ff60b
+To:       f8c70df559cb9225f6e426d0f139fd6e8752c644
+Nonce:    0
+GasPrice: 20000000000
+GasLimit  90000
+Value:    10000000000000000000
+Data:     0x
+V:        0x1c
+R:        0x9de7d843959f55a553577dc68a887893adf1b80eccd872021dfa6b8bcf3db43
+S:        0x287f8e01640ccd5924308725d2d274def7edc4a18169b36ae26c95216fdf0fed
+Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c644888ac7230489e80000801ca009de7d843959f55a553577dc68a887893adf1b80eccd872021dfa6b8bcf3db43a0287f8e01640ccd5924308725d2d274def7edc4a18169b36ae26c95216fdf0fed
+</code></pre>
+<blockquote>
+<p>當該區塊的交易確認沒問題被執行後，就可以透過<code>miner.stop()</code>停止採礦。</p>
+</blockquote>
+<p>這時再回到<code>geth-2</code>節點，查看目前的數值變化，會發現增加了 10 枚乙太幣：</p>
+<pre><code class="sh">&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
+10
+</code></pre>
+<p>之後可以在任一節點透過 eth web3 的 API 來查找指定區塊的交易資訊：</p>
+<pre><code class="sh">&gt; eth.getTransactionFromBlock(40)
+{
+  blockHash: &quot;0xe839c1392657731417fc04b9aecf7a181dd339086d5f7cdea0bccc2b1483b885&quot;,
+  blockNumber: 112,
+  from: &quot;0xcb41ad8ba28c4b8b52eee159ef3bb6da197ff60b&quot;,
+  gas: 90000,
+  gasPrice: 20000000000,
+  hash: &quot;0x1aee9082a55751c59077a273e7b08acd028d5099a4986f002518b0c8919d9e36&quot;,
+  input: &quot;0x&quot;,
+  nonce: 0,
+  to: &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;,
+  transactionIndex: 0,
+  value: 10000000000000000000
+}
+</code></pre>
+<h2 id="簡單的-Contract"><a href="#簡單的-Contract" class="headerlink" title="簡單的 Contract"></a>簡單的 Contract</h2><p>這邊將說明如何建立一個簡單的合約(Contract)來部署於區塊鏈上，首先複製以下內容：</p>
+<pre><code>contract SimpleStorage {
+    uint storedData;
+    function set(uint x) {
+        storedData = x;
+    }
+    function get() constant returns (uint retVal) {
+        return storedData;
+    }
+}
+</code></pre><p>接著將內容貼到 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="external">browser-solidity</a> 進行編譯成 JavaScript。如快照畫面所示。</p>
+<center><img src="/images/blockchain/snapshot-contract.png" alt=""></center>
+
+<p>透過這個 IDE 可以將 Solidity 語言轉換成 web3 code(JavaScript)，複製 web3 code 的內容，並儲存成<code>SimpleStorage.js</code>檔案放置到<code>geth-1</code>上。接著 attach 進入 geth 執行以下指令：</p>
+<pre><code class="sh">&gt; loadScript(&#39;SimpleStorage.js&#39;);
+</code></pre>
+<p>若有自行安裝<code>browser-solidity</code>的話，則可以使用如下圖一樣的方式連接。</p>
+<center><img src="/images/blockchain/snapshot-dash-web3-provider.png" alt=""></center>
+
+                
+<p class="green-link-context">
+    <a href="/2017/05/26/blockchain/geth-monitoring/" rel="next" title="監控 Go Ethereum 的區塊鏈狀況">
+    Prev: 監控 Go Ethereum 的區塊鏈狀況
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2017/04/23/container/linuxkit/" rel="next" title="品嚐 Moby LinuxKit 的 Linux 作業系統">
+    Next: 品嚐 Moby LinuxKit 的 Linux 作業系統
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kairen.bai.1" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/imac-cloud" target="_blank">imac-cloud</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">My gitbook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

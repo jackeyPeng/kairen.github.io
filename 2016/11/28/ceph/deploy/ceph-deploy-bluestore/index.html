@@ -1,0 +1,899 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>Using bluestore in Kraken | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="Using bluestore in Kraken"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">13</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Ceph/">Ceph</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>Using bluestore in Kraken</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2016-11-28T09:08:54.000Z"><a href="/2016/11/28/ceph/deploy/ceph-deploy-bluestore/">2016-11-28</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/BlueStore/" class="chip pink lighten-1">BlueStore</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#硬體規格說明"><span class="section table-of-contents-text">硬體規格說明</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點部署"><span class="section table-of-contents-text">節點部署</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#系統驗證"><span class="section table-of-contents-text">系統驗證</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#叢集檢查"><span class="section table-of-contents-text">叢集檢查</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#RBD-建立"><span class="section table-of-contents-text">RBD 建立</span></a></li></ol></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>本篇說明如何安裝 Kraken 版本的 Ceph，並將 objectstore backend 修改成 Bluestore，過程包含建立 RBD 等操作。</p>
+<a id="more"></a>
+<h2 id="硬體規格說明"><a href="#硬體規格說明" class="headerlink" title="硬體規格說明"></a>硬體規格說明</h2><p>本安裝由於實體機器數量受到限制，故只進行一台 MON 與兩台 OSD，而 OSD 數量則總共兩顆，硬體規格如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>RAM</th>
+<th>CPUs</th>
+<th>Disk</th>
+<th>IP Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mon1(deploy)</td>
+<td>4 GB</td>
+<td>4 core</td>
+<td>500 GB</td>
+<td>172.16.1.200</td>
+</tr>
+<tr>
+<td>osd1</td>
+<td>16 GB</td>
+<td>8 core</td>
+<td>2 TB</td>
+<td>172.16.1.201</td>
+</tr>
+<tr>
+<td>osd2</td>
+<td>16 GB</td>
+<td>8 core</td>
+<td>2 TB</td>
+<td>172.16.1.202</td>
+</tr>
+<tr>
+<td>osd3</td>
+<td>16 GB</td>
+<td>8 core</td>
+<td>2 TB</td>
+<td>172.16.1.203</td>
+</tr>
+</tbody>
+</table>
+<p>作業系統採用<code>Ubuntu 16.04 LTS Server</code>，Kernel 版本為<code>Linux 4.4.0-31-generic</code>。</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有四台節點。</p>
+<p>首先在每一台節點新增以下內容到<code>/etc/hosts</code>：</p>
+<pre><code>127.0.0.1    localhost
+
+172.16.1.200 mon1
+172.16.1.201 osd1
+172.16.1.202 osd2
+172.16.1.203 osd3
+</code></pre><p>然後設定各節點 sudo 指令的權限，使之不用輸入密碼(若使用 root 則忽略)：</p>
+<pre><code class="sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | \
+sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu
+</code></pre>
+<p>接著在設定<code>deploy</code>節點能夠以無密碼方式進行 SSH 登入其他節點，請依照以下執行：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
+$ ssh-copy-id mon1
+$ ssh-copy-id osd1
+...
+</code></pre>
+<blockquote>
+<p>若不同節點之間使用不同 User 進行 SSH 部署的話，可以設定 ~/.ssh/config</p>
+</blockquote>
+<p>之後在<code>deploy</code>節點安裝部署工具，首先使用 apt-get 來進行安裝基本相依套件，再透過 pypi 進行安裝 ceph-deploy 工具：</p>
+<pre><code class="sh">$ sudo apt-get install -y python-pip
+$ sudo pip install -U ceph-deploy
+</code></pre>
+<h2 id="節點部署"><a href="#節點部署" class="headerlink" title="節點部署"></a>節點部署</h2><p>首先建立一個名稱為 local 的目錄，並進到目錄底下：</p>
+<pre><code class="sh">$ sudo mkdir local &amp;&amp; cd local
+</code></pre>
+<p>接著透過 ceph-deploy 在各節點安裝 ceph：</p>
+<pre><code class="sh">$ ceph-deploy install --release kraken mon1 osd1 osd2 osd3
+</code></pre>
+<p>完成後建立 Monitor 節點資訊到 ceph.conf 中：</p>
+<pre><code class="sh">$ ceph-deploy new mon1 &lt;other_mons&gt;
+</code></pre>
+<p>接著編輯目錄底下的 ceph.conf，並加入以下內容：</p>
+<pre><code class="sh">[global]
+...
+rbd_default_features = 3
+
+osd pool default size = 3
+osd pool default min size = 1
+
+public network = 172.16.1.0/24
+cluster network = 172.16.1.0/24
+
+filestore_xattr_use_omap = true
+enable experimental unrecoverable data corrupting features = bluestore rocksdb
+bluestore fsck on mount = true
+bluestore block db size = 134217728
+bluestore block wal size = 268435456
+bluestore block size = 322122547200
+osd objectstore = bluestore
+
+[osd]
+bluestore = true
+</code></pre>
+<p>若確認沒問題，即可透過以下指令初始化 mon：</p>
+<pre><code class="sh">$ ceph-deploy mon create-initial
+</code></pre>
+<p>上述沒有問題後，就可以開始部署實際作為儲存的 OSD 節點，我們可以透過以下指令進行：</p>
+<pre><code class="sh">$ ceph-deploy osd prepare --bluestore osd1:&lt;device&gt;
+</code></pre>
+<h2 id="系統驗證"><a href="#系統驗證" class="headerlink" title="系統驗證"></a>系統驗證</h2><h3 id="叢集檢查"><a href="#叢集檢查" class="headerlink" title="叢集檢查"></a>叢集檢查</h3><p>首先要驗證環境是否有部署成功，可以透過 ceph 提供的基本指令做檢查：</p>
+<pre><code class="sh">$ ceph -v
+ceph version v11.0.2 (697fe64f9f106252c49a2c4fe4d79aea29363be7)
+
+$ ceph -s
+
+    cluster 6da24ae5-755f-4077-bfa0-78681dfc6bde
+     health HEALTH_OK
+     monmap e1: 1 mons at {r-mon00=172.16.1.200:6789/0}
+            election epoch 7, quorum 0 mon1
+        mgr no daemons active
+     osdmap e256: 3 osds: 3 up, 3 in
+            flags sortbitwise,require_jewel_osds
+      pgmap v920162: 128 pgs, 1 pools, 6091 MB data, 1580 objects
+            12194 MB used, 588 GB / 600 GB avail
+                 128 active+clean
+</code></pre>
+<p>另外也可以用 osd 指令來查看部屬的 osd 資訊：</p>
+<pre><code class="sh">$ ceph osd tree
+
+ID WEIGHT  TYPE NAME        UP/DOWN REWEIGHT PRIMARY-AFFINITY
+-1 0.58618 root default
+-2 0.29309     host osd1
+ 0 0.29309         osd.0         up  1.00000          1.00000
+-3 0.29309     host osd2
+ 1 0.29309         osd.1         up  1.00000          1.00000
+-4 0.29309     host osd3
+ 1 0.29309         osd.2         up  1.00000          1.00000
+</code></pre>
+<h3 id="RBD-建立"><a href="#RBD-建立" class="headerlink" title="RBD 建立"></a>RBD 建立</h3><p>本節說明在 Kraken 版本建立 RBD 來進行使用，在預設部署起來的叢集下會存在一個儲存池 rbd，因此可以省略建立新的儲存池。</p>
+<p>首先透過以下指令建立一個區塊裝置映像檔：</p>
+<pre><code class="sh">$ rbd create rbd/bd -s 50G
+</code></pre>
+<p>接著透過 info 指令查看區塊裝置映像檔資訊：</p>
+<pre><code class="sh">$ rbd info rbd/bd
+
+rbd image &#39;bd&#39;:
+    size 51200 MB in 12800 objects
+    order 22 (4096 kB objects)
+    block_name_prefix: rbd_data.102d474b0dc51
+    format: 2
+    features: layering, striping
+    flags:
+    stripe unit: 4096 kB
+    stripe count: 1
+</code></pre>
+<blockquote>
+<p>P.S. 這邊由於 Kernel 版本問題有些特性無法支援，因此在 conf 檔只設定使用 layering, striping。</p>
+<p>P.S. 若預設未修改 feature 設定的話，可以透過以下指令修改:</p>
+<pre><code class="sh">$ rbd feature disable rbd/bd &lt;feature_name&gt;
+</code></pre>
+<p>以下為目前支援的特性：</p>
+<table>
+<thead>
+<tr>
+<th>屬性名稱</th>
+<th>說明</th>
+<th>Bit Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>layering</td>
+<td>支援分層</td>
+<td>1</td>
+</tr>
+<tr>
+<td>striping</td>
+<td>支援串連(v2)</td>
+<td>2</td>
+</tr>
+<tr>
+<td>exclusive-lock</td>
+<td>支援互斥鎖定</td>
+<td>4</td>
+</tr>
+<tr>
+<td>object-map</td>
+<td>支援物件映射(相依於 exclusive-lock )</td>
+<td>8</td>
+</tr>
+<tr>
+<td>fast-diff</td>
+<td>支援快速計算差異(相依於 object-map )</td>
+<td>16</td>
+</tr>
+<tr>
+<td>deep-flatten</td>
+<td>支援快照扁平化操作</td>
+<td>32</td>
+</tr>
+<tr>
+<td>journaling</td>
+<td>支援紀錄 I/O 操作(相依於 exclusive-lock )</td>
+<td>64</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p>接著就可以透過 Linux mkfs 指令來格式化 rbd：</p>
+<pre><code class="sh">$ sudo mkfs.ext4 /dev/rbd0
+$ sudo mount /dev/rbd0 /mnt
+</code></pre>
+<p>最後透過 dd 指令測試 rbd 寫入效能：</p>
+<pre><code class="sh">$ dd if=/dev/zero of=/mnt/test bs=4096 count=4000000
+
+4000000+0 records in
+4000000+0 records out
+16384000000 bytes (16 GB) copied, 119.947 s, 137 MB/s
+</code></pre>
+<p>另外有些需求為了測試 feature，卻又礙於 Kernel 不支援等問題，而造成無法 Map 時，可以透過 rbd-nbd 來進行 Map，安裝跟使用方式如下：</p>
+<pre><code class="sh">$ sudo apt-get install -y rbd-nbd
+$ sudo rbd-nbd map rbd/bd
+/dev/nbd0
+</code></pre>
+<blockquote>
+<p>P.S. 在新版的 ceph 已經有內建 rbd nbd，參考 <a href="http://docs.ceph.com/docs/jewel/man/8/rbd/#commands" target="_blank" rel="external">rbd - manage command</a>。</p>
+</blockquote>
+<p>最後透過 dd 指令測試 nbd 寫入效能：</p>
+<pre><code class="sh">$ dd if=/dev/zero of=./mnt-nbd/test bs=4096 count=4000000
+
+4000000+0 records in
+4000000+0 records out
+16384000000 bytes (16 GB) copied, 168.201 s, 97.4 MB/s
+</code></pre>
+
+                
+<p class="green-link-context">
+    <a href="/2016/12/03/ceph/ceph-spdk/" rel="next" title="Ceph 使用 SPDK 加速 NVMe SSD">
+    Prev: Ceph 使用 SPDK 加速 NVMe SSD
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2016/10/23/kubernetes/deploy/minikube/" rel="next" title="Minikube 部署 Local 測試環境">
+    Next: Minikube 部署 Local 測試環境
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kairen.bai.1" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/imac-cloud" target="_blank">imac-cloud</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">My gitbook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

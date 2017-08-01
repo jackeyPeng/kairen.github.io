@@ -1,0 +1,887 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>CentOS 6.5 PXE 安裝與設定 | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="CentOS 6.5 PXE 安裝與設定"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">13</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Linux/">Linux</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>CentOS 6.5 PXE 安裝與設定</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2015-10-03T04:23:01.000Z"><a href="/2015/10/03/linux/centos/centos-pxe/">2015-10-03</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
+        
+            <a href="/tags/PXE/" class="chip pink lighten-1">PXE</a>
+        
+            <a href="/tags/Bare-Metal/" class="chip pink lighten-1">Bare Metal</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#安裝環境"><span class="section table-of-contents-text">安裝環境</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#PXE-安裝與設定"><span class="section table-of-contents-text">PXE 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#DHCP-Server-安裝與設定"><span class="section table-of-contents-text">DHCP Server 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#TFTP-Server-安裝與設定"><span class="section table-of-contents-text">TFTP Server 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#安裝-syslinu"><span class="section table-of-contents-text">安裝 syslinu</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#掛載CentOS-映像檔"><span class="section table-of-contents-text">掛載CentOS 映像檔</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#設定開機選單"><span class="section table-of-contents-text">設定開機選單</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#修改額外開機選單訊息"><span class="section table-of-contents-text">修改額外開機選單訊息</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#提供NFS-Server-提供映像檔"><span class="section table-of-contents-text">提供NFS Server 提供映像檔</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#提供-HTTP-Server"><span class="section table-of-contents-text">提供 HTTP Server</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#提供-FTP-Server"><span class="section table-of-contents-text">提供 FTP Server</span></a></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。</p>
+<a id="more"></a>
+<h2 id="安裝環境"><a href="#安裝環境" class="headerlink" title="安裝環境"></a>安裝環境</h2><ul>
+<li>CentOS 6.5 Minimal Install</li>
+<li>Intel(R) Core(TM)2 Quad CPU Q8400  @ 2.66GHz</li>
+<li>500 GB</li>
+<li>4G RAM</li>
+<li>Two Eth Card<ul>
+<li>Inner eth = PEX DHCP</li>
+<li>Outer eth = Public network</li>
+</ul>
+</li>
+</ul>
+<h2 id="PXE-安裝與設定"><a href="#PXE-安裝與設定" class="headerlink" title="PXE 安裝與設定"></a>PXE 安裝與設定</h2><p>首先安装 Setuptool 於 CentOS 上</p>
+<pre><code class="sh">$ sudo yum install -y setuptool ntsysv iptables system-config-network-tui
+</code></pre>
+<p>關閉防火牆與 SElinux，避免驗證時被阻擋：</p>
+<pre><code class="sh">$ sudo service iptables stop
+$ sudo setenforce 0
+</code></pre>
+<p>接著編輯<code>/etc/selinux/config</code>，修改以下內容:</p>
+<pre><code>SELINUX=disabled
+</code></pre><p>然後編輯<code>/etc/sysconfig/network-scripts/ifcfg-ethx</code>設定與確認 IP Address 是否正確：</p>
+<pre><code class="sh">DEVICE=ethx
+HWADDR=C4:6E:1F:04:60:24    #依照個人eth
+TYPE=Ethernet
+UUID=ada7e5dc-a2e9-4a89-9c93-e1f559cd05f2
+ONBOOT=yes
+NM_CONTROLLED=yes
+BOOTPROTO=none
+IPADDR=192.168.28.130       #依照網路
+NETMASK=255.255.255.0
+USERCTL=no
+</code></pre>
+<h2 id="DHCP-Server-安裝與設定"><a href="#DHCP-Server-安裝與設定" class="headerlink" title="DHCP Server 安裝與設定"></a>DHCP Server 安裝與設定</h2><p>DHCP是「 動態主機配置協定」(Dynamic Host Configuration Protocol)。<br>DHCP是可自動將IP位址指派給登入TCP/IP網路的用戶端的一種軟體(這種IP位址稱為「動態IP位址」)。這邊安裝方式為以下：</p>
+<pre><code class="sh">$ sudo yum -y install dhcp
+</code></pre>
+<p>完成後編輯<code>/etc/dhcp/dhcpd.conf</code>，並修改以下設定:</p>
+<pre><code>ddns-update-style none;
+ignore client-updates;
+allow booting;
+allow bootp;
+option ip-forwarding false;
+option mask-supplier false;
+option broadcast-address 192.168.28.255;
+
+subnet 192.168.28.0 netmask 255.255.255.0 {
+        option routers 192.168.28.130
+        range 192.168.28.50 192.168.28.60;
+        #option subnet-mask 255.255.255.0;
+        #option domain-name &quot;i4502.dic.ksu&quot;;
+        option domain-name-servers 10.21.20.1;
+
+        next-server 192.168.28.130;
+        filename        &quot;pxelinux.0&quot;;
+}
+</code></pre><p>設定完後，重新啟動 DHCP 服務：</p>
+<pre><code class="sh">$ sudo service dhcpd start
+$ sudo chkconfig dhcpd on
+</code></pre>
+<h2 id="TFTP-Server-安裝與設定"><a href="#TFTP-Server-安裝與設定" class="headerlink" title="TFTP Server 安裝與設定"></a>TFTP Server 安裝與設定</h2><p>簡單文件傳輸協議或稱小型文件傳輸協議（英文：Trivial File Transfer Protocol，縮寫TFTP），是一種簡化的文件傳輸協議。小型文件傳輸協議非常簡單，通過少量存儲器就能輕鬆實現——這在當時是很重要的考慮因素。所以TFTP被用於引導計算機，例如沒有大容量存儲器的路由器。安裝方式為以下：</p>
+<pre><code class="sh">$ sudo yum -y install tftp-server tftp
+</code></pre>
+<p>安裝完成後編輯<code>/etc/xinetd.d/tftp</code>，修改以下內容：</p>
+<pre><code>service tftp
+{
+        socket_type             = dgram
+        protocol                = udp
+        wait                    = yes
+        user                    = root
+        server                  = /usr/sbin/in.tftpd
+        server_args             = -s /install/tftpboot
+        disable                 = yes
+        per_source              = 11
+        cps                     = 100 2
+        flags                   = IPv4
+}
+</code></pre><p>P.S 如果不修改 server_args，預設為 <code>/var/lib/tftpboot/</code>。</p>
+<p>接著建立<code>/install/tftpboot</code>來存放 Boot 映像檔：</p>
+<pre><code class="sh">sudo mkdir -p /install/tftpboot
+sudochcon --reference /var /install
+
+sudo service xinetd restart
+sudo chkconfig xinetd on
+sudo chkconfig tftp on
+</code></pre>
+<h2 id="安裝-syslinu"><a href="#安裝-syslinu" class="headerlink" title="安裝 syslinu"></a>安裝 syslinu</h2><p>如果要使用 PXE 的開機管理程式與開機選單的話，那就得要安裝 CentOS 內建提供的 syslinux 軟體，從裡面撈出兩個檔案即可。當然啦，這兩個檔案得要放置在 TFTP 的根目錄下才好！整個實作的過程如下。</p>
+<pre><code class="sh">yum -y install syslinux
+cp /usr/share/syslinux/menu.c32 /install/tftpboot/
+cp /usr/share/syslinux/vesamenu.c32 /install/tftpboot/
+cp /usr/share/syslinux/pxelinux.0 /install/tftpboot/
+mkdir /install/tftpboot/pxelinux.cfg
+ll /install/tftpboot/
+</code></pre>
+<h2 id="掛載CentOS-映像檔"><a href="#掛載CentOS-映像檔" class="headerlink" title="掛載CentOS 映像檔"></a>掛載CentOS 映像檔</h2><p>已CentOS 6.5 Minimal為範例。</p>
+<pre><code class="sh">mount -o loop CentOS-6.5-x86_64-minimal.iso /mnt
+mkdir -p /install/tftpboot/kernel/centos6.5
+
+cp /mnt/isolinux/vmlinuz /install/tftpboot/kernel/centos6.5
+cp /mnt/isolinux/initrd.img /install/tftpboot/kernel/centos6.5
+cp /mnt/isolinux/isolinux.cfg /install/tftpboot/pxelinux.cfg/demo
+umount /mnt
+</code></pre>
+<ul>
+<li>vmlinuz：就是安裝軟體的核心檔案 (kernel file)</li>
+<li>initrd.img：就是開機過程中所需要的核心模組參數</li>
+<li>isolinux.cfg –&gt; demo：作為未來 PXE 所需要的開機選單之參考</li>
+</ul>
+<h2 id="設定開機選單"><a href="#設定開機選單" class="headerlink" title="設定開機選單"></a>設定開機選單</h2><pre><code class="sh">vim /install/tftpboot/pxelinux.cfg/default
+</code></pre>
+<p><strong>修改：</strong></p>
+<pre><code class="sh">UI vesamenu.c32
+TIMEOUT 300
+DISPLAY ./boot.msg
+MENU TITLE Welcome to KAIREN&#39;s PXE Server System
+
+LABEL local
+  MENU LABEL Boot from local drive
+  MENU DEFAULT
+  localboot 0
+
+LABEL ubuntu
+  MENU LABEL Install CentOS 6.5
+  kernel ./kernel/centos6.5/vmlinuz
+  append initrd=./kernel/centos6.5/initrd.img
+</code></pre>
+<h3 id="修改額外開機選單訊息"><a href="#修改額外開機選單訊息" class="headerlink" title="修改額外開機選單訊息"></a>修改額外開機選單訊息</h3><pre><code class="sh">vim /install/tftpboot/boot.msg
+</code></pre>
+<p><strong>訊息：</strong></p>
+<pre><code class="sh">Welcome to KAI-REN&#39;s PXE Server System.
+
+The 1st menu can let you system goto hard disk menu.
+The 2nd menu can goto interactive installation step.
+</code></pre>
+<h2 id="提供NFS-Server-提供映像檔"><a href="#提供NFS-Server-提供映像檔" class="headerlink" title="提供NFS Server 提供映像檔"></a>提供NFS Server 提供映像檔</h2><p>NFS 就是 Network FileSystem 的縮寫，最早之前是由 Sun 這家公司所發展出來的。 它最大的功能就是可以透過網路，讓不同的機器、不同的作業系統、可以彼此分享個別的檔案 (share files)。這個 NFS 伺服器可以讓你的 PC 來將網路遠端的 NFS 伺服器分享的目錄，掛載到本地端的機器當中， 在本地端的機器看起來，那個遠端主機的目錄就好像是自己的一個磁碟分割槽一樣 (partition)。</p>
+<pre><code class="sh">mkdir -p /install/nfs_share/centos6.5
+vim /etc/fstab
+</code></pre>
+<p><strong>在最底下加入：</strong></p>
+<pre><code class="sh">/root/CentOS-6.5-x86_64-minimal.iso /install/nfs_share/centos6.5 iso9660 defaults,loop 0 0
+</code></pre>
+<p><strong>安裝並提供分享目錄</strong></p>
+<pre><code class="sh">mount -a
+df
+
+yum -y install nfs-utils
+vim /etc/exports
+</code></pre>
+<p><strong>加入：</strong></p>
+<pre><code class="sh">/install/nfs_share/  192.168.28.0/24(ro,async,nohide,crossmnt)  localhost(ro,async,nohide,crossmnt)
+</code></pre>
+<p><strong>修改System nfs conf</strong></p>
+<pre><code class="sh">vim /etc/sysconfig/nfs
+</code></pre>
+<p><strong>如下(P.S 找到上面這幾個設定值，我們得要設定好固定的 port 來開放防火牆給用戶處理)：</strong></p>
+<pre><code class="sh">RQUOTAD_PORT=901
+LOCKD_TCPPORT=902
+LOCKD_UDPPORT=902
+MOUNTD_PORT=903
+STATD_PORT=904
+</code></pre>
+<p><strong>修改NFS 不需要對映帳號</strong></p>
+<pre><code class="sh">vim /etc/idmapd.conf
+</code></pre>
+<p><strong>如下：</strong></p>
+<pre><code class="sh">[General]
+Domain = &quot;kairen.pxe.com&quot;
+[Mapping]
+Nobody-User = nfsnobody
+Nobody-Group = nfsnobody
+</code></pre>
+<p><strong>重開服務</strong></p>
+<pre><code class="sh">service rpcbind restart
+service nfs restart
+service rpcidmapd restart
+service nfslock restart
+
+chkconfig rpcbind on
+chkconfig nfs on
+chkconfig rpcidmapd on
+chkconfig nfslock on
+rpcinfo -p
+
+showmount -e localhost
+</code></pre>
+<p>如果看到<strong>Export list for localhost:<br>/install/nfs_share 192.168.28.0/24,localhost</strong>就是成功了。</p>
+<h2 id="提供-HTTP-Server"><a href="#提供-HTTP-Server" class="headerlink" title="提供 HTTP Server"></a>提供 HTTP Server</h2><p>Apache HTTP Server（簡稱Apache）是Apache軟體基金會的一個開放原始碼的網頁伺服器軟體，可以在大多數電腦作業系統中運行，由於其跨平台和安全性。</p>
+<pre><code class="sh">yum -y install httpd
+service httpd start
+chkconfig httpd on
+</code></pre>
+<p><strong>建立CentOS 6.5目錄</strong></p>
+<pre><code class="sh">mkdir -p /var/www/html/install/centos6.5
+vim /etc/fstab
+</code></pre>
+<p><strong>加入到最下方：</strong></p>
+<pre><code class="sh">/root/CentOS-6.5-x86_64-minimal.iso /var/www/html/install/centos6.5 iso9660 defaults,loop 0 0
+</code></pre>
+<p><strong>掛載起來</strong></p>
+<pre><code class="sh">mount -a
+df
+</code></pre>
+<h2 id="提供-FTP-Server"><a href="#提供-FTP-Server" class="headerlink" title="提供 FTP Server"></a>提供 FTP Server</h2><pre><code class="sh">yum -y install vsftpd
+service vsftpd start
+chkconfig vsftpd on
+
+mkdir -p /var/ftp/install/centos6.5
+vim /etc/fstab
+</code></pre>
+<p><strong>一樣加入Mount :</strong></p>
+<pre><code class="sh">/root/CentOS-6.5-x86_64-minimal.iso /var/ftp/install/centos6.5 iso9660 defaults,loop,context=system_u:object_r:public_content_t:s0 0 0
+</code></pre>
+<p><strong>掛載起來</strong></p>
+<pre><code class="sh">mount -a
+df
+</code></pre>
+<ul>
+<li><a href="http://192.168.28.130/install/centos6.5" target="_blank" rel="external">HTTP</a></li>
+<li><a href="ftp://192.168.28.130/install/centos6.5" target="_blank" rel="external">FTP</a></li>
+</ul>
+
+                
+<p class="green-link-context">
+    <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/" rel="next" title="Ubuntu PXE 安裝與設定">
+    Prev: Ubuntu PXE 安裝與設定
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2015/09/19/data-engineer/spark-yarn/" rel="next" title="Spark on Hadoop YARN 單機安裝">
+    Next: Spark on Hadoop YARN 單機安裝
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kairen.bai.1" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/imac-cloud" target="_blank">imac-cloud</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">My gitbook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

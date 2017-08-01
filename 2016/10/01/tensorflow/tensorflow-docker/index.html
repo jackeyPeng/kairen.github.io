@@ -1,0 +1,850 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>TensorFlow on Docker | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="TensorFlow on Docker"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">13</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/TensorFlow/">TensorFlow</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>TensorFlow on Docker</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2016-10-01T08:23:01.000Z"><a href="/2016/10/01/tensorflow/tensorflow-docker/">2016-10-01</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/TensorFlow/" class="chip pink lighten-1">TensorFlow</a>
+        
+            <a href="/tags/Machine-Learning/" class="chip pink lighten-1">Machine Learning</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#環境準備"><span class="section table-of-contents-text">環境準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#利用-Docker-執行-TensorFlow"><span class="section table-of-contents-text">利用 Docker 執行 TensorFlow</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#利用-Docker-提供-Serving"><span class="section table-of-contents-text">利用 Docker 提供 Serving</span></a></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>本篇主要整理使用 Docker 來執行 TensorFlow 的一些問題，這邊 Google 官方已經提供了相關的映像檔提供使用，因此會簡單說明安裝過程與需求。</p>
+<center><img src="/images/tf/docker-tf.png" alt=""></center>
+
+<a id="more"></a>
+<p><br></p>
+<h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>環境採用 Ubuntu 16.04 Desktop 作業系統，然後顯卡是撿朋友不要的來使用，環境硬體資源如下：</p>
+<table>
+<thead>
+<tr>
+<th>名稱</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU</td>
+<td>i7-4790 CPU @ 3.60GHz</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>32GB</td>
+</tr>
+<tr>
+<td>GPU</td>
+<td>GeForce GTX 650</td>
+</tr>
+</tbody>
+</table>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始進行 TensorFlow on Docker 之前，需要確認環境已經安裝以下驅動與軟體等。</p>
+<ul>
+<li>系統安裝了 Docker Engine：</li>
+</ul>
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+$ sudo iptables -P FORWARD ACCEPT
+</code></pre>
+<ul>
+<li>安裝最新版本 NVIDIA Driver 軟體：</li>
+</ul>
+<pre><code class="sh">$ sudo add-apt-repository -y ppa:graphics-drivers/ppa
+$ sudo apt-get update
+$ sudo apt-get install -y nvidia-367
+$ sudo dpkg -l | grep nvidia-367
+... 375.39-0ubuntu0.16.04.1 ..
+</code></pre>
+<ul>
+<li>編譯與安裝 nvidia-modprobe：</li>
+</ul>
+<pre><code class="sh">$ sudo apt-get install -y m4
+$ git clone &quot;https://github.com/NVIDIA/nvidia-modprobe.git&quot;
+$ cd nvidia-modprobe
+$ make &amp;&amp; sudo make install
+$ sudo nvidia-modprobe -u -c=0
+</code></pre>
+<ul>
+<li>安裝 Nvidia Docker Plugin:</li>
+</ul>
+<pre><code class="sh">$ wget -P /tmp &quot;https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb&quot;
+$ sudo dpkg -i /tmp/nvidia-docker*.deb &amp;&amp; rm /tmp/nvidia-docker*.deb
+$ sudo systemctl start nvidia-docker.service
+$ sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
+...
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 375.39                 Driver Version: 375.39                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 650     Off  | 0000:01:00.0     N/A |                  N/A |
+| 10%   34C    P8    N/A /  N/A |    267MiB /   975MiB |     N/A      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID  Type  Process name                               Usage      |
+|=============================================================================|
+</code></pre>
+<h2 id="利用-Docker-執行-TensorFlow"><a href="#利用-Docker-執行-TensorFlow" class="headerlink" title="利用 Docker 執行 TensorFlow"></a>利用 Docker 執行 TensorFlow</h2><p>TensorFlow on Docker 官方已經提供了相關映像檔，這邊透過單一指令就可以取得該映像檔，並啟動提供使用，以下為只有 CPU 的版本：</p>
+<pre><code class="sh">$ docker run -d -p 8888:8888 --name tf-cpu tensorflow/tensorflow
+$ docker logs tf-cpu
+...
+to login with a token:
+        http://localhost:8888/?token=7ddd6ef31fed5f22696c1003a905782b9219a6ec9a19b97c
+</code></pre>
+<blockquote>
+<p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="external">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
+</blockquote>
+<p>若要支援 GPU(CUDA) 的容器的話，可以透過以下指令來提供：</p>
+<pre><code class="sh">$ nvidia-docker run -d -p 8888:8888 --name tf-gpu tensorflow/tensorflow:latest-gpu
+$ docker logs tf-cpu
+</code></pre>
+<blockquote>
+<p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="external">tags</a>。</p>
+</blockquote>
+<h2 id="利用-Docker-提供-Serving"><a href="#利用-Docker-提供-Serving" class="headerlink" title="利用 Docker 提供 Serving"></a>利用 Docker 提供 Serving</h2><p>TensorFlow Serving 是靈活、高效能的機器學習模型服務系統，是專門為生產環境而設計的，它可以很簡單部署新的演算法與實驗來提供同樣的架構與 API 進行服務。</p>
+<p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="external">Dockerfile </a> 來進行建置：</p>
+<pre><code class="sh">$ mkdir serving &amp;&amp; cd serving
+$ wget &quot;https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel&quot;
+$ sed -i &#39;s/BAZEL_VERSION.*0.4.2/BAZEL_VERSION 0.4.5/g&#39; Dockerfile.devel
+$ docker build --pull -t kyle/serving:0.1.0 -f Dockerfile.devel .
+</code></pre>
+<p>建置完成映像檔後，透過以下指令執行，並在容器內建置 Serving：</p>
+<pre><code class="sh">$ docker run -itd --name=tf-serving kyle/serving:0.1.0
+$ docker exec -ti tf-serving bash
+root@459a89a3cf5a$ git clone --recurse-submodules &quot;https://github.com/tensorflow/serving&quot;
+root@459a89a3cf5a$ cd serving/tensorflow
+root@459a89a3cf5a$ ./configure
+root@459a89a3cf5a$ cd .. &amp;&amp; bazel build -c opt tensorflow_serving/...
+</code></pre>
+<p>當建置完 Serving 後，就可以透過以下指令來確認是否正確：</p>
+<pre><code class="sh">root@459a89a3cf5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
+usage: bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
+Flags:
+    --port=8500                          int32    port to listen on
+    --enable_batching=false
+...
+</code></pre>
+<p>接著使用 Inception v3 模型來提供服務，透過以下步驟來完成：</p>
+<pre><code class="sh">root@459a89a3cf5a$ curl -O &quot;http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz&quot;
+root@459a89a3cf5a$ tar xzf inception-v3-2016-03-01.tar.gz
+root@459a89a3cf5a$ ls inception-v3
+README.txt  checkpoint  model.ckpt-157585
+
+root@459a89a3cf5a$ bazel-bin/tensorflow_serving/example/inception_saved_model --checkpoint_dir=inception-v3 --output_dir=inception-export
+Successfully exported model to inception-export
+
+root@459a89a3cf5a$ ls inception-export
+1
+</code></pre>
+<p>當完成匯入後離開容器，並 commit 成新版本映像檔：</p>
+<pre><code class="sh">$ docker commit tf-serving kyle/serving-inception:0.1.0
+$ docker images
+REPOSITORY               TAG                 IMAGE ID            CREATED             SIZE
+kyle/serving-inception   0.1.0               1d866ff60d38        3 minutes ago       5.55 GB
+</code></pre>
+<p>接著執行剛 commit 的映像檔，並啟動 Serving 服務：</p>
+<pre><code class="sh">$ docker run -it kyle/serving-inception:0.1.0
+root@5b9a89eeef5a$ cd serving
+root@5b9a89eeef5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server --port=9000 --model_name=inception --model_base_path=inception-export &amp;&gt; inception_log &amp;
+[1] 15
+</code></pre>
+<p>最後透過 <code>inception_client.py</code> 來測試功能：</p>
+<pre><code class="sh">root@5b9a89eeef5a$ curl &quot;https://s-media-cache-ak0.pinimg.com/736x/32/00/3b/32003bd128bebe99cb8c655a9c0f00f5.jpg&quot; --output rabbit.jpg
+root@5b9a89eeef5a$ bazel-bin/tensorflow_serving/example/inception_client --server=localhost:9000 --image=rabbit.jpg
+
+outputs {
+  key: &quot;classes&quot;
+  value {
+    dtype: DT_STRING
+    tensor_shape {
+      dim {
+        size: 1
+      }
+      dim {
+        size: 5
+      }
+    }
+    string_val: &quot;hare&quot;
+    string_val: &quot;wood rabbit, cottontail, cottontail rabbit&quot;
+    string_val: &quot;Angora, Angora rabbit&quot;
+    string_val: &quot;mouse, computer mouse&quot;
+    string_val: &quot;gazelle&quot;
+  }
+}
+outputs {
+  key: &quot;scores&quot;
+  value {
+    dtype: DT_FLOAT
+    tensor_shape {
+      dim {
+        size: 1
+      }
+      dim {
+        size: 5
+      }
+    }
+    float_val: 10.3059120178
+    float_val: 8.19226741791
+    float_val: 4.00839996338
+    float_val: 2.34308481216
+    float_val: 2.00992465019
+  }
+}
+</code></pre>
+
+                
+<p class="green-link-context">
+    <a href="/2016/10/23/kubernetes/deploy/minikube/" rel="next" title="Minikube 部署 Local 測試環境">
+    Prev: Minikube 部署 Local 測試環境
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2016/09/29/kubernetes/deploy/kubeadm/" rel="next" title="只要用 kubeadm 小朋友都能部署 Kubernetes">
+    Next: 只要用 kubeadm 小朋友都能部署 Kubernetes
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kairen.bai.1" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/imac-cloud" target="_blank">imac-cloud</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">My gitbook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>
