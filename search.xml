@@ -4,6 +4,140 @@
   
     
     <entry>
+      <title><![CDATA[智能合約(Smart contracts)]]></title>
+      <url>https://kairen.github.io/2017/05/28/blockchain/smart-contracts/</url>
+      <content type="html"><![CDATA[<p><code>智能合約(Smart Contracts)</code> 是在 Ethereum 區塊鏈中所屬的物件。它們包含程式碼函式以及能夠與其他合約進行互動、做出決策、儲存資料與傳送乙太幣給其他人。合約是由創建者所定義，但是它們的執行與他們所提供的服務，都是由 Ethereum 網路本身提供。它們將存在且可被執行，只要整個網路存在，並且只會因程式中有撰寫自我銷毀的功能才會消失。</p>
+<p>我可以用合約做什麼呢？只要想像力夠豐富，要做什麼幾乎都沒問題，但以下指南只會是入門，讓我們去實現一些簡單的事情。</p>
+<a id="more"></a>
+<h3 id="Smart-Sponsor"><a href="#Smart-Sponsor" class="headerlink" title="Smart Sponsor"></a>Smart Sponsor</h3><p>本節將說明一智能合約範例，透過建構一個合約來允許以下賬戶持有人進行互動。</p>
+<ul>
+<li>一個慈善機構舉行籌款活動，我們稱之為 <strong>thebenefactor</strong>。</li>
+<li>一個受贊助的 runner 想為慈善機構募款，我們稱之為 <strong>therunner</strong>。</li>
+<li>其他的人想要贊助 runner，我們稱之為 <strong>thesponsor</strong>。</li>
+<li>一個 Ethereum 節點，用來開採區塊鏈以驗證交易，我們稱之為 <strong>theminer</strong>。</li>
+</ul>
+<p>我們的合約(smartSponsor)：</p>
+<ul>
+<li>是由一位 <strong>runner</strong> 透過贊助的執行來為慈善機構募款。</li>
+<li>當建立合約時，<strong>runner</strong> 會任命為募集錢的捐助者。</li>
+<li><strong>runner</strong> 則邀情其他人去進行贊助。用戶透過呼叫一個在智能合約上的函式，將乙太幣從 <strong>贊助商的帳戶</strong> 轉移到 <strong>合約</strong>，並保持乙太幣於合約，直到有進一步的通知。</li>
+<li>在合約的時限期間的所有人都能看到誰是 <strong>捐助者</strong>，有多少的乙太幣被從誰捐(雖然贊助者可以匿名，當然:p)。</li>
+</ul>
+<p><img src="/images/blockchain/smartSponsor-1.png" alt="flow-1"></p>
+<p>那麼有兩件事情可能發生：</p>
+<ul>
+<li>執行都按計劃進行，以及 <strong>runner</strong> 指示合約轉移到所有資金的捐助者。</li>
+</ul>
+<p><img src="/images/blockchain/smartSponsor-2.png" alt="flow-2"></p>
+<ul>
+<li>執行由於謀些原因無法承擔，而 runner 指示合約將退還贊助商的抵押。</li>
+</ul>
+<p><img src="/images/blockchain/smartSponsor-3.png" alt="flow-3"></p>
+<p>Ethereum 允許智能合約由撰寫 Solidity 語言來定義。Solidity 的合約是類似於 Java 的類別定義。成員變數的儲存採用區塊鍊交易與合約的方法，來詢問合約或改變的其狀態。作為區塊鏈的副本會分散到網路中的所有節點，任何人都可以詢問合約，以從中搜尋公開的訊息。</p>
+<p>合約有以下幾種方法：</p>
+<ul>
+<li><strong><code>smartSponsor</code></strong>：合約的建構子。它初始化合約的狀態。合約的建立者傳入賬戶的位址，有利於合約的 drawdown。</li>
+<li><strong><code>pledge</code></strong>：任何人都可以呼叫捐贈乙太幣贊助基金。贊助商提供支援的選擇性訊息</li>
+<li><strong><code>getPot</code></strong>：回傳當前儲存在合約的總乙太幣。</li>
+<li><strong><code>refund</code></strong>：把贊助商的錢退回給贊助商。只有合約的擁有者才能呼叫這個函式。</li>
+<li><strong><code>drawdown</code></strong>：傳送合約的總價值給捐助者賬戶。只有合約的擁有者才能呼叫這個函式。</li>
+</ul>
+<p>這個想法是使一個合約擁有約束力。他們不能拿回任何資金，除非整個合約被退還。在這種情況下，所有資料都是被公開存取的，這意味著任何人都有存取 Ethereum 區塊鏈，來查看誰建立了合約，誰是捐助者，以及誰透過存取合約程式碼本身保證了每一筆資金。</p>
+<p>要注意很重要的一點，任何改變合約的狀態(建立、承若、退還或 drawing down)都需要在區塊鏈上建立交易，這意味著這些交易不會被儲存，要直到這些交易的區塊被開採。操作只能讀取到一個現有合約狀態(getPot 或讀取公有成員變數)都不需要進行挖礦。這是一個很重要且微妙的點：寫入操作是很慢的(因為我們要等到採礦完成)。由於這情況合約可能永遠不會被建立到區塊鍊中，因此呼叫方需要提供一些獎勵，來促進礦工去工作。這是被稱為 gas 的 Ethereum 術語，所有的寫入操作都是需要 gas 的支出來改變區塊鍊的狀態。</p>
+<p>幸運的是我們不需要購買真正的乙太幣，以及參與 Ethereum 網路。我們可以使用相同的軟體，但要配置它運行一個本地測試區塊鏈，以及產生自己的假乙太幣。</p>
+<p>以下為一個 Solidity 語言的智能合約範例：</p>
+<pre><code class="js">contract smartSponsor {
+  address public owner;
+  address public benefactor;
+  bool public refunded;
+  bool public complete;
+  uint public numPledges;
+  struct Pledge {
+    uint amount;
+    address eth_address;
+    bytes32 message;
+  }
+  mapping(uint =&gt; Pledge) public pledges;
+
+  // constructor
+  function smartSponsor(address _benefactor) {
+    owner = msg.sender;
+    numPledges = 0;
+    refunded = false;
+    complete = false;
+    benefactor = _benefactor;
+  }
+
+  // add a new pledge
+  function pledge(bytes32 _message) {
+    if (msg.value == 0 || complete || refunded) throw;
+    pledges[numPledges] = Pledge(msg.value, msg.sender, _message);
+    numPledges++;
+  }
+
+  function getPot() constant returns (uint) {
+    return this.balance;
+  }
+
+  // refund the backers
+  function refund() {
+    if (msg.sender != owner || complete || refunded) throw;
+    for (uint i = 0; i &lt; numPledges; ++i) {
+      pledges[i].eth_address.send(pledges[i].amount);
+    }
+    refunded = true;
+    complete = true;
+  }
+
+  // send funds to the contract benefactor
+  function drawdown() {
+    if (msg.sender != owner || complete || refunded) throw;
+    benefactor.send(this.balance);
+    complete = true;
+  }
+}
+</code></pre>
+<blockquote>
+<ul>
+<li><p>一個<code>Pledge</code>結構模型的捐贈，儲存著贊助商的帳戶 ID、承若押金，以及一些訊息字串。</p>
+</li>
+<li><p>這個<code>pledges</code>陣列儲存了一個承若方的列表。</p>
+</li>
+<li><p>合約中的所有成員變數都是公開的，所以<code>getters</code>將自動被建立。</p>
+</li>
+<li><p><code>throw</code>被稱為某些函式(functions)，用以防止資料被寫入錯誤的資料到該區塊鏈中。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="參考連結"><a href="#參考連結" class="headerlink" title="參考連結"></a>參考連結</h2><ul>
+<li><a href="https://medium.com/@kpcb_edge/our-thoughts-on-ethereum-31520b164e00#.2q1i88278" target="_blank" rel="external">Our thoughts on Ethereum</a></li>
+<li><a href="https://www.ethereum.org/greeter" target="_blank" rel="external">Building a smart contract using the command line</a></li>
+<li><a href="https://developer.ibm.com/clouddataservices/2016/05/19/block-chain-technology-smart-contracts-and-ethereum/" target="_blank" rel="external">Block chain technology, smart contracts and Ethereum</a></li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> Blockchain </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Ethereum </tag>
+            
+            <tag> Blockchain </tag>
+            
+            <tag> Solidity </tag>
+            
+            <tag> Smart Contract </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[利用 Browser Solidity 部署智能合約]]></title>
       <url>https://kairen.github.io/2017/05/27/blockchain/browser-solidity/</url>
       <content type="html"><![CDATA[<p>Browser Solidity 是一個 Web-based 的 Solidity 編譯器與 IDE。本節將說明如何安裝於 Linux 與 Docker 中。</p>
@@ -546,6 +680,124 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
             <tag> Blockchain </tag>
             
             <tag> Go lang </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Enterprise 的 Docker registry 平台 Harbor]]></title>
+      <url>https://kairen.github.io/2017/05/10/container/harbor-install/</url>
+      <content type="html"><![CDATA[<p>Harbor 是一個企業級 Registry 伺服器用於儲存和分散 Docker Image 的，透過新增一些企業常用的功能，例如：安全性、身分驗證和管理等功能擴展了開源的 <a href="https://github.com/docker/distribution" target="_blank" rel="external">Docker Distribution</a>。作為一個企業級的私有 Registry 伺服器，Harbor 提供了更好的效能與安全性。Harbor 支援安裝多個 Registry 並將 Image 在多個 Registry 做 replicated。除此之外，Harbor 亦提供了高級的安全性功能，像是用戶管理(user managment)，存取控制(access control)和活動審核(activity auditing)。</p>
+<p><img src="/images/docker/harbor_logo.png" alt=""><br><a id="more"></a></p>
+<h2 id="功能特色"><a href="#功能特色" class="headerlink" title="功能特色"></a>功能特色</h2><ul>
+<li><strong>基於角色為基礎的存取控制(Role based access control)</strong>：使用者和 Repository 透過 Project 進行組織管理，一個使用者在同一個 Project 下，對於每個 Image 可以有不同權限。</li>
+<li><strong>基於 Policy 的 Image 複製</strong>：Image 可以在多得 Registry instance 中同步複製。適合於附載平衡、高可用性、混合雲與多雲的情境。</li>
+<li><strong>支援 LDAP/AD</strong>：Harbor 可以整合企業已有的 LDAP/AD，來管理使用者的認證與授權。</li>
+<li><strong>使用者的圖形化介面</strong>：使用者可以透過瀏覽器，查詢 Image 和管理 Project</li>
+<li><strong>審核管理</strong>：所有對 Repositroy 的操作都被記錄。</li>
+<li><strong>RESTful API</strong>：RESTful APIs 提供給管理的操作，可以輕易的整合額外的系統。</li>
+<li><strong>快速部署</strong>：提供 Online installer 與 Offline installer。</li>
+</ul>
+<h2 id="安裝指南"><a href="#安裝指南" class="headerlink" title="安裝指南"></a>安裝指南</h2><p>Harbor 提供兩種方法進行安裝：</p>
+<ol>
+<li>Online installer<br> 這種安裝方式會從 Docker hub 下載 Harbor 所需的映像檔，因此 installer 檔案較輕量。</li>
+<li>Offline installer<br> 當無任何網際網路連接的情況下使用此種安裝方式，預先將所需的映像檔打包，因此 installer 檔案較大。</li>
+</ol>
+<h3 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h3><p>Harbor 會部署數個 Docker container，所以部署的主機需要能支援 Docker 的 Linux distribution。而部署主機需要安裝以下套件：</p>
+<ul>
+<li>Python 版本<code>2.7+</code>。</li>
+<li>Docker Engine 版本 <code>1.10+</code>。Docker 安裝方式，請參考：<a href="https://docs.docker.com/engine/installation/" target="_blank" rel="external">Install Docker</a></li>
+<li>Docker Compose 版本 <code>1.6.0+</code>。Docker Compose 安裝方式，請參考：<a href="https://docs.docker.com/compose/install/" target="_blank" rel="external">Install Docker Compose</a></li>
+</ul>
+<blockquote>
+<p>官方安裝指南說明是 Linux 且要支援 Docker，但 Windows 支援 Docker 部署 Harbor 還需要驗證是否可行。</p>
+</blockquote>
+<p>安裝步驟大致可分為以下階段：</p>
+<ol>
+<li>下載 installer</li>
+<li>設定 Harbor</li>
+<li>執行安裝腳本</li>
+</ol>
+<h4 id="下載-installer"><a href="#下載-installer" class="headerlink" title="下載 installer"></a>下載 installer</h4><p>installer 的二進制檔案可以從 <a href="https://github.com/vmware/harbor/releases" target="_blank" rel="external">release page</a> 下載，選擇您需要 Online installer 或者 Offline installer，下載完成後，使用<code>tar</code>將 package 解壓縮：</p>
+<p>Online installer：</p>
+<pre><code class="sh">$ tar xvf harbor-online-installer-&lt;version&gt;.tgz
+</code></pre>
+<p>Offline installer：</p>
+<pre><code class="sh">$ tar xvf harbor-offline-installer-&lt;version&gt;.tgz
+</code></pre>
+<h4 id="設定-Harbor"><a href="#設定-Harbor" class="headerlink" title="設定 Harbor"></a>設定 Harbor</h4><p>Harbor 的設定與參數都在<code>harbor.cfg</code>中。</p>
+<p><code>harbor.cfg</code>中的參數分為<strong>required parameters</strong>與<strong>optional parameters</strong></p>
+<ul>
+<li><strong>required parameters</strong><br>  這類的參數是必須設定的，且會影響使用者更新<code>harbor.cfg</code>後，重新執行安裝腳本來重新安裝 Harbor。</li>
+<li><strong>optional parameters</strong><br>  這類的參數為使用者自行決定是否設定，且只會在第一次安裝時，這些參數的配置才會生效。而 Harbor 啟動後，可以透過 Web UI 進行修改。</li>
+</ul>
+<h5 id="Configuring-storage-backend-optional"><a href="#Configuring-storage-backend-optional" class="headerlink" title="Configuring storage backend (optional)"></a>Configuring storage backend (optional)</h5><p>預設的情況下，Harbor 會將 Docker image 儲存在本機的檔案系統上，在生產環境中，您可以考慮使用其他 storage backend 而不是本機的檔案系統，像是 S3, OpenStack Swift, Ceph 等。而僅需更改 <code>common/templates/registry/config.yml</code>。以下為一個接 OpenStack Swift 的範例：</p>
+<pre><code class="sh">storage:
+  swift:
+    username: admin
+    password: ADMIN_PASS
+    authurl: http://keystone_addr:35357/v3/auth
+    tenant: admin
+    domain: default
+    region: regionOne
+    container: docker_images
+</code></pre>
+<blockquote>
+<p>更多 storage backend 的資訊，請參考：<a href="https://docs.docker.com/registry/configuration/" target="_blank" rel="external">Registry Configuration Reference</a>。<br>另外官方提供的是改 <code>common/templates/registry/config.yml</code>，感覺寫錯，需再測試其正確性。</p>
+</blockquote>
+<h4 id="執行安裝腳本"><a href="#執行安裝腳本" class="headerlink" title="執行安裝腳本"></a>執行安裝腳本</h4><p>一旦<code>harbor.cfg</code>與 storage backend (optional) 設定完成後，可以透過<code>install.sh</code>腳本開始安裝 Harbor。從 Harbor 1.1.0 版本之後，已經整合<code>Notary</code>，但是預設的情況下安裝是不包含<code>Notary</code>支援：</p>
+<pre><code class="sh">$ sudo ./install.sh
+</code></pre>
+<blockquote>
+<p>Online installer 會從 Docker hub 下載 Harbor 所需的映像檔，因此會花較久的時間。</p>
+</blockquote>
+<p>如果安裝過程正常，您可以打開瀏覽器並輸入在<code>harbor.cfg</code>中設定的<code>hostname</code>，來存取 Harbor 的 Web UI。<br><img src="https://i.imgur.com/jBVsr49.png" alt="Harbor Web UI"></p>
+<blockquote>
+<p>預設的管理者帳號密碼為 <code>admin</code>/<code>Harbor12345</code>。</p>
+</blockquote>
+<h4 id="開始使用-Harbor"><a href="#開始使用-Harbor" class="headerlink" title="開始使用 Harbor"></a>開始使用 Harbor</h4><p>登入成功後，可以創建一個新的 Project，並使用 Docker command 進行登入，但在登入之前，需要對 Docker daemon 新增<code>--insecure-registry</code>參數。新增<code>--insecure-registry</code>參數至<code>/etc/default/docker</code>中：</p>
+<pre><code class="sh">DOCKER_OPTS=&quot;--insecure-registry &lt;your harbor.cfg hostname&gt;&quot;
+</code></pre>
+<blockquote>
+<p>其他細節，請參考：<a href="https://docs.docker.com/registry/insecure/#deploying-a-plain-http-registry" target="_blank" rel="external">Test an insecure registry</a>。</p>
+<p>若在<code>Ubuntu 16.04</code>的作業系統版本，需要修改<code>/lib/systemd/system/docker.service</code>檔案，並加入一下內容。另外在 CentOS 7.x 版本則不需要加入<code>-H fd://</code>資訊：</p>
+<pre><code class="sh">EnvironmentFile=/etc/default/docker
+ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
+</code></pre>
+</blockquote>
+<p>修改完成後，重新啟動服務：</p>
+<pre><code class="sh">$ sudo systemctl daemon-reload
+</code></pre>
+<p>服務重啟成功後，透過 Docker command 進行 login：</p>
+<pre><code class="sh">$ docker login &lt;your harbor.cfg hostname&gt;
+</code></pre>
+<p>將映像檔上 tag 之後，上傳至 Harbor：</p>
+<pre><code class="sh">$ docker tag ubuntu:&lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubuntu:16.04
+$ docker push &lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubunut:16.04
+</code></pre>
+<p>從 Harbor 抓取上傳的映像檔：</p>
+<pre><code class="sh">$ docker pull &lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubunut:16.04
+</code></pre>
+<blockquote>
+<p>更多使用者操作，請參考：<a href="https://github.com/vmware/harbor/blob/master/docs/user_guide.md" target="_blank" rel="external">Harbor User Guide</a>。</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> Container </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Linux Container </tag>
+            
+            <tag> Docker </tag>
+            
+            <tag> Docker registry </tag>
             
         </tags>
         
@@ -6516,6 +6768,136 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
     </entry>
     
     <entry>
+      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
+      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
+      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
+<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="external">Module Index</a>。</p>
+<a id="more"></a>
+<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
+<pre><code class="sh">[cluster]
+ansible-slave-1 ansible_host=172.16.1.206
+ansible-slave-2 ansible_host=172.16.1.207
+ansible-slave-3 ansible_host=172.16.1.208
+</code></pre>
+<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
+<pre><code class="sh">$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+</code></pre>
+<blockquote>
+<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
+</blockquote>
+<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
+</code></pre>
+<blockquote>
+<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
+</code></pre>
+<p>會發現 bash 是平行執行的。</p>
+</blockquote>
+<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
+</code></pre>
+<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
+</code></pre>
+<blockquote>
+<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
+</blockquote>
+<p>也可以透過<code>--become-user</code>來切換使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
+</code></pre>
+<blockquote>
+<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
+</blockquote>
+<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
+<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
+</code></pre>
+<blockquote>
+<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
+</blockquote>
+<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
+<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
+</code></pre>
+<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
+$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
+</code></pre>
+<p><code>file</code>模組也能夠建立目錄：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
+</code></pre>
+<p>若要刪除可以使用以下方式：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
+</code></pre>
+<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
+</code></pre>
+<blockquote>
+<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
+</blockquote>
+<p>若要確認是否為最新版本，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
+</code></pre>
+<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
+</code></pre>
+<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="external">About Modules</a>。</p>
+<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
+</code></pre>
+<p>刪除則如以下：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
+</code></pre>
+<blockquote>
+<p><code>--become</code>與<code>-b</code>是等效的。</p>
+</blockquote>
+<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
+<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
+</code></pre>
+<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
+<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
+</code></pre>
+<blockquote>
+<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
+</blockquote>
+<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
+<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
+</code></pre>
+<p>獲取狀態指令如下：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<blockquote>
+<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
+</blockquote>
+<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster[0] -m setup
+</code></pre>
+<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="external">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="external">Variables</a> 進行研究。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Automation Engine </tag>
+            
+            <tag> Ansible </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Ansible Inventory]]></title>
       <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</url>
       <content type="html"><![CDATA[<p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
@@ -6697,136 +7079,6 @@ aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
 freebsd_host      ansible_python_interpreter=/usr/local/bin/python
 ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>]]></content>
-      
-        <categories>
-            
-            <category> DevOps </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> DevOps </tag>
-            
-            <tag> Automation Engine </tag>
-            
-            <tag> Ansible </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
-      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
-      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="external">Module Index</a>。</p>
-<a id="more"></a>
-<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
-<pre><code class="sh">[cluster]
-ansible-slave-1 ansible_host=172.16.1.206
-ansible-slave-2 ansible_host=172.16.1.207
-ansible-slave-3 ansible_host=172.16.1.208
-</code></pre>
-<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
-<pre><code class="sh">$ ssh-agent bash
-$ ssh-add ~/.ssh/id_rsa
-</code></pre>
-<blockquote>
-<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
-</blockquote>
-<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
-</code></pre>
-<blockquote>
-<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
-</code></pre>
-<p>會發現 bash 是平行執行的。</p>
-</blockquote>
-<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
-</code></pre>
-<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
-</code></pre>
-<blockquote>
-<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
-</blockquote>
-<p>也可以透過<code>--become-user</code>來切換使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
-</code></pre>
-<blockquote>
-<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
-</blockquote>
-<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
-<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
-</code></pre>
-<blockquote>
-<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
-</blockquote>
-<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
-<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
-</code></pre>
-<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
-$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
-</code></pre>
-<p><code>file</code>模組也能夠建立目錄：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
-</code></pre>
-<p>若要刪除可以使用以下方式：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
-</code></pre>
-<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
-</code></pre>
-<blockquote>
-<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
-</blockquote>
-<p>若要確認是否為最新版本，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
-</code></pre>
-<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
-</code></pre>
-<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="external">About Modules</a>。</p>
-<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
-</code></pre>
-<p>刪除則如以下：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
-</code></pre>
-<blockquote>
-<p><code>--become</code>與<code>-b</code>是等效的。</p>
-</blockquote>
-<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
-<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
-</code></pre>
-<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
-<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
-</code></pre>
-<blockquote>
-<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
-</blockquote>
-<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
-<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
-</code></pre>
-<p>獲取狀態指令如下：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<blockquote>
-<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
-</blockquote>
-<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster[0] -m setup
-</code></pre>
-<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="external">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="external">Variables</a> 進行研究。</p>
-]]></content>
       
         <categories>
             
@@ -8650,6 +8902,87 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[自己建立 Docker Registry]]></title>
+      <url>https://kairen.github.io/2016/01/02/container/docker-registry/</url>
+      <content type="html"><![CDATA[<p>Docker Registry 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>、<a href="https://quay.io/" target="_blank" rel="external">QUAY</a> 與 <a href="https://console.cloud.google.com/gcr/images/google-containers/GLOBAL" target="_blank" rel="external">GCP registry</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="external">Deploying a registry server</a>。</p>
+<a id="more"></a>
+<h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Role</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.16.35.13</td>
+<td>docker-registry</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+</tbody>
+</table>
+<h3 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h3><p>首先進入到<code>docker-registry</code>節點，安裝 Docker engine：</p>
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+</code></pre>
+<p>完成安裝後，接著透過以下指令建立一個 Docker registry 容器：</p>
+<pre><code class="sh">$ docker run -d -p 5000:5000 --restart=always --name registry \
+-v $(pwd)/data:/var/lib/registry \
+registry:2
+</code></pre>
+<blockquote>
+<p>-v 為 host 與 container 要進行同步的目錄，主要存放 docker images 資料</p>
+</blockquote>
+<p>接著為了方便檢視 Docker image，這邊另外部署 Docker registry UI：</p>
+<pre><code class="sh">$ docker run -d -p 5001:80 \
+-e ENV_DOCKER_REGISTRY_HOST=172.16.35.13 \
+-e ENV_DOCKER_REGISTRY_PORT=5000 \
+konradkleine/docker-registry-frontend:v2
+</code></pre>
+<p>完成後就可以透過瀏覽器進入 <a href="172.16.35.13:5001" target="_blank" rel="external">Docker registry UI</a> 查看資訊。也可以透過以下指令檢查是否部署成功：</p>
+<pre><code class="sh">$ docker pull ubuntu:14.04
+$ docker tag ubuntu:14.04 localhost:5000/ubuntu:14.04
+$ docker push localhost:5000/ubuntu:14.04
+
+The push refers to a repository [localhost:5000/ubuntu]
+447f88c8358f: Pushed
+df9a135a6949: Pushed
+...
+</code></pre>
+<blockquote>
+<p>其他 Docker registry 列表：</p>
+<ul>
+<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="external">Portus</a></li>
+<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="external">Atomic Registry</a></li>
+<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="external">Private Registries in RancherOS</a></li>
+<li><a href="https://github.com/vmware/harbor" target="_blank" rel="external">VMware Harbor</a></li>
+</ul>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> Container </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Linux Container </tag>
+            
+            <tag> Docker </tag>
+            
+            <tag> Docker registry </tag>
             
         </tags>
         
