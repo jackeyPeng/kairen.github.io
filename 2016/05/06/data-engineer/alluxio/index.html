@@ -7,7 +7,7 @@
 
     
 
-    <title>NoSQL | KaiRen&#39;s Blog</title>
+    <title>Alluxio 分散式虛擬儲存系統 | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    
+    <meta property="og:title" content="Alluxio 分散式虛擬儲存系統"/>
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -257,30 +257,157 @@
 
     <main>
         <div class="container main-container">
-    
-
-<nav class="page-nav hide-on-small-only">
+    <nav class="page-nav hide-on-small-only">
     <div class="nav-wrapper indigo">
-        <span class="breadcrumb">Current page(Tags)</span>
+        <span class="breadcrumb">Current page(Categories)</span>
         
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Spark/">Spark</a>
+
 
         
-            <a class="breadcrumb" href="/tags/NoSQL/">NoSQL</a>
+
         
     </div>
 </nav>
 
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>Alluxio 分散式虛擬儲存系統</h1>
+    
 
 
-    <div class="collection mt-0">
+            </div>
+            <time class="green-link-context" datetime="2016-05-06T09:08:54.000Z"><a href="/2016/05/06/data-engineer/alluxio/">2016-05-06</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
         
-            <a href="/2015/11/17/data-engineer/apache-cassandra/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-11-17T09:08:54.000Z">2015-11-17</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Apache Cassandra 分散式資料庫
-            </a>
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/Java/" class="chip pink lighten-1">Java</a>
+        
+            <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
         
     </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Install-Java7"><span class="section table-of-contents-text">Install Java7</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Download-Alluxio-1-0-0"><span class="section table-of-contents-text">Download Alluxio 1.0.0</span></a></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p><code>Alluxio</code> 是分散式虛擬儲存系統，早期名稱為 Tachyon ，而現在已正式改名 Alluxio，並發佈 1.0 版本</p>
+<p>Aluxion 是一個記憶體虛擬分散式儲存系統，具有高效能、高容錯以及高可靠性的特色，它能夠統一資料的存取去串接機算框架和儲存系統的橋梁，像是同時可相容於 Hadoop MapReduce 和 Apache Spark 以及 Apache Flink 的計算框架和 Alibaba OSS、Amazon S3、OpenStack Swift,、GlusterFS 及 Ceph 的儲存系統</p>
+<p><img src="/images/spark/alluxio_architecture.jpg" alt=""></p>
+<a id="more"></a>
+<h2 id="Install-Java7"><a href="#Install-Java7" class="headerlink" title="Install Java7"></a>Install Java7</h2><p>首先安裝相關套件：</p>
+<pre><code class="sh">$ sudo apt-get purge openjdk*
+$ sudo apt-get -y autoremove
+$ sudo add-apt-repository -y ppa:webupd8team/java
+$ sudo apt-get update
+$ echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+$ echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+$ sudo apt-get -y install oracle-java7-installer
+</code></pre>
+<h2 id="Download-Alluxio-1-0-0"><a href="#Download-Alluxio-1-0-0" class="headerlink" title="Download Alluxio 1.0.0"></a>Download Alluxio 1.0.0</h2><p>接著下載 Alluxio：</p>
+<pre><code class="sh">$ wget http://alluxio.org/downloads/files/1.0.0/alluxio-1.0.0-bin.tar.gz
+$ tar xvfz alluxio-1.0.0-bin.tar.gz
+$ cd alluxio-1.0.0
+</code></pre>
+<p>複製一個<code>conf/alluxio-env.sh</code>檔案</p>
+<pre><code class="sh">$ cp conf/alluxio-env.sh.template conf/alluxio-env.sh
+</code></pre>
+<p><code>conf/alluxio-env.sh</code>中加入<code>ALLUXIO_UNDERFS_ADDRESS</code>參數</p>
+<pre><code class="sh">export ALLUXIO_UNDERFS_ADDRESS=/tmp
+</code></pre>
+<p>確認 <code>ssh localhost</code> 可成功</p>
+<pre><code class="sh">$ssh-copy-id localhsot
+</code></pre>
+<p>格式化 Alluxio FileSystem 並開啟它</p>
+<pre><code class="sh">$ ./bin/alluxio format
+$ ./bin/alluxio-start.sh local
+</code></pre>
+<p>驗證 Alluxio 可於瀏覽器輸入<code>http://localhost:19999</code>，也可執行簡單的程式，如下:</p>
+<pre><code class="sh">$ ./bin/alluxio runTest Basic CACHE THROUGH
+</code></pre>
+<p>執行後，如下:</p>
+<pre><code>2015-11-20 08:32:22,271 INFO   (ClientBase.java:connect) - Alluxio client (version 1.0.0) is trying to connect with FileSystemMaster master @ localhost/127.0.0.1:19998
+2015-11-20 08:32:22,294 INFO   (ClientBase.java:connect) - Client registered with FileSystemMaster master @ localhost/127.0.0.1:19998
+2015-11-20 08:32:22,387 INFO   (BasicOperations.java:createFile) - createFile with fileId 33554431 took 127 ms.
+2015-11-20 08:32:22,552 INFO   (ClientBase.java:connect) - Alluxio client (version 1.0.0) is trying to connect with BlockMaster master @ localhost/127.0.0.1:19998
+2015-11-20 08:32:22,553 INFO   (ClientBase.java:connect) - Client registered with BlockMaster master @ localhost/127.0.0.1:19998
+2015-11-20 08:32:22,604 INFO   (WorkerClient.java:connect) - Connecting local worker @ /192.168.2.15:29998
+2015-11-20 08:32:22,698 INFO   (BasicOperations.java:writeFile) - writeFile to file /default_tests_files/BasicFile_CACHE_THROUGH took 311 ms.
+2015-11-20 08:32:22,759 INFO   (FileUtils.java:createStorageDirPath) - Folder /Volumes/ramdisk/alluxioworker/7226211928567857329 was created!
+2015-11-20 08:32:22,809 INFO   (LocalBlockOutStream.java:&lt;init&gt;) - LocalBlockOutStream created new file block, block path: /Volumes/ramdisk/alluxioworker/7226211928567857329/16777216
+2015-11-20 08:32:22,886 INFO   (BasicOperations.java:readFile) - readFile file /default_tests_files/BasicFile_CACHE_THROUGH took 187 ms.
+Passed the test!
+</code></pre><p>執行更複雜的測試:</p>
+<pre><code class="sh">$ ./bin/alluxio runTests
+</code></pre>
+<p>停止服務：</p>
+<pre><code class="sh">$ ./bin/alluxio-stop.sh all
+</code></pre>
+
+                
+<p class="green-link-context">
+    <a href="/2016/05/15/ceph/rados-java/" rel="next" title="利用 rados-java 存取 Ceph">
+    Prev: 利用 rados-java 存取 Ceph
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2016/04/21/linux/ubuntu/dm-cache/" rel="next" title="DM-cache 建立混和區塊裝置">
+    Next: DM-cache 建立混和區塊裝置
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
 
 
 </div>

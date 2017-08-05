@@ -163,14 +163,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Container/">
                     Container <span class="right">6</span></a>
                 </a>
@@ -179,8 +171,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">9</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -189,6 +181,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/DevOps/">
                     DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -268,6 +268,48 @@
             <div class="article-title">
                 
     
+        <h1 class="indigo-link-context"><a href="/2016/01/13/kubernetes/deploy/docker-singal/">Docker 建立單機 Kubernetes</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-01-13T09:08:54.000Z"><a href="/2016/01/13/kubernetes/deploy/docker-singal/">2016-01-13</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>本篇將說明如何透過 Docker 來部署一個單機的 kubernetes。其架構圖如下所示：</p>
+<p><img src="/images/kube/singlenode-docker.png" alt=""></p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/01/13/kubernetes/deploy/docker-singal/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
         <h1 class="indigo-link-context"><a href="/2016/01/05/container/docker-network/">學習 Docker Network 之間的差別</a></h1>
     
 
@@ -326,13 +368,13 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
-        
             <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
         
             <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
         
             <a href="/tags/Visualization/" class="chip pink lighten-1">Visualization</a>
+        
+            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
         
     </div>
 
@@ -492,13 +534,13 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
-        
-            <a href="/tags/File-System/" class="chip pink lighten-1">File System</a>
-        
             <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
         
             <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/File-System/" class="chip pink lighten-1">File System</a>
         
     </div>
 
@@ -643,62 +685,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2015/11/19/ceph/ceph-intro/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/11/17/data-engineer/apache-cassandra/">Apache Cassandra 分散式資料庫</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-11-17T09:08:54.000Z"><a href="/2015/11/17/data-engineer/apache-cassandra/">2015-11-17</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
-        
-            <a href="/tags/Database/" class="chip pink lighten-1">Database</a>
-        
-            <a href="/tags/NoSQL/" class="chip pink lighten-1">NoSQL</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Cassandra 是最初由 Facebook 開發，之後貢獻給 Apache 基金會維護的分散式 NoSQL 資料庫系統，一般被認為 Amazon Dyname 與 Google BigTable 的結合體，主要是分散性像 Dynamo，然而資料模型卻如 BigTable。目前有多家公司採用，可運行上千台節點來提供超過 200 TB 的資料。</p>
-<p>Cassandra 擁有幾個特點，也因為這些特點讓許多人選擇使用該資料庫，以下幾個項目簡單列出其特點：</p>
-<ul>
-<li>完全去中心化，且不是主從架構的備份</li>
-<li>統一類型的節點</li>
-<li>以 P2P 協定串連起網路，清除 SPOF（Single Point Of Failure）問題</li>
-<li>高擴展性，新增與刪除節點容易</li>
-<li>可呼叫的一致性，並支援強一致性與弱一致性</li>
-<li>支援跨區域的叢集架構</li>
-<li>每個區域儲存一份完整資料，來提供存取局部性、容錯與災難復原</li>
-<li><strong>寫入效能理論上比讀取好（但近期有證實現在讀取也很不錯），適合串流資料儲存</strong></li>
-<li>比 HBase 的隨機存取效能要好上許多，但不擅長區間掃描</li>
-<li>可作為 HBase 的即時查詢快取。</li>
-</ul>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/11/17/data-engineer/apache-cassandra/">READ MORE</a>
         </ div>
         
     </div>
