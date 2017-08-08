@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2017-08-02T02:33:37.000Z</updated>
+  <updated>2017-08-08T08:01:50.000Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -14,6 +14,127 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>利用 LinuxKit 建立 Kubernetes 叢集</title>
+    <link href="https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/"/>
+    <id>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</id>
+    <published>2017-07-21T16:00:00.000Z</published>
+    <updated>2017-08-08T08:01:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>LinuxKit 是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，先前有簡單介紹與操作過，可以參考<a href="https://kairen.github.io/2017/04/23/container/linuxkit/">LinuxKit</a>。本篇則將利用 LinuxKit 來建立 Kubernetes 的映像檔，並部署簡單的 Kubernetes 叢集。</p>
+<p><img src="/images/kube/moby+kubernetes.png" alt=""></p>
+<a id="more"></a>
+<p>本次教學會在<code>Mac OS X</code>作業系統上進行，而部署的軟體資訊如下：</p>
+<ul>
+<li>Kubernetes v1.7.2(2017-08-07, Update)</li>
+<li>Etcd v3</li>
+<li>Weave</li>
+<li>Docker v17.06.0-ce</li>
+</ul>
+<h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><ul>
+<li>主機已安裝與啟動<code>Docker</code>工具。</li>
+<li>主機已安裝<code>Git</code>工具。</li>
+<li>主機以下載 LinuxKit 專案，並建構了 Moby 與 LinuxKit 工具。</li>
+</ul>
+<p>建構 Moby 與 LinuxKit 方法如以下操作：</p>
+<pre><code class="sh">$ git clone https://github.com/linuxkit/linuxkit.git
+$ cd linuxkit
+$ make
+$ ./bin/moby version
+moby version 0.0
+commit: c2b081ed8a9f690820cc0c0568238e641848f58f
+
+$ ./bin/linuxkit version
+linuxkit version 0.0
+commit: 0e3ca695d07d1c9870eca71fb7dd9ede31a38380
+</code></pre>
+<h2 id="建構-Kubernetes-系統映像檔"><a href="#建構-Kubernetes-系統映像檔" class="headerlink" title="建構 Kubernetes 系統映像檔"></a>建構 Kubernetes 系統映像檔</h2><p>首先我們要建立一個包好 Kubernetes 的 Linux 映像檔，而官方已經有做好範例，只要利用以下方式即可建構：</p>
+<pre><code class="sh">$ cd linuxkit/projects/kubernetes/
+$ make build-vm-images
+...
+Create outputs:
+  kube-node-kernel kube-node-initrd.img kube-node-cmdline
+</code></pre>
+<h2 id="建置-Kubernetes-cluster"><a href="#建置-Kubernetes-cluster" class="headerlink" title="建置 Kubernetes cluster"></a>建置 Kubernetes cluster</h2><p>完成建構映像檔後，就可以透過以下指令來啟動 Master OS 映像檔，然後獲取節點 IP：</p>
+<pre><code class="sh">$ ./boot.sh
+
+(ns: getty) linuxkit-025000000002:~\# ip addr show dev eth0
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 02:50:00:00:00:02 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.65.3/24 brd 192.168.65.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::abf0:9fa4:d0f4:8da2/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>啟動後，開啟新的 Console 來 SSH 進入 Master，來利用 kubeadm 初始化 Master：</p>
+<pre><code class="sh">$ cd linuxkit/projects/kubernetes/
+$ ./ssh_into_kubelet.sh 192.168.65.3
+linuxkit-025000000002:/\# kubeadm-init.sh
+...
+kubeadm join --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+</code></pre>
+<p>一旦 kubeadm 完成後，就會看到 Token，這時請記住 Token 資訊。接著開啟新 Console，然後執行以下指令來啟動 Node：</p>
+<pre><code class="sh">console1&gt;$ ./boot.sh 1 --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+</code></pre>
+<blockquote>
+<p>P.S. 開啟節點格式為<code>./boot.sh &lt;n&gt; [&lt;join_args&gt; ...]</code>。</p>
+</blockquote>
+<p>接著分別在開兩個 Console 來加入叢集：</p>
+<pre><code class="sh">console2&gt; $ ./boot.sh 2 --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+console3&gt; $ ./boot.sh 3 --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+</code></pre>
+<p>完成後回到 Master 節點上，執行以下指令來查看節點狀況：</p>
+<pre><code class="sh">$ kubectl get no
+NAME                    STATUS    AGE       VERSION
+linuxkit-025000000002   Ready     16m       v1.7.2
+linuxkit-025000000003   Ready     6m        v1.7.2
+linuxkit-025000000004   Ready     1m        v1.7.2
+linuxkit-025000000005   Ready     1m        v1.7.2
+</code></pre>
+<h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
+<pre><code class="sh">$ kubectl run nginx --image=nginx --replicas=1 --port=80
+$ kubectl get pods -o wide
+NAME                     READY     STATUS    RESTARTS   AGE       IP          NODE
+nginx-1423793266-v0hpb   1/1       Running   0          38s       10.42.0.1   linuxkit-025000000004
+</code></pre>
+<p>完成後要接著建立 svc(Service)，來提供外部網路存取應用程式，使用以下指令建立：</p>
+<pre><code class="sh">$ kubectl expose deploy nginx --port=80 --type=NodePort
+$ kubectl get svc
+NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   10.96.0.1       &lt;none&gt;        443/TCP        19m
+nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
+</code></pre>
+<p>由於這邊不是使用實體機器部署，因此網路使用 Docker namespace 網路，故這邊透過<code>ubuntu-desktop-lxde-vnc</code>來瀏覽 Nginx 應用：</p>
+<pre><code class="sh">$ docker run -it --rm -p 6080:80 dorowu/ubuntu-desktop-lxde-vnc
+</code></pre>
+<blockquote>
+<p>完成後透過瀏覽器連接 <a href="localhost:6080" target="_blank" rel="external">HTLM VNC</a></p>
+</blockquote>
+<p><img src="/images/kube/docker-desktop.png" alt=""></p>
+<p>最後關閉節點只需要執行以下即可：</p>
+<pre><code class="sh">$ halt
+[ 1503.034689] reboot: Power down
+</code></pre>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;LinuxKit 是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，先前有簡單介紹與操作過，可以參考&lt;a href=&quot;https://kairen.github.io/2017/04/23/container/linuxkit/&quot;&gt;LinuxKit&lt;/a&gt;。本篇則將利用 LinuxKit 來建立 Kubernetes 的映像檔，並部署簡單的 Kubernetes 叢集。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/kube/moby+kubernetes.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
+    
+    
+      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
+    
+      <category term="LinuxKit" scheme="https://kairen.github.io/tags/LinuxKit/"/>
+    
+  </entry>
   
   <entry>
     <title>智能合約(Smart contracts)</title>
@@ -4069,266 +4190,6 @@ Hello world, GO !
       <category term="Golang" scheme="https://kairen.github.io/tags/Golang/"/>
     
       <category term="OS X" scheme="https://kairen.github.io/tags/OS-X/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>簡單部署 DC/OS 於 CentOS 上</title>
-    <link href="https://kairen.github.io/2016/08/17/data-engineer/dcos-install/"/>
-    <id>https://kairen.github.io/2016/08/17/data-engineer/dcos-install/</id>
-    <published>2016-08-17T09:08:54.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>DC/OS(Data Center Operating System，資料中心作業系統)是 Mesosphere 公司開源的系統，該平台提供了諸多巨量資料處理框架與系統的建置，並以分散式系統 Mesos 作為核心，提供系統資源的隔離與調度，使用者可以根據需求與策略來應用系統資源。</p>
-<p>而本篇將說明如何透過 UI 與 CLI 進行安裝 DC/OS。</p>
-<a id="more"></a>
-<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>DC/OS 最低需求要四台主機，以下為本次安裝的硬體設備：</p>
-<table>
-<thead>
-<tr>
-<th>Role</th>
-<th>RAM</th>
-<th>Disk</th>
-<th>CPUs</th>
-<th>IP Address</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>bootstrap</td>
-<td>16 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.101</td>
-</tr>
-<tr>
-<td>master</td>
-<td>8 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.102</td>
-</tr>
-<tr>
-<td>agent-1</td>
-<td>8 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.103</td>
-</tr>
-<tr>
-<td>agent-2</td>
-<td>8 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.104</td>
-</tr>
-</tbody>
-</table>
-<p>請以上節點都分別安裝 RHEL 或者 CentOS 作業系統。並且設定 IP 為靜態固定，編輯<code>/etc/sysconfig/network-scripts/ifcfg-&lt;name&gt;</code>檔案，加入以下內容：</p>
-<pre><code class="sh">ONBOOT=&quot;yes&quot;
-IPADDR=&quot;10.0.0.104&quot;
-PREFIX=&quot;24&quot;
-GATEWAY=&quot;10.0.0.1&quot;
-DNS1=&quot;8.8.8.8&quot;
-DNS2=&quot;8.8.8.4&quot;
-</code></pre>
-<h2 id="安裝前準備"><a href="#安裝前準備" class="headerlink" title="安裝前準備"></a>安裝前準備</h2><p>在開始安裝以前，首先需要在每一台節點將基本環境的軟體更新：</p>
-<pre><code class="sh">$ sudo yum upgrade -y
-</code></pre>
-<blockquote>
-<p>完成後檢查是否是最新版本，可以透過以下方式查看 Kernel：</p>
-<pre><code class="sh">$ uname -r
-3.10.0-327.13.1.el7.x86_64
-</code></pre>
-<p>如果不是以上版本，請執行以下指令：</p>
-<pre><code class="sh">$ sudo yum upgrade --assumeyes --tolerant
-$ sudo yum update --assumeyes
-</code></pre>
-</blockquote>
-<p>由於在 CentOS 與 RHEL 預設會開啟防火牆，故要關閉防火牆與開機時自動啟動：</p>
-<pre><code class="sh">$ sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
-</code></pre>
-<p>接著安裝一些基本工具軟體：</p>
-<pre><code class="sh">$ sudo yum install -y tar xz unzip curl ipset vim
-</code></pre>
-<p>設定啟動 OverlayFS :</p>
-<pre><code class="sh">$ sudo tee /etc/modules-load.d/overlay.conf &lt;&lt;-&#39;EOF&#39;
-overlay
-EOF
-</code></pre>
-<p>設定關閉 SELinux 與設定一些資訊，並重新啟動：</p>
-<pre><code class="sh">$ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config &amp;&amp;
-sudo groupadd nogroup &amp;&amp;
-sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 &amp;&amp;
-sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 &amp;&amp;
-sudo reboot
-</code></pre>
-<p>完成重新啟動後，在每一台節點安裝 Docker，首先要取得 Repos，設定以下來讓 yum 可以抓取：</p>
-<pre><code class="sh">$ sudo tee /etc/yum.repos.d/docker.repo &lt;&lt;-&#39;EOF&#39;
-[dockerrepo]
-name=Docker Repository
-baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
-enabled=1
-gpgcheck=1
-gpgkey=https://yum.dockerproject.org/gpg
-EOF
-</code></pre>
-<p>設定 systemd 執行 Docker daemon 於 OverlayFS：</p>
-<pre><code class="sh">$ sudo mkdir -p /etc/systemd/system/docker.service.d &amp;&amp; sudo tee /etc/systemd/system/docker.service.d/override.conf &lt;&lt;- EOF
-[Service]
-ExecStart=
-ExecStart=/usr/bin/docker daemon --storage-driver=overlay -H fd://
-EOF
-</code></pre>
-<p>安裝 Docker engine，並啟動 docker 與設定開機啟動：</p>
-<pre><code class="sh">$ sudo yum install --assumeyes --tolerant docker-engine
-$ sudo systemctl start docker
-$ sudo systemctl enable docker
-</code></pre>
-<blockquote>
-<p>這邊可以設定使用者加入 docker 群組：</p>
-<pre><code class="sh">$ sudo gpasswd -a $(whoami) docker
-</code></pre>
-</blockquote>
-<h2 id="安裝-Bootstrap-Node"><a href="#安裝-Bootstrap-Node" class="headerlink" title="安裝 Bootstrap Node"></a>安裝 Bootstrap Node</h2><p>Bootstrap 節點主要提供佈署的功能，可以採用 UI 或 CLI 來進行部署，以下將說明如何透過建置 Bootstrap 來完成 DC/OS 佈署。</p>
-<h3 id="GUI-安裝"><a href="#GUI-安裝" class="headerlink" title="GUI 安裝"></a>GUI 安裝</h3><p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="external">DC/OS installer</a>：</p>
-<pre><code class="sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
-</code></pre>
-<p>接著執行啟動 DC/OS UI：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --web -v
-</code></pre>
-<p>完成後，即可開啟瀏覽器輸入 <a href="http://&lt;bootstrap-node-public-ip&gt;:9000" target="_blank" rel="external">bootstrap web</a></p>
-<p>這邊需要輸入 Bootstrap 節點的 SSH 私有金鑰，透過以下方式產生與印出：</p>
-<pre><code class="sh">$ ssh-keygen -t rsa
-$ cat .ssh/id_rsa
-</code></pre>
-<p>並建立一個腳本檔案<code>ip-detect</code>，並加入以下內容：</p>
-<pre><code class="sh">#!/bin/bash
-set -o nounset -o errexit
-
-IP=&lt;MASTER_IP&gt;
-
-echo $(ip route get ${IP} | awk &#39;{print $NF; exit}&#39;)
-</code></pre>
-<p>上傳以上資訊，並填入 Master 與 Agent 的 IP Address。</p>
-<h3 id="CLI-安裝"><a href="#CLI-安裝" class="headerlink" title="CLI 安裝"></a>CLI 安裝</h3><p>DC/OS 除了可以透過 GUI 進行安裝，也可以透過 CLI 的方式來佈署，首先建立目錄<code>genconf</code>：</p>
-<pre><code class="sh">$ mkdir -p dcos_cluster
-$ cd dcos_cluster
-$ mkdir -p genconf
-</code></pre>
-<p>然後下載 DC/OS installer 來進行安裝，並且查看所有指令：</p>
-<pre><code class="sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
-$ sudo bash dcos_generate_config.sh --help
-</code></pre>
-<p>建立一個腳本檔案<code>genconf/ip-detect</code>，並加入以下內容：</p>
-<pre><code class="sh">#!/bin/bash
-set -o nounset -o errexit
-
-IP=&lt;MASTER_IP&gt;
-
-echo $(ip route get ${IP} | awk &#39;{print $NF; exit}&#39;)
-</code></pre>
-<blockquote>
-<p><code>MASTER_IP</code>為修改成主節點 IP。</p>
-</blockquote>
-<p>接著建立設定檔<code>genconf/config.yaml</code>，並加入以下內容：</p>
-<pre><code class="sh">---
-agent_list:
-- &lt;agent-private-ip-1&gt;
-- &lt;agent-private-ip-2&gt;
-bootstrap_url: file:///opt/dcos_install_tmp
-cluster_name: &quot;DC/OS Cluster&quot;
-master_discovery: static
-master_list:
-- &lt;master-private-ip-1&gt;
-resolvers:
-- 8.8.4.4
-- 8.8.8.8
-ssh_port: 22
-ssh_user: &lt;username&gt;
-</code></pre>
-<blockquote>
-<p><code>&lt;agent-private-ip-1&gt;</code> 修改成 <code>10.0.0.103</code>。</p>
-<p><code>&lt;agent-private-ip-2&gt;</code> 修改成 <code>10.0.0.104</code>。</p>
-<p><code>&lt;master-private-ip-1&gt;</code> 修改成 <code>10.0.0.102</code>。</p>
-<p><code>&lt;username&gt;</code> 修改成 <code>cloud-user</code>。P.S 這邊是用 cloud image。</p>
-</blockquote>
-<p>完成後複製 Bootstrap 節點的 SSH 私有金鑰到目錄底下：</p>
-<pre><code class="sh">$ cp &lt;path-to-key&gt; genconf/ssh_key &amp;&amp; chmod 0600 genconf/ssh_key
-</code></pre>
-<p>透過 DC/OS installer 產生設定資訊：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --genconf
-Extracting image from this script and loading into docker daemon, this step can take a few minutes
-dcos-genconf.e060aa49ac4ab62d5e-1e14856f55e5d5d07b.tar
-Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
-====&gt; EXECUTING CONFIGURATION GENERATION
-...
-</code></pre>
-<p>成功的話目錄結構會類似以下：</p>
-<pre><code>├── dcos-genconf.14509fe1e7899f4395-3a2b7e03c45cd615da.tar
-├── dcos_generate_config.sh
-└── genconf
-    ├── cluster_packages.json
-    ├── config.yaml
-    ├── ip-detect
-    ├── serve
-    │   ├── bootstrap
-    │   │   ├── 3a2b7e03c45cd615da8dfb1b103943894652cd71.active.json
-    │   │   └── 3a2b7e03c45cd615da8dfb1b103943894652cd71.bootstrap.tar.xz
-    │   ├── bootstrap.latest
-    │   ├── cluster-package-info.json
-    │   ├── dcos_install.sh
-    │   ├── fetch_packages.sh
-    │   └── packages
-    │       ├── dcos-config
-    │       │   └── dcos-config--setup_6dac2d99011d6219b32d9f66cafa9845b7cf6d74.tar.xz
-    │       └── dcos-metadata
-    │           └── dcos-metadata--setup_6dac2d99011d6219b32d9f66cafa9845b7cf6d74.tar.xz
-    ├── ssh_key
-    └── state
-</code></pre><p>若沒問題就可以 prerequisites 佈署階段：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --install-prereqs
-Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING INSTALL PREREQUISITES
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START install_prereqs
-</code></pre>
-<p>若沒問題就可以執行 preflight 來驗證叢集是否可以安裝：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --preflight
-Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING PREFLIGHT
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START run_preflight
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; STAGE preflight
-</code></pre>
-<p>一樣若沒問題就可以執行 deploy 來安裝 DC/OS：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --deploy
-Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING DC/OS INSTALLATION
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START deploy_master
-</code></pre>
-<p>最後沒問題就可以執行 postflight 來確認服務是否有啟動：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --postflight
-Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING POSTFLIGHT
-====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START run_postflight
-</code></pre>
-<p>都完成後就可以查看 <a href="http://&lt;master-public-ip&gt;:8181/exhibitor/v1/ui/index.html" target="_blank" rel="external">Zookpeer</a> 與 <a href="http://&lt;public-master-ip&gt;/" target="_blank" rel="external">DC/OS</a>。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;DC/OS(Data Center Operating System，資料中心作業系統)是 Mesosphere 公司開源的系統，該平台提供了諸多巨量資料處理框架與系統的建置，並以分散式系統 Mesos 作為核心，提供系統資源的隔離與調度，使用者可以根據需求與策略來應用系統資源。&lt;/p&gt;
-&lt;p&gt;而本篇將說明如何透過 UI 與 CLI 進行安裝 DC/OS。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Spark" scheme="https://kairen.github.io/categories/Spark/"/>
-    
-    
-      <category term="Spark" scheme="https://kairen.github.io/tags/Spark/"/>
-    
-      <category term="DC/OS" scheme="https://kairen.github.io/tags/DC-OS/"/>
-    
-      <category term="Mesos" scheme="https://kairen.github.io/tags/Mesos/"/>
     
   </entry>
   

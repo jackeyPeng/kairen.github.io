@@ -4,6 +4,124 @@
   
     
     <entry>
+      <title><![CDATA[利用 LinuxKit 建立 Kubernetes 叢集]]></title>
+      <url>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</url>
+      <content type="html"><![CDATA[<p>LinuxKit 是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，先前有簡單介紹與操作過，可以參考<a href="https://kairen.github.io/2017/04/23/container/linuxkit/">LinuxKit</a>。本篇則將利用 LinuxKit 來建立 Kubernetes 的映像檔，並部署簡單的 Kubernetes 叢集。</p>
+<p><img src="/images/kube/moby+kubernetes.png" alt=""></p>
+<a id="more"></a>
+<p>本次教學會在<code>Mac OS X</code>作業系統上進行，而部署的軟體資訊如下：</p>
+<ul>
+<li>Kubernetes v1.7.2(2017-08-07, Update)</li>
+<li>Etcd v3</li>
+<li>Weave</li>
+<li>Docker v17.06.0-ce</li>
+</ul>
+<h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><ul>
+<li>主機已安裝與啟動<code>Docker</code>工具。</li>
+<li>主機已安裝<code>Git</code>工具。</li>
+<li>主機以下載 LinuxKit 專案，並建構了 Moby 與 LinuxKit 工具。</li>
+</ul>
+<p>建構 Moby 與 LinuxKit 方法如以下操作：</p>
+<pre><code class="sh">$ git clone https://github.com/linuxkit/linuxkit.git
+$ cd linuxkit
+$ make
+$ ./bin/moby version
+moby version 0.0
+commit: c2b081ed8a9f690820cc0c0568238e641848f58f
+
+$ ./bin/linuxkit version
+linuxkit version 0.0
+commit: 0e3ca695d07d1c9870eca71fb7dd9ede31a38380
+</code></pre>
+<h2 id="建構-Kubernetes-系統映像檔"><a href="#建構-Kubernetes-系統映像檔" class="headerlink" title="建構 Kubernetes 系統映像檔"></a>建構 Kubernetes 系統映像檔</h2><p>首先我們要建立一個包好 Kubernetes 的 Linux 映像檔，而官方已經有做好範例，只要利用以下方式即可建構：</p>
+<pre><code class="sh">$ cd linuxkit/projects/kubernetes/
+$ make build-vm-images
+...
+Create outputs:
+  kube-node-kernel kube-node-initrd.img kube-node-cmdline
+</code></pre>
+<h2 id="建置-Kubernetes-cluster"><a href="#建置-Kubernetes-cluster" class="headerlink" title="建置 Kubernetes cluster"></a>建置 Kubernetes cluster</h2><p>完成建構映像檔後，就可以透過以下指令來啟動 Master OS 映像檔，然後獲取節點 IP：</p>
+<pre><code class="sh">$ ./boot.sh
+
+(ns: getty) linuxkit-025000000002:~\# ip addr show dev eth0
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 02:50:00:00:00:02 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.65.3/24 brd 192.168.65.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::abf0:9fa4:d0f4:8da2/64 scope link
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>啟動後，開啟新的 Console 來 SSH 進入 Master，來利用 kubeadm 初始化 Master：</p>
+<pre><code class="sh">$ cd linuxkit/projects/kubernetes/
+$ ./ssh_into_kubelet.sh 192.168.65.3
+linuxkit-025000000002:/\# kubeadm-init.sh
+...
+kubeadm join --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+</code></pre>
+<p>一旦 kubeadm 完成後，就會看到 Token，這時請記住 Token 資訊。接著開啟新 Console，然後執行以下指令來啟動 Node：</p>
+<pre><code class="sh">console1&gt;$ ./boot.sh 1 --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+</code></pre>
+<blockquote>
+<p>P.S. 開啟節點格式為<code>./boot.sh &lt;n&gt; [&lt;join_args&gt; ...]</code>。</p>
+</blockquote>
+<p>接著分別在開兩個 Console 來加入叢集：</p>
+<pre><code class="sh">console2&gt; $ ./boot.sh 2 --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+console3&gt; $ ./boot.sh 3 --token 4236d3.29f61af661c49dbf 192.168.65.3:6443
+</code></pre>
+<p>完成後回到 Master 節點上，執行以下指令來查看節點狀況：</p>
+<pre><code class="sh">$ kubectl get no
+NAME                    STATUS    AGE       VERSION
+linuxkit-025000000002   Ready     16m       v1.7.2
+linuxkit-025000000003   Ready     6m        v1.7.2
+linuxkit-025000000004   Ready     1m        v1.7.2
+linuxkit-025000000005   Ready     1m        v1.7.2
+</code></pre>
+<h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
+<pre><code class="sh">$ kubectl run nginx --image=nginx --replicas=1 --port=80
+$ kubectl get pods -o wide
+NAME                     READY     STATUS    RESTARTS   AGE       IP          NODE
+nginx-1423793266-v0hpb   1/1       Running   0          38s       10.42.0.1   linuxkit-025000000004
+</code></pre>
+<p>完成後要接著建立 svc(Service)，來提供外部網路存取應用程式，使用以下指令建立：</p>
+<pre><code class="sh">$ kubectl expose deploy nginx --port=80 --type=NodePort
+$ kubectl get svc
+NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes   10.96.0.1       &lt;none&gt;        443/TCP        19m
+nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
+</code></pre>
+<p>由於這邊不是使用實體機器部署，因此網路使用 Docker namespace 網路，故這邊透過<code>ubuntu-desktop-lxde-vnc</code>來瀏覽 Nginx 應用：</p>
+<pre><code class="sh">$ docker run -it --rm -p 6080:80 dorowu/ubuntu-desktop-lxde-vnc
+</code></pre>
+<blockquote>
+<p>完成後透過瀏覽器連接 <a href="localhost:6080" target="_blank" rel="external">HTLM VNC</a></p>
+</blockquote>
+<p><img src="/images/kube/docker-desktop.png" alt=""></p>
+<p>最後關閉節點只需要執行以下即可：</p>
+<pre><code class="sh">$ halt
+[ 1503.034689] reboot: Power down
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> Kubernetes </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
+            
+            <tag> LinuxKit </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[智能合約(Smart contracts)]]></title>
       <url>https://kairen.github.io/2017/05/28/blockchain/smart-contracts/</url>
       <content type="html"><![CDATA[<p><code>智能合約(Smart Contracts)</code> 是在 Ethereum 區塊鏈中所屬的物件。它們包含程式碼函式以及能夠與其他合約進行互動、做出決策、儲存資料與傳送乙太幣給其他人。合約是由創建者所定義，但是它們的執行與他們所提供的服務，都是由 Ethereum 網路本身提供。它們將存在且可被執行，只要整個網路存在，並且只會因程式中有撰寫自我銷毀的功能才會消失。</p>
@@ -4724,9 +4842,9 @@ clean
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -5192,9 +5310,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -5670,9 +5788,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -5933,9 +6051,9 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
-            <tag> Logging </tag>
-            
             <tag> Spark </tag>
+            
+            <tag> Logging </tag>
             
         </tags>
         
@@ -6084,9 +6202,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
@@ -8149,11 +8267,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -8971,13 +9089,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
+            <tag> Logging </tag>
+            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
-            
-            <tag> Logging </tag>
             
         </tags>
         
@@ -9295,13 +9413,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> OpenStack </tag>
-            
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
             
             <tag> File System </tag>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         

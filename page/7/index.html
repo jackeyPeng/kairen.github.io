@@ -163,14 +163,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">6</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Ceph/">
                     Ceph <span class="right">8</span></a>
                 </a>
@@ -179,8 +171,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -189,6 +181,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -204,7 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">13</span></a>
+                    Kubernetes <span class="right">14</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,50 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2015/11/19/ceph/ceph-intro/">Ceph 分散式儲存系統介紹</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2015-11-19T09:08:54.000Z"><a href="/2015/11/19/ceph/ceph-intro/">2015-11-19</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/Distribution-System/" class="chip pink lighten-1">Distribution System</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Ceph 提供了<code>Ceph 物件儲存</code>以及<code>Ceph 區塊儲存</code>，除此之外 Ceph 也提供了自身的<code>Ceph 檔案系統</code>，所有的 Ceph 儲存叢集的部署都開始於 Ceph 各節點，透過網路與 Ceph 的叢集溝通。最簡單的 Ceph 儲存叢集至少要建立一個 Monitor 與兩個 OSD（Object storage daemon），但是當需要運行 Ceph 檔案系統時，就需要再加入Metadata伺服器。</p>
+<center><img src="/images/ceph/ceph.jpeg" alt="Ceph"></center>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2015/11/19/ceph/ceph-intro/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -671,45 +715,6 @@
 </article>
 
     
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/09/18/data-engineer/spark-standalone/">Spark Standalone 模擬分散式運算</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-09-18T09:08:54.000Z"><a href="/2015/09/18/data-engineer/spark-standalone/">2015-09-18</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>本教學為安裝 Spark Standalone 的叢集版本，將 Spark 應用程式執行於自己的分散式機制與各台機器連結上，來讓應用程式執行於不同的工作節點上。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/09/18/data-engineer/spark-standalone/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
 
     <ul class="pagination center-align">
     <li class="">
@@ -731,9 +736,11 @@
     
         <li class="active pink"><a href="/page/7">7</a></li>
     
+        <li class="waves-effect"><a href="/page/8">8</a></li>
     
-    <li class="disabled">
-        <a href="/"><i class="fa fa-angle-right"></i></a>
+    
+    <li class="">
+        <a href="/page/8/"><i class="fa fa-angle-right"></i></a>
     </li>
  </ul>
 

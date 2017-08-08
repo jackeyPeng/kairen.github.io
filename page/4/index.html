@@ -163,14 +163,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">6</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Ceph/">
                     Ceph <span class="right">8</span></a>
                 </a>
@@ -179,8 +171,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -189,6 +181,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -204,7 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">13</span></a>
+                    Kubernetes <span class="right">14</span></a>
                 </a>
             </li>
 
@@ -268,6 +268,60 @@
             <div class="article-title">
                 
     
+        <h1 class="indigo-link-context"><a href="/2016/04/06/data-engineer/akka-intro/">Akka 基本介紹</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-04-06T09:08:54.000Z"><a href="/2016/04/06/data-engineer/akka-intro/">2016-04-06</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Java/" class="chip pink lighten-1">Java</a>
+        
+            <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
+        
+            <a href="/tags/Concurrent/" class="chip pink lighten-1">Concurrent</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <h1 id="Akka"><a href="#Akka" class="headerlink" title="Akka"></a>Akka</h1><p>Akka 是基於 Actor 模型以 Scala 程式語言開發而成的開源工具，被用在建置可擴展、彈性、高度並行、分散式與快速響應的 JVM 應用程式平台。現在許多高度並行（Concurrent） JVM 應用程式被廣泛應用，尤其以巨量資料處理框架為甚，諸如：Spark、Storm等，甚至可以基於 Akka 建置高平行的 Web 框架，更能建置分散式系統。Akka 最主要的目是要解決同步造成的效能問題，以及可能發生的死鎖問題。</p>
+<p>Akka 目前擁有以下幾個特點：</p>
+<ul>
+<li>高度並行與分散式</li>
+<li>可擴展</li>
+<li>擁有容錯機制</li>
+<li>去中心化，且彈性</li>
+<li>基於 Actors 模型</li>
+<li>事務性 Actors</li>
+<li>支援 JAVA 與 Scala API。</li>
+<li>支援叢集</li>
+</ul>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/04/06/data-engineer/akka-intro/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
         <h1 class="indigo-link-context"><a href="/2016/04/04/data-engineer/apache-flume/">Apache Flume 快速上手</a></h1>
     
 
@@ -279,9 +333,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
-        
             <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
+        
+            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
         
     </div>
 
@@ -320,9 +374,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
-        
             <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
         
     </div>
 
@@ -668,50 +722,6 @@
 </article>
 
     
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2016/02/17/devops/ansible/ansible-inventory/">Ansible Inventory</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-02-17T04:23:01.000Z"><a href="/2016/02/17/devops/ansible/ansible-inventory/">2016-02-17</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
-        
-            <a href="/tags/Automation-Engine/" class="chip pink lighten-1">Automation Engine</a>
-        
-            <a href="/tags/Ansible/" class="chip pink lighten-1">Ansible</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
-<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="external">Dynamic Inventory</a>。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/02/17/devops/ansible/ansible-inventory/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
 
     <ul class="pagination center-align">
     <li class="">
@@ -732,6 +742,8 @@
         <li class="waves-effect"><a href="/page/6">6</a></li>
     
         <li class="waves-effect"><a href="/page/7">7</a></li>
+    
+        <li class="waves-effect"><a href="/page/8">8</a></li>
     
     
     <li class="">
