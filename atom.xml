@@ -1929,7 +1929,7 @@ $ helm repo add example http://repo-url
     <link href="https://kairen.github.io/2017/03/17/kubernetes/deploy/kargo-baremetal/"/>
     <id>https://kairen.github.io/2017/03/17/kubernetes/deploy/kargo-baremetal/</id>
     <published>2017-03-17T09:08:54.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
+    <updated>2017-08-18T11:13:29.000Z</updated>
     
     <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="external">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
 <ul>
@@ -2010,9 +2010,9 @@ $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible git cowsay pyth
 <h2 id="安裝-Kubespray-與準備部署資訊"><a href="#安裝-Kubespray-與準備部署資訊" class="headerlink" title="安裝 Kubespray 與準備部署資訊"></a>安裝 Kubespray 與準備部署資訊</h2><p>首先透過 pypi 安裝 kubespray-cli，雖然官方說已經改成 Go 語言版本的工具，但是根本沒在更新，所以目前暫時用 pypi 版本：</p>
 <pre><code class="sh">$ sudo pip install -U kubespray
 </code></pre>
-<p>安裝完成後，新增設定檔<code>/etc/kubespray/kubespray.yml</code>，並加入以下內容：</p>
+<p>安裝完成後，新增設定檔<code>~/.kubespray.yml</code>，並加入以下內容：</p>
 <pre><code class="sh">$ mkdir /etc/kubespray
-$ cat &lt;&lt;EOF &gt; /etc/kubespray/kubespray.yml
+$ cat &lt;&lt;EOF &gt; ~/.kubespray.yml
 kubespray_git_repo: &quot;https://github.com/kubernetes-incubator/kubespray.git&quot;
 # Logging options
 loglevel: &quot;info&quot;
