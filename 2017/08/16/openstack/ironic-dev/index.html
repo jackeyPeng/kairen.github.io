@@ -377,7 +377,7 @@ $ git clone https://git.openstack.org/openstack-dev/devstack
 $ cd devstack
 </code></pre>
 <p>接著撰寫 local.conf 來描述部署過程所需的服務：</p>
-<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic.conf -O local.conf
+<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic-local.conf -O local.conf
 $ sed -i &#39;s/HOST_IP=.*/HOST_IP=172.22.132.93/g&#39; local.conf
 </code></pre>
 <blockquote>
@@ -590,7 +590,7 @@ $ ironic node-create -d agent_ipmitool \
 <blockquote>
 <p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
 </blockquote>
-<p>接著更新機器資訊，由於這邊沒有使用 inspector，故要自己設定機器資訊：</p>
+<p>接著更新機器資訊，由於這邊也可以使用 inspector 來取得：h</p>
 <pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
 $ ironic node-update $NODE_UUID add \
                      properties/cpus=4 \

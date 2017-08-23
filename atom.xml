@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2017-08-23T12:58:31.000Z</updated>
+  <updated>2017-08-23T13:38:05.000Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://kairen.github.io/2017/08/16/openstack/ironic-dev/"/>
     <id>https://kairen.github.io/2017/08/16/openstack/ironic-dev/</id>
     <published>2017-08-16T08:23:01.000Z</published>
-    <updated>2017-08-23T12:58:31.000Z</updated>
+    <updated>2017-08-23T13:38:05.000Z</updated>
     
     <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
 <p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
@@ -88,7 +88,7 @@ $ git clone https://git.openstack.org/openstack-dev/devstack
 $ cd devstack
 </code></pre>
 <p>接著撰寫 local.conf 來描述部署過程所需的服務：</p>
-<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic.conf -O local.conf
+<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic-local.conf -O local.conf
 $ sed -i &#39;s/HOST_IP=.*/HOST_IP=172.22.132.93/g&#39; local.conf
 </code></pre>
 <blockquote>
@@ -301,7 +301,7 @@ $ ironic node-create -d agent_ipmitool \
 <blockquote>
 <p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
 </blockquote>
-<p>接著更新機器資訊，由於這邊沒有使用 inspector，故要自己設定機器資訊：</p>
+<p>接著更新機器資訊，由於這邊也可以使用 inspector 來取得：h</p>
 <pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
 $ ironic node-update $NODE_UUID add \
                      properties/cpus=4 \
