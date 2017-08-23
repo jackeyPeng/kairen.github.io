@@ -195,14 +195,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
                 </a>
@@ -211,8 +203,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">14</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">3</span></a>
+                    OpenStack <span class="right">4</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,50 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2015/11/21/ceph/cephfs/">Ceph FS 基本操作</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2015-11-21T09:08:54.000Z"><a href="/2015/11/21/ceph/cephfs/">2015-11-21</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/File-System/" class="chip pink lighten-1">File System</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Ceph FS 底層的部分同樣是由 RADOS(OSDs + Monitors + MDSs) 提供，在上一層同樣與 librados 溝通，最上層則是有不同的 library 將其轉換成標準的 POSIX 檔案系統供使用。</p>
+<center><img src="/images/ceph/cephfs.png" alt=""></center>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2015/11/21/ceph/cephfs/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -666,49 +710,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/10/03/linux/centos/centos-pxe/">CentOS 6.5 PXE 安裝與設定</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-10-03T04:23:01.000Z"><a href="/2015/10/03/linux/centos/centos-pxe/">2015-10-03</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
-        
-            <a href="/tags/PXE/" class="chip pink lighten-1">PXE</a>
-        
-            <a href="/tags/Bare-Metal/" class="chip pink lighten-1">Bare Metal</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/10/03/linux/centos/centos-pxe/">READ MORE</a>
         </ div>
         
     </div>

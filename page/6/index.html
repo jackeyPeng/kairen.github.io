@@ -195,14 +195,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
                 </a>
@@ -211,8 +203,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">14</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">3</span></a>
+                    OpenStack <span class="right">4</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,54 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/02/11/devops/graphite/">利用 Graphite 監控系統資料</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-02-11T04:23:01.000Z"><a href="/2016/02/11/devops/graphite/">2016-02-11</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
+        
+            <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
+        
+            <a href="/tags/Data-Collect/" class="chip pink lighten-1">Data Collect</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Graphite 是一款開源的監控繪圖工具。Graphite 可以實時收集、存儲、顯示時間序列類型的數據（time series data）。它主要有三個部分構成：</p>
+<ol>
+<li><strong>Carbon</strong>：基於 Twisted 的行程，用來接收資料。</li>
+<li><strong>Whisper</strong>：專門儲存時間序列類型資料的小型資料庫。</li>
+<li><strong>Graphite</strong> webapp：基於 Django 的網頁應用程式。</li>
+</ol>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/02/11/devops/graphite/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -653,50 +701,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2015/11/24/linux/ubuntu/nfs/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/11/21/ceph/cephfs/">Ceph FS 基本操作</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-11-21T09:08:54.000Z"><a href="/2015/11/21/ceph/cephfs/">2015-11-21</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
-        
-            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
-        
-            <a href="/tags/File-System/" class="chip pink lighten-1">File System</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Ceph FS 底層的部分同樣是由 RADOS(OSDs + Monitors + MDSs) 提供，在上一層同樣與 librados 溝通，最上層則是有不同的 library 將其轉換成標準的 POSIX 檔案系統供使用。</p>
-<center><img src="/images/ceph/cephfs.png" alt=""></center>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/11/21/ceph/cephfs/">READ MORE</a>
         </ div>
         
     </div>

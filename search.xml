@@ -4,6 +4,395 @@
   
     
     <entry>
+      <title><![CDATA[利用 OpenStack Ironic 提供裸機部署服務]]></title>
+      <url>https://kairen.github.io/2017/08/16/openstack/ironic-dev/</url>
+      <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
+<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>OpenStack Pike</li>
+<li>DevStack Pike</li>
+<li>Pike Pike Pike ….</li>
+</ul>
+<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
+<a id="more"></a>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>controller</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>bare-node1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>這邊 controller 為主要控制節點，將安裝大部分 OpenStack 服務。而 bare-node 為被用來做裸機部署的機器。</p>
+</blockquote>
+<p>網卡若是實體主機，請設定為固定 IP，如以下：</p>
+<pre><code>auto eth0
+iface eth0 inet static
+           address 172.20.3.93/24
+           gateway    172.20.3.1
+           dns-nameservers 8.8.8.8
+</code></pre><blockquote>
+<p>若想修改主機的網卡名稱，可以編輯<code>/etc/udev/rules.d/70-persistent-net.rules</code>。</p>
+</blockquote>
+<p>其中<code>controller</code>的<code>eth2</code>需設定為以下：</p>
+<pre><code>auto &lt;ethx&gt;
+iface &lt;ethx&gt; inet manual
+        up ip link set dev $IFACE up
+        down ip link set dev $IFACE down
+</code></pre><h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
+<ul>
+<li>確認所有節點網路可以溝通。</li>
+<li>Bare-node IPMI 設定完成。包含 Address、User 與 Password。</li>
+<li>修改 Controller 的 <code>/etc/apt/sources.list</code>，使用<code>tw.archive.ubuntu.com</code>。</li>
+</ul>
+<h2 id="安裝-OpenStack-服務"><a href="#安裝-OpenStack-服務" class="headerlink" title="安裝 OpenStack 服務"></a>安裝 OpenStack 服務</h2><p>這邊採用 DevStack 來部署測試環境，首先透過以下指令取得 DevStack：</p>
+<pre><code class="sh">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+$ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
+$ sudo su - stack
+$ git clone https://git.openstack.org/openstack-dev/devstack
+$ cd devstack
+</code></pre>
+<p>接著撰寫 local.conf 來描述部署過程所需的服務：</p>
+<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic.conf -O local.conf
+$ sed -i &#39;s/HOST_IP=.*/HOST_IP=172.22.132.93/g&#39; local.conf
+</code></pre>
+<blockquote>
+<p><code>HOST_IP</code>請更換為自己環境 IP。有其他 Driver 請記得加入。</p>
+</blockquote>
+<p>完成後執行部署腳本進行建置：</p>
+<pre><code class="sh">$ ./stack.sh
+</code></pre>
+<blockquote>
+<p>大約經過 15 min 就可以完成整個環境安裝。</p>
+</blockquote>
+<p>測試 OpenStack 環境：</p>
+<pre><code class="sh">$ source openrc admin
+$ openstack user list
++----------------------------------+----------------+
+| ID                               | Name           |
++----------------------------------+----------------+
+| 3ba4e813270e4e98ad781f4103284e0d | demo           |
+| 40c6014bc18f407fbfbc22aadedb1ca0 | placement      |
+| 567156ad1c7b4ccdbcd4ea02e7c44ce3 | alt_demo       |
+| 7a22ce5036614993a707dd976c505ccd | swift          |
+| 8d392f051afe45008289abca4dadf3ca | swiftusertest1 |
+| a6e616af3bf04611bc23625e71a22e64 | swiftusertest4 |
+| a835f1674648427396a7c6ac7e5eef06 | neutron        |
+| b2bf73ef2eaa425c93e4f552e9266056 | swiftusertest2 |
+| b7de1af8522b495c8a9fb743eb6e7f59 | nova           |
+| cada5913a03e4f2794066902144264d3 | admin          |
+| f03e39680b234474b139d00c3fbca989 | swiftusertest3 |
+| f0a4033463f64c00858ff05525545b6d | glance-swift   |
+| f2a1b186e7e84b10ae7e8f810e5c2412 | glance         |
+| ff31787d136f4fba96c19af419b8559c | ironic         |
++----------------------------------+----------------+
+</code></pre>
+<p>測試 ironic 是否正常運行：</p>
+<pre><code class="sh">$ ironic node-list
++---------------------+----------------+
+| Supported driver(s) | Active host(s) |
++---------------------+----------------+
+| agent_ipmitool      | ironic-dev     |
+| fake                | ironic-dev     |
+| ipmi                | ironic-dev     |
+| pxe_ipmitool        | ironic-dev     |
++---------------------+----------------+
+</code></pre>
+<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="external">Configure the Networking service for bare metal provisioning</a>。</p>
+<p>首先編輯<code>/etc/neutron/plugins/ml2/ml2_conf.ini</code>修改以下內容：</p>
+<pre><code>[ml2_type_flat]
+flat_networks = public, physnet1
+
+[ovs]
+datapath_type = system
+bridge_mappings = public:br-ex, physnet1:br-eth2
+tunnel_bridge = br-tun
+local_ip = 172.22.132.93
+</code></pre><p>接著建立 bridge 來處理實體網路與 OpenStack 之間的溝通：</p>
+<pre><code class="sh">$ sudo ovs-vsctl add-br br-eth2
+$ sudo ovs-vsctl add-port br-eth2 eth2
+</code></pre>
+<p>完成後重新啟動 Neutron server 與 agent：</p>
+<pre><code class="sh">$ sudo systemctl restart devstack@q-svc.service
+$ sudo systemctl restart devstack@q-agt.service
+</code></pre>
+<p>建立完成後，OVS bridges 會類似如下：</p>
+<pre><code class="sh">$ sudo ovs-vsctl show
+
+    Bridge br-int
+        fail_mode: secure
+        Port &quot;int-br-eth2&quot;
+            Interface &quot;int-br-eth2&quot;
+                type: patch
+                options: {peer=&quot;phy-br-eth2&quot;}
+        Port br-int
+            Interface br-int
+                type: internal
+    Bridge &quot;br-eth2&quot;
+        Port &quot;phy-br-eth2&quot;
+            Interface &quot;phy-br-eth2&quot;
+                type: patch
+                options: {peer=&quot;int-br-eth2&quot;}
+        Port &quot;eth2&quot;
+            Interface &quot;eth2&quot;
+        Port &quot;br-eth2&quot;
+            Interface &quot;br-eth2&quot;
+                type: internal
+</code></pre>
+<p>接著建立 Neutron flat 網路來提供使用：</p>
+<pre><code class="sh">$ neutron net-create sharednet1 \
+                     --shared \
+                     --provider:network_type flat \
+                     --provider:physical_network physnet1
+
+$ neutron subnet-create sharednet1 172.22.132.0/24 \
+                        --name sharedsubnet1 \
+                        --ip-version=4 --gateway=172.22.132.254 \
+                        --allocation-pool start=172.22.132.180,end=172.22.132.200 \
+                        --enable-dhcp
+</code></pre>
+<blockquote>
+<p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="external">Provider network</a>。</p>
+</blockquote>
+<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="external">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
+<pre><code class="sh">$ openstack network list
++--------------------------------------+------------+----------------------------------------------------------------------------+
+| ID                                   | Name       | Subnets                                                                    |
++--------------------------------------+------------+----------------------------------------------------------------------------+
+| 03de10a0-d4d2-43ce-83db-806a5277dd29 | private    | 2a651bfb-776d-47f4-a958-f8a418f7fcd5, 99bdbd78-7a20-41b7-afa3-7cf7bf25b95b |
+| 349a6a5b-1e26-4e36-8444-f6a6bbbdd227 | public     | 032a516e-3d55-4623-995d-06ee033eaee4, daf733a9-492e-4ea6-8a45-6364b88a8f6f |
+| ade096bd-6a86-4d90-9cf4-bce9921f7257 | sharednet1 | 3f9f2a47-fdd9-472b-a6a2-ce6570e490ff                                       |
++--------------------------------------+------------+----------------------------------------------------------------------------+
+</code></pre>
+<p>編輯<code>/etc/ironic/ironic.conf</code>修改一下內容：</p>
+<pre><code>[neutron]
+cleaning_network = sharednet1
+</code></pre><p>完成後，重新啟動 Ironic 服務：</p>
+<pre><code class="sh">$ sudo systemctl restart devstack@ir-api.service
+$ sudo systemctl restart devstack@ir-cond.service
+</code></pre>
+<h3 id="建立-Deploy-與-User-映像檔"><a href="#建立-Deploy-與-User-映像檔" class="headerlink" title="建立 Deploy 與 User 映像檔"></a>建立 Deploy 與 User 映像檔</h3><p>裸機服務在配置時需要兩組映像檔，分別為 <code>Deploy</code> 與 <code>User</code> 映像檔，其功能如下：</p>
+<ul>
+<li><code>Deploy images</code>: 用來準備裸機服務機器以進行實際的作業系統部署，在 Cleaning 等階段會使用到。</li>
+<li><code>User images</code>:最後安裝至裸機服務提供給使用者使用的作業系統映像檔。</li>
+</ul>
+<p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="external">Building or downloading a deploy ramdisk image</a>。</p>
+<p>首先我們必須先安裝<code>disk-image-builder</code>工具來提供建構映像檔：</p>
+<pre><code class="sh">$ virtualenv dib
+$ source dib/bin/activate
+(dib) $ pip install diskimage-builder
+</code></pre>
+<p>接著執行以下指令來進行建構映像檔：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; k8s.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+$ DIB_YUM_REPO_CONF=k8s.repo \
+  DIB_DEV_USER_USERNAME=kyle \
+  DIB_DEV_USER_PWDLESS_SUDO=yes \
+  DIB_DEV_USER_PASSWORD=r00tme \
+  disk-image-create \
+        centos7 \
+        dhcp-all-interfaces \
+        devuser \
+        yum \
+        epel \
+        baremetal \
+        -o k8s.qcow2 \
+        -p vim,docker,kubelet,kubeadm,kubectl,kubernetes-cni
+
+...
+Converting image using qemu-img convert
+Image file k8s.qcow2 created...
+</code></pre>
+<p>完成後會看到以下檔案：</p>
+<pre><code class="sh">$ ls
+dib  k8s.d  k8s.initrd  k8s.qcow2  k8s.repo  k8s.vmlinuz
+</code></pre>
+<p>上傳至 Glance 以提供使用：</p>
+<pre><code class="sh"># 上傳 Kernel
+$ openstack image create k8s.kernel \
+                      --public \
+                      --disk-format aki \
+                      --container-format aki &lt; k8s.vmlinuz
+# 上傳 Initrd
+$ openstack image create k8s.initrd \
+                      --public \
+                      --disk-format ari \
+                      --container-format ari &lt; k8s.initrd
+# 上傳 Qcow2
+$ export MY_VMLINUZ_UUID=$(openstack image list | awk &#39;/k8s.kernel/ { print $2 }&#39;)
+$ export MY_INITRD_UUID=$(openstack image list | awk &#39;/k8s.initrd/ { print $2 }&#39;)
+$ openstack image create k8s \
+                      --public \
+                      --disk-format qcow2 \
+                      --container-format bare \
+                      --property kernel_id=$MY_VMLINUZ_UUID \
+                      --property ramdisk_id=$MY_INITRD_UUID &lt; k8s.qcow2
+</code></pre>
+<h2 id="建立-Ironic-節點"><a href="#建立-Ironic-節點" class="headerlink" title="建立 Ironic 節點"></a>建立 Ironic 節點</h2><p>在所有服務配置都完成後，這時候要註冊實體機器資訊，來提供給 Compute 服務部署時使用。首先確認 Ironic 的 Driver 是否有資源機器的 Power driver：</p>
+<pre><code class="sh">$ ironic driver-list
++---------------------+----------------+
+| Supported driver(s) | Active host(s) |
++---------------------+----------------+
+| agent_ipmitool      | ironic-dev     |
+| fake                | ironic-dev     |
+| ipmi                | ironic-dev     |
+| pxe_ipmitool        | ironic-dev     |
++---------------------+----------------+
+</code></pre>
+<blockquote>
+<p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="external">Set up the drivers for the Bare Metal service</a>。</p>
+</blockquote>
+<p>確認有支援後，透過以下指令來建立 Node，並進行註冊：</p>
+<pre><code class="sh">$ export DEPLOY_VMLINUZ_UUID=$(openstack image list | awk &#39;/ipmitool.kernel/ { print $2 }&#39;)
+$ export DEPLOY_INITRD_UUID=$(openstack image list | awk &#39;/ipmitool.initramfs/ { print $2 }&#39;)
+$ ironic node-create -d agent_ipmitool \
+                     -n bare-node-1 \
+                     -i ipmi_address=172.20.3.194 \
+                     -i ipmi_username=maas \
+                     -i ipmi_password=passwd \
+                     -i ipmi_port=623 \
+                     -i deploy_kernel=$DEPLOY_VMLINUZ_UUID \
+                     -i deploy_ramdisk=$DEPLOY_INITRD_UUID
+</code></pre>
+<blockquote>
+<p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
+</blockquote>
+<p>接著更新機器資訊，由於這邊沒有使用 inspector，故要自己設定機器資訊：</p>
+<pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
+$ ironic node-update $NODE_UUID add \
+                     properties/cpus=4 \
+                     properties/memory_mb=8192 \
+                     properties/local_gb=100 \
+                     properties/root_gb=100 \
+                     properties/cpu_arch=x86_64
+</code></pre>
+<p>然後透過 port create 來把 Node 的所有網路資訊進行註冊：</p>
+<pre><code class="sh">$ ironic port-create -n $NODE_UUID -a NODE_MAC_ADDRESS
+</code></pre>
+<blockquote>
+<p>這邊<code>NODE_MAC_ADDRESS</code>是指<code>bare-node-1</code>節點的 PXE(eth1)網卡 Mac Address，如 54:a0:50:85:d5:fa。</p>
+</blockquote>
+<p>完成後透過 validate 指令來檢查：</p>
+<pre><code class="sh">$ ironic node-validate $NODE_UUID
++------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Interface  | Result | Reason                                                                                                                                                                                                |
++------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| boot       | False  | Cannot validate image information for node 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| console    | True   |                                                                                                                                                                                                       |
+| deploy     | False  | Cannot validate image information for node 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| inspect    | None   | not supported                                                                                                                                                                                         |
+| management | True   |                                                                                                                                                                                                       |
+| network    | True   |                                                                                                                                                                                                       |
+| power      | True   |                                                                                                                                                                                                       |
+| raid       | True   |                                                                                                                                                                                                       |
+| storage    | True   |                                                                                                                                                                                                       |
++------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+<blockquote>
+<p>P.S. 這邊<code>boot</code>與<code>deploy</code>的錯誤若是如上所示的話，可以直接忽略，這是因為使用 Nova 來管理 baremetal 會出現的問題。</p>
+</blockquote>
+<p>最後利用 provision 指令來測試節點是否能夠提供服務：</p>
+<pre><code class="sh">$ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID manage
+$ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID provide
+$ ironic node-list
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 | bare-0 | None          | power off   | cleaning           | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+</code></pre>
+<blockquote>
+<p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="external">Ironic’s State Machine</a>。</p>
+</blockquote>
+<p><img src="/images/openstack/ironic-clean.png" alt=""></p>
+<h2 id="透過-Nova-部署-baremetal-機器"><a href="#透過-Nova-部署-baremetal-機器" class="headerlink" title="透過 Nova 部署 baremetal 機器"></a>透過 Nova 部署 baremetal 機器</h2><p>最後我們要透過 Nova API 來部署裸機，在開始前要建立一個 flavor 跟上傳 keypair 來提供使用：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
+$ openstack keypair create --public-key ~/.ssh/id_rsa.pub default
+$ openstack flavor create --vcpus 4 --ram 8192 --disk 100 baremetal.large
+</code></pre>
+<p>完成後，即可透過以下指令進行部署：</p>
+<pre><code class="sh">$ NET_ID=$(openstack network list | awk &#39;/sharednet1/ { print $2 }&#39;)
+$ openstack server create --flavor baremetal.large \
+                          --nic net-id=$NET_ID \
+                          --image k8s \
+                          --key-name default k8s-01
+</code></pre>
+<p>經過一段時間後，就會看到部署完成，這時候可以透過以下指令來確認部署結果：</p>
+<pre><code class="sh">$ openstack server list
++--------------------------------------+--------+--------+---------------------------+-------+-----------------+
+| ID                                   | Name   | Status | Networks                  | Image | Flavor          |
++--------------------------------------+--------+--------+---------------------------+-------+-----------------+
+| a40e5cb1-dfc6-44d5-b638-648e8c0975fb | k8s-01 | ACTIVE | sharednet1=172.22.132.184 | k8s   | baremetal.large |
++--------------------------------------+--------+--------+---------------------------+-------+-----------------+
+
+$ openstack baremetal list
++--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID                        | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
+| 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 | bare-0 | a40e5cb1-dfc6-44d5-b638-648e8c0975fb | power on    | active             | False       |
++--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
+</code></pre>
+<p>最後透過 ssh 來進入部署機器來建立應用：</p>
+<pre><code class="sh">$ ssh kyle@172.22.132.187
+[kyle@host-172-22-132-187 ~]$ sudo systemctl start kubelet.service
+[kyle@host-172-22-132-187 ~]$ sudo systemctl start docker.service
+[kyle@host-172-22-132-187 ~]$ sudo kubeadm init --service-cidr 10.96.0.0/12 \
+                                                --kubernetes-version v1.7.4 \
+                                                --pod-network-cidr 10.244.0.0/16 \
+                                                --apiserver-advertise-address 172.22.132.187 \
+                                                --token b0f7b8.8d1767876297d85c
+</code></pre>
+<blockquote>
+<p>整合<code>Magnum</code>有空再寫，先簡單玩玩吧。</p>
+</blockquote>
+<p>若是懶人可以用 Dashboard 來部署，另外本教學的 DevStack 有使用 Ironic UI，因此可以在以下頁面看到 node 資訊。<br><img src="/images/openstack/ironic-ui.png" alt=""></p>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> DevStack </tag>
+            
+            <tag> Bare-metal </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[利用 LinuxKit 建立 Kubernetes 叢集]]></title>
       <url>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</url>
       <content type="html"><![CDATA[<p>LinuxKit 是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，先前有簡單介紹與操作過，可以參考<a href="https://kairen.github.io/2017/04/23/container/linuxkit/">LinuxKit</a>。本篇則將利用 LinuxKit 來建立 Kubernetes 的映像檔，並部署簡單的 Kubernetes 叢集。</p>
@@ -6253,6 +6642,104 @@ a1.sinks.k1.channel=c1
     </entry>
     
     <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[DRBD 進行跨節點的區塊儲存備份]]></title>
       <url>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</url>
       <content type="html"><![CDATA[<p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
@@ -6398,104 +6885,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2017-08-08T08:01:50.000Z</updated>
+  <updated>2017-08-23T10:10:35.000Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -14,6 +14,405 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>利用 OpenStack Ironic 提供裸機部署服務</title>
+    <link href="https://kairen.github.io/2017/08/16/openstack/ironic-dev/"/>
+    <id>https://kairen.github.io/2017/08/16/openstack/ironic-dev/</id>
+    <published>2017-08-16T08:23:01.000Z</published>
+    <updated>2017-08-23T10:10:35.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
+<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>OpenStack Pike</li>
+<li>DevStack Pike</li>
+<li>Pike Pike Pike ….</li>
+</ul>
+<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
+<a id="more"></a>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>controller</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>bare-node1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>這邊 controller 為主要控制節點，將安裝大部分 OpenStack 服務。而 bare-node 為被用來做裸機部署的機器。</p>
+</blockquote>
+<p>網卡若是實體主機，請設定為固定 IP，如以下：</p>
+<pre><code>auto eth0
+iface eth0 inet static
+           address 172.20.3.93/24
+           gateway    172.20.3.1
+           dns-nameservers 8.8.8.8
+</code></pre><blockquote>
+<p>若想修改主機的網卡名稱，可以編輯<code>/etc/udev/rules.d/70-persistent-net.rules</code>。</p>
+</blockquote>
+<p>其中<code>controller</code>的<code>eth2</code>需設定為以下：</p>
+<pre><code>auto &lt;ethx&gt;
+iface &lt;ethx&gt; inet manual
+        up ip link set dev $IFACE up
+        down ip link set dev $IFACE down
+</code></pre><h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
+<ul>
+<li>確認所有節點網路可以溝通。</li>
+<li>Bare-node IPMI 設定完成。包含 Address、User 與 Password。</li>
+<li>修改 Controller 的 <code>/etc/apt/sources.list</code>，使用<code>tw.archive.ubuntu.com</code>。</li>
+</ul>
+<h2 id="安裝-OpenStack-服務"><a href="#安裝-OpenStack-服務" class="headerlink" title="安裝 OpenStack 服務"></a>安裝 OpenStack 服務</h2><p>這邊採用 DevStack 來部署測試環境，首先透過以下指令取得 DevStack：</p>
+<pre><code class="sh">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+$ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
+$ sudo su - stack
+$ git clone https://git.openstack.org/openstack-dev/devstack
+$ cd devstack
+</code></pre>
+<p>接著撰寫 local.conf 來描述部署過程所需的服務：</p>
+<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic.conf -O local.conf
+$ sed -i &#39;s/HOST_IP=.*/HOST_IP=172.22.132.93/g&#39; local.conf
+</code></pre>
+<blockquote>
+<p><code>HOST_IP</code>請更換為自己環境 IP。有其他 Driver 請記得加入。</p>
+</blockquote>
+<p>完成後執行部署腳本進行建置：</p>
+<pre><code class="sh">$ ./stack.sh
+</code></pre>
+<blockquote>
+<p>大約經過 15 min 就可以完成整個環境安裝。</p>
+</blockquote>
+<p>測試 OpenStack 環境：</p>
+<pre><code class="sh">$ source openrc admin
+$ openstack user list
++----------------------------------+----------------+
+| ID                               | Name           |
++----------------------------------+----------------+
+| 3ba4e813270e4e98ad781f4103284e0d | demo           |
+| 40c6014bc18f407fbfbc22aadedb1ca0 | placement      |
+| 567156ad1c7b4ccdbcd4ea02e7c44ce3 | alt_demo       |
+| 7a22ce5036614993a707dd976c505ccd | swift          |
+| 8d392f051afe45008289abca4dadf3ca | swiftusertest1 |
+| a6e616af3bf04611bc23625e71a22e64 | swiftusertest4 |
+| a835f1674648427396a7c6ac7e5eef06 | neutron        |
+| b2bf73ef2eaa425c93e4f552e9266056 | swiftusertest2 |
+| b7de1af8522b495c8a9fb743eb6e7f59 | nova           |
+| cada5913a03e4f2794066902144264d3 | admin          |
+| f03e39680b234474b139d00c3fbca989 | swiftusertest3 |
+| f0a4033463f64c00858ff05525545b6d | glance-swift   |
+| f2a1b186e7e84b10ae7e8f810e5c2412 | glance         |
+| ff31787d136f4fba96c19af419b8559c | ironic         |
++----------------------------------+----------------+
+</code></pre>
+<p>測試 ironic 是否正常運行：</p>
+<pre><code class="sh">$ ironic node-list
++---------------------+----------------+
+| Supported driver(s) | Active host(s) |
++---------------------+----------------+
+| agent_ipmitool      | ironic-dev     |
+| fake                | ironic-dev     |
+| ipmi                | ironic-dev     |
+| pxe_ipmitool        | ironic-dev     |
++---------------------+----------------+
+</code></pre>
+<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="external">Configure the Networking service for bare metal provisioning</a>。</p>
+<p>首先編輯<code>/etc/neutron/plugins/ml2/ml2_conf.ini</code>修改以下內容：</p>
+<pre><code>[ml2_type_flat]
+flat_networks = public, physnet1
+
+[ovs]
+datapath_type = system
+bridge_mappings = public:br-ex, physnet1:br-eth2
+tunnel_bridge = br-tun
+local_ip = 172.22.132.93
+</code></pre><p>接著建立 bridge 來處理實體網路與 OpenStack 之間的溝通：</p>
+<pre><code class="sh">$ sudo ovs-vsctl add-br br-eth2
+$ sudo ovs-vsctl add-port br-eth2 eth2
+</code></pre>
+<p>完成後重新啟動 Neutron server 與 agent：</p>
+<pre><code class="sh">$ sudo systemctl restart devstack@q-svc.service
+$ sudo systemctl restart devstack@q-agt.service
+</code></pre>
+<p>建立完成後，OVS bridges 會類似如下：</p>
+<pre><code class="sh">$ sudo ovs-vsctl show
+
+    Bridge br-int
+        fail_mode: secure
+        Port &quot;int-br-eth2&quot;
+            Interface &quot;int-br-eth2&quot;
+                type: patch
+                options: {peer=&quot;phy-br-eth2&quot;}
+        Port br-int
+            Interface br-int
+                type: internal
+    Bridge &quot;br-eth2&quot;
+        Port &quot;phy-br-eth2&quot;
+            Interface &quot;phy-br-eth2&quot;
+                type: patch
+                options: {peer=&quot;int-br-eth2&quot;}
+        Port &quot;eth2&quot;
+            Interface &quot;eth2&quot;
+        Port &quot;br-eth2&quot;
+            Interface &quot;br-eth2&quot;
+                type: internal
+</code></pre>
+<p>接著建立 Neutron flat 網路來提供使用：</p>
+<pre><code class="sh">$ neutron net-create sharednet1 \
+                     --shared \
+                     --provider:network_type flat \
+                     --provider:physical_network physnet1
+
+$ neutron subnet-create sharednet1 172.22.132.0/24 \
+                        --name sharedsubnet1 \
+                        --ip-version=4 --gateway=172.22.132.254 \
+                        --allocation-pool start=172.22.132.180,end=172.22.132.200 \
+                        --enable-dhcp
+</code></pre>
+<blockquote>
+<p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="external">Provider network</a>。</p>
+</blockquote>
+<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="external">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
+<pre><code class="sh">$ openstack network list
++--------------------------------------+------------+----------------------------------------------------------------------------+
+| ID                                   | Name       | Subnets                                                                    |
++--------------------------------------+------------+----------------------------------------------------------------------------+
+| 03de10a0-d4d2-43ce-83db-806a5277dd29 | private    | 2a651bfb-776d-47f4-a958-f8a418f7fcd5, 99bdbd78-7a20-41b7-afa3-7cf7bf25b95b |
+| 349a6a5b-1e26-4e36-8444-f6a6bbbdd227 | public     | 032a516e-3d55-4623-995d-06ee033eaee4, daf733a9-492e-4ea6-8a45-6364b88a8f6f |
+| ade096bd-6a86-4d90-9cf4-bce9921f7257 | sharednet1 | 3f9f2a47-fdd9-472b-a6a2-ce6570e490ff                                       |
++--------------------------------------+------------+----------------------------------------------------------------------------+
+</code></pre>
+<p>編輯<code>/etc/ironic/ironic.conf</code>修改一下內容：</p>
+<pre><code>[neutron]
+cleaning_network = sharednet1
+</code></pre><p>完成後，重新啟動 Ironic 服務：</p>
+<pre><code class="sh">$ sudo systemctl restart devstack@ir-api.service
+$ sudo systemctl restart devstack@ir-cond.service
+</code></pre>
+<h3 id="建立-Deploy-與-User-映像檔"><a href="#建立-Deploy-與-User-映像檔" class="headerlink" title="建立 Deploy 與 User 映像檔"></a>建立 Deploy 與 User 映像檔</h3><p>裸機服務在配置時需要兩組映像檔，分別為 <code>Deploy</code> 與 <code>User</code> 映像檔，其功能如下：</p>
+<ul>
+<li><code>Deploy images</code>: 用來準備裸機服務機器以進行實際的作業系統部署，在 Cleaning 等階段會使用到。</li>
+<li><code>User images</code>:最後安裝至裸機服務提供給使用者使用的作業系統映像檔。</li>
+</ul>
+<p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="external">Building or downloading a deploy ramdisk image</a>。</p>
+<p>首先我們必須先安裝<code>disk-image-builder</code>工具來提供建構映像檔：</p>
+<pre><code class="sh">$ virtualenv dib
+$ source dib/bin/activate
+(dib) $ pip install diskimage-builder
+</code></pre>
+<p>接著執行以下指令來進行建構映像檔：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; k8s.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+$ DIB_YUM_REPO_CONF=k8s.repo \
+  DIB_DEV_USER_USERNAME=kyle \
+  DIB_DEV_USER_PWDLESS_SUDO=yes \
+  DIB_DEV_USER_PASSWORD=r00tme \
+  disk-image-create \
+        centos7 \
+        dhcp-all-interfaces \
+        devuser \
+        yum \
+        epel \
+        baremetal \
+        -o k8s.qcow2 \
+        -p vim,docker,kubelet,kubeadm,kubectl,kubernetes-cni
+
+...
+Converting image using qemu-img convert
+Image file k8s.qcow2 created...
+</code></pre>
+<p>完成後會看到以下檔案：</p>
+<pre><code class="sh">$ ls
+dib  k8s.d  k8s.initrd  k8s.qcow2  k8s.repo  k8s.vmlinuz
+</code></pre>
+<p>上傳至 Glance 以提供使用：</p>
+<pre><code class="sh"># 上傳 Kernel
+$ openstack image create k8s.kernel \
+                      --public \
+                      --disk-format aki \
+                      --container-format aki &lt; k8s.vmlinuz
+# 上傳 Initrd
+$ openstack image create k8s.initrd \
+                      --public \
+                      --disk-format ari \
+                      --container-format ari &lt; k8s.initrd
+# 上傳 Qcow2
+$ export MY_VMLINUZ_UUID=$(openstack image list | awk &#39;/k8s.kernel/ { print $2 }&#39;)
+$ export MY_INITRD_UUID=$(openstack image list | awk &#39;/k8s.initrd/ { print $2 }&#39;)
+$ openstack image create k8s \
+                      --public \
+                      --disk-format qcow2 \
+                      --container-format bare \
+                      --property kernel_id=$MY_VMLINUZ_UUID \
+                      --property ramdisk_id=$MY_INITRD_UUID &lt; k8s.qcow2
+</code></pre>
+<h2 id="建立-Ironic-節點"><a href="#建立-Ironic-節點" class="headerlink" title="建立 Ironic 節點"></a>建立 Ironic 節點</h2><p>在所有服務配置都完成後，這時候要註冊實體機器資訊，來提供給 Compute 服務部署時使用。首先確認 Ironic 的 Driver 是否有資源機器的 Power driver：</p>
+<pre><code class="sh">$ ironic driver-list
++---------------------+----------------+
+| Supported driver(s) | Active host(s) |
++---------------------+----------------+
+| agent_ipmitool      | ironic-dev     |
+| fake                | ironic-dev     |
+| ipmi                | ironic-dev     |
+| pxe_ipmitool        | ironic-dev     |
++---------------------+----------------+
+</code></pre>
+<blockquote>
+<p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="external">Set up the drivers for the Bare Metal service</a>。</p>
+</blockquote>
+<p>確認有支援後，透過以下指令來建立 Node，並進行註冊：</p>
+<pre><code class="sh">$ export DEPLOY_VMLINUZ_UUID=$(openstack image list | awk &#39;/ipmitool.kernel/ { print $2 }&#39;)
+$ export DEPLOY_INITRD_UUID=$(openstack image list | awk &#39;/ipmitool.initramfs/ { print $2 }&#39;)
+$ ironic node-create -d agent_ipmitool \
+                     -n bare-node-1 \
+                     -i ipmi_address=172.20.3.194 \
+                     -i ipmi_username=maas \
+                     -i ipmi_password=passwd \
+                     -i ipmi_port=623 \
+                     -i deploy_kernel=$DEPLOY_VMLINUZ_UUID \
+                     -i deploy_ramdisk=$DEPLOY_INITRD_UUID
+</code></pre>
+<blockquote>
+<p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
+</blockquote>
+<p>接著更新機器資訊，由於這邊沒有使用 inspector，故要自己設定機器資訊：</p>
+<pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
+$ ironic node-update $NODE_UUID add \
+                     properties/cpus=4 \
+                     properties/memory_mb=8192 \
+                     properties/local_gb=100 \
+                     properties/root_gb=100 \
+                     properties/cpu_arch=x86_64
+</code></pre>
+<p>然後透過 port create 來把 Node 的所有網路資訊進行註冊：</p>
+<pre><code class="sh">$ ironic port-create -n $NODE_UUID -a NODE_MAC_ADDRESS
+</code></pre>
+<blockquote>
+<p>這邊<code>NODE_MAC_ADDRESS</code>是指<code>bare-node-1</code>節點的 PXE(eth1)網卡 Mac Address，如 54:a0:50:85:d5:fa。</p>
+</blockquote>
+<p>完成後透過 validate 指令來檢查：</p>
+<pre><code class="sh">$ ironic node-validate $NODE_UUID
++------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Interface  | Result | Reason                                                                                                                                                                                                |
++------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| boot       | False  | Cannot validate image information for node 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| console    | True   |                                                                                                                                                                                                       |
+| deploy     | False  | Cannot validate image information for node 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| inspect    | None   | not supported                                                                                                                                                                                         |
+| management | True   |                                                                                                                                                                                                       |
+| network    | True   |                                                                                                                                                                                                       |
+| power      | True   |                                                                                                                                                                                                       |
+| raid       | True   |                                                                                                                                                                                                       |
+| storage    | True   |                                                                                                                                                                                                       |
++------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+</code></pre>
+<blockquote>
+<p>P.S. 這邊<code>boot</code>與<code>deploy</code>的錯誤若是如上所示的話，可以直接忽略，這是因為使用 Nova 來管理 baremetal 會出現的問題。</p>
+</blockquote>
+<p>最後利用 provision 指令來測試節點是否能夠提供服務：</p>
+<pre><code class="sh">$ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID manage
+$ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID provide
+$ ironic node-list
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+| 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 | bare-0 | None          | power off   | cleaning           | False       |
++--------------------------------------+--------+---------------+-------------+--------------------+-------------+
+</code></pre>
+<blockquote>
+<p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="external">Ironic’s State Machine</a>。</p>
+</blockquote>
+<p><img src="/images/openstack/ironic-clean.png" alt=""></p>
+<h2 id="透過-Nova-部署-baremetal-機器"><a href="#透過-Nova-部署-baremetal-機器" class="headerlink" title="透過 Nova 部署 baremetal 機器"></a>透過 Nova 部署 baremetal 機器</h2><p>最後我們要透過 Nova API 來部署裸機，在開始前要建立一個 flavor 跟上傳 keypair 來提供使用：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
+$ openstack keypair create --public-key ~/.ssh/id_rsa.pub default
+$ openstack flavor create --vcpus 4 --ram 8192 --disk 100 baremetal.large
+</code></pre>
+<p>完成後，即可透過以下指令進行部署：</p>
+<pre><code class="sh">$ NET_ID=$(openstack network list | awk &#39;/sharednet1/ { print $2 }&#39;)
+$ openstack server create --flavor baremetal.large \
+                          --nic net-id=$NET_ID \
+                          --image k8s \
+                          --key-name default k8s-01
+</code></pre>
+<p>經過一段時間後，就會看到部署完成，這時候可以透過以下指令來確認部署結果：</p>
+<pre><code class="sh">$ openstack server list
++--------------------------------------+--------+--------+---------------------------+-------+-----------------+
+| ID                                   | Name   | Status | Networks                  | Image | Flavor          |
++--------------------------------------+--------+--------+---------------------------+-------+-----------------+
+| a40e5cb1-dfc6-44d5-b638-648e8c0975fb | k8s-01 | ACTIVE | sharednet1=172.22.132.184 | k8s   | baremetal.large |
++--------------------------------------+--------+--------+---------------------------+-------+-----------------+
+
+$ openstack baremetal list
++--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
+| UUID                                 | Name   | Instance UUID                        | Power State | Provisioning State | Maintenance |
++--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
+| 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 | bare-0 | a40e5cb1-dfc6-44d5-b638-648e8c0975fb | power on    | active             | False       |
++--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
+</code></pre>
+<p>最後透過 ssh 來進入部署機器來建立應用：</p>
+<pre><code class="sh">$ ssh kyle@172.22.132.187
+[kyle@host-172-22-132-187 ~]$ sudo systemctl start kubelet.service
+[kyle@host-172-22-132-187 ~]$ sudo systemctl start docker.service
+[kyle@host-172-22-132-187 ~]$ sudo kubeadm init --service-cidr 10.96.0.0/12 \
+                                                --kubernetes-version v1.7.4 \
+                                                --pod-network-cidr 10.244.0.0/16 \
+                                                --apiserver-advertise-address 172.22.132.187 \
+                                                --token b0f7b8.8d1767876297d85c
+</code></pre>
+<blockquote>
+<p>整合<code>Magnum</code>有空再寫，先簡單玩玩吧。</p>
+</blockquote>
+<p>若是懶人可以用 Dashboard 來部署，另外本教學的 DevStack 有使用 Ironic UI，因此可以在以下頁面看到 node 資訊。<br><img src="/images/openstack/ironic-ui.png" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;a href=&quot;https://docs.openstack.org/ironic/latest/user/index.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Ironic&lt;/a&gt; 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。&lt;/p&gt;
+&lt;p&gt;本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 &lt;a href=&quot;https://docs.openstack.org/devstack/latest/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;DevStack&lt;/a&gt; 來部署服務，再手動設定一些步驟。&lt;/p&gt;
+&lt;p&gt;本環境安裝資訊：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenStack Pike&lt;/li&gt;
+&lt;li&gt;DevStack Pike&lt;/li&gt;
+&lt;li&gt;Pike Pike Pike ….&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&quot;/images/openstack/openstack-ironic.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="OpenStack" scheme="https://kairen.github.io/categories/OpenStack/"/>
+    
+    
+      <category term="OpenStack" scheme="https://kairen.github.io/tags/OpenStack/"/>
+    
+      <category term="DevStack" scheme="https://kairen.github.io/tags/DevStack/"/>
+    
+      <category term="Bare-metal" scheme="https://kairen.github.io/tags/Bare-metal/"/>
+    
+  </entry>
   
   <entry>
     <title>利用 LinuxKit 建立 Kubernetes 叢集</title>
@@ -4086,221 +4485,6 @@ outputs {
       <category term="TensorFlow" scheme="https://kairen.github.io/tags/TensorFlow/"/>
     
       <category term="Machine Learning" scheme="https://kairen.github.io/tags/Machine-Learning/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>只要用 kubeadm 小朋友都能部署 Kubernetes</title>
-    <link href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/"/>
-    <id>https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/</id>
-    <published>2016-09-29T09:08:54.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/getting-started-guides/kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm/milestone/1" target="_blank" rel="external">kubeadm Roadmap for v1.6</a> 來更進一步知道功能發展狀態。</p>
-<p>本環境安裝資訊：</p>
-<ul>
-<li>Kubernetes v1.6.1(2017/04/03 Update).</li>
-<li>Etcd v3</li>
-<li>Flannel v0.7.0</li>
-<li>Docker v17.04.0-ce</li>
-</ul>
-<a id="more"></a>
-<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt：</p>
-<table>
-<thead>
-<tr>
-<th>IP Address</th>
-<th>Role</th>
-<th>CPU</th>
-<th>Memory</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>172.16.35.12</td>
-<td>master1</td>
-<td>1</td>
-<td>2G</td>
-</tr>
-<tr>
-<td>172.16.35.10</td>
-<td>node1</td>
-<td>1</td>
-<td>2G</td>
-</tr>
-<tr>
-<td>172.16.35.11</td>
-<td>node2</td>
-<td>1</td>
-<td>2G</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>目前 kubeadm 只支援在<code>Ubuntu 16.04+</code>、<code>CentOS 7</code>與<code>HypriotOS v1.0.1+</code>作業系統上使用。</p>
-</blockquote>
-<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
-<ul>
-<li>所有節點網路可以溝通。</li>
-<li>所有節點需要設定 APT Docker Repository：</li>
-</ul>
-<pre><code class="sh">$ sudo apt-key adv --keyserver &quot;hkp://p80.pool.sks-keyservers.net:80&quot; --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-$ echo &#39;deb https://apt.dockerproject.org/repo ubuntu-xenial main&#39; | sudo tee /etc/apt/sources.list.d/docker.list
-</code></pre>
-<blockquote>
-<p>CentOS 7 EPEL 有支援 Docker Package:</p>
-<pre><code class="sh">$ sudo yum install -y epel-release
-</code></pre>
-</blockquote>
-<ul>
-<li>所有節點需要設定 APT 與 Yum Kubernetes Repository：</li>
-</ul>
-<pre><code class="sh">$ curl -s &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | sudo apt-key add -
-$ echo &quot;deb http://apt.kubernetes.io/ kubernetes-xenial main&quot; | sudo tee /etc/apt/sources.list.d/kubernetes.list
-</code></pre>
-<blockquote>
-<p>若是 CentOS 7 則執行以下方式：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-</code></pre>
-</blockquote>
-<ul>
-<li>CentOS 7 要額外確認 SELinux 或 Firewall 關閉。</li>
-</ul>
-<h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
-<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-engine
-$ sudo iptables -P FORWARD ACCEPT &amp;&amp; sudo iptables-save
-</code></pre>
-<p>完成後就可以開始進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
-<pre><code class="sh">$ sudo su -
-$ kubeadm token generate
-b0f7b8.8d1767876297d85c
-
-$ kubeadm init --service-cidr 10.96.0.0/12 \
---kubernetes-version v1.6.1 \
---pod-network-cidr 10.244.0.0/16 \
---apiserver-advertise-address 172.16.35.12 \
---token b0f7b8.8d1767876297d85c
-
-...
-kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
-</code></pre>
-<p>當出現如上面資訊後，表示 Master 初始化成功，不過這邊還是一樣透過 kubectl 測試一下：</p>
-<pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
-$ kubectl get node
-NAME      STATUS    AGE       VERSION
-master1   Ready     19m       v1.6.1
-</code></pre>
-<p>當執行正確後要接著部署網路，但要注意<code>一個叢集只能用一種網路</code>，這邊採用 Flannel：</p>
-<pre><code class="sh">$ kubectl create -f &quot;https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml&quot;
-$ kubectl create -f &quot;https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml&quot;
-configmap &quot;kube-flannel-cfg&quot; created
-daemonset &quot;kube-flannel-ds&quot; created
-</code></pre>
-<blockquote>
-<p>由於 1.6.1 版本預設使用了 RBAC，因此需要建立相關授權。其他可以參考 <a href="https://kubernetes.io/docs/admin/addons/" target="_blank" rel="external">Networking and Network Policy</a>。</p>
-</blockquote>
-<p>確認 Flannel 部署正確：</p>
-<pre><code class="sh">$ kubectl get po
-NAME                    READY     STATUS    RESTARTS   AGE
-kube-flannel-ds-lx4ww   2/2       Running   0          2m
-
-$ ip -4 a show flannel.1
-5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
-    inet 10.244.0.0/32 scope global flannel.1
-       valid_lft forever preferred_lft forever
-
-$ route -n
-Kernel IP routing table
-Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-10.244.0.0      0.0.0.0         255.255.0.0     U     0      0        0 flannel.1
-</code></pre>
-<h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
-<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-engine
-$ sudo iptables -P FORWARD ACCEPT &amp;&amp; sudo iptables-save
-</code></pre>
-<p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
-<pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
-...
-Run &#39;kubectl get nodes&#39; on the master to see this machine join.
-</code></pre>
-<p>回到<code>master1</code>查看節點狀態：</p>
-<pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
-$ kubectl  get node
-NAME      STATUS    AGE       VERSION
-master1   Ready     19m       v1.6.1
-node1     Ready     9m        v1.6.1
-node2     Ready     5m        v1.6.1
-</code></pre>
-<h2 id="Add-ons-建立"><a href="#Add-ons-建立" class="headerlink" title="Add-ons 建立"></a>Add-ons 建立</h2><p>當完成後就可以建立一些 Addons，如 Dashboard。這邊執行以下指令進行建立：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; kube-dashboard-rbac.yml
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: dashboard-admin
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: kube-system
-EOF
-
-$ kubectl create -f kube-dashboard-rbac.yml
-$ kubectl create -f &quot;https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml&quot;
-</code></pre>
-<p>確認沒問題後，透過 kubectl 查看：</p>
-<pre><code class="sh">kubectl get svc --namespace=kube-system
-NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
-kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
-kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
-</code></pre>
-<p>最後就可以存取 <a href="http://172.16.35.12:32546" target="_blank" rel="external">Kube Dashboard</a></p>
-<h2 id="簡單部署一個微服務"><a href="#簡單部署一個微服務" class="headerlink" title="簡單部署一個微服務"></a>簡單部署一個微服務</h2><p>這邊利用 Weave 公司提供的微服務來驗證系統，透過以下方式建立：</p>
-<pre><code class="sh">$ kubectl create namespace sock-shop
-$ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true&quot;
-</code></pre>
-<p>接著透過 kubectl 查看資訊：</p>
-<pre><code class="sh">$ kubectl describe svc front-end -n sock-shop
-$ kubectl get pods -n sock-shop
-</code></pre>
-<p>最後存取 <a href="http://172.16.35.12:30001" target="_blank" rel="external">http://172.16.35.12:30001</a> 即可看到服務的 Frontend。</p>
-<h2 id="移除節點"><a href="#移除節點" class="headerlink" title="移除節點"></a>移除節點</h2><p>最後，若要將現有節點移除的話，kubeadm 已經有內建的指令來完成這件事，只要執行以下即可：</p>
-<pre><code class="sh">$ kubeadm reset
-</code></pre>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/getting-started-guides/kubeadm/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;kubeadm&lt;/a&gt;是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 &lt;a href=&quot;https://github.com/kubernetes/kubeadm/milestone/1&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;kubeadm Roadmap for v1.6&lt;/a&gt; 來更進一步知道功能發展狀態。&lt;/p&gt;
-&lt;p&gt;本環境安裝資訊：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Kubernetes v1.6.1(2017/04/03 Update).&lt;/li&gt;
-&lt;li&gt;Etcd v3&lt;/li&gt;
-&lt;li&gt;Flannel v0.7.0&lt;/li&gt;
-&lt;li&gt;Docker v17.04.0-ce&lt;/li&gt;
-&lt;/ul&gt;
-    
-    </summary>
-    
-      <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
-    
-    
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
-      <category term="Ubuntu" scheme="https://kairen.github.io/tags/Ubuntu/"/>
-    
-      <category term="CentOS" scheme="https://kairen.github.io/tags/CentOS/"/>
     
   </entry>
   

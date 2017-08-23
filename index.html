@@ -195,14 +195,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
                 </a>
@@ -211,8 +203,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">14</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">3</span></a>
+                    OpenStack <span class="right">4</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,57 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2017/08/16/openstack/ironic-dev/">利用 OpenStack Ironic 提供裸機部署服務</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2017-08-16T08:23:01.000Z"><a href="/2017/08/16/openstack/ironic-dev/">2017-08-16</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
+        
+            <a href="/tags/DevStack/" class="chip pink lighten-1">DevStack</a>
+        
+            <a href="/tags/Bare-metal/" class="chip pink lighten-1">Bare-metal</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
+<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>OpenStack Pike</li>
+<li>DevStack Pike</li>
+<li>Pike Pike Pike ….</li>
+</ul>
+<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2017/08/16/openstack/ironic-dev/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -665,62 +716,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2017/03/25/kubernetes/helm-quickstart/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2017/03/17/kubernetes/deploy/kargo-baremetal/">Kubespray 部署實體機 Kubernetes v1.6 叢集</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2017-03-17T09:08:54.000Z"><a href="/2017/03/17/kubernetes/deploy/kargo-baremetal/">2017-03-17</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/Ansible/" class="chip pink lighten-1">Ansible</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="external">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
-<ul>
-<li>可以部署在 AWS, GCE, Azure, OpenStack 或者 Baremetal.</li>
-<li>部署 High Available Kubernetes 叢集.</li>
-<li>可組合性(Composable)，可自行選擇 Network Plugin (flannel, calico, canal, weave) 來部署.</li>
-<li>支援多種 Linux distributions(CoreOS, Debian Jessie, Ubuntu 16.04, CentOS/RHEL7).</li>
-</ul>
-<p>本篇將說明如何透過 Kubespray 部署 Kubernetes 至實體機器節點，安裝版本如下所示：</p>
-<ul>
-<li>Kubernetes v1.6.4</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.04.0-ce</li>
-</ul>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2017/03/17/kubernetes/deploy/kargo-baremetal/">READ MORE</a>
         </ div>
         
     </div>
