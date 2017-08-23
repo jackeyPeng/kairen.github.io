@@ -319,8 +319,11 @@
 <li>DevStack Pike</li>
 <li>Pike Pike Pike ….</li>
 </ul>
-<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
 <a id="more"></a>
+<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
+<blockquote>
+<p>P.S. 這邊因為我的 Manage net 已經有 MAAS 的服務，所以才用其他張網卡進行部署。</p>
+</blockquote>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
 <table>
 <thead>
@@ -652,7 +655,7 @@ $ openstack server create --flavor baremetal.large \
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
 | ID                                   | Name   | Status | Networks                  | Image | Flavor          |
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
-| a40e5cb1-dfc6-44d5-b638-648e8c0975fb | k8s-01 | ACTIVE | sharednet1=172.22.132.184 | k8s   | baremetal.large |
+| a40e5cb1-dfc6-44d5-b638-648e8c0975fb | k8s-01 | ACTIVE | sharednet1=172.22.132.187 | k8s   | baremetal.large |
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
 
 $ openstack baremetal list

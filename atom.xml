@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2017-08-23T10:10:35.000Z</updated>
+  <updated>2017-08-23T12:58:31.000Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="https://kairen.github.io/2017/08/16/openstack/ironic-dev/"/>
     <id>https://kairen.github.io/2017/08/16/openstack/ironic-dev/</id>
     <published>2017-08-16T08:23:01.000Z</published>
-    <updated>2017-08-23T10:10:35.000Z</updated>
+    <updated>2017-08-23T12:58:31.000Z</updated>
     
     <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
 <p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
@@ -30,8 +30,11 @@
 <li>DevStack Pike</li>
 <li>Pike Pike Pike ….</li>
 </ul>
-<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
 <a id="more"></a>
+<p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
+<blockquote>
+<p>P.S. 這邊因為我的 Manage net 已經有 MAAS 的服務，所以才用其他張網卡進行部署。</p>
+</blockquote>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
 <table>
 <thead>
@@ -363,7 +366,7 @@ $ openstack server create --flavor baremetal.large \
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
 | ID                                   | Name   | Status | Networks                  | Image | Flavor          |
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
-| a40e5cb1-dfc6-44d5-b638-648e8c0975fb | k8s-01 | ACTIVE | sharednet1=172.22.132.184 | k8s   | baremetal.large |
+| a40e5cb1-dfc6-44d5-b638-648e8c0975fb | k8s-01 | ACTIVE | sharednet1=172.22.132.187 | k8s   | baremetal.large |
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
 
 $ openstack baremetal list
@@ -399,7 +402,6 @@ $ openstack baremetal list
 &lt;li&gt;DevStack Pike&lt;/li&gt;
 &lt;li&gt;Pike Pike Pike ….&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img src=&quot;/images/openstack/openstack-ironic.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
     
     </summary>
     
