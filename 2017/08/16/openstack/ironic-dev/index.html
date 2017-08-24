@@ -590,7 +590,7 @@ $ ironic node-create -d agent_ipmitool \
 <blockquote>
 <p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
 </blockquote>
-<p>接著更新機器資訊，由於這邊也可以使用 inspector 來取得：h</p>
+<p>接著更新機器資訊，這邊透過手動方式來更新資訊：</p>
 <pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
 $ ironic node-update $NODE_UUID add \
                      properties/cpus=4 \
@@ -599,7 +599,20 @@ $ ironic node-update $NODE_UUID add \
                      properties/root_gb=100 \
                      properties/cpu_arch=x86_64
 </code></pre>
-<p>然後透過 port create 來把 Node 的所有網路資訊進行註冊：</p>
+<p>(option)也可以使用 inspector 來識別裸機機器的硬體資訊，但需要修改<code>/etc/ironic-inspector/dnsmasq.conf</code>修改一下：</p>
+<pre><code>no-daemon
+port=0
+interface=eth1
+bind-interfaces
+dhcp-range=172.22.132.200,172.22.132.210
+dhcp-match=ipxe,175
+dhcp-boot=tag:!ipxe,undionly.kpxe
+dhcp-boot=tag:ipxe,http://172.22.132.93:3928/ironic-inspector.ipxe
+dhcp-sequential-ip
+</code></pre><blockquote>
+<p>完成後，透過 systemctl 重新啟動背景服務<code>devstack@ironic-inspector-dhcp.service</code>與<code>devstack@ironic-inspector.service</code>。</p>
+</blockquote>
+<p>透過 port create 來把 Node 的所有網路資訊進行註冊：</p>
 <pre><code class="sh">$ ironic port-create -n $NODE_UUID -a NODE_MAC_ADDRESS
 </code></pre>
 <blockquote>
@@ -610,10 +623,10 @@ $ ironic node-update $NODE_UUID add \
 +------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Interface  | Result | Reason                                                                                                                                                                                                |
 +------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| boot       | False  | Cannot validate image information for node 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
-| console    | True   |                                                                                                                                                                                                       |
-| deploy     | False  | Cannot validate image information for node 0c20cf7d-0a36-46f4-ac38-721ff8bfb646 because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
-| inspect    | None   | not supported                                                                                                                                                                                         |
+| boot       | False  | Cannot validate image information for node 8e6fd86a-8eed-4e24-a510-3f5ebb0a336a because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| console    | False  | Missing &#39;ipmi_terminal_port&#39; parameter in node\&#39;s driver_info.                                                                                                                                         |
+| deploy     | False  | Cannot validate image information for node 8e6fd86a-8eed-4e24-a510-3f5ebb0a336a because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| inspect    | True   |                                                                                                                                                                                                       |
 | management | True   |                                                                                                                                                                                                       |
 | network    | True   |                                                                                                                                                                                                       |
 | power      | True   |                                                                                                                                                                                                       |
