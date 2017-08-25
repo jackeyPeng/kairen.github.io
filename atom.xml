@@ -3682,9 +3682,9 @@ $ ./bin/ceph -s
       <category term="Ceph" scheme="https://kairen.github.io/categories/Ceph/"/>
     
     
-      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
-    
       <category term="Storage" scheme="https://kairen.github.io/tags/Storage/"/>
+    
+      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
     
       <category term="Distribution System" scheme="https://kairen.github.io/tags/Distribution-System/"/>
     
@@ -3942,9 +3942,9 @@ $ sudo rbd-nbd map rbd/bd
       <category term="Ceph" scheme="https://kairen.github.io/categories/Ceph/"/>
     
     
-      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
-    
       <category term="Storage" scheme="https://kairen.github.io/tags/Storage/"/>
+    
+      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
     
       <category term="BlueStore" scheme="https://kairen.github.io/tags/BlueStore/"/>
     
@@ -4161,7 +4161,7 @@ networks:
     <link href="https://kairen.github.io/2016/10/23/kubernetes/deploy/minikube/"/>
     <id>https://kairen.github.io/2016/10/23/kubernetes/deploy/minikube/</id>
     <published>2016-10-23T09:08:54.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
+    <updated>2017-08-25T18:14:29.000Z</updated>
     
     <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/minikube" target="_blank" rel="external">Minikube</a> 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。</p>
 <p>本環境安裝資訊：</p>
@@ -4180,7 +4180,7 @@ $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
 <blockquote>
 <p>如果是 Linux 使用者則使用下面 URL 取得：</p>
-<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.6.0//bin/linux/amd64/kubectl&quot;
+<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.6.0/bin/linux/amd64/kubectl&quot;
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/bin/
 </code></pre>
 </blockquote>
