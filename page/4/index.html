@@ -155,16 +155,16 @@
             
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">8</span></a>
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">4</span></a>
+                    OpenStack <span class="right">5</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,49 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/05/15/ceph/rados-java/">利用 rados-java 存取 Ceph</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-05-15T09:08:54.000Z"><a href="/2016/05/15/ceph/rados-java/">2016-05-15</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/Java/" class="chip pink lighten-1">Java</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://github.com/ceph/rados-java" target="_blank" rel="external">rados-java</a> 透過 JNA 來綁定 librados (C) 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/05/15/ceph/rados-java/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -421,9 +464,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
-        
             <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
+        
+            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
         
     </div>
 
@@ -439,47 +482,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2016/04/04/data-engineer/apache-flume/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2016/04/01/linux/ubuntu/drbd/">DRBD 進行跨節點的區塊儲存備份</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-04-01T08:23:01.000Z"><a href="/2016/04/01/linux/ubuntu/drbd/">2016-04-01</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
-        
-            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/04/01/linux/ubuntu/drbd/">READ MORE</a>
         </ div>
         
     </div>
@@ -523,6 +525,47 @@
         
         <div class="card-action green-link-context">
             <a href="/2016/04/01/openstack/how-to-contribute/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/04/01/linux/ubuntu/drbd/">DRBD 進行跨節點的區塊儲存備份</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-04-01T08:23:01.000Z"><a href="/2016/04/01/linux/ubuntu/drbd/">2016-04-01</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/04/01/linux/ubuntu/drbd/">READ MORE</a>
         </ div>
         
     </div>
@@ -666,56 +709,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2016/02/24/kubernetes/deploy/official-ansible/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">Vagrant CoreOS 部署 Kubernetes 測試叢集</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-02-23T09:08:54.000Z"><a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">2016-02-23</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/CoreOS/" class="chip pink lighten-1">CoreOS</a>
-        
-            <a href="/tags/Vagrant/" class="chip pink lighten-1">Vagrant</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>本節將透過 Vagrant 與 CoreOS 來部署單機多節點的 Kubernetes 虛擬叢集，並使用 Kubernetest CLI 工具與 API 進行溝通。</p>
-<p>本次安裝版本為：</p>
-<ul>
-<li>CoreOS alpha.</li>
-<li>Kubernetes v1.5.4.</li>
-</ul>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">READ MORE</a>
         </ div>
         
     </div>

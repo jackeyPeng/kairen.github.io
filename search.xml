@@ -4,6 +4,277 @@
   
     
     <entry>
+      <title><![CDATA[利用 Kuryr 整合 OpenStack 與 Kubernetes 網路]]></title>
+      <url>https://kairen.github.io/2017/08/29/openstack/kuryr-kubernetes/</url>
+      <content type="html"><![CDATA[<p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="external">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
+<p><img src="https://i.imgur.com/2XfP3vb.png" alt=""></p>
+<a id="more"></a>
+<p>Kuryr-Kubernetes 整合有兩個主要組成部分：</p>
+<ol>
+<li><strong>Kuryr Controller</strong>:<br>Controller 主要目的是監控 Kubernetes API 的來獲取 Kubernetes 資源的變化，然後依據 Kubernetes 資源的需求來執行子資源的分配和資源管理。</li>
+<li><strong>Kuryr CNI</strong>：主要是依據 Kuryr Controller 分配的資源來綁定網路至 Pods 上。</li>
+</ol>
+<p>本篇我們將說明如何利用<code>DevStack</code>與<code>Kubespray</code>建立一個簡單的測試環境。</p>
+<h2 id="環境資源與事前準備"><a href="#環境資源與事前準備" class="headerlink" title="環境資源與事前準備"></a>環境資源與事前準備</h2><p>準備兩台實體機器，這邊測試的作業系統為<code>CentOS 7.x</code>，該環境將在扁平的網路下進行。</p>
+<table>
+<thead>
+<tr>
+<th>IP Address 1</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.24.0.34</td>
+<td>controller, k8s-master</td>
+</tr>
+<tr>
+<td>172.24.0.80</td>
+<td>compute, k8s-node1</td>
+</tr>
+</tbody>
+</table>
+<p>更新每台節點的 CentOS 7.x packages:</p>
+<pre><code class="shell=">$ sudo yum --enablerepo=cr update -y
+</code></pre>
+<p>然後關閉 firewalld 以及 SELinux 來避免實現發生問題：</p>
+<pre><code class="shell=">$ sudo setenforce 0
+$ sudo systemctl disable firewalld &amp;&amp; sudo systemctl stop firewalld
+</code></pre>
+<h2 id="OpenStack-Controller-安裝"><a href="#OpenStack-Controller-安裝" class="headerlink" title="OpenStack Controller 安裝"></a>OpenStack Controller 安裝</h2><p>首先進入<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
+<p>然後執行以下指令來建立 DevStack 專用使用者：</p>
+<pre><code class="shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+$ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
+</code></pre>
+<blockquote>
+<p>選用 DevStack 是因為現在都是用 Systemd 來管理服務，不用再用 screen 了，雖然都很方便。</p>
+</blockquote>
+<p>接著切換至該使用者環境來建立 OpenStack：</p>
+<pre><code class="shell=">$ sudo su - stack
+</code></pre>
+<p>下載 DevStack 安裝套件：</p>
+<pre><code class="shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
+$ cd devstack
+</code></pre>
+<p>新增<code>local.conf</code>檔案，來描述部署資訊：</p>
+<pre><code>[[local|localrc]]
+HOST_IP=172.24.0.34
+GIT_BASE=https://github.com
+
+ADMIN_PASSWORD=passwd
+DATABASE_PASSWORD=passwd
+RABBIT_PASSWORD=passwd
+SERVICE_PASSWORD=passwd
+SERVICE_TOKEN=passwd
+MULTI_HOST=1
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的 IP 位置。</p>
+</blockquote>
+<p>完成後，執行以下指令開始部署：</p>
+<pre><code class="shell=">$ ./stack.sh
+</code></pre>
+<h2 id="Openstack-Compute-安裝"><a href="#Openstack-Compute-安裝" class="headerlink" title="Openstack Compute 安裝"></a>Openstack Compute 安裝</h2><p>進入到<code>172.24.0.80（compute）</code>，並且執行以下指令。</p>
+<p>然後執行以下指令來建立 DevStack 專用使用者：</p>
+<pre><code class="shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+$ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
+</code></pre>
+<blockquote>
+<p>選用 DevStack 是因為現在都是用 Systemd 來管理服務，不用再用 screen 了，雖然都很方便。</p>
+</blockquote>
+<p>接著切換至該使用者環境來建立 OpenStack：</p>
+<pre><code class="shell=">$ sudo su - stack
+</code></pre>
+<p>下載 DevStack 安裝套件：</p>
+<pre><code class="shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
+$ cd devstack
+</code></pre>
+<p>新增<code>local.conf</code>檔案，來描述部署資訊：</p>
+<pre><code>[[local|localrc]]
+HOST_IP=172.24.0.80
+GIT_BASE=https://github.com
+MULTI_HOST=1
+LOGFILE=/opt/stack/logs/stack.sh.log
+ADMIN_PASSWORD=passwd
+DATABASE_PASSWORD=passwd
+RABBIT_PASSWORD=passwd
+SERVICE_PASSWORD=passwd
+DATABASE_TYPE=mysql
+
+SERVICE_HOST=172.24.0.34
+MYSQL_HOST=$SERVICE_HOST
+RABBIT_HOST=$SERVICE_HOST
+GLANCE_HOSTPORT=$SERVICE_HOST:9292
+ENABLED_SERVICES=n-cpu,q-agt,n-api-meta,c-vol,placement-client
+NOVA_VNC_ENABLED=True
+NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
+VNCSERVER_LISTEN=$HOST_IP
+VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
+</blockquote>
+<p>完成後，執行以下指令開始部署：</p>
+<pre><code class="shell=">$ ./stack.sh
+</code></pre>
+<h2 id="建立-Kubernetes-叢集環境"><a href="#建立-Kubernetes-叢集環境" class="headerlink" title="建立 Kubernetes 叢集環境"></a>建立 Kubernetes 叢集環境</h2><p>首先確認所有節點之間不需要 SSH 密碼即可登入，接著進入到<code>172.24.0.34（k8s-master）</code>並且執行以下指令。</p>
+<p>接著安裝所需要的套件：</p>
+<pre><code class="shell=">$ sudo yum -y install software-properties-common ansible git gcc python-pip python-devel libffi-devel openssl-devel
+$ sudo pip install -U kubespray
+</code></pre>
+<p>完成後，新增 kubespray 設定檔：</p>
+<pre><code class="shell=">$ cat &lt;&lt;EOF &gt;  ~/.kubespray.yml
+kubespray_git_repo: &quot;https://github.com/kubernetes-incubator/kubespray.git&quot;
+# Logging options
+loglevel: &quot;info&quot;
+EOF
+</code></pre>
+<p>然後利用 kubespray-cli 快速產生環境的<code>inventory</code>檔，並修改部分內容：</p>
+<pre><code class="shell=">$ sudo -i
+$ kubespray prepare --masters master --etcds master --nodes node1
+</code></pre>
+<p>編輯<code>/root/.kubespray/inventory/inventory.cfg</code>，修改以下內容：</p>
+<pre><code>[all]
+master  ansible_host=172.24.0.34 ansible_user=root ip=172.24.0.34
+node1    ansible_host=172.24.0.80 ansible_user=root ip=172.24.0.80
+
+[kube-master]
+master
+
+[kube-node]
+master
+node1
+
+[etcd]
+master
+
+[k8s-cluster:children]
+kube-node1
+kube-master
+</code></pre><p>完成後，即可利用 kubespray-cli 指令來進行部署：</p>
+<pre><code class="shell=">$ kubespray deploy --verbose -u root -k .ssh/id_rsa -n calico
+</code></pre>
+<p>經過一段時間後就會部署完成，這時候檢查節點是否正常：</p>
+<pre><code class="shell=">$ kubectl get no
+NAME      STATUS         AGE       VERSION
+master    Ready,master   2m        v1.7.4
+node1     Ready          2m        v1.7.4
+</code></pre>
+<p>接著為了方便讓 Kuryr Controller 簡單取得 K8s API Server，這邊修改<code>/etc/kubernetes/manifests/kube-apiserver.yml</code>檔案，加入以下內容：</p>
+<pre><code>- &quot;--insecure-bind-address=0.0.0.0&quot;
+- &quot;--insecure-port=8080&quot;
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
+</blockquote>
+<h2 id="安裝-Openstack-Kuryr"><a href="#安裝-Openstack-Kuryr" class="headerlink" title="安裝 Openstack Kuryr"></a>安裝 Openstack Kuryr</h2><p>進入到<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
+<p>首先在節點安裝所需要的套件：</p>
+<pre><code class="shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel install python-pip
+</code></pre>
+<p>然後下載 kuryr-kubernetes 並進行安裝：</p>
+<pre><code class="shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
+$ pip install -e kuryr-kubernetes
+</code></pre>
+<p>新增<code>kuryr.conf</code>至<code>/etc/kuryr</code>目錄：</p>
+<pre><code class="shell=">$ cd kuryr-kubernetes
+$ ./tools/generate_config_file_samples.sh
+$ sudo mkdir -p /etc/kuryr/
+$ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
+</code></pre>
+<p>接著使用 OpenStack Dashboard 建立相關專案，在瀏覽器輸入<a href="http://172.24.0.34" target="_blank" rel="external">Dashboard</a>，並執行以下步驟。</p>
+<ol>
+<li>新增 K8s project。</li>
+<li>修改 K8s project member 加入到 service project。</li>
+<li>在該 Project 中新增 Security Groups，參考 <a href="https://docs.openstack.org/kuryr-kubernetes/latest/installation/manual.html" target="_blank" rel="external">kuryr-kubernetes manually</a>。</li>
+<li>在該 Project 中新增 pod_subnet 子網路。</li>
+<li>在該 Project 中新增 service_subnet 子網路。</li>
+</ol>
+<p>完成後，修改<code>/etc/kuryr/kuryr.conf</code>檔案，加入以下內容：</p>
+<pre><code>[DEFAULT]
+use_stderr = true
+bindir = /usr/local/libexec/kuryr
+
+[kubernetes]
+api_root = http://172.24.0.34:8080
+
+[neutron]
+auth_url = http://172.24.0.34/identity
+username = admin
+user_domain_name = Default
+password = admin
+project_name = service
+project_domain_name = Default
+auth_type = password
+
+[neutron_defaults]
+ovs_bridge = br-int
+pod_security_groups = {id_of_secuirity_group_for_pods}
+pod_subnet = {id_of_subnet_for_pods}
+project = {id_of_project}
+service_subnet = {id_of_subnet_for_k8s_services}
+</code></pre><p>完成後執行 kuryr-k8s-controller：</p>
+<pre><code class="shell=">$ kuryr-k8s-controller --config-file /etc/kuryr/kuryr.conf
+</code></pre>
+<h2 id="安裝-Kuryr-CNI"><a href="#安裝-Kuryr-CNI" class="headerlink" title="安裝 Kuryr-CNI"></a>安裝 Kuryr-CNI</h2><p>進入到<code>172.24.0.80（node1）</code>並且執行以下指令。</p>
+<p>首先在節點安裝所需要的套件：</p>
+<pre><code class="shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel python-pip
+</code></pre>
+<p>然後安裝 Kuryr-CNI 來提供給 kubelet 使用：</p>
+<pre><code class="shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
+$ sudo pip install -e kuryr-kubernetes
+</code></pre>
+<p>新增<code>kuryr.conf</code>至<code>/etc/kuryr</code>目錄：</p>
+<pre><code class="shell=">$ cd kuryr-kubernetes
+$ ./tools/generate_config_file_samples.sh
+$ sudo mkdir -p /etc/kuryr/
+$ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
+</code></pre>
+<p>修改<code>/etc/kuryr/kuryr.conf</code>檔案，加入以下內容：</p>
+<pre><code>[DEFAULT]
+use_stderr = true
+bindir = /usr/local/libexec/kuryr
+[kubernetes]
+api_root = http://172.24.0.34:8080
+</code></pre><p>建立 CNI bin 與 Conf 目錄：</p>
+<pre><code class="shell=">$ sudo mkdir -p /opt/cni/bin
+$ sudo ln -s $(which kuryr-cni) /opt/cni/bin/
+$ sudo mkdir -p /etc/cni/net.d/
+</code></pre>
+<p>新增<code>/etc/cni/net.d/10-kuryr.conf</code> CNI 設定檔：</p>
+<pre><code>{
+    &quot;cniVersion&quot;: &quot;0.3.0&quot;,
+    &quot;name&quot;: &quot;kuryr&quot;,
+    &quot;type&quot;: &quot;kuryr-cni&quot;,
+    &quot;kuryr_conf&quot;: &quot;/etc/kuryr/kuryr.conf&quot;,
+    &quot;debug&quot;: true
+}
+</code></pre><p>完成後，更新 oslo 與 vif python 函式庫：</p>
+<pre><code class="shell=">
+$ sudo pip install &#39;oslo.privsep&gt;=1.20.0&#39; &#39;os-vif&gt;=1.5.0&#39;
+</code></pre>
+<p>最後重新啟動相關服務：</p>
+<pre><code>sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet.service
+</code></pre><h2 id="測試結果"><a href="#測試結果" class="headerlink" title="測試結果"></a>測試結果</h2><p>我們這邊開一個 Pod 與 OpenStack VM 來進行溝通：<br><img src="https://i.imgur.com/UYXdKud.png" alt=""></p>
+<p><img src="https://i.imgur.com/dwoEytW.png" alt=""></p>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Docker </tag>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Kubernetes </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[利用 OpenStack Ironic 提供裸機部署服務]]></title>
       <url>https://kairen.github.io/2017/08/16/openstack/ironic-dev/</url>
       <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
@@ -6649,9 +6920,107 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
+            <tag> Spark </tag>
+            
             <tag> Logging </tag>
             
-            <tag> Spark </tag>
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
             
         </tags>
         
@@ -6803,104 +7172,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -9687,13 +9958,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
+            <tag> Logging </tag>
+            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
-            
-            <tag> Logging </tag>
             
         </tags>
         
@@ -11936,18 +12207,18 @@ lib/spark-examples*.jar \
   
     
     <entry>
-      <title><![CDATA[categories]]></title>
-      <url>https://kairen.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[關於我]]></title>
       <url>https://kairen.github.io/about/index.html</url>
       <content type="html"><![CDATA[<p>大家好!我是 Kyle，目前任職於 inwinSTACK 擔任軟體工程師，主要開發與研究虛擬化、分散式儲存與容器化應用，無聊時就嘗試一些技術性東西，並將筆記整理至這邊，有任何問題也歡迎聯絡。</p>
 <p>自己在⼤學期間主要撰寫於 Java 與 Objc 程式語⾔，並專注開發 iOS Mobile 應用程式，期間共開發 20 項相關專案，而次要研讀 Hadoop 與 Spark 巨量資料運算框架，以及 Linux 相關技術，在大學期間從 Backend、Frontend 至 Mobile 都有參與開發及設計。自己本身喜歡接觸有挑戰性的事情，在學期間利用產學合作，與業界進行 Co-work 開發該企業軟體，合作企業橫跨不同領域，諸如：旅遊產業、雲端產業、健⾝器材產業等等，幫助許多企業降低⽣產成本與提升產品附加價值，在開發專案與不同領域的夥伴相互合作，來⾃不同領域科系互補與意⾒，體會產品與作品需深思熟慮很多層⾯。</p>
 <p>由於雲端的普及，虛擬化技術⽇漸成熟，因應其需求，在研究所主要專研於雲端相關知識與技術，並以雲端開源軟體 OpenStack、Ceph 分散式檔案儲存系統與 Docker 輕量虛擬化做深⼊研究，進⼀步了解其架構與運作⽅式，並將其建置與應⽤於實務上，也透過參與相關活動及貢獻來與國際接軌，學習不同領域知識與技術，希望未來能把所學發揮出來。</p>
 ]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>https://kairen.github.io/categories/index.html</url>
+      <content type="html"></content>
     </entry>
     
     <entry>

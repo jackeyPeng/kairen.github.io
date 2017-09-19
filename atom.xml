@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2017-08-24T16:42:08.000Z</updated>
+  <updated>2017-09-19T08:04:17.000Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -14,6 +14,280 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>利用 Kuryr 整合 OpenStack 與 Kubernetes 網路</title>
+    <link href="https://kairen.github.io/2017/08/29/openstack/kuryr-kubernetes/"/>
+    <id>https://kairen.github.io/2017/08/29/openstack/kuryr-kubernetes/</id>
+    <published>2017-08-29T08:23:01.000Z</published>
+    <updated>2017-09-19T08:04:17.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="external">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
+<p><img src="https://i.imgur.com/2XfP3vb.png" alt=""></p>
+<a id="more"></a>
+<p>Kuryr-Kubernetes 整合有兩個主要組成部分：</p>
+<ol>
+<li><strong>Kuryr Controller</strong>:<br>Controller 主要目的是監控 Kubernetes API 的來獲取 Kubernetes 資源的變化，然後依據 Kubernetes 資源的需求來執行子資源的分配和資源管理。</li>
+<li><strong>Kuryr CNI</strong>：主要是依據 Kuryr Controller 分配的資源來綁定網路至 Pods 上。</li>
+</ol>
+<p>本篇我們將說明如何利用<code>DevStack</code>與<code>Kubespray</code>建立一個簡單的測試環境。</p>
+<h2 id="環境資源與事前準備"><a href="#環境資源與事前準備" class="headerlink" title="環境資源與事前準備"></a>環境資源與事前準備</h2><p>準備兩台實體機器，這邊測試的作業系統為<code>CentOS 7.x</code>，該環境將在扁平的網路下進行。</p>
+<table>
+<thead>
+<tr>
+<th>IP Address 1</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.24.0.34</td>
+<td>controller, k8s-master</td>
+</tr>
+<tr>
+<td>172.24.0.80</td>
+<td>compute, k8s-node1</td>
+</tr>
+</tbody>
+</table>
+<p>更新每台節點的 CentOS 7.x packages:</p>
+<pre><code class="shell=">$ sudo yum --enablerepo=cr update -y
+</code></pre>
+<p>然後關閉 firewalld 以及 SELinux 來避免實現發生問題：</p>
+<pre><code class="shell=">$ sudo setenforce 0
+$ sudo systemctl disable firewalld &amp;&amp; sudo systemctl stop firewalld
+</code></pre>
+<h2 id="OpenStack-Controller-安裝"><a href="#OpenStack-Controller-安裝" class="headerlink" title="OpenStack Controller 安裝"></a>OpenStack Controller 安裝</h2><p>首先進入<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
+<p>然後執行以下指令來建立 DevStack 專用使用者：</p>
+<pre><code class="shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+$ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
+</code></pre>
+<blockquote>
+<p>選用 DevStack 是因為現在都是用 Systemd 來管理服務，不用再用 screen 了，雖然都很方便。</p>
+</blockquote>
+<p>接著切換至該使用者環境來建立 OpenStack：</p>
+<pre><code class="shell=">$ sudo su - stack
+</code></pre>
+<p>下載 DevStack 安裝套件：</p>
+<pre><code class="shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
+$ cd devstack
+</code></pre>
+<p>新增<code>local.conf</code>檔案，來描述部署資訊：</p>
+<pre><code>[[local|localrc]]
+HOST_IP=172.24.0.34
+GIT_BASE=https://github.com
+
+ADMIN_PASSWORD=passwd
+DATABASE_PASSWORD=passwd
+RABBIT_PASSWORD=passwd
+SERVICE_PASSWORD=passwd
+SERVICE_TOKEN=passwd
+MULTI_HOST=1
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的 IP 位置。</p>
+</blockquote>
+<p>完成後，執行以下指令開始部署：</p>
+<pre><code class="shell=">$ ./stack.sh
+</code></pre>
+<h2 id="Openstack-Compute-安裝"><a href="#Openstack-Compute-安裝" class="headerlink" title="Openstack Compute 安裝"></a>Openstack Compute 安裝</h2><p>進入到<code>172.24.0.80（compute）</code>，並且執行以下指令。</p>
+<p>然後執行以下指令來建立 DevStack 專用使用者：</p>
+<pre><code class="shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+$ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
+</code></pre>
+<blockquote>
+<p>選用 DevStack 是因為現在都是用 Systemd 來管理服務，不用再用 screen 了，雖然都很方便。</p>
+</blockquote>
+<p>接著切換至該使用者環境來建立 OpenStack：</p>
+<pre><code class="shell=">$ sudo su - stack
+</code></pre>
+<p>下載 DevStack 安裝套件：</p>
+<pre><code class="shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
+$ cd devstack
+</code></pre>
+<p>新增<code>local.conf</code>檔案，來描述部署資訊：</p>
+<pre><code>[[local|localrc]]
+HOST_IP=172.24.0.80
+GIT_BASE=https://github.com
+MULTI_HOST=1
+LOGFILE=/opt/stack/logs/stack.sh.log
+ADMIN_PASSWORD=passwd
+DATABASE_PASSWORD=passwd
+RABBIT_PASSWORD=passwd
+SERVICE_PASSWORD=passwd
+DATABASE_TYPE=mysql
+
+SERVICE_HOST=172.24.0.34
+MYSQL_HOST=$SERVICE_HOST
+RABBIT_HOST=$SERVICE_HOST
+GLANCE_HOSTPORT=$SERVICE_HOST:9292
+ENABLED_SERVICES=n-cpu,q-agt,n-api-meta,c-vol,placement-client
+NOVA_VNC_ENABLED=True
+NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
+VNCSERVER_LISTEN=$HOST_IP
+VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
+</blockquote>
+<p>完成後，執行以下指令開始部署：</p>
+<pre><code class="shell=">$ ./stack.sh
+</code></pre>
+<h2 id="建立-Kubernetes-叢集環境"><a href="#建立-Kubernetes-叢集環境" class="headerlink" title="建立 Kubernetes 叢集環境"></a>建立 Kubernetes 叢集環境</h2><p>首先確認所有節點之間不需要 SSH 密碼即可登入，接著進入到<code>172.24.0.34（k8s-master）</code>並且執行以下指令。</p>
+<p>接著安裝所需要的套件：</p>
+<pre><code class="shell=">$ sudo yum -y install software-properties-common ansible git gcc python-pip python-devel libffi-devel openssl-devel
+$ sudo pip install -U kubespray
+</code></pre>
+<p>完成後，新增 kubespray 設定檔：</p>
+<pre><code class="shell=">$ cat &lt;&lt;EOF &gt;  ~/.kubespray.yml
+kubespray_git_repo: &quot;https://github.com/kubernetes-incubator/kubespray.git&quot;
+# Logging options
+loglevel: &quot;info&quot;
+EOF
+</code></pre>
+<p>然後利用 kubespray-cli 快速產生環境的<code>inventory</code>檔，並修改部分內容：</p>
+<pre><code class="shell=">$ sudo -i
+$ kubespray prepare --masters master --etcds master --nodes node1
+</code></pre>
+<p>編輯<code>/root/.kubespray/inventory/inventory.cfg</code>，修改以下內容：</p>
+<pre><code>[all]
+master  ansible_host=172.24.0.34 ansible_user=root ip=172.24.0.34
+node1    ansible_host=172.24.0.80 ansible_user=root ip=172.24.0.80
+
+[kube-master]
+master
+
+[kube-node]
+master
+node1
+
+[etcd]
+master
+
+[k8s-cluster:children]
+kube-node1
+kube-master
+</code></pre><p>完成後，即可利用 kubespray-cli 指令來進行部署：</p>
+<pre><code class="shell=">$ kubespray deploy --verbose -u root -k .ssh/id_rsa -n calico
+</code></pre>
+<p>經過一段時間後就會部署完成，這時候檢查節點是否正常：</p>
+<pre><code class="shell=">$ kubectl get no
+NAME      STATUS         AGE       VERSION
+master    Ready,master   2m        v1.7.4
+node1     Ready          2m        v1.7.4
+</code></pre>
+<p>接著為了方便讓 Kuryr Controller 簡單取得 K8s API Server，這邊修改<code>/etc/kubernetes/manifests/kube-apiserver.yml</code>檔案，加入以下內容：</p>
+<pre><code>- &quot;--insecure-bind-address=0.0.0.0&quot;
+- &quot;--insecure-port=8080&quot;
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
+</blockquote>
+<h2 id="安裝-Openstack-Kuryr"><a href="#安裝-Openstack-Kuryr" class="headerlink" title="安裝 Openstack Kuryr"></a>安裝 Openstack Kuryr</h2><p>進入到<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
+<p>首先在節點安裝所需要的套件：</p>
+<pre><code class="shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel install python-pip
+</code></pre>
+<p>然後下載 kuryr-kubernetes 並進行安裝：</p>
+<pre><code class="shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
+$ pip install -e kuryr-kubernetes
+</code></pre>
+<p>新增<code>kuryr.conf</code>至<code>/etc/kuryr</code>目錄：</p>
+<pre><code class="shell=">$ cd kuryr-kubernetes
+$ ./tools/generate_config_file_samples.sh
+$ sudo mkdir -p /etc/kuryr/
+$ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
+</code></pre>
+<p>接著使用 OpenStack Dashboard 建立相關專案，在瀏覽器輸入<a href="http://172.24.0.34" target="_blank" rel="external">Dashboard</a>，並執行以下步驟。</p>
+<ol>
+<li>新增 K8s project。</li>
+<li>修改 K8s project member 加入到 service project。</li>
+<li>在該 Project 中新增 Security Groups，參考 <a href="https://docs.openstack.org/kuryr-kubernetes/latest/installation/manual.html" target="_blank" rel="external">kuryr-kubernetes manually</a>。</li>
+<li>在該 Project 中新增 pod_subnet 子網路。</li>
+<li>在該 Project 中新增 service_subnet 子網路。</li>
+</ol>
+<p>完成後，修改<code>/etc/kuryr/kuryr.conf</code>檔案，加入以下內容：</p>
+<pre><code>[DEFAULT]
+use_stderr = true
+bindir = /usr/local/libexec/kuryr
+
+[kubernetes]
+api_root = http://172.24.0.34:8080
+
+[neutron]
+auth_url = http://172.24.0.34/identity
+username = admin
+user_domain_name = Default
+password = admin
+project_name = service
+project_domain_name = Default
+auth_type = password
+
+[neutron_defaults]
+ovs_bridge = br-int
+pod_security_groups = {id_of_secuirity_group_for_pods}
+pod_subnet = {id_of_subnet_for_pods}
+project = {id_of_project}
+service_subnet = {id_of_subnet_for_k8s_services}
+</code></pre><p>完成後執行 kuryr-k8s-controller：</p>
+<pre><code class="shell=">$ kuryr-k8s-controller --config-file /etc/kuryr/kuryr.conf
+</code></pre>
+<h2 id="安裝-Kuryr-CNI"><a href="#安裝-Kuryr-CNI" class="headerlink" title="安裝 Kuryr-CNI"></a>安裝 Kuryr-CNI</h2><p>進入到<code>172.24.0.80（node1）</code>並且執行以下指令。</p>
+<p>首先在節點安裝所需要的套件：</p>
+<pre><code class="shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel python-pip
+</code></pre>
+<p>然後安裝 Kuryr-CNI 來提供給 kubelet 使用：</p>
+<pre><code class="shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
+$ sudo pip install -e kuryr-kubernetes
+</code></pre>
+<p>新增<code>kuryr.conf</code>至<code>/etc/kuryr</code>目錄：</p>
+<pre><code class="shell=">$ cd kuryr-kubernetes
+$ ./tools/generate_config_file_samples.sh
+$ sudo mkdir -p /etc/kuryr/
+$ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
+</code></pre>
+<p>修改<code>/etc/kuryr/kuryr.conf</code>檔案，加入以下內容：</p>
+<pre><code>[DEFAULT]
+use_stderr = true
+bindir = /usr/local/libexec/kuryr
+[kubernetes]
+api_root = http://172.24.0.34:8080
+</code></pre><p>建立 CNI bin 與 Conf 目錄：</p>
+<pre><code class="shell=">$ sudo mkdir -p /opt/cni/bin
+$ sudo ln -s $(which kuryr-cni) /opt/cni/bin/
+$ sudo mkdir -p /etc/cni/net.d/
+</code></pre>
+<p>新增<code>/etc/cni/net.d/10-kuryr.conf</code> CNI 設定檔：</p>
+<pre><code>{
+    &quot;cniVersion&quot;: &quot;0.3.0&quot;,
+    &quot;name&quot;: &quot;kuryr&quot;,
+    &quot;type&quot;: &quot;kuryr-cni&quot;,
+    &quot;kuryr_conf&quot;: &quot;/etc/kuryr/kuryr.conf&quot;,
+    &quot;debug&quot;: true
+}
+</code></pre><p>完成後，更新 oslo 與 vif python 函式庫：</p>
+<pre><code class="shell=">
+$ sudo pip install &#39;oslo.privsep&gt;=1.20.0&#39; &#39;os-vif&gt;=1.5.0&#39;
+</code></pre>
+<p>最後重新啟動相關服務：</p>
+<pre><code>sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet.service
+</code></pre><h2 id="測試結果"><a href="#測試結果" class="headerlink" title="測試結果"></a>測試結果</h2><p>我們這邊開一個 Pod 與 OpenStack VM 來進行溝通：<br><img src="https://i.imgur.com/UYXdKud.png" alt=""></p>
+<p><img src="https://i.imgur.com/dwoEytW.png" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;a href=&quot;https://github.com/openstack/kuryr-kubernetes&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Kubernetes Kuryr&lt;/a&gt; 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/2XfP3vb.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="OpenStack" scheme="https://kairen.github.io/categories/OpenStack/"/>
+    
+    
+      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="OpenStack" scheme="https://kairen.github.io/tags/OpenStack/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
+    
+  </entry>
   
   <entry>
     <title>利用 OpenStack Ironic 提供裸機部署服務</title>
@@ -4290,216 +4564,6 @@ real path=/
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
       <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>TensorFlow on Docker</title>
-    <link href="https://kairen.github.io/2016/10/01/tensorflow/tensorflow-docker/"/>
-    <id>https://kairen.github.io/2016/10/01/tensorflow/tensorflow-docker/</id>
-    <published>2016-10-01T08:23:01.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本篇主要整理使用 Docker 來執行 TensorFlow 的一些問題，這邊 Google 官方已經提供了相關的映像檔提供使用，因此會簡單說明安裝過程與需求。</p>
-<center><img src="/images/tf/docker-tf.png" alt=""></center>
-
-<a id="more"></a>
-<p><br></p>
-<h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>環境採用 Ubuntu 16.04 Desktop 作業系統，然後顯卡是撿朋友不要的來使用，環境硬體資源如下：</p>
-<table>
-<thead>
-<tr>
-<th>名稱</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CPU</td>
-<td>i7-4790 CPU @ 3.60GHz</td>
-</tr>
-<tr>
-<td>Memory</td>
-<td>32GB</td>
-</tr>
-<tr>
-<td>GPU</td>
-<td>GeForce GTX 650</td>
-</tr>
-</tbody>
-</table>
-<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始進行 TensorFlow on Docker 之前，需要確認環境已經安裝以下驅動與軟體等。</p>
-<ul>
-<li>系統安裝了 Docker Engine：</li>
-</ul>
-<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
-$ sudo iptables -P FORWARD ACCEPT
-</code></pre>
-<ul>
-<li>安裝最新版本 NVIDIA Driver 軟體：</li>
-</ul>
-<pre><code class="sh">$ sudo add-apt-repository -y ppa:graphics-drivers/ppa
-$ sudo apt-get update
-$ sudo apt-get install -y nvidia-367
-$ sudo dpkg -l | grep nvidia-367
-... 375.39-0ubuntu0.16.04.1 ..
-</code></pre>
-<ul>
-<li>編譯與安裝 nvidia-modprobe：</li>
-</ul>
-<pre><code class="sh">$ sudo apt-get install -y m4
-$ git clone &quot;https://github.com/NVIDIA/nvidia-modprobe.git&quot;
-$ cd nvidia-modprobe
-$ make &amp;&amp; sudo make install
-$ sudo nvidia-modprobe -u -c=0
-</code></pre>
-<ul>
-<li>安裝 Nvidia Docker Plugin:</li>
-</ul>
-<pre><code class="sh">$ wget -P /tmp &quot;https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb&quot;
-$ sudo dpkg -i /tmp/nvidia-docker*.deb &amp;&amp; rm /tmp/nvidia-docker*.deb
-$ sudo systemctl start nvidia-docker.service
-$ sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
-...
-+-----------------------------------------------------------------------------+
-| NVIDIA-SMI 375.39                 Driver Version: 375.39                    |
-|-------------------------------+----------------------+----------------------+
-| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
-| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
-|===============================+======================+======================|
-|   0  GeForce GTX 650     Off  | 0000:01:00.0     N/A |                  N/A |
-| 10%   34C    P8    N/A /  N/A |    267MiB /   975MiB |     N/A      Default |
-+-------------------------------+----------------------+----------------------+
-
-+-----------------------------------------------------------------------------+
-| Processes:                                                       GPU Memory |
-|  GPU       PID  Type  Process name                               Usage      |
-|=============================================================================|
-</code></pre>
-<h2 id="利用-Docker-執行-TensorFlow"><a href="#利用-Docker-執行-TensorFlow" class="headerlink" title="利用 Docker 執行 TensorFlow"></a>利用 Docker 執行 TensorFlow</h2><p>TensorFlow on Docker 官方已經提供了相關映像檔，這邊透過單一指令就可以取得該映像檔，並啟動提供使用，以下為只有 CPU 的版本：</p>
-<pre><code class="sh">$ docker run -d -p 8888:8888 --name tf-cpu tensorflow/tensorflow
-$ docker logs tf-cpu
-...
-to login with a token:
-        http://localhost:8888/?token=7ddd6ef31fed5f22696c1003a905782b9219a6ec9a19b97c
-</code></pre>
-<blockquote>
-<p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="external">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
-</blockquote>
-<p>若要支援 GPU(CUDA) 的容器的話，可以透過以下指令來提供：</p>
-<pre><code class="sh">$ nvidia-docker run -d -p 8888:8888 --name tf-gpu tensorflow/tensorflow:latest-gpu
-$ docker logs tf-cpu
-</code></pre>
-<blockquote>
-<p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="external">tags</a>。</p>
-</blockquote>
-<h2 id="利用-Docker-提供-Serving"><a href="#利用-Docker-提供-Serving" class="headerlink" title="利用 Docker 提供 Serving"></a>利用 Docker 提供 Serving</h2><p>TensorFlow Serving 是靈活、高效能的機器學習模型服務系統，是專門為生產環境而設計的，它可以很簡單部署新的演算法與實驗來提供同樣的架構與 API 進行服務。</p>
-<p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="external">Dockerfile </a> 來進行建置：</p>
-<pre><code class="sh">$ mkdir serving &amp;&amp; cd serving
-$ wget &quot;https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel&quot;
-$ sed -i &#39;s/BAZEL_VERSION.*0.4.2/BAZEL_VERSION 0.4.5/g&#39; Dockerfile.devel
-$ docker build --pull -t kyle/serving:0.1.0 -f Dockerfile.devel .
-</code></pre>
-<p>建置完成映像檔後，透過以下指令執行，並在容器內建置 Serving：</p>
-<pre><code class="sh">$ docker run -itd --name=tf-serving kyle/serving:0.1.0
-$ docker exec -ti tf-serving bash
-root@459a89a3cf5a$ git clone --recurse-submodules &quot;https://github.com/tensorflow/serving&quot;
-root@459a89a3cf5a$ cd serving/tensorflow
-root@459a89a3cf5a$ ./configure
-root@459a89a3cf5a$ cd .. &amp;&amp; bazel build -c opt tensorflow_serving/...
-</code></pre>
-<p>當建置完 Serving 後，就可以透過以下指令來確認是否正確：</p>
-<pre><code class="sh">root@459a89a3cf5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
-usage: bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
-Flags:
-    --port=8500                          int32    port to listen on
-    --enable_batching=false
-...
-</code></pre>
-<p>接著使用 Inception v3 模型來提供服務，透過以下步驟來完成：</p>
-<pre><code class="sh">root@459a89a3cf5a$ curl -O &quot;http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz&quot;
-root@459a89a3cf5a$ tar xzf inception-v3-2016-03-01.tar.gz
-root@459a89a3cf5a$ ls inception-v3
-README.txt  checkpoint  model.ckpt-157585
-
-root@459a89a3cf5a$ bazel-bin/tensorflow_serving/example/inception_saved_model --checkpoint_dir=inception-v3 --output_dir=inception-export
-Successfully exported model to inception-export
-
-root@459a89a3cf5a$ ls inception-export
-1
-</code></pre>
-<p>當完成匯入後離開容器，並 commit 成新版本映像檔：</p>
-<pre><code class="sh">$ docker commit tf-serving kyle/serving-inception:0.1.0
-$ docker images
-REPOSITORY               TAG                 IMAGE ID            CREATED             SIZE
-kyle/serving-inception   0.1.0               1d866ff60d38        3 minutes ago       5.55 GB
-</code></pre>
-<p>接著執行剛 commit 的映像檔，並啟動 Serving 服務：</p>
-<pre><code class="sh">$ docker run -it kyle/serving-inception:0.1.0
-root@5b9a89eeef5a$ cd serving
-root@5b9a89eeef5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server --port=9000 --model_name=inception --model_base_path=inception-export &amp;&gt; inception_log &amp;
-[1] 15
-</code></pre>
-<p>最後透過 <code>inception_client.py</code> 來測試功能：</p>
-<pre><code class="sh">root@5b9a89eeef5a$ curl &quot;https://s-media-cache-ak0.pinimg.com/736x/32/00/3b/32003bd128bebe99cb8c655a9c0f00f5.jpg&quot; --output rabbit.jpg
-root@5b9a89eeef5a$ bazel-bin/tensorflow_serving/example/inception_client --server=localhost:9000 --image=rabbit.jpg
-
-outputs {
-  key: &quot;classes&quot;
-  value {
-    dtype: DT_STRING
-    tensor_shape {
-      dim {
-        size: 1
-      }
-      dim {
-        size: 5
-      }
-    }
-    string_val: &quot;hare&quot;
-    string_val: &quot;wood rabbit, cottontail, cottontail rabbit&quot;
-    string_val: &quot;Angora, Angora rabbit&quot;
-    string_val: &quot;mouse, computer mouse&quot;
-    string_val: &quot;gazelle&quot;
-  }
-}
-outputs {
-  key: &quot;scores&quot;
-  value {
-    dtype: DT_FLOAT
-    tensor_shape {
-      dim {
-        size: 1
-      }
-      dim {
-        size: 5
-      }
-    }
-    float_val: 10.3059120178
-    float_val: 8.19226741791
-    float_val: 4.00839996338
-    float_val: 2.34308481216
-    float_val: 2.00992465019
-  }
-}
-</code></pre>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本篇主要整理使用 Docker 來執行 TensorFlow 的一些問題，這邊 Google 官方已經提供了相關的映像檔提供使用，因此會簡單說明安裝過程與需求。&lt;/p&gt;
-&lt;center&gt;&lt;img src=&quot;/images/tf/docker-tf.png&quot; alt=&quot;&quot;&gt;&lt;/center&gt;
-    
-    </summary>
-    
-      <category term="TensorFlow" scheme="https://kairen.github.io/categories/TensorFlow/"/>
-    
-    
-      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
-    
-      <category term="TensorFlow" scheme="https://kairen.github.io/tags/TensorFlow/"/>
-    
-      <category term="Machine Learning" scheme="https://kairen.github.io/tags/Machine-Learning/"/>
     
   </entry>
   
