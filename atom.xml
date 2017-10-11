@@ -2606,9 +2606,9 @@ $ helm repo add example http://repo-url
     
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
-      <category term="Helm" scheme="https://kairen.github.io/tags/Helm/"/>
-    
       <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
+    
+      <category term="Helm" scheme="https://kairen.github.io/tags/Helm/"/>
     
   </entry>
   
@@ -2617,7 +2617,7 @@ $ helm repo add example http://repo-url
     <link href="https://kairen.github.io/2017/03/17/kubernetes/deploy/kargo-baremetal/"/>
     <id>https://kairen.github.io/2017/03/17/kubernetes/deploy/kargo-baremetal/</id>
     <published>2017-03-17T09:08:54.000Z</published>
-    <updated>2017-08-18T11:13:29.000Z</updated>
+    <updated>2017-09-28T06:00:31.000Z</updated>
     
     <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="external">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
 <ul>
