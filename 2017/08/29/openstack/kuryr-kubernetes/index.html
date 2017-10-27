@@ -179,6 +179,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -189,14 +197,6 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -415,7 +415,7 @@ NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
 VNCSERVER_LISTEN=$HOST_IP
 VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
 </code></pre><blockquote>
-<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
+<p>Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
 </blockquote>
 <p>完成後，執行以下指令開始部署：</p>
 <pre><code class="shell=">$ ./stack.sh
@@ -467,7 +467,7 @@ node1     Ready          2m        v1.7.4
 <pre><code>- &quot;--insecure-bind-address=0.0.0.0&quot;
 - &quot;--insecure-port=8080&quot;
 </code></pre><blockquote>
-<p>[color=#fc9fca]Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
+<p>Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
 </blockquote>
 <h2 id="安裝-Openstack-Kuryr"><a href="#安裝-Openstack-Kuryr" class="headerlink" title="安裝 Openstack Kuryr"></a>安裝 Openstack Kuryr</h2><p>進入到<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
 <p>首先在節點安裝所需要的套件：</p>

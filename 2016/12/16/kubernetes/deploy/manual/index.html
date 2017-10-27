@@ -7,7 +7,7 @@
 
     
 
-    <title>Kubernetes 全手動苦工安裝教學 | KaiRen&#39;s Blog</title>
+    <title>Kubernetes 全手動苦工安裝教學(TL;DR) | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="Kubernetes 全手動苦工安裝教學"/>
+    <meta property="og:title" content="Kubernetes 全手動苦工安裝教學(TL;DR)"/>
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -179,6 +179,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -189,14 +197,6 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -281,7 +281,7 @@
             <div class="article-title">
                 
     
-        <h1>Kubernetes 全手動苦工安裝教學</h1>
+        <h1>Kubernetes 全手動苦工安裝教學(TL;DR)</h1>
     
 
 
@@ -304,7 +304,7 @@
 
 
             <div class="toc green-link-context hide-on-med-and-down">
-    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#預先準備資訊"><span class="section table-of-contents-text">預先準備資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Etcd-安裝與設定"><span class="section table-of-contents-text">Etcd 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Flannel-安裝與設定"><span class="section table-of-contents-text">Flannel 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Master-安裝與設定"><span class="section table-of-contents-text">Kubernetes Master 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Node-安裝與設定"><span class="section table-of-contents-text">Kubernetes Node 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Addons-部署"><span class="section table-of-contents-text">Kubernetes Addons 部署</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#簡單部署-Nginx-服務"><span class="section table-of-contents-text">簡單部署 Nginx 服務</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#擴展服務數量"><span class="section table-of-contents-text">擴展服務數量</span></a></li></ol></li></ol>
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#預先準備資訊"><span class="section table-of-contents-text">預先準備資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Etcd-安裝與設定"><span class="section table-of-contents-text">Etcd 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Master-安裝與設定"><span class="section table-of-contents-text">Kubernetes Master 安裝與設定</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#下載-Kubernetes-元件"><span class="section table-of-contents-text">下載 Kubernetes 元件</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#建立叢集-CA-與-Certificates"><span class="section table-of-contents-text">建立叢集 CA 與 Certificates</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Admin-certificate"><span class="section table-of-contents-text">Admin certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#API-server-certificate"><span class="section table-of-contents-text">API server certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Controller-manager-certificate"><span class="section table-of-contents-text">Controller manager certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Scheduler-certificate"><span class="section table-of-contents-text">Scheduler certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Kubelet-certificate"><span class="section table-of-contents-text">Kubelet certificate</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#安裝-Kubernetes-核心元件"><span class="section table-of-contents-text">安裝 Kubernetes 核心元件</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Node-安裝與設定"><span class="section table-of-contents-text">Kubernetes Node 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Calico-Network-安裝與設定"><span class="section table-of-contents-text">Calico Network 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Addons-部署"><span class="section table-of-contents-text">Kubernetes Addons 部署</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#kube-proxy-Cert"><span class="section table-of-contents-text">kube-proxy Cert</span></a></li></ol></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#簡單部署-Nginx-服務"><span class="section table-of-contents-text">簡單部署 Nginx 服務</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#擴展服務數量"><span class="section table-of-contents-text">擴展服務數量</span></a></li></ol></li></ol>
 </div>
 
 
@@ -312,10 +312,10 @@
                 <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
-<li>Kubernetes v1.6.4</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.05.0-ce</li>
+<li>Kubernetes v1.8.2</li>
+<li>Etcd v3.2.9</li>
+<li>Calico v2.6.2</li>
+<li>Docker v17.10.0-ce</li>
 </ul>
 <a id="more"></a>
 <h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
@@ -331,7 +331,7 @@
 <tbody>
 <tr>
 <td>172.16.35.12</td>
-<td>master</td>
+<td>master1</td>
 <td>1</td>
 <td>2G</td>
 </tr>
@@ -350,18 +350,31 @@
 </tbody>
 </table>
 <blockquote>
-<p>這邊 master 為主要控制節點，node 為應用程式工作節點。</p>
+<p>這邊 master 為主要控制節點也是<code>部署節點</code>，node 為應用程式工作節點。<br>另外所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。</p>
 </blockquote>
 <p>首先安裝前要確認以下幾項都已將準備完成：</p>
 <ul>
-<li>所有節點彼此網路互通，並且不需要 SSH 密碼即可登入。</li>
+<li>所有節點彼此網路互通，並且<code>master1</code> SSH 登入其他節點為 passwdless。</li>
 <li>所有防火牆與 SELinux 已關閉。如 CentOS：</li>
 </ul>
 <pre><code class="sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
 $ setenforce 0
+$ vim /etc/selinux/config
+SELINUX=disabled
 </code></pre>
 <ul>
 <li>所有節點需要設定<code>/etc/host</code>解析到所有主機。</li>
+</ul>
+<pre><code>...
+172.16.35.10 node1
+172.16.35.11 node2
+172.16.35.12 master1
+</code></pre><ul>
+<li>所有節點需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數，完成用<code>sysctl -p /etc/sysctl.d/k8s.conf</code>來生效。</li>
+</ul>
+<pre><code>net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+</code></pre><ul>
 <li>所有節點需要安裝<code>Docker</code>或<code>rtk</code>引擎。這邊採用<code>Docker</code>來當作容器引擎，安裝方式如下：</li>
 </ul>
 <pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
@@ -371,11 +384,20 @@ $ setenforce 0
 <pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
 </code></pre>
 </blockquote>
-<h2 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最為需要的一環，Kubernetes 會將部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集的狀態。</p>
-<p>首先在<code>master</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
+<ul>
+<li>所有節點需要安裝<code>CFSSL</code>工具，這將會用來建立 TLS certificates。</li>
+</ul>
+<pre><code class="sh">$ export CFSS_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
+$ wget &quot;${CFSS_URL}/cfssl_linux-amd64&quot; -O /usr/local/bin/cfssl
+$ wget &quot;${CFSS_URL}/cfssljson_linux-amd64&quot; -O /usr/local/bin/cfssljson
+$ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
+</code></pre>
+<h2 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最重要的一環，Kubernetes 會將大部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集運作與溝通正常。</p>
+<p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
 <pre><code class="sh">$ cd /opt
-$ wget -qO- &quot;https://github.com/coreos/etcd/releases/download/v3.1.6/etcd-v3.1.6-linux-amd64.tar.gz&quot; | tar -zx
-$ mv etcd-v3.1.6-linux-amd64 etcd
+$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
+$ wget -qO- &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
+$ mv etcd-v3.2.9-linux-amd64 etcd
 $ cd etcd/ &amp;&amp; ln etcd /usr/bin/ &amp;&amp; ln etcdctl /usr/bin/
 </code></pre>
 <p>完成後新建 Etcd Group 與 User，並建立 Etcd 設定檔目錄：</p>
@@ -385,10 +407,10 @@ $ mkdir /etc/etcd
 </code></pre>
 <p>新增<code>/etc/etcd/etcd.conf</code>檔案，加入以下內容：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/etcd/etcd.conf
-ETCD_NAME=master
+ETCD_NAME=master1
 ETCD_DATA_DIR=/var/lib/etcd
 ETCD_INITIAL_ADVERTISE_PEER_URLS=http://172.16.35.12:2380
-ETCD_INITIAL_CLUSTER=master=http://172.16.35.12:2380
+ETCD_INITIAL_CLUSTER=master1=http://172.16.35.12:2380
 ETCD_INITIAL_CLUSTER_STATE=new
 ETCD_INITIAL_CLUSTER_TOKEN=etcd-k8s-cluster
 ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
@@ -413,7 +435,7 @@ Type=notify
 User=etcd
 PermissionsStartOnly=true
 ExecStart=/usr/bin/etcd
-Restart=always
+Restart=on-failure
 RestartSec=10
 LimitNOFILE=65536
 
@@ -430,174 +452,178 @@ $ systemctl enable etcd.service &amp;&amp; systemctl start etcd.service
 member 95b428c288413b46 is healthy: got healthy result from http://172.16.35.12:2379
 cluster is healthy
 </code></pre>
-<p>接著回到<code>master</code>節點，新增一個<code>/tmp/flannel-config.json</code>檔，並加入以下內容：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /tmp/flannel-config.json
-{ &quot;Network&quot;: &quot;10.244.0.0/16&quot;, &quot;SubnetLen&quot;: 24, &quot;Backend&quot;: { &quot;Type&quot;: &quot;vxlan&quot; } }
-EOF
+<h2 id="Kubernetes-Master-安裝與設定"><a href="#Kubernetes-Master-安裝與設定" class="headerlink" title="Kubernetes Master 安裝與設定"></a>Kubernetes Master 安裝與設定</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。本步驟將下載 Kubernetes 並安裝至 <code>master1</code>上，然後產生相關 TLS Cert 與 CA 金鑰，提供給叢集元件認證使用。</p>
+<h3 id="下載-Kubernetes-元件"><a href="#下載-Kubernetes-元件" class="headerlink" title="下載 Kubernetes 元件"></a>下載 Kubernetes 元件</h3><p>首先透過網路取得所有需要的執行檔案：</p>
+<pre><code class="sh"># Download Kubernetes
+$ export KUBE_URL=&quot;https://storage.googleapis.com/kubernetes-release/release/v1.8.2/bin/linux/amd64&quot;
+$ wget &quot;${KUBE_URL}/kubelet&quot; -O /usr/bin/kubelet
+$ wget &quot;${KUBE_URL}/kubectl&quot; -O /usr/bin/kubectl
+$ chmod +x /usr/bin/kubelet /usr/bin/kubectl
+
+# Download CNI
+$ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
+$ export CNI_URL=&quot;https://github.com/containernetworking/plugins/releases/download&quot;
+$ wget -qO- &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
 </code></pre>
-<p>然後將 Flannel 網路設定儲存到 etcd 中：</p>
-<pre><code class="sh">$ etcdctl --no-sync set /atomic.io/network/config &lt; /tmp/flannel-config.json
-$ etcdctl ls /atomic.io/network/
-/atomic.io/network/config
+<h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 Client 與 Server 的各元件 Cert，並且替 Kubernetes admin user 產生 Client 簽證。</p>
+<p>建立<code>pki</code>資料夾，然後進入目錄完成以下操作。</p>
+<pre><code class="sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
+$ export CA_URL=&quot;https://kairen.github.io/files/manual/master/pki&quot;
 </code></pre>
-<h2 id="Flannel-安裝與設定"><a href="#Flannel-安裝與設定" class="headerlink" title="Flannel 安裝與設定"></a>Flannel 安裝與設定</h2><p>Flannel 是 CoreOS 團隊針對 Kubernetes 設計的一個<code>覆蓋網絡(Overlay Network)</code>工具，其目的在於幫助每一個使用 Kuberentes 的主機擁有一個完整的子網路。</p>
-<p>首先在<code>所有</code>節點下載 Flannel，並執行以下步驟。首先解壓縮放到 /opt 底下與安裝：</p>
-<pre><code class="sh">$ cd /opt &amp;&amp; mkdir flannel
-$ wget -qO- &quot;https://github.com/coreos/flannel/releases/download/v0.7.1/flannel-v0.7.1-linux-amd64.tar.gz&quot; | tar -zxC flannel/
-$ cd flannel/ &amp;&amp; ln flanneld /usr/bin/ &amp;&amp; ln mk-docker-opts.sh /usr/bin/
+<p>下載<code>ca-config.json</code>與<code>ca-csr.json</code>檔案，並產生 CA 金鑰：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/ca-config.json&quot;
+$ wget &quot;${CA_URL}/ca-csr.json&quot;
+$ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+$ ls ca*.pem
+ca-key.pem  ca.pem
 </code></pre>
-<p>建立 Docker Drop-in 目錄，並新增<code>flannel.conf</code>檔案：</p>
-<pre><code class="sh">$ mkdir -p /etc/systemd/system/docker.service.d
-$ cat &lt;&lt;EOF &gt; /etc/systemd/system/docker.service.d/flannel.conf
-[Service]
-EnvironmentFile=-/run/flannel/docker
-EOF
+<h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 kubernetes-admin certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/admin-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  admin-csr.json | cfssljson -bare admin
+
+$ ls admin*.pem
+admin-key.pem  admin.pem
 </code></pre>
-<p>新增<code>/etc/default/flanneld</code>檔案，加入以下內容：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/default/flanneld
-FLANNEL_ETCD_ENDPOINTS=&quot;http://172.16.35.12:2379&quot;
-FLANNEL_ETCD_PREFIX=&quot;/atomic.io/network&quot;
-FLANNEL_OPTIONS=&quot;--iface=enp0s8&quot;
-EOF
+<p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># admin set-cluster
+$ kubectl config set-cluster kubernetes-manual \
+    --certificate-authority=/etc/kubernetes/pki/ca.pem \
+    --embed-certs=true \
+    --server=&quot;https://172.16.35.12:6443&quot; \
+    --kubeconfig=../admin.conf
+
+# admin set-credentials
+$ kubectl config set-credentials kubernetes-admin \
+    --client-certificate=/etc/kubernetes/pki/admin.pem \
+    --embed-certs=true \
+    --client-key=/etc/kubernetes/pki/admin-key.pem \
+    --kubeconfig=../admin.conf
+
+# admin set-context
+$ kubectl config set-context kubernetes-admin@kubernetes \
+    --cluster=kubernetes-manual \
+    --user=kubernetes-admin \
+    --kubeconfig=../admin.conf
+
+# admin set default context
+$ kubectl config use-context kubernetes-admin@kubernetes --kubeconfig=../admin.conf
+</code></pre>
+<h4 id="API-server-certificate"><a href="#API-server-certificate" class="headerlink" title="API server certificate"></a>API server certificate</h4><p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/apiserver-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  apiserver-csr.json | cfssljson -bare apiserver
+
+$ ls apiserver*.pem
+apiserver-key.pem  apiserver.pem
+</code></pre>
+<h4 id="Controller-manager-certificate"><a href="#Controller-manager-certificate" class="headerlink" title="Controller manager certificate"></a>Controller manager certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/manager-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  manager-csr.json | cfssljson -bare controller-manager
+
+$ ls controller-manager*.pem
+</code></pre>
+<h4 id="Scheduler-certificate"><a href="#Scheduler-certificate" class="headerlink" title="Scheduler certificate"></a>Scheduler certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/scheduler-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  scheduler-csr.json | cfssljson -bare scheduler
+
+$ ls scheduler*.pem
+</code></pre>
+<p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/kubelet-csr.json&quot;
+$ sed -i &#39;s/$NODE/master1/g&#39; kubelet-csr.json
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kubelet-csr.json | cfssljson -bare kubelet
+
+$ ls kubelet*.pem
+</code></pre>
+<h4 id="Kubelet-certificate"><a href="#Kubelet-certificate" class="headerlink" title="Kubelet certificate"></a>Kubelet certificate</h4><p>接著透過以下指令產生名稱為 <code>kubelet.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># set-cluster
+$ kubectl config set-cluster kubernetes-manual \
+    --certificate-authority=/etc/kubernetes/pki/ca.pem \
+    --embed-certs=true \
+    --server=&quot;https://172.16.35.12:6443&quot; \
+    --kubeconfig=../kubelet.conf
+
+# set-credentials
+$ kubectl config set-credentials system:node:master1 \
+    --client-certificate=/etc/kubernetes/pki/kubelet.pem \
+    --embed-certs=true \
+    --client-key=/etc/kubernetes/pki/kubelet-key.pem \
+    --kubeconfig=../kubelet.conf
+
+# set-context
+$ kubectl config set-context system:node:master1@kubernetes \
+    --cluster=kubernetes-manual \
+    --user=system:node:master1 \
+    --kubeconfig=../kubelet.conf
+
+# set default context
+$ kubectl config use-context default --kubeconfig=../kubelet.conf
+</code></pre>
+<p>完成後刪除不必要檔案：</p>
+<pre><code class="sh">$ rm -rf *.json
+</code></pre>
+<h3 id="安裝-Kubernetes-核心元件"><a href="#安裝-Kubernetes-核心元件" class="headerlink" title="安裝 Kubernetes 核心元件"></a>安裝 Kubernetes 核心元件</h3><p>首先下載 Kubernetes 核心元件 YAML 檔案，這邊我們不透過 Binary 方案來建立 Mater 核心元件，而是採用 Self-hosted 方式來達成，因此需要下載所有核心元件的<code>Static Pod</code>檔案到<code>/etc/kubernetes/manifests</code>目錄：</p>
+<pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual/master/core&quot;
+$ cd /etc/kubernetes/manifests
+$ for FILE in apiserver manager scheduler; do
+    wget &quot;${CORE_URL}/${FILE}.conf&quot; -O ${FILE}.yml
+  done
 </code></pre>
 <blockquote>
-<p><code>FLANNEL_ETCD_ENDPOINTS</code> 請修改成自己的 <code>master</code> IP。<br><code>FLANNEL_OPTIONS</code>可以依據需求加入，這邊主要指定 flannel 使用的網卡。</p>
+<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>apiserver.yml</code>、<code>manager.yml</code>、<code>scheduler.yml</code></p>
 </blockquote>
-<p>新增<code>/lib/systemd/system/flanneld.service</code>來管理 Flannel：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/flanneld.service
-[Unit]
-Description=Flanneld Service
-After=network-online.target
-Wants=network-online.target
-After=etcd.service
-Before=docker.service
-
-[Service]
-Type=notify
-EnvironmentFile=/etc/default/flanneld
-ExecStart=/usr/bin/flanneld -etcd-endpoints=\${FLANNEL_ETCD_ENDPOINTS} -etcd-prefix=\${FLANNEL_ETCD_PREFIX} \${FLANNEL_OPTIONS}
-ExecStartPost=/usr/bin/mk-docker-opts.sh -d /run/flannel/docker
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-RequiredBy=docker.service
-EOF
+<p>產生一個用來加密 Etcd 的 Key：</p>
+<pre><code class="sh">$ head -c 32 /dev/urandom | base64
+SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
 </code></pre>
-<p>之後到<code>每台</code>節點啟動 Flannel:</p>
-<pre><code class="sh">$ systemctl enable flanneld.service &amp;&amp; systemctl start flanneld.service
+<p>在<code>/etc/kubernetes/</code>目錄下，建立<code>encryption-config.yml</code>的加密檔案：</p>
+<pre><code class="yml">kind: EncryptionConfig
+apiVersion: v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
+      - identity: {}
 </code></pre>
-<p>完成後透過以下指令簡單驗證：</p>
-<pre><code class="sh">$ ip -4 addr show flannel.1
-
-5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
-    inet 10.244.11.0/32 scope global flannel.1
-       valid_lft forever preferred_lft forever
-</code></pre>
-<p>確認有網路後，修改<code>/lib/systemd/system/docker.service</code>檔案以下內容：</p>
-<pre><code>ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
-ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
-</code></pre><blockquote>
-<p>若是 CentOS 7 則不需要加入 <code>-H fd://</code>。</p>
-</blockquote>
-<p>重新啟動 Docker 來使用 Flannel：</p>
-<pre><code class="sh">$ systemctl daemon-reload &amp;&amp; systemctl restart docker
-$ ip -4 a show docker0
-
-4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default
-    inet 10.244.11.1/24 scope global docker0
-       valid_lft forever preferred_lft forever
-</code></pre>
-<p>最後在任一台節點去 Ping 其他節點的 docker0 網路，若 Ping 的到表示部署沒問題。</p>
-<h2 id="Kubernetes-Master-安裝與設定"><a href="#Kubernetes-Master-安裝與設定" class="headerlink" title="Kubernetes Master 安裝與設定"></a>Kubernetes Master 安裝與設定</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。首先加入取得 Packages 來源並安裝：</p>
-<pre><code class="sh">$ curl -s &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | apt-key add -
-$ echo &quot;deb http://apt.kubernetes.io/ kubernetes-xenial main&quot; &gt; /etc/apt/sources.list.d/kubernetes.list
-$ apt-get update &amp;&amp; apt-get install -y kubectl kubelet kubernetes-cni
-</code></pre>
-<blockquote>
-<p>CentOS 7 則使用以下指令安裝：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-$ yum install -y kubelet kubectl kubernetes-cni
-</code></pre>
-</blockquote>
-<p>然後準備 OpenSSL 的設定檔資訊：</p>
-<pre><code class="sh">$ mkdir -p /etc/kubernetes/pki
-$ DIR=/etc/kubernetes/pki
-$ cat &lt;&lt;EOF &gt; ${DIR}/openssl.conf
-[req]
-req_extensions = v3_req
-distinguished_name = req_distinguished_name
-[req_distinguished_name]
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = kubernetes
-DNS.2 = kubernetes.default
-DNS.3 = kubernetes.default.svc
-DNS.4 = kubernetes.default.svc.cluster.local
-IP.1 = 192.160.0.1
-IP.2 = 172.16.35.12
-EOF
-</code></pre>
-<blockquote>
-<p><code>IP.2</code> 請修改成自己的<code>master</code> IP。<br>細節請參考<a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
-</blockquote>
-<p>建立 OpenSSL Keypairs 與 Certificate：</p>
-<pre><code class="sh">DIR=/etc/kubernetes/pki
-
-openssl genrsa -out ${DIR}/ca-key.pem 2048
-openssl req -x509 -new -nodes -key ${DIR}/ca-key.pem -days 1000 -out ${DIR}/ca.pem -subj &#39;/CN=kube-ca&#39;
-openssl genrsa -out ${DIR}/admin-key.pem 2048
-openssl req -new -key ${DIR}/admin-key.pem -out ${DIR}/admin.csr -subj &#39;/CN=kube-admin&#39;
-openssl x509 -req -in ${DIR}/admin.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/admin.pem -days 1000
-openssl genrsa -out ${DIR}/apiserver-key.pem 2048
-openssl req -new -key ${DIR}/apiserver-key.pem -out ${DIR}/apiserver.csr -subj &#39;/CN=kube-apiserver&#39; -config ${DIR}/openssl.conf
-openssl x509 -req -in ${DIR}/apiserver.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/apiserver.pem -days 1000 -extensions v3_req -extfile ${DIR}/openssl.conf
-</code></pre>
-<blockquote>
-<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
-</blockquote>
-<p>接著下載 Kubernetes 相關檔案至<code>/etc/kubernetes</code>：</p>
-<pre><code class="sh">cd /etc/kubernetes/
-URL=&quot;https://kairen.github.io/files/manual/master&quot;
-wget ${URL}/kube-apiserver.conf -O manifests/kube-apiserver.yml
-wget ${URL}/kube-controller-manager.conf -O manifests/kube-controller-manager.yml
-wget ${URL}/kube-scheduler.conf -O manifests/kube-scheduler.yml
-wget ${URL}/admin.conf -O admin.conf
-wget ${URL}/kubelet.conf -O kubelet
-cat &lt;&lt;EOF &gt; /etc/kubernetes/user.csv
-p@ssw0rd,admin,admin
-EOF
-</code></pre>
-<blockquote>
-<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>kube-apiserver.yml</code>、<code>kube-controller-manager.yml</code>、<code>kube-scheduler.yml</code>與<code>admin.yml</code>。</p>
-</blockquote>
 <p>新增<code>/lib/systemd/system/kubelet.service</code>來管理 kubelet：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/kubelet.service
 [Unit]
-Description=Kubernetes Kubelet Server
+Description=Kubernetes kubelet service
 After=docker.service
 Requires=docker.service
 
 [Service]
 WorkingDirectory=/var/lib/kubelet
-EnvironmentFile=-/etc/kubernetes/kubelet
-ExecStart=/usr/bin/kubelet \$KUBELET_ADDRESS \$KUBELET_POD_INFRA_CONTAINER \
-\$KUBELET_ARGS \$KUBE_NODE_LABEL \$KUBE_LOGTOSTDERR \
-\$KUBE_ALLOW_PRIV \$KUBELET_NETWORK_ARGS \
-\$KUBELET_DNS_ARGS
-Restart=always
+ExecStart=/usr/bin/kubelet \$KUBELET_ADDRESS \$KUBELET_POD_INFRA_CONTAINER \$KUBELET_ARGS \$KUBE_NODE_LABEL \$KUBE_LOGTOSTDERR \$KUBE_ALLOW_PRIV \$KUBELET_NETWORK_ARGS \$KUBELET_DNS_ARGS
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
@@ -607,8 +633,9 @@ EOF
 <p><code>/etc/systemd/system/kubelet.service</code>為<code>CentOS 7</code>使用的路徑。</p>
 </blockquote>
 <p>最後建立 var 存放資訊，然後啟動 kubelet 服務:</p>
-<pre><code class="sh">$ mkdir -p /var/lib/kubelet
-$ systemctl daemon-reload &amp;&amp; systemctl restart kubelet.service
+<pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes
+$ systemctl daemon-reload
+$ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 </code></pre>
 <p>完成後會需要一段時間來下載與啟動元件，可以利用該指令來監看：</p>
 <pre><code class="sh">$ watch -n 1 netstat -ntlp
@@ -651,6 +678,7 @@ EOF
 $ yum install -y kubelet kubernetes-cni
 </code></pre>
 </blockquote>
+<p>Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。因此，我們為了取得<code>Node Authorizer</code>的授權，需要建立</p>
 <p>然後準備 OpenSSL 的設定檔資訊：</p>
 <pre><code class="sh">$ mkdir -p /etc/kubernetes/pki
 $ DIR=/etc/kubernetes/pki
@@ -733,7 +761,87 @@ master1   Ready,master   17m       v1.6.4
 node1     Ready          20s       v1.6.4
 node2     Ready          18s       v1.6.4
 </code></pre>
-<h2 id="Kubernetes-Addons-部署"><a href="#Kubernetes-Addons-部署" class="headerlink" title="Kubernetes Addons 部署"></a>Kubernetes Addons 部署</h2><p>當環境都建置完成後，就可以進行部署附加元件，首先到<code>master1</code>，並進入<code>/etc/kubernetes/</code>目錄下載 Addon 檔案：</p>
+<h2 id="Calico-Network-安裝與設定"><a href="#Calico-Network-安裝與設定" class="headerlink" title="Calico Network 安裝與設定"></a>Calico Network 安裝與設定</h2><p>Flannel 是 CoreOS 團隊針對 Kubernetes 設計的一個<code>覆蓋網絡(Overlay Network)</code>工具，其目的在於幫助每一個使用 Kuberentes 的主機擁有一個完整的子網路。</p>
+<p>首先在<code>所有</code>節點下載 Flannel，並執行以下步驟。首先解壓縮放到 /opt 底下與安裝：</p>
+<pre><code class="sh">$ cd /opt &amp;&amp; mkdir flannel
+$ wget -qO- &quot;https://github.com/coreos/flannel/releases/download/v0.7.1/flannel-v0.7.1-linux-amd64.tar.gz&quot; | tar -zxC flannel/
+$ cd flannel/ &amp;&amp; ln flanneld /usr/bin/ &amp;&amp; ln mk-docker-opts.sh /usr/bin/
+</code></pre>
+<p>建立 Docker Drop-in 目錄，並新增<code>flannel.conf</code>檔案：</p>
+<pre><code class="sh">$ mkdir -p /etc/systemd/system/docker.service.d
+$ cat &lt;&lt;EOF &gt; /etc/systemd/system/docker.service.d/flannel.conf
+[Service]
+EnvironmentFile=-/run/flannel/docker
+EOF
+</code></pre>
+<p>新增<code>/etc/default/flanneld</code>檔案，加入以下內容：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/default/flanneld
+FLANNEL_ETCD_ENDPOINTS=&quot;http://172.16.35.12:2379&quot;
+FLANNEL_ETCD_PREFIX=&quot;/atomic.io/network&quot;
+FLANNEL_OPTIONS=&quot;--iface=enp0s8&quot;
+EOF
+</code></pre>
+<blockquote>
+<p><code>FLANNEL_ETCD_ENDPOINTS</code> 請修改成自己的 <code>master</code> IP。<br><code>FLANNEL_OPTIONS</code>可以依據需求加入，這邊主要指定 flannel 使用的網卡。</p>
+</blockquote>
+<p>新增<code>/lib/systemd/system/flanneld.service</code>來管理 Flannel：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/flanneld.service
+[Unit]
+Description=Flanneld Service
+After=network-online.target
+Wants=network-online.target
+After=etcd.service
+Before=docker.service
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/default/flanneld
+ExecStart=/usr/bin/flanneld -etcd-endpoints=\${FLANNEL_ETCD_ENDPOINTS} -etcd-prefix=\${FLANNEL_ETCD_PREFIX} \${FLANNEL_OPTIONS}
+ExecStartPost=/usr/bin/mk-docker-opts.sh -d /run/flannel/docker
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=docker.service
+EOF
+</code></pre>
+<p>之後到<code>每台</code>節點啟動 Flannel:</p>
+<pre><code class="sh">$ systemctl enable flanneld.service &amp;&amp; systemctl start flanneld.service
+</code></pre>
+<p>完成後透過以下指令簡單驗證：</p>
+<pre><code class="sh">$ ip -4 addr show flannel.1
+
+5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
+    inet 10.244.11.0/32 scope global flannel.1
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>確認有網路後，修改<code>/lib/systemd/system/docker.service</code>檔案以下內容：</p>
+<pre><code>ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
+</code></pre><blockquote>
+<p>若是 CentOS 7 則不需要加入 <code>-H fd://</code>。</p>
+</blockquote>
+<p>重新啟動 Docker 來使用 Flannel：</p>
+<pre><code class="sh">$ systemctl daemon-reload &amp;&amp; systemctl restart docker
+$ ip -4 a show docker0
+
+4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default
+    inet 10.244.11.1/24 scope global docker0
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>最後在任一台節點去 Ping 其他節點的 docker0 網路，若 Ping 的到表示部署沒問題。</p>
+<h2 id="Kubernetes-Addons-部署"><a href="#Kubernetes-Addons-部署" class="headerlink" title="Kubernetes Addons 部署"></a>Kubernetes Addons 部署</h2><h4 id="kube-proxy-Cert"><a href="#kube-proxy-Cert" class="headerlink" title="kube-proxy Cert"></a>kube-proxy Cert</h4><p>下載<code>kube-proxy-csr.json</code>檔案，並產生 Cert 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/kube-proxy-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-proxy-csr.json | cfssljson -bare kube-proxy
+
+$ ls kube-proxy*.pem
+</code></pre>
+<p>當環境都建置完成後，就可以進行部署附加元件，首先到<code>master1</code>，並進入<code>/etc/kubernetes/</code>目錄下載 Addon 檔案：</p>
 <pre><code class="sh">cd /etc/kubernetes/ &amp;&amp; mkdir addon
 URL=&quot;https://kairen.github.io/files/manual/addon&quot;
 wget ${URL}/kube-proxy.conf -O addon/kube-proxy.yml

@@ -179,6 +179,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -189,14 +197,6 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -311,13 +311,13 @@
 
 
             <div class="entry green-link-context">
-                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">KaiRen Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
-<li>Kubernetes v1.6.2</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.04.0-ce</li>
+<li>Kubernetes v1.7.0+</li>
+<li>Etcd v3.2.8</li>
+<li>Flannel v0.9.0</li>
+<li>Docker v1.13.0+(latest on v17.10.0-ce)</li>
 </ul>
 <a id="more"></a>
 <p>而在 OS 部分以支援<code>Ubuntu 16.x</code>及<code>CentOS 7.x</code>的虛擬機與實體機部署。</p>
@@ -407,7 +407,7 @@ $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible
 $ sudo yum -y install ansible cowsay
 </code></pre>
 <h2 id="部署-Kubernetes-叢集"><a href="#部署-Kubernetes-叢集" class="headerlink" title="部署 Kubernetes 叢集"></a>部署 Kubernetes 叢集</h2><p>首先透過 Git 取得 HA Kubernetes Ansible 的專案：</p>
-<pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot; -b dev
+<pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
 $ cd kube-ansible
 </code></pre>
 <p>然後編輯<code>inventory</code>檔案，來加入要部署的節點角色：</p>
@@ -427,25 +427,23 @@ $ cd kube-ansible
 masters
 nodes
 </code></pre><p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
-<pre><code># Kubernetes component version
-kube_version: 1.6.2
+<pre><code class="yml"># Kubernetes component version
+kube_version: 1.7.8
 
-# Network plugin
-network: flannel
+# Network plugin implementation(&#39;flannel&#39;, &#39;calico&#39;, &#39;canal&#39;, &#39;weave&#39;, &#39;router&#39;)
+network: calico
 pod_network_cidr: &quot;10.244.0.0/16&quot;
 
-# Kubernetes service 內部網路 IP range(預設即可)
-cluster_subnet: 192.160.0
+# Kubernetes cluster network
+cluster_subnet: 10.96.0
 kubernetes_service_ip: &quot;{{ cluster_subnet }}.1&quot;
 service_ip_range: &quot;{{ cluster_subnet }}.0/12&quot;
 service_node_port_range: 30000-32767
 
 # apiserver lb 與 vip
 lb_vip_address: 172.20.3.90
-lb_api_url: &quot;https://{{ lb_vip_address }}&quot;
-api_secure_port: 5443
-
-sslcert_enable: true
+lb_secure_port: 6443
+lb_api_url: &quot;https://{{ lb_vip_address }}:{{ lb_secure_port }}&quot;
 
 # 額外認證方式
 extra_auth:
@@ -457,17 +455,24 @@ extra_auth:
 insecure_registrys:
 # - &quot;gcr.io&quot;
 
-# Kubernetes Addons 設定
-kube_dash: true  # Dashboard 服務
+# Core addons (Strongly recommend)
+kube_dns: true
+dns_name: cluster.local # cluster dns name
+dns_ip: &quot;{{ cluster_subnet }}.10&quot;
 
-kube_dns: true # DNS 服務
+kube_proxy: true
+kube_proxy_mode: iptables # &quot;ipvs(1.8+)&quot;, &quot;iptables&quot; or &quot;userspace&quot;.
 
-kube_proxy: true # Kubernetes proxy 元件
-kube_proxy_mode: iptables # 如果要部署 Ceph on Kubernetes 需要改成 &#39;userspace&#39;
+# Extra addons
+kube_dashboard: true # Kubenetes dasobhard console.
+kube_logging: false # EFK stack for Kubernetes
+kube_monitoring: true # Grafana + Infuxdb + Heapster monitoring
 
-kube_logging: true # EFK 服務
-kube_monitoring: true # Heapster + Influxdb + Grafana 服務
-</code></pre><p>確認<code>group_vars/all.yml</code>完成後，透過 ansible ping 來檢查叢集狀態：</p>
+# Ingress controller
+ingress: true
+ingress_type: nginx # &#39;nginx&#39;, &#39;haproxy&#39;, &#39;traefik&#39;
+</code></pre>
+<p>確認<code>group_vars/all.yml</code>完成後，透過 ansible ping 來檢查叢集狀態：</p>
 <pre><code class="sh">$ ansible all -m ping
 172.20.3.91 | SUCCESS =&gt; {
     &quot;changed&quot;: false,
@@ -493,9 +498,6 @@ node5     Ready             1m
 <p>接著就可以部署 Addons 了，透過以下方式進行：</p>
 <pre><code class="sh">$ ansible-playbook addons.yml
 </code></pre>
-<p>若想要更新特定元件可以使用以下方式：</p>
-<pre><code class="sh">$ ansible-playbook cluster.yml --tags etcd
-</code></pre>
 <h2 id="驗證叢集"><a href="#驗證叢集" class="headerlink" title="驗證叢集"></a>驗證叢集</h2><p>當完成上述步驟後，就可以在任一台<code>master</code>節點進行操作 Kubernetes：</p>
 <pre><code class="sh">$ kubectl get po -n kube-system
 NAME                                    READY     STATUS    RESTARTS   AGE
@@ -512,7 +514,7 @@ kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http://172.20.3.93:2379 isLeader=true
 </code></pre>
 <h2 id="重置叢集"><a href="#重置叢集" class="headerlink" title="重置叢集"></a>重置叢集</h2><p>若想要將整個叢集進行重置的話，可以使用以下方式：</p>
-<pre><code class="sh">$ ansible-playbook playbooks/reset.yml
+<pre><code class="sh">$ ansible-playbook reset.yml
 </code></pre>
 
                 

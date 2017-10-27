@@ -179,6 +179,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -189,14 +197,6 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -440,13 +440,13 @@
 
             
                 <div class="entry green-link-context">
-                    <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">KaiRen Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+                    <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
-<li>Kubernetes v1.6.2</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.04.0-ce</li>
+<li>Kubernetes v1.7.0+</li>
+<li>Etcd v3.2.8</li>
+<li>Flannel v0.9.0</li>
+<li>Docker v1.13.0+(latest on v17.10.0-ce)</li>
 </ul>
                 </div>
             
@@ -490,10 +490,10 @@
 
             
                 <div class="entry green-link-context">
-                    <p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">KaiRen Kubernetes Ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
+                    <p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">Kubernetes Ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
 <p>kube-ansible 提供了以下幾項功能：</p>
 <ul>
-<li>Kubernetes 1.4.0+.</li>
+<li>Kubernetes 1.7.0+.</li>
 <li>Ceph on Kubernetes cluster.</li>
 <li>Common addons.</li>
 </ul>
@@ -516,7 +516,7 @@
             <div class="article-title">
                 
     
-        <h1 class="indigo-link-context"><a href="/2016/12/16/kubernetes/deploy/manual/">Kubernetes 全手動苦工安裝教學</a></h1>
+        <h1 class="indigo-link-context"><a href="/2016/12/16/kubernetes/deploy/manual/">Kubernetes 全手動苦工安裝教學(TL;DR)</a></h1>
     
 
 
@@ -540,10 +540,10 @@
                     <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
-<li>Kubernetes v1.6.4</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.05.0-ce</li>
+<li>Kubernetes v1.8.2</li>
+<li>Etcd v3.2.9</li>
+<li>Calico v2.6.2</li>
+<li>Docker v17.10.0-ce</li>
 </ul>
                 </div>
             
@@ -728,8 +728,8 @@
                     <p><a href="https://github.com/kubernetes/minikube" target="_blank" rel="external">Minikube</a> 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。</p>
 <p>本環境安裝資訊：</p>
 <ul>
-<li>Minikube v0.19.0</li>
-<li>Kubernetes v1.6.0</li>
+<li>Minikube v0.22.3</li>
+<li>Kubernetes v1.7.5</li>
 </ul>
                 </div>
             

@@ -110,7 +110,7 @@ NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
 VNCSERVER_LISTEN=$HOST_IP
 VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
 </code></pre><blockquote>
-<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
+<p>Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
 </blockquote>
 <p>完成後，執行以下指令開始部署：</p>
 <pre><code class="shell=">$ ./stack.sh
@@ -162,7 +162,7 @@ node1     Ready          2m        v1.7.4
 <pre><code>- &quot;--insecure-bind-address=0.0.0.0&quot;
 - &quot;--insecure-port=8080&quot;
 </code></pre><blockquote>
-<p>[color=#fc9fca]Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
+<p>Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
 </blockquote>
 <h2 id="安裝-Openstack-Kuryr"><a href="#安裝-Openstack-Kuryr" class="headerlink" title="安裝 Openstack Kuryr"></a>安裝 Openstack Kuryr</h2><p>進入到<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
 <p>首先在節點安裝所需要的套件：</p>
@@ -2888,13 +2888,13 @@ Hello, TensorFlow!
     <entry>
       <title><![CDATA[自製 Kubernetes Ansible 快速部署實體機 HA 叢集]]></title>
       <url>https://kairen.github.io/2017/02/19/kubernetes/deploy/kube-ansible-metal/</url>
-      <content type="html"><![CDATA[<p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">KaiRen Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+      <content type="html"><![CDATA[<p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
-<li>Kubernetes v1.6.2</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.04.0-ce</li>
+<li>Kubernetes v1.7.0+</li>
+<li>Etcd v3.2.8</li>
+<li>Flannel v0.9.0</li>
+<li>Docker v1.13.0+(latest on v17.10.0-ce)</li>
 </ul>
 <a id="more"></a>
 <p>而在 OS 部分以支援<code>Ubuntu 16.x</code>及<code>CentOS 7.x</code>的虛擬機與實體機部署。</p>
@@ -2984,7 +2984,7 @@ $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible
 $ sudo yum -y install ansible cowsay
 </code></pre>
 <h2 id="部署-Kubernetes-叢集"><a href="#部署-Kubernetes-叢集" class="headerlink" title="部署 Kubernetes 叢集"></a>部署 Kubernetes 叢集</h2><p>首先透過 Git 取得 HA Kubernetes Ansible 的專案：</p>
-<pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot; -b dev
+<pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
 $ cd kube-ansible
 </code></pre>
 <p>然後編輯<code>inventory</code>檔案，來加入要部署的節點角色：</p>
@@ -3004,25 +3004,23 @@ $ cd kube-ansible
 masters
 nodes
 </code></pre><p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
-<pre><code># Kubernetes component version
-kube_version: 1.6.2
+<pre><code class="yml"># Kubernetes component version
+kube_version: 1.7.8
 
-# Network plugin
-network: flannel
+# Network plugin implementation(&#39;flannel&#39;, &#39;calico&#39;, &#39;canal&#39;, &#39;weave&#39;, &#39;router&#39;)
+network: calico
 pod_network_cidr: &quot;10.244.0.0/16&quot;
 
-# Kubernetes service 內部網路 IP range(預設即可)
-cluster_subnet: 192.160.0
+# Kubernetes cluster network
+cluster_subnet: 10.96.0
 kubernetes_service_ip: &quot;{{ cluster_subnet }}.1&quot;
 service_ip_range: &quot;{{ cluster_subnet }}.0/12&quot;
 service_node_port_range: 30000-32767
 
 # apiserver lb 與 vip
 lb_vip_address: 172.20.3.90
-lb_api_url: &quot;https://{{ lb_vip_address }}&quot;
-api_secure_port: 5443
-
-sslcert_enable: true
+lb_secure_port: 6443
+lb_api_url: &quot;https://{{ lb_vip_address }}:{{ lb_secure_port }}&quot;
 
 # 額外認證方式
 extra_auth:
@@ -3034,17 +3032,24 @@ extra_auth:
 insecure_registrys:
 # - &quot;gcr.io&quot;
 
-# Kubernetes Addons 設定
-kube_dash: true  # Dashboard 服務
+# Core addons (Strongly recommend)
+kube_dns: true
+dns_name: cluster.local # cluster dns name
+dns_ip: &quot;{{ cluster_subnet }}.10&quot;
 
-kube_dns: true # DNS 服務
+kube_proxy: true
+kube_proxy_mode: iptables # &quot;ipvs(1.8+)&quot;, &quot;iptables&quot; or &quot;userspace&quot;.
 
-kube_proxy: true # Kubernetes proxy 元件
-kube_proxy_mode: iptables # 如果要部署 Ceph on Kubernetes 需要改成 &#39;userspace&#39;
+# Extra addons
+kube_dashboard: true # Kubenetes dasobhard console.
+kube_logging: false # EFK stack for Kubernetes
+kube_monitoring: true # Grafana + Infuxdb + Heapster monitoring
 
-kube_logging: true # EFK 服務
-kube_monitoring: true # Heapster + Influxdb + Grafana 服務
-</code></pre><p>確認<code>group_vars/all.yml</code>完成後，透過 ansible ping 來檢查叢集狀態：</p>
+# Ingress controller
+ingress: true
+ingress_type: nginx # &#39;nginx&#39;, &#39;haproxy&#39;, &#39;traefik&#39;
+</code></pre>
+<p>確認<code>group_vars/all.yml</code>完成後，透過 ansible ping 來檢查叢集狀態：</p>
 <pre><code class="sh">$ ansible all -m ping
 172.20.3.91 | SUCCESS =&gt; {
     &quot;changed&quot;: false,
@@ -3070,9 +3075,6 @@ node5     Ready             1m
 <p>接著就可以部署 Addons 了，透過以下方式進行：</p>
 <pre><code class="sh">$ ansible-playbook addons.yml
 </code></pre>
-<p>若想要更新特定元件可以使用以下方式：</p>
-<pre><code class="sh">$ ansible-playbook cluster.yml --tags etcd
-</code></pre>
 <h2 id="驗證叢集"><a href="#驗證叢集" class="headerlink" title="驗證叢集"></a>驗證叢集</h2><p>當完成上述步驟後，就可以在任一台<code>master</code>節點進行操作 Kubernetes：</p>
 <pre><code class="sh">$ kubectl get po -n kube-system
 NAME                                    READY     STATUS    RESTARTS   AGE
@@ -3089,7 +3091,7 @@ kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http://172.20.3.93:2379 isLeader=true
 </code></pre>
 <h2 id="重置叢集"><a href="#重置叢集" class="headerlink" title="重置叢集"></a>重置叢集</h2><p>若想要將整個叢集進行重置的話，可以使用以下方式：</p>
-<pre><code class="sh">$ ansible-playbook playbooks/reset.yml
+<pre><code class="sh">$ ansible-playbook reset.yml
 </code></pre>
 ]]></content>
       
@@ -3115,10 +3117,10 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
     <entry>
       <title><![CDATA[自製 Kubernetes Ansible 快速部署 HA 測試環境]]></title>
       <url>https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-test/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">KaiRen Kubernetes Ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">Kubernetes Ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
 <p>kube-ansible 提供了以下幾項功能：</p>
 <ul>
-<li>Kubernetes 1.4.0+.</li>
+<li>Kubernetes 1.7.0+.</li>
 <li>Ceph on Kubernetes cluster.</li>
 <li>Common addons.</li>
 </ul>
@@ -3135,20 +3137,23 @@ $ cd kube-ansible
 $ ./setup-vagrant -h
 Usage : setup-vagrant [options]
 
- -b|--boss        Set number of master.
- -n|--node        Set number of node.
- -c|--cpu         Set number of cores per vm.
- -m|--memory      Set memory size per vm.
- -p|--provider    Set virtual machine provider(virtualbox, libvirt).
- -o|--os-image    Set virtual machine operation system(ubuntu16, centos7).
- -i|--interface   Set the network bind interface.
+ -b|--boss        Number of master.
+ -w|--worker      Number of worker.
+ -c|--cpu         Number of cores per vm.
+ -m|--memory      Memory size per vm.
+ -p|--provider    Virtual machine provider(virtualbox, libvirt).
+ -o|--os-image    Virtual machine operation system(ubuntu16, centos7).
+ -i|--interface   Network bind interface.
+ -n|--network     Container Network plugin.
+ -f|--force       Force deployment.
 </code></pre>
 <p>這邊執行以下指令來建立三台 Master 與三台 Node 的環境：</p>
-<pre><code class="sh">$ ./setup-vagrant -b 3 -c 3
-Cluster Size: 3 master, 2 node.
-     VM Size: 3 vCPU, 1024 MB
+<pre><code class="sh">$ /setup-vagrant -b 3 -m 2048 -w 3 -n flannel
+Cluster Size: 3 master, 3 worker.
+     VM Size: 1 vCPU, 2048 MB
      VM Info: ubuntu16, virtualbox
-Start deploying?(y): y
+         CNI: flannel
+Start deploying?(y):
 </code></pre>
 <blockquote>
 <p>預設 CPU 為 1vCPU，而 Memory 為 1024MB。</p>
@@ -3285,15 +3290,15 @@ node3     Ready             1h
     </entry>
     
     <entry>
-      <title><![CDATA[Kubernetes 全手動苦工安裝教學]]></title>
+      <title><![CDATA[Kubernetes 全手動苦工安裝教學(TL;DR)]]></title>
       <url>https://kairen.github.io/2016/12/16/kubernetes/deploy/manual/</url>
       <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
-<li>Kubernetes v1.6.4</li>
-<li>Etcd v3.1.6</li>
-<li>Flannel v0.7.1</li>
-<li>Docker v17.05.0-ce</li>
+<li>Kubernetes v1.8.2</li>
+<li>Etcd v3.2.9</li>
+<li>Calico v2.6.2</li>
+<li>Docker v17.10.0-ce</li>
 </ul>
 <a id="more"></a>
 <h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
@@ -3309,7 +3314,7 @@ node3     Ready             1h
 <tbody>
 <tr>
 <td>172.16.35.12</td>
-<td>master</td>
+<td>master1</td>
 <td>1</td>
 <td>2G</td>
 </tr>
@@ -3328,18 +3333,31 @@ node3     Ready             1h
 </tbody>
 </table>
 <blockquote>
-<p>這邊 master 為主要控制節點，node 為應用程式工作節點。</p>
+<p>這邊 master 為主要控制節點也是<code>部署節點</code>，node 為應用程式工作節點。<br>另外所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。</p>
 </blockquote>
 <p>首先安裝前要確認以下幾項都已將準備完成：</p>
 <ul>
-<li>所有節點彼此網路互通，並且不需要 SSH 密碼即可登入。</li>
+<li>所有節點彼此網路互通，並且<code>master1</code> SSH 登入其他節點為 passwdless。</li>
 <li>所有防火牆與 SELinux 已關閉。如 CentOS：</li>
 </ul>
 <pre><code class="sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
 $ setenforce 0
+$ vim /etc/selinux/config
+SELINUX=disabled
 </code></pre>
 <ul>
 <li>所有節點需要設定<code>/etc/host</code>解析到所有主機。</li>
+</ul>
+<pre><code>...
+172.16.35.10 node1
+172.16.35.11 node2
+172.16.35.12 master1
+</code></pre><ul>
+<li>所有節點需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數，完成用<code>sysctl -p /etc/sysctl.d/k8s.conf</code>來生效。</li>
+</ul>
+<pre><code>net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+</code></pre><ul>
 <li>所有節點需要安裝<code>Docker</code>或<code>rtk</code>引擎。這邊採用<code>Docker</code>來當作容器引擎，安裝方式如下：</li>
 </ul>
 <pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
@@ -3349,11 +3367,20 @@ $ setenforce 0
 <pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
 </code></pre>
 </blockquote>
-<h2 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最為需要的一環，Kubernetes 會將部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集的狀態。</p>
-<p>首先在<code>master</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
+<ul>
+<li>所有節點需要安裝<code>CFSSL</code>工具，這將會用來建立 TLS certificates。</li>
+</ul>
+<pre><code class="sh">$ export CFSS_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
+$ wget &quot;${CFSS_URL}/cfssl_linux-amd64&quot; -O /usr/local/bin/cfssl
+$ wget &quot;${CFSS_URL}/cfssljson_linux-amd64&quot; -O /usr/local/bin/cfssljson
+$ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
+</code></pre>
+<h2 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最重要的一環，Kubernetes 會將大部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集運作與溝通正常。</p>
+<p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
 <pre><code class="sh">$ cd /opt
-$ wget -qO- &quot;https://github.com/coreos/etcd/releases/download/v3.1.6/etcd-v3.1.6-linux-amd64.tar.gz&quot; | tar -zx
-$ mv etcd-v3.1.6-linux-amd64 etcd
+$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
+$ wget -qO- &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
+$ mv etcd-v3.2.9-linux-amd64 etcd
 $ cd etcd/ &amp;&amp; ln etcd /usr/bin/ &amp;&amp; ln etcdctl /usr/bin/
 </code></pre>
 <p>完成後新建 Etcd Group 與 User，並建立 Etcd 設定檔目錄：</p>
@@ -3363,10 +3390,10 @@ $ mkdir /etc/etcd
 </code></pre>
 <p>新增<code>/etc/etcd/etcd.conf</code>檔案，加入以下內容：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/etcd/etcd.conf
-ETCD_NAME=master
+ETCD_NAME=master1
 ETCD_DATA_DIR=/var/lib/etcd
 ETCD_INITIAL_ADVERTISE_PEER_URLS=http://172.16.35.12:2380
-ETCD_INITIAL_CLUSTER=master=http://172.16.35.12:2380
+ETCD_INITIAL_CLUSTER=master1=http://172.16.35.12:2380
 ETCD_INITIAL_CLUSTER_STATE=new
 ETCD_INITIAL_CLUSTER_TOKEN=etcd-k8s-cluster
 ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
@@ -3391,7 +3418,7 @@ Type=notify
 User=etcd
 PermissionsStartOnly=true
 ExecStart=/usr/bin/etcd
-Restart=always
+Restart=on-failure
 RestartSec=10
 LimitNOFILE=65536
 
@@ -3408,174 +3435,178 @@ $ systemctl enable etcd.service &amp;&amp; systemctl start etcd.service
 member 95b428c288413b46 is healthy: got healthy result from http://172.16.35.12:2379
 cluster is healthy
 </code></pre>
-<p>接著回到<code>master</code>節點，新增一個<code>/tmp/flannel-config.json</code>檔，並加入以下內容：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /tmp/flannel-config.json
-{ &quot;Network&quot;: &quot;10.244.0.0/16&quot;, &quot;SubnetLen&quot;: 24, &quot;Backend&quot;: { &quot;Type&quot;: &quot;vxlan&quot; } }
-EOF
+<h2 id="Kubernetes-Master-安裝與設定"><a href="#Kubernetes-Master-安裝與設定" class="headerlink" title="Kubernetes Master 安裝與設定"></a>Kubernetes Master 安裝與設定</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。本步驟將下載 Kubernetes 並安裝至 <code>master1</code>上，然後產生相關 TLS Cert 與 CA 金鑰，提供給叢集元件認證使用。</p>
+<h3 id="下載-Kubernetes-元件"><a href="#下載-Kubernetes-元件" class="headerlink" title="下載 Kubernetes 元件"></a>下載 Kubernetes 元件</h3><p>首先透過網路取得所有需要的執行檔案：</p>
+<pre><code class="sh"># Download Kubernetes
+$ export KUBE_URL=&quot;https://storage.googleapis.com/kubernetes-release/release/v1.8.2/bin/linux/amd64&quot;
+$ wget &quot;${KUBE_URL}/kubelet&quot; -O /usr/bin/kubelet
+$ wget &quot;${KUBE_URL}/kubectl&quot; -O /usr/bin/kubectl
+$ chmod +x /usr/bin/kubelet /usr/bin/kubectl
+
+# Download CNI
+$ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
+$ export CNI_URL=&quot;https://github.com/containernetworking/plugins/releases/download&quot;
+$ wget -qO- &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
 </code></pre>
-<p>然後將 Flannel 網路設定儲存到 etcd 中：</p>
-<pre><code class="sh">$ etcdctl --no-sync set /atomic.io/network/config &lt; /tmp/flannel-config.json
-$ etcdctl ls /atomic.io/network/
-/atomic.io/network/config
+<h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 Client 與 Server 的各元件 Cert，並且替 Kubernetes admin user 產生 Client 簽證。</p>
+<p>建立<code>pki</code>資料夾，然後進入目錄完成以下操作。</p>
+<pre><code class="sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
+$ export CA_URL=&quot;https://kairen.github.io/files/manual/master/pki&quot;
 </code></pre>
-<h2 id="Flannel-安裝與設定"><a href="#Flannel-安裝與設定" class="headerlink" title="Flannel 安裝與設定"></a>Flannel 安裝與設定</h2><p>Flannel 是 CoreOS 團隊針對 Kubernetes 設計的一個<code>覆蓋網絡(Overlay Network)</code>工具，其目的在於幫助每一個使用 Kuberentes 的主機擁有一個完整的子網路。</p>
-<p>首先在<code>所有</code>節點下載 Flannel，並執行以下步驟。首先解壓縮放到 /opt 底下與安裝：</p>
-<pre><code class="sh">$ cd /opt &amp;&amp; mkdir flannel
-$ wget -qO- &quot;https://github.com/coreos/flannel/releases/download/v0.7.1/flannel-v0.7.1-linux-amd64.tar.gz&quot; | tar -zxC flannel/
-$ cd flannel/ &amp;&amp; ln flanneld /usr/bin/ &amp;&amp; ln mk-docker-opts.sh /usr/bin/
+<p>下載<code>ca-config.json</code>與<code>ca-csr.json</code>檔案，並產生 CA 金鑰：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/ca-config.json&quot;
+$ wget &quot;${CA_URL}/ca-csr.json&quot;
+$ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+$ ls ca*.pem
+ca-key.pem  ca.pem
 </code></pre>
-<p>建立 Docker Drop-in 目錄，並新增<code>flannel.conf</code>檔案：</p>
-<pre><code class="sh">$ mkdir -p /etc/systemd/system/docker.service.d
-$ cat &lt;&lt;EOF &gt; /etc/systemd/system/docker.service.d/flannel.conf
-[Service]
-EnvironmentFile=-/run/flannel/docker
-EOF
+<h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 kubernetes-admin certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/admin-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  admin-csr.json | cfssljson -bare admin
+
+$ ls admin*.pem
+admin-key.pem  admin.pem
 </code></pre>
-<p>新增<code>/etc/default/flanneld</code>檔案，加入以下內容：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/default/flanneld
-FLANNEL_ETCD_ENDPOINTS=&quot;http://172.16.35.12:2379&quot;
-FLANNEL_ETCD_PREFIX=&quot;/atomic.io/network&quot;
-FLANNEL_OPTIONS=&quot;--iface=enp0s8&quot;
-EOF
+<p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># admin set-cluster
+$ kubectl config set-cluster kubernetes-manual \
+    --certificate-authority=/etc/kubernetes/pki/ca.pem \
+    --embed-certs=true \
+    --server=&quot;https://172.16.35.12:6443&quot; \
+    --kubeconfig=../admin.conf
+
+# admin set-credentials
+$ kubectl config set-credentials kubernetes-admin \
+    --client-certificate=/etc/kubernetes/pki/admin.pem \
+    --embed-certs=true \
+    --client-key=/etc/kubernetes/pki/admin-key.pem \
+    --kubeconfig=../admin.conf
+
+# admin set-context
+$ kubectl config set-context kubernetes-admin@kubernetes \
+    --cluster=kubernetes-manual \
+    --user=kubernetes-admin \
+    --kubeconfig=../admin.conf
+
+# admin set default context
+$ kubectl config use-context kubernetes-admin@kubernetes --kubeconfig=../admin.conf
+</code></pre>
+<h4 id="API-server-certificate"><a href="#API-server-certificate" class="headerlink" title="API server certificate"></a>API server certificate</h4><p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/apiserver-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  apiserver-csr.json | cfssljson -bare apiserver
+
+$ ls apiserver*.pem
+apiserver-key.pem  apiserver.pem
+</code></pre>
+<h4 id="Controller-manager-certificate"><a href="#Controller-manager-certificate" class="headerlink" title="Controller manager certificate"></a>Controller manager certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/manager-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  manager-csr.json | cfssljson -bare controller-manager
+
+$ ls controller-manager*.pem
+</code></pre>
+<h4 id="Scheduler-certificate"><a href="#Scheduler-certificate" class="headerlink" title="Scheduler certificate"></a>Scheduler certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/scheduler-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  scheduler-csr.json | cfssljson -bare scheduler
+
+$ ls scheduler*.pem
+</code></pre>
+<p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/kubelet-csr.json&quot;
+$ sed -i &#39;s/$NODE/master1/g&#39; kubelet-csr.json
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kubelet-csr.json | cfssljson -bare kubelet
+
+$ ls kubelet*.pem
+</code></pre>
+<h4 id="Kubelet-certificate"><a href="#Kubelet-certificate" class="headerlink" title="Kubelet certificate"></a>Kubelet certificate</h4><p>接著透過以下指令產生名稱為 <code>kubelet.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># set-cluster
+$ kubectl config set-cluster kubernetes-manual \
+    --certificate-authority=/etc/kubernetes/pki/ca.pem \
+    --embed-certs=true \
+    --server=&quot;https://172.16.35.12:6443&quot; \
+    --kubeconfig=../kubelet.conf
+
+# set-credentials
+$ kubectl config set-credentials system:node:master1 \
+    --client-certificate=/etc/kubernetes/pki/kubelet.pem \
+    --embed-certs=true \
+    --client-key=/etc/kubernetes/pki/kubelet-key.pem \
+    --kubeconfig=../kubelet.conf
+
+# set-context
+$ kubectl config set-context system:node:master1@kubernetes \
+    --cluster=kubernetes-manual \
+    --user=system:node:master1 \
+    --kubeconfig=../kubelet.conf
+
+# set default context
+$ kubectl config use-context default --kubeconfig=../kubelet.conf
+</code></pre>
+<p>完成後刪除不必要檔案：</p>
+<pre><code class="sh">$ rm -rf *.json
+</code></pre>
+<h3 id="安裝-Kubernetes-核心元件"><a href="#安裝-Kubernetes-核心元件" class="headerlink" title="安裝 Kubernetes 核心元件"></a>安裝 Kubernetes 核心元件</h3><p>首先下載 Kubernetes 核心元件 YAML 檔案，這邊我們不透過 Binary 方案來建立 Mater 核心元件，而是採用 Self-hosted 方式來達成，因此需要下載所有核心元件的<code>Static Pod</code>檔案到<code>/etc/kubernetes/manifests</code>目錄：</p>
+<pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual/master/core&quot;
+$ cd /etc/kubernetes/manifests
+$ for FILE in apiserver manager scheduler; do
+    wget &quot;${CORE_URL}/${FILE}.conf&quot; -O ${FILE}.yml
+  done
 </code></pre>
 <blockquote>
-<p><code>FLANNEL_ETCD_ENDPOINTS</code> 請修改成自己的 <code>master</code> IP。<br><code>FLANNEL_OPTIONS</code>可以依據需求加入，這邊主要指定 flannel 使用的網卡。</p>
+<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>apiserver.yml</code>、<code>manager.yml</code>、<code>scheduler.yml</code></p>
 </blockquote>
-<p>新增<code>/lib/systemd/system/flanneld.service</code>來管理 Flannel：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/flanneld.service
-[Unit]
-Description=Flanneld Service
-After=network-online.target
-Wants=network-online.target
-After=etcd.service
-Before=docker.service
-
-[Service]
-Type=notify
-EnvironmentFile=/etc/default/flanneld
-ExecStart=/usr/bin/flanneld -etcd-endpoints=\${FLANNEL_ETCD_ENDPOINTS} -etcd-prefix=\${FLANNEL_ETCD_PREFIX} \${FLANNEL_OPTIONS}
-ExecStartPost=/usr/bin/mk-docker-opts.sh -d /run/flannel/docker
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-RequiredBy=docker.service
-EOF
+<p>產生一個用來加密 Etcd 的 Key：</p>
+<pre><code class="sh">$ head -c 32 /dev/urandom | base64
+SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
 </code></pre>
-<p>之後到<code>每台</code>節點啟動 Flannel:</p>
-<pre><code class="sh">$ systemctl enable flanneld.service &amp;&amp; systemctl start flanneld.service
+<p>在<code>/etc/kubernetes/</code>目錄下，建立<code>encryption-config.yml</code>的加密檔案：</p>
+<pre><code class="yml">kind: EncryptionConfig
+apiVersion: v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
+      - identity: {}
 </code></pre>
-<p>完成後透過以下指令簡單驗證：</p>
-<pre><code class="sh">$ ip -4 addr show flannel.1
-
-5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
-    inet 10.244.11.0/32 scope global flannel.1
-       valid_lft forever preferred_lft forever
-</code></pre>
-<p>確認有網路後，修改<code>/lib/systemd/system/docker.service</code>檔案以下內容：</p>
-<pre><code>ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
-ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
-</code></pre><blockquote>
-<p>若是 CentOS 7 則不需要加入 <code>-H fd://</code>。</p>
-</blockquote>
-<p>重新啟動 Docker 來使用 Flannel：</p>
-<pre><code class="sh">$ systemctl daemon-reload &amp;&amp; systemctl restart docker
-$ ip -4 a show docker0
-
-4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default
-    inet 10.244.11.1/24 scope global docker0
-       valid_lft forever preferred_lft forever
-</code></pre>
-<p>最後在任一台節點去 Ping 其他節點的 docker0 網路，若 Ping 的到表示部署沒問題。</p>
-<h2 id="Kubernetes-Master-安裝與設定"><a href="#Kubernetes-Master-安裝與設定" class="headerlink" title="Kubernetes Master 安裝與設定"></a>Kubernetes Master 安裝與設定</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。首先加入取得 Packages 來源並安裝：</p>
-<pre><code class="sh">$ curl -s &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | apt-key add -
-$ echo &quot;deb http://apt.kubernetes.io/ kubernetes-xenial main&quot; &gt; /etc/apt/sources.list.d/kubernetes.list
-$ apt-get update &amp;&amp; apt-get install -y kubectl kubelet kubernetes-cni
-</code></pre>
-<blockquote>
-<p>CentOS 7 則使用以下指令安裝：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-$ yum install -y kubelet kubectl kubernetes-cni
-</code></pre>
-</blockquote>
-<p>然後準備 OpenSSL 的設定檔資訊：</p>
-<pre><code class="sh">$ mkdir -p /etc/kubernetes/pki
-$ DIR=/etc/kubernetes/pki
-$ cat &lt;&lt;EOF &gt; ${DIR}/openssl.conf
-[req]
-req_extensions = v3_req
-distinguished_name = req_distinguished_name
-[req_distinguished_name]
-[ v3_req ]
-basicConstraints = CA:FALSE
-keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = kubernetes
-DNS.2 = kubernetes.default
-DNS.3 = kubernetes.default.svc
-DNS.4 = kubernetes.default.svc.cluster.local
-IP.1 = 192.160.0.1
-IP.2 = 172.16.35.12
-EOF
-</code></pre>
-<blockquote>
-<p><code>IP.2</code> 請修改成自己的<code>master</code> IP。<br>細節請參考<a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
-</blockquote>
-<p>建立 OpenSSL Keypairs 與 Certificate：</p>
-<pre><code class="sh">DIR=/etc/kubernetes/pki
-
-openssl genrsa -out ${DIR}/ca-key.pem 2048
-openssl req -x509 -new -nodes -key ${DIR}/ca-key.pem -days 1000 -out ${DIR}/ca.pem -subj &#39;/CN=kube-ca&#39;
-openssl genrsa -out ${DIR}/admin-key.pem 2048
-openssl req -new -key ${DIR}/admin-key.pem -out ${DIR}/admin.csr -subj &#39;/CN=kube-admin&#39;
-openssl x509 -req -in ${DIR}/admin.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/admin.pem -days 1000
-openssl genrsa -out ${DIR}/apiserver-key.pem 2048
-openssl req -new -key ${DIR}/apiserver-key.pem -out ${DIR}/apiserver.csr -subj &#39;/CN=kube-apiserver&#39; -config ${DIR}/openssl.conf
-openssl x509 -req -in ${DIR}/apiserver.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/apiserver.pem -days 1000 -extensions v3_req -extfile ${DIR}/openssl.conf
-</code></pre>
-<blockquote>
-<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
-</blockquote>
-<p>接著下載 Kubernetes 相關檔案至<code>/etc/kubernetes</code>：</p>
-<pre><code class="sh">cd /etc/kubernetes/
-URL=&quot;https://kairen.github.io/files/manual/master&quot;
-wget ${URL}/kube-apiserver.conf -O manifests/kube-apiserver.yml
-wget ${URL}/kube-controller-manager.conf -O manifests/kube-controller-manager.yml
-wget ${URL}/kube-scheduler.conf -O manifests/kube-scheduler.yml
-wget ${URL}/admin.conf -O admin.conf
-wget ${URL}/kubelet.conf -O kubelet
-cat &lt;&lt;EOF &gt; /etc/kubernetes/user.csv
-p@ssw0rd,admin,admin
-EOF
-</code></pre>
-<blockquote>
-<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>kube-apiserver.yml</code>、<code>kube-controller-manager.yml</code>、<code>kube-scheduler.yml</code>與<code>admin.yml</code>。</p>
-</blockquote>
 <p>新增<code>/lib/systemd/system/kubelet.service</code>來管理 kubelet：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/kubelet.service
 [Unit]
-Description=Kubernetes Kubelet Server
+Description=Kubernetes kubelet service
 After=docker.service
 Requires=docker.service
 
 [Service]
 WorkingDirectory=/var/lib/kubelet
-EnvironmentFile=-/etc/kubernetes/kubelet
-ExecStart=/usr/bin/kubelet \$KUBELET_ADDRESS \$KUBELET_POD_INFRA_CONTAINER \
-\$KUBELET_ARGS \$KUBE_NODE_LABEL \$KUBE_LOGTOSTDERR \
-\$KUBE_ALLOW_PRIV \$KUBELET_NETWORK_ARGS \
-\$KUBELET_DNS_ARGS
-Restart=always
+ExecStart=/usr/bin/kubelet \$KUBELET_ADDRESS \$KUBELET_POD_INFRA_CONTAINER \$KUBELET_ARGS \$KUBE_NODE_LABEL \$KUBE_LOGTOSTDERR \$KUBE_ALLOW_PRIV \$KUBELET_NETWORK_ARGS \$KUBELET_DNS_ARGS
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
@@ -3585,8 +3616,9 @@ EOF
 <p><code>/etc/systemd/system/kubelet.service</code>為<code>CentOS 7</code>使用的路徑。</p>
 </blockquote>
 <p>最後建立 var 存放資訊，然後啟動 kubelet 服務:</p>
-<pre><code class="sh">$ mkdir -p /var/lib/kubelet
-$ systemctl daemon-reload &amp;&amp; systemctl restart kubelet.service
+<pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes
+$ systemctl daemon-reload
+$ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 </code></pre>
 <p>完成後會需要一段時間來下載與啟動元件，可以利用該指令來監看：</p>
 <pre><code class="sh">$ watch -n 1 netstat -ntlp
@@ -3629,6 +3661,7 @@ EOF
 $ yum install -y kubelet kubernetes-cni
 </code></pre>
 </blockquote>
+<p>Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。因此，我們為了取得<code>Node Authorizer</code>的授權，需要建立</p>
 <p>然後準備 OpenSSL 的設定檔資訊：</p>
 <pre><code class="sh">$ mkdir -p /etc/kubernetes/pki
 $ DIR=/etc/kubernetes/pki
@@ -3711,7 +3744,87 @@ master1   Ready,master   17m       v1.6.4
 node1     Ready          20s       v1.6.4
 node2     Ready          18s       v1.6.4
 </code></pre>
-<h2 id="Kubernetes-Addons-部署"><a href="#Kubernetes-Addons-部署" class="headerlink" title="Kubernetes Addons 部署"></a>Kubernetes Addons 部署</h2><p>當環境都建置完成後，就可以進行部署附加元件，首先到<code>master1</code>，並進入<code>/etc/kubernetes/</code>目錄下載 Addon 檔案：</p>
+<h2 id="Calico-Network-安裝與設定"><a href="#Calico-Network-安裝與設定" class="headerlink" title="Calico Network 安裝與設定"></a>Calico Network 安裝與設定</h2><p>Flannel 是 CoreOS 團隊針對 Kubernetes 設計的一個<code>覆蓋網絡(Overlay Network)</code>工具，其目的在於幫助每一個使用 Kuberentes 的主機擁有一個完整的子網路。</p>
+<p>首先在<code>所有</code>節點下載 Flannel，並執行以下步驟。首先解壓縮放到 /opt 底下與安裝：</p>
+<pre><code class="sh">$ cd /opt &amp;&amp; mkdir flannel
+$ wget -qO- &quot;https://github.com/coreos/flannel/releases/download/v0.7.1/flannel-v0.7.1-linux-amd64.tar.gz&quot; | tar -zxC flannel/
+$ cd flannel/ &amp;&amp; ln flanneld /usr/bin/ &amp;&amp; ln mk-docker-opts.sh /usr/bin/
+</code></pre>
+<p>建立 Docker Drop-in 目錄，並新增<code>flannel.conf</code>檔案：</p>
+<pre><code class="sh">$ mkdir -p /etc/systemd/system/docker.service.d
+$ cat &lt;&lt;EOF &gt; /etc/systemd/system/docker.service.d/flannel.conf
+[Service]
+EnvironmentFile=-/run/flannel/docker
+EOF
+</code></pre>
+<p>新增<code>/etc/default/flanneld</code>檔案，加入以下內容：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/default/flanneld
+FLANNEL_ETCD_ENDPOINTS=&quot;http://172.16.35.12:2379&quot;
+FLANNEL_ETCD_PREFIX=&quot;/atomic.io/network&quot;
+FLANNEL_OPTIONS=&quot;--iface=enp0s8&quot;
+EOF
+</code></pre>
+<blockquote>
+<p><code>FLANNEL_ETCD_ENDPOINTS</code> 請修改成自己的 <code>master</code> IP。<br><code>FLANNEL_OPTIONS</code>可以依據需求加入，這邊主要指定 flannel 使用的網卡。</p>
+</blockquote>
+<p>新增<code>/lib/systemd/system/flanneld.service</code>來管理 Flannel：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/flanneld.service
+[Unit]
+Description=Flanneld Service
+After=network-online.target
+Wants=network-online.target
+After=etcd.service
+Before=docker.service
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/default/flanneld
+ExecStart=/usr/bin/flanneld -etcd-endpoints=\${FLANNEL_ETCD_ENDPOINTS} -etcd-prefix=\${FLANNEL_ETCD_PREFIX} \${FLANNEL_OPTIONS}
+ExecStartPost=/usr/bin/mk-docker-opts.sh -d /run/flannel/docker
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=docker.service
+EOF
+</code></pre>
+<p>之後到<code>每台</code>節點啟動 Flannel:</p>
+<pre><code class="sh">$ systemctl enable flanneld.service &amp;&amp; systemctl start flanneld.service
+</code></pre>
+<p>完成後透過以下指令簡單驗證：</p>
+<pre><code class="sh">$ ip -4 addr show flannel.1
+
+5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
+    inet 10.244.11.0/32 scope global flannel.1
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>確認有網路後，修改<code>/lib/systemd/system/docker.service</code>檔案以下內容：</p>
+<pre><code>ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
+</code></pre><blockquote>
+<p>若是 CentOS 7 則不需要加入 <code>-H fd://</code>。</p>
+</blockquote>
+<p>重新啟動 Docker 來使用 Flannel：</p>
+<pre><code class="sh">$ systemctl daemon-reload &amp;&amp; systemctl restart docker
+$ ip -4 a show docker0
+
+4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN group default
+    inet 10.244.11.1/24 scope global docker0
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>最後在任一台節點去 Ping 其他節點的 docker0 網路，若 Ping 的到表示部署沒問題。</p>
+<h2 id="Kubernetes-Addons-部署"><a href="#Kubernetes-Addons-部署" class="headerlink" title="Kubernetes Addons 部署"></a>Kubernetes Addons 部署</h2><h4 id="kube-proxy-Cert"><a href="#kube-proxy-Cert" class="headerlink" title="kube-proxy Cert"></a>kube-proxy Cert</h4><p>下載<code>kube-proxy-csr.json</code>檔案，並產生 Cert 簽證：</p>
+<pre><code class="sh">$ wget &quot;${CA_URL}/kube-proxy-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  kube-proxy-csr.json | cfssljson -bare kube-proxy
+
+$ ls kube-proxy*.pem
+</code></pre>
+<p>當環境都建置完成後，就可以進行部署附加元件，首先到<code>master1</code>，並進入<code>/etc/kubernetes/</code>目錄下載 Addon 檔案：</p>
 <pre><code class="sh">cd /etc/kubernetes/ &amp;&amp; mkdir addon
 URL=&quot;https://kairen.github.io/files/manual/addon&quot;
 wget ${URL}/kube-proxy.conf -O addon/kube-proxy.yml
@@ -4318,8 +4431,8 @@ networks:
       <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/minikube" target="_blank" rel="external">Minikube</a> 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。</p>
 <p>本環境安裝資訊：</p>
 <ul>
-<li>Minikube v0.19.0</li>
-<li>Kubernetes v1.6.0</li>
+<li>Minikube v0.22.3</li>
+<li>Kubernetes v1.7.5</li>
 </ul>
 <a id="more"></a>
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
@@ -4327,75 +4440,89 @@ networks:
 <li>安裝 <code>xhyve driver</code>, <code>VirtualBox</code> 或 <code>VMware Fusion</code>。</li>
 <li>安裝 kubectl 工具。</li>
 </ul>
-<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.6.0/bin/darwin/amd64/kubectl&quot;
+<p>以下為<code>Mac OS X</code>下載方式：</p>
+<pre><code class="sh">$ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.5/bin/darwin/amd64/kubectl
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
-<blockquote>
-<p>如果是 Linux 使用者則使用下面 URL 取得：</p>
-<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.6.0/bin/linux/amd64/kubectl&quot;
-$ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/bin/
+<p>如果是<code>Linux</code>則使用以下方式：</p>
+<pre><code class="sh">$ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.5/bin/linux/amd64/kubectl
+$ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
-</blockquote>
-<h2 id="快速開始"><a href="#快速開始" class="headerlink" title="快速開始"></a>快速開始</h2><p>Minikube 支援了許多作業系統，若是 OS X 的開發者，可以透過該指令安裝：</p>
-<pre><code class="sh">$ curl -Lo minikube https://storage.googl
-eapis.com/minikube/releases/v0.19.0/minikube-darwin-amd64 &amp;&amp; chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
+<h2 id="快速開始"><a href="#快速開始" class="headerlink" title="快速開始"></a>快速開始</h2><p>Minikube 支援了許多作業系統，若是 <code>OS X</code> 的開發者，可以透過該指令安裝：</p>
+<pre><code class="sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.22.3/minikube-darwin-amd64
+$ chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
 </code></pre>
-<blockquote>
-<p>Linux 開發者則利用以下指令安裝：</p>
-<pre><code class="sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.19.0/minikube-linux-amd64 &amp;&amp; chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
+<p>若是 <code>Linux</code> 開發者則利用以下指令安裝：</p>
+<pre><code class="sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.22.3/minikube-linux-amd64
+$ chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
 </code></pre>
-</blockquote>
 <p>下載完成後，就可以透過以下指令建立環境：</p>
 <pre><code class="sh">$ minikube get-k8s-versions
+The following Kubernetes versions are available:
+    - v1.8.0
+    - v1.7.5
+...
+
 $ minikube start
-Starting local Kubernetes v1.6.0 cluster...
+Starting local Kubernetes v1.7.5 cluster...
 Starting VM...
-SSH-ing files into VM...
+Getting VM IP address...
+Moving files into cluster...
 Setting up certs...
-Starting cluster components...
 Connecting to cluster...
 Setting up kubeconfig...
+Starting cluster components...
 Kubectl is now configured to use the cluster.
 </code></pre>
 <p>看到上述資訊表示已完成啟動 Kubernetes 虛擬機，這時候可以透過 kubectl 來查看資訊：</p>
 <pre><code class="sh">$ kubectl get node
 NAME       STATUS    AGE       VERSION
-minikube   Ready     10m       v1.6.0
+minikube   Ready     2m        v1.7.5
 
-$ kubectl get po -n kube-system
-NAME                             READY     STATUS    RESTARTS   AGE
-po/kube-addon-manager-minikube   1/1       Running   2          12m
-po/kube-dns-268032401-wzgjx      3/3       Running   3          11m
-po/kubernetes-dashboard-hdcp1    1/1       Running   1          11m
+$ kubectl get po,svc -n kube-system
+NAME                                READY     STATUS    RESTARTS   AGE
+po/default-http-backend-2jk83       1/1       Running   0          2m
+po/kube-addon-manager-minikube      1/1       Running   0          2m
+po/kube-dns-1326421443-8br9x        3/3       Running   0          2m
+po/kubernetes-dashboard-mdc9f       1/1       Running   0          2m
+po/nginx-ingress-controller-dspc0   1/1       Running   0          2m
 
 NAME                       CLUSTER-IP   EXTERNAL-IP   PORT(S)         AGE
-svc/kube-dns               10.0.0.10    &lt;none&gt;        53/UDP,53/TCP   11m
-svc/kubernetes-dashboard   10.0.0.198   &lt;nodes&gt;       80:30000/TCP    11m
+svc/default-http-backend   10.0.0.237   &lt;nodes&gt;       80:30001/TCP    2m
+svc/kube-dns               10.0.0.10    &lt;none&gt;        53/UDP,53/TCP   2m
+svc/kubernetes-dashboard   10.0.0.222   &lt;nodes&gt;       80:30000/TCP    2m
 </code></pre>
 <blockquote>
 <p>新版本 Minikube 預設會自動啟動上述 Addons。這時可以透過瀏覽器進入 <a href="http://192.168.99.100:30000/" target="_blank" rel="external">Dashboard</a>。</p>
+</blockquote>
+<p>想啟動 Extra addons 的話，可以透過以下指令來達成：</p>
+<pre><code class="sh">$ minikube addons list
+$ minikube addons enable heapster
+</code></pre>
+<blockquote>
+<p>若要移除則使用<code>minikube addons disable heapster</code>指令。</p>
 </blockquote>
 <p>取得虛擬機裡面的 Docker env：</p>
 <pre><code class="sh">$ eval $(minikube docker-env)
 $ docker version
 Client:
- Version:      1.13.1
+ Version:      17.10.0-ce
  API version:  1.23
- Go version:   go1.7.5
- Git commit:   092cba3
- Built:        Wed Feb  8 08:47:51 2017
+ Go version:   go1.8.3
+ Git commit:   f4ffd25
+ Built:        Tue Oct 17 19:00:43 2017
  OS/Arch:      darwin/amd64
 
 Server:
- Version:      1.11.1
- API version:  1.23 (minimum version )
- Go version:   go1.5.4
- Git commit:   5604cbe
- Built:        Wed Apr 27 00:34:20 2016
+ Version:      1.12.6
+ API version:  1.24 (minimum version )
+ Go version:   go1.6.4
+ Git commit:   78d1802
+ Built:        Wed Jan 11 00:23:16 2017
  OS/Arch:      linux/amd64
  Experimental: false
 </code></pre>
-<p>若想要移除與刪除虛擬機的話，可以透過以下指令進行：</p>
+<p>(option)若想要移除與刪除虛擬機的話，可以透過以下指令進行：</p>
 <pre><code class="sh">$ minikube stop
 $ minikube delete
 </code></pre>
@@ -4652,13 +4779,16 @@ outputs {
     <entry>
       <title><![CDATA[只要用 kubeadm 小朋友都能部署 Kubernetes]]></title>
       <url>https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/</url>
-      <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/getting-started-guides/kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm/milestone/1" target="_blank" rel="external">kubeadm Roadmap for v1.6</a> 來更進一步知道功能發展狀態。</p>
+      <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="external">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+<blockquote>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="external">kubeadm-ansible</a>。</p>
+</blockquote>
 <p>本環境安裝資訊：</p>
 <ul>
-<li>Kubernetes v1.6.1(2017/04/03 Update).</li>
+<li>Kubernetes v1.8.2</li>
 <li>Etcd v3</li>
-<li>Flannel v0.7.0</li>
-<li>Docker v17.04.0-ce</li>
+<li>Flannel v0.9.0</li>
+<li>Docker v17.10.0-ce</li>
 </ul>
 <a id="more"></a>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt：</p>
@@ -4733,41 +4863,52 @@ EOF
 </ul>
 <h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
 <pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-engine
-$ sudo iptables -P FORWARD ACCEPT &amp;&amp; sudo iptables-save
 </code></pre>
-<p>完成後就可以開始進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
+<p>接著修改<code>/etc/systemd/system/kubelet.service.d/10-kubeadm.conf</code>加入以下內容：</p>
+<pre><code>...
+Environment=&quot;KUBELET_EXTRA_ARGS=--fail-swap-on=false&quot;
+...
+</code></pre><p>完成後 Reload daemon：</p>
+<pre><code class="sh">$ systemctl daemon-reload
+</code></pre>
+<p>進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ sudo su -
 $ kubeadm token generate
 b0f7b8.8d1767876297d85c
 
 $ kubeadm init --service-cidr 10.96.0.0/12 \
---kubernetes-version v1.6.1 \
---pod-network-cidr 10.244.0.0/16 \
---apiserver-advertise-address 172.16.35.12 \
---token b0f7b8.8d1767876297d85c
-
+               --kubernetes-version v1.8.2 \
+               --pod-network-cidr 10.244.0.0/16 \
+               --apiserver-advertise-address 172.16.35.12 \
+               --token b0f7b8.8d1767876297d85c
+# Deploy output               
 ...
 kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
 </code></pre>
 <p>當出現如上面資訊後，表示 Master 初始化成功，不過這邊還是一樣透過 kubectl 測試一下：</p>
-<pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
+<pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get node
-NAME      STATUS    AGE       VERSION
-master1   Ready     19m       v1.6.1
+NAME      STATUS    ROLES     AGE       VERSION
+master1   Ready     master    10m       v1.8.2
 </code></pre>
 <p>當執行正確後要接著部署網路，但要注意<code>一個叢集只能用一種網路</code>，這邊採用 Flannel：</p>
-<pre><code class="sh">$ kubectl create -f &quot;https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml&quot;
-$ kubectl create -f &quot;https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml&quot;
-configmap &quot;kube-flannel-cfg&quot; created
-daemonset &quot;kube-flannel-ds&quot; created
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml
+clusterrole &quot;flannel&quot; created
+clusterrolebinding &quot;flannel&quot; created
+serviceaccount &quot;flannel&quot; configured
+configmap &quot;kube-flannel-cfg&quot; configured
+daemonset &quot;kube-flannel-ds&quot; configured
 </code></pre>
 <blockquote>
-<p>由於 1.6.1 版本預設使用了 RBAC，因此需要建立相關授權。其他可以參考 <a href="https://kubernetes.io/docs/admin/addons/" target="_blank" rel="external">Networking and Network Policy</a>。</p>
+<p>需要注意這邊若<code>--pod-network-cidr=10.244.0.0/16</code>改變時，在<code>kube-flannel.yml</code>也不需修改<code>net-conf.json</code>。</p>
 </blockquote>
 <p>確認 Flannel 部署正確：</p>
-<pre><code class="sh">$ kubectl get po
-NAME                    READY     STATUS    RESTARTS   AGE
-kube-flannel-ds-lx4ww   2/2       Running   0          2m
+<pre><code class="sh">$ kubectl get po -n kube-system
+NAME                                         READY     STATUS    RESTARTS   AGE
+kube-flannel-ds-3b66l                        1/1       Running   0          9s
+kube-flannel-ds-m6874                        1/1       Running   0          9s
+kube-flannel-ds-vmb38                        1/1       Running   0          9s
+...
 
 $ ip -4 a show flannel.1
 5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
@@ -4781,48 +4922,42 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 </code></pre>
 <h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
 <pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-engine
-$ sudo iptables -P FORWARD ACCEPT &amp;&amp; sudo iptables-save
+</code></pre>
+<p>接著需要修改<code>/etc/systemd/system/kubelet.service.d/10-kubeadm.conf</code>加入以下內容：</p>
+<pre><code>...
+Environment=&quot;KUBELET_EXTRA_ARGS=--fail-swap-on=false&quot;
+...
+</code></pre><p>完成後 Reload daemon：</p>
+<pre><code class="sh">$ systemctl daemon-reload
 </code></pre>
 <p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
+# Deploy output
 ...
 Run &#39;kubectl get nodes&#39; on the master to see this machine join.
 </code></pre>
 <p>回到<code>master1</code>查看節點狀態：</p>
-<pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
-$ kubectl  get node
-NAME      STATUS    AGE       VERSION
-master1   Ready     19m       v1.6.1
-node1     Ready     9m        v1.6.1
-node2     Ready     5m        v1.6.1
+<pre><code class="sh">$ kubectl get node
+NAME      STATUS    ROLES     AGE       VERSION
+master1   Ready     master    10m       v1.8.2
+node1     Ready     &lt;none&gt;    9m        v1.8.2
+node2     Ready     &lt;none&gt;    9m        v1.8.2
 </code></pre>
 <h2 id="Add-ons-建立"><a href="#Add-ons-建立" class="headerlink" title="Add-ons 建立"></a>Add-ons 建立</h2><p>當完成後就可以建立一些 Addons，如 Dashboard。這邊執行以下指令進行建立：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; kube-dashboard-rbac.yml
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: dashboard-admin
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: kube-system
-EOF
-
-$ kubectl create -f kube-dashboard-rbac.yml
-$ kubectl create -f &quot;https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml&quot;
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 </code></pre>
+<p>&gt;</p>
 <p>確認沒問題後，透過 kubectl 查看：</p>
 <pre><code class="sh">kubectl get svc --namespace=kube-system
 NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
 kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
 kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
 </code></pre>
-<p>最後就可以存取 <a href="http://172.16.35.12:32546" target="_blank" rel="external">Kube Dashboard</a></p>
-<h2 id="簡單部署一個微服務"><a href="#簡單部署一個微服務" class="headerlink" title="簡單部署一個微服務"></a>簡單部署一個微服務</h2><p>這邊利用 Weave 公司提供的微服務來驗證系統，透過以下方式建立：</p>
+<blockquote>
+<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="external">Installation</a>。</p>
+</blockquote>
+<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Kube Dashboard</a>。</p>
+<h2 id="簡單部署一個服務"><a href="#簡單部署一個服務" class="headerlink" title="簡單部署一個服務"></a>簡單部署一個服務</h2><p>這邊利用 Weave 公司提供的服務來驗證系統，透過以下方式建立：</p>
 <pre><code class="sh">$ kubectl create namespace sock-shop
 $ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true&quot;
 </code></pre>
@@ -5197,9 +5332,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> Mesos </tag>
-            
             <tag> DC/OS </tag>
+            
+            <tag> Mesos </tag>
             
         </tags>
         
@@ -6920,9 +7055,9 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
-            <tag> Spark </tag>
-            
             <tag> Logging </tag>
+            
+            <tag> Spark </tag>
             
         </tags>
         
@@ -7443,7 +7578,7 @@ listen haproxy_stats
     </entry>
     
     <entry>
-      <title><![CDATA[透過官方 Ansible 部署 Kubernetes]]></title>
+      <title><![CDATA[透過官方 Ansible 部署 Kubernetes(Unrecommended)]]></title>
       <url>https://kairen.github.io/2016/02/24/kubernetes/deploy/official-ansible/</url>
       <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Creating a Kubernetes Cluster</a>。</p>
 <center><img src="/images/kube/kube-ansible.png" alt=""></center>
@@ -7600,7 +7735,7 @@ kube-system   monitoring-influxdb     10.254.135.115   &lt;none&gt;        8083/
     </entry>
     
     <entry>
-      <title><![CDATA[Vagrant CoreOS 部署 Kubernetes 測試叢集]]></title>
+      <title><![CDATA[Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)]]></title>
       <url>https://kairen.github.io/2016/02/23/kubernetes/deploy/vagrant-multi-install/</url>
       <content type="html"><![CDATA[<p>本節將透過 Vagrant 與 CoreOS 來部署單機多節點的 Kubernetes 虛擬叢集，並使用 Kubernetest CLI 工具與 API 進行溝通。</p>
 <p>本次安裝版本為：</p>
@@ -7831,6 +7966,136 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
     </entry>
     
     <entry>
+      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
+      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
+      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
+<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="external">Module Index</a>。</p>
+<a id="more"></a>
+<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
+<pre><code class="sh">[cluster]
+ansible-slave-1 ansible_host=172.16.1.206
+ansible-slave-2 ansible_host=172.16.1.207
+ansible-slave-3 ansible_host=172.16.1.208
+</code></pre>
+<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
+<pre><code class="sh">$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+</code></pre>
+<blockquote>
+<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
+</blockquote>
+<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
+</code></pre>
+<blockquote>
+<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
+</code></pre>
+<p>會發現 bash 是平行執行的。</p>
+</blockquote>
+<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
+</code></pre>
+<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
+</code></pre>
+<blockquote>
+<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
+</blockquote>
+<p>也可以透過<code>--become-user</code>來切換使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
+</code></pre>
+<blockquote>
+<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
+</blockquote>
+<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
+<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
+</code></pre>
+<blockquote>
+<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
+</blockquote>
+<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
+<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
+</code></pre>
+<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
+$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
+</code></pre>
+<p><code>file</code>模組也能夠建立目錄：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
+</code></pre>
+<p>若要刪除可以使用以下方式：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
+</code></pre>
+<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
+</code></pre>
+<blockquote>
+<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
+</blockquote>
+<p>若要確認是否為最新版本，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
+</code></pre>
+<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
+</code></pre>
+<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="external">About Modules</a>。</p>
+<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
+</code></pre>
+<p>刪除則如以下：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
+</code></pre>
+<blockquote>
+<p><code>--become</code>與<code>-b</code>是等效的。</p>
+</blockquote>
+<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
+<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
+</code></pre>
+<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
+<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
+</code></pre>
+<blockquote>
+<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
+</blockquote>
+<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
+<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
+</code></pre>
+<p>獲取狀態指令如下：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<blockquote>
+<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
+</blockquote>
+<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster[0] -m setup
+</code></pre>
+<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="external">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="external">Variables</a> 進行研究。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Automation Engine </tag>
+            
+            <tag> Ansible </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Ansible Inventory]]></title>
       <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</url>
       <content type="html"><![CDATA[<p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
@@ -8012,136 +8277,6 @@ aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
 freebsd_host      ansible_python_interpreter=/usr/local/bin/python
 ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>]]></content>
-      
-        <categories>
-            
-            <category> DevOps </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> DevOps </tag>
-            
-            <tag> Automation Engine </tag>
-            
-            <tag> Ansible </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
-      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
-      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="external">Module Index</a>。</p>
-<a id="more"></a>
-<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
-<pre><code class="sh">[cluster]
-ansible-slave-1 ansible_host=172.16.1.206
-ansible-slave-2 ansible_host=172.16.1.207
-ansible-slave-3 ansible_host=172.16.1.208
-</code></pre>
-<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
-<pre><code class="sh">$ ssh-agent bash
-$ ssh-add ~/.ssh/id_rsa
-</code></pre>
-<blockquote>
-<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
-</blockquote>
-<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
-</code></pre>
-<blockquote>
-<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
-</code></pre>
-<p>會發現 bash 是平行執行的。</p>
-</blockquote>
-<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
-</code></pre>
-<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
-</code></pre>
-<blockquote>
-<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
-</blockquote>
-<p>也可以透過<code>--become-user</code>來切換使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
-</code></pre>
-<blockquote>
-<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
-</blockquote>
-<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
-<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
-</code></pre>
-<blockquote>
-<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
-</blockquote>
-<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
-<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
-</code></pre>
-<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
-$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
-</code></pre>
-<p><code>file</code>模組也能夠建立目錄：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
-</code></pre>
-<p>若要刪除可以使用以下方式：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
-</code></pre>
-<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
-</code></pre>
-<blockquote>
-<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
-</blockquote>
-<p>若要確認是否為最新版本，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
-</code></pre>
-<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
-</code></pre>
-<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="external">About Modules</a>。</p>
-<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
-</code></pre>
-<p>刪除則如以下：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
-</code></pre>
-<blockquote>
-<p><code>--become</code>與<code>-b</code>是等效的。</p>
-</blockquote>
-<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
-<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
-</code></pre>
-<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
-<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
-</code></pre>
-<blockquote>
-<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
-</blockquote>
-<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
-<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
-</code></pre>
-<p>獲取狀態指令如下：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<blockquote>
-<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
-</blockquote>
-<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster[0] -m setup
-</code></pre>
-<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="external">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="external">Variables</a> 進行研究。</p>
-]]></content>
       
         <categories>
             
@@ -9493,7 +9628,7 @@ $ kubectl delete -f nginx-svc.yaml
     </entry>
     
     <entry>
-      <title><![CDATA[Docker 建立多節點 Kubernetes]]></title>
+      <title><![CDATA[hyperkube 建立多節點 Kubernetes(Unrecommended)]]></title>
       <url>https://kairen.github.io/2016/01/14/kubernetes/deploy/docker-multi/</url>
       <content type="html"><![CDATA[<p>本篇將說明如何透過 Docker 來部署一個多節點的 kubernetes 叢集。其架構圖如下所示：</p>
 <p><img src="/images/kube/multinode-docker.png" alt=""></p>
@@ -9639,7 +9774,7 @@ $ curl ${IP}
     </entry>
     
     <entry>
-      <title><![CDATA[Docker 建立單機 Kubernetes]]></title>
+      <title><![CDATA[hyperkube 建立單機 Kubernetes(Unrecommended)]]></title>
       <url>https://kairen.github.io/2016/01/13/kubernetes/deploy/docker-singal/</url>
       <content type="html"><![CDATA[<p>本篇將說明如何透過 Docker 來部署一個單機的 kubernetes。其架構圖如下所示：</p>
 <p><img src="/images/kube/singlenode-docker.png" alt=""></p>
@@ -9958,13 +10093,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
-            <tag> Logging </tag>
-            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
+            
+            <tag> Logging </tag>
             
         </tags>
         
@@ -12255,6 +12390,54 @@ $ openstack security group rule create \
       <title><![CDATA[tags]]></title>
       <url>https://kairen.github.io/tags/index.html</url>
       <content type="html"></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes-apiserver","hosts":["127.0.0.1","172.16.35.10","172.16.35.11","172.16.35.12","10.96.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes-admin","hosts":["172.16.35.10","172.16.35.11","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:masters","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"8760h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"8760h"}}}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"Kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"CA"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:nodes","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","hosts":["172.16.35.10","172.16.35.11","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","hosts":["172.16.35.10","172.16.35.11","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
   

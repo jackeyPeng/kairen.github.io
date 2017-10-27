@@ -179,6 +179,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -189,14 +197,6 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -306,18 +306,21 @@
 
 
             <div class="toc green-link-context hide-on-med-and-down">
-    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點資訊"><span class="section table-of-contents-text">節點資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Master-建立"><span class="section table-of-contents-text">Kubernetes Master 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Node-建立"><span class="section table-of-contents-text">Kubernetes Node 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Add-ons-建立"><span class="section table-of-contents-text">Add-ons 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#簡單部署一個微服務"><span class="section table-of-contents-text">簡單部署一個微服務</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#移除節點"><span class="section table-of-contents-text">移除節點</span></a></li></ol>
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點資訊"><span class="section table-of-contents-text">節點資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Master-建立"><span class="section table-of-contents-text">Kubernetes Master 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Node-建立"><span class="section table-of-contents-text">Kubernetes Node 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Add-ons-建立"><span class="section table-of-contents-text">Add-ons 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#簡單部署一個服務"><span class="section table-of-contents-text">簡單部署一個服務</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#移除節點"><span class="section table-of-contents-text">移除節點</span></a></li></ol>
 </div>
 
 
             <div class="entry green-link-context">
-                <p><a href="https://kubernetes.io/docs/getting-started-guides/kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm/milestone/1" target="_blank" rel="external">kubeadm Roadmap for v1.6</a> 來更進一步知道功能發展狀態。</p>
+                <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="external">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+<blockquote>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="external">kubeadm-ansible</a>。</p>
+</blockquote>
 <p>本環境安裝資訊：</p>
 <ul>
-<li>Kubernetes v1.6.1(2017/04/03 Update).</li>
+<li>Kubernetes v1.8.2</li>
 <li>Etcd v3</li>
-<li>Flannel v0.7.0</li>
-<li>Docker v17.04.0-ce</li>
+<li>Flannel v0.9.0</li>
+<li>Docker v17.10.0-ce</li>
 </ul>
 <a id="more"></a>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt：</p>
@@ -392,41 +395,52 @@ EOF
 </ul>
 <h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
 <pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-engine
-$ sudo iptables -P FORWARD ACCEPT &amp;&amp; sudo iptables-save
 </code></pre>
-<p>完成後就可以開始進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
+<p>接著修改<code>/etc/systemd/system/kubelet.service.d/10-kubeadm.conf</code>加入以下內容：</p>
+<pre><code>...
+Environment=&quot;KUBELET_EXTRA_ARGS=--fail-swap-on=false&quot;
+...
+</code></pre><p>完成後 Reload daemon：</p>
+<pre><code class="sh">$ systemctl daemon-reload
+</code></pre>
+<p>進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ sudo su -
 $ kubeadm token generate
 b0f7b8.8d1767876297d85c
 
 $ kubeadm init --service-cidr 10.96.0.0/12 \
---kubernetes-version v1.6.1 \
---pod-network-cidr 10.244.0.0/16 \
---apiserver-advertise-address 172.16.35.12 \
---token b0f7b8.8d1767876297d85c
-
+               --kubernetes-version v1.8.2 \
+               --pod-network-cidr 10.244.0.0/16 \
+               --apiserver-advertise-address 172.16.35.12 \
+               --token b0f7b8.8d1767876297d85c
+# Deploy output               
 ...
 kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
 </code></pre>
 <p>當出現如上面資訊後，表示 Master 初始化成功，不過這邊還是一樣透過 kubectl 測試一下：</p>
-<pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
+<pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get node
-NAME      STATUS    AGE       VERSION
-master1   Ready     19m       v1.6.1
+NAME      STATUS    ROLES     AGE       VERSION
+master1   Ready     master    10m       v1.8.2
 </code></pre>
 <p>當執行正確後要接著部署網路，但要注意<code>一個叢集只能用一種網路</code>，這邊採用 Flannel：</p>
-<pre><code class="sh">$ kubectl create -f &quot;https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel-rbac.yml&quot;
-$ kubectl create -f &quot;https://rawgit.com/coreos/flannel/master/Documentation/kube-flannel.yml&quot;
-configmap &quot;kube-flannel-cfg&quot; created
-daemonset &quot;kube-flannel-ds&quot; created
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml
+clusterrole &quot;flannel&quot; created
+clusterrolebinding &quot;flannel&quot; created
+serviceaccount &quot;flannel&quot; configured
+configmap &quot;kube-flannel-cfg&quot; configured
+daemonset &quot;kube-flannel-ds&quot; configured
 </code></pre>
 <blockquote>
-<p>由於 1.6.1 版本預設使用了 RBAC，因此需要建立相關授權。其他可以參考 <a href="https://kubernetes.io/docs/admin/addons/" target="_blank" rel="external">Networking and Network Policy</a>。</p>
+<p>需要注意這邊若<code>--pod-network-cidr=10.244.0.0/16</code>改變時，在<code>kube-flannel.yml</code>也不需修改<code>net-conf.json</code>。</p>
 </blockquote>
 <p>確認 Flannel 部署正確：</p>
-<pre><code class="sh">$ kubectl get po
-NAME                    READY     STATUS    RESTARTS   AGE
-kube-flannel-ds-lx4ww   2/2       Running   0          2m
+<pre><code class="sh">$ kubectl get po -n kube-system
+NAME                                         READY     STATUS    RESTARTS   AGE
+kube-flannel-ds-3b66l                        1/1       Running   0          9s
+kube-flannel-ds-m6874                        1/1       Running   0          9s
+kube-flannel-ds-vmb38                        1/1       Running   0          9s
+...
 
 $ ip -4 a show flannel.1
 5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
@@ -440,48 +454,42 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 </code></pre>
 <h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
 <pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-engine
-$ sudo iptables -P FORWARD ACCEPT &amp;&amp; sudo iptables-save
+</code></pre>
+<p>接著需要修改<code>/etc/systemd/system/kubelet.service.d/10-kubeadm.conf</code>加入以下內容：</p>
+<pre><code>...
+Environment=&quot;KUBELET_EXTRA_ARGS=--fail-swap-on=false&quot;
+...
+</code></pre><p>完成後 Reload daemon：</p>
+<pre><code class="sh">$ systemctl daemon-reload
 </code></pre>
 <p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
+# Deploy output
 ...
 Run &#39;kubectl get nodes&#39; on the master to see this machine join.
 </code></pre>
 <p>回到<code>master1</code>查看節點狀態：</p>
-<pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
-$ kubectl  get node
-NAME      STATUS    AGE       VERSION
-master1   Ready     19m       v1.6.1
-node1     Ready     9m        v1.6.1
-node2     Ready     5m        v1.6.1
+<pre><code class="sh">$ kubectl get node
+NAME      STATUS    ROLES     AGE       VERSION
+master1   Ready     master    10m       v1.8.2
+node1     Ready     &lt;none&gt;    9m        v1.8.2
+node2     Ready     &lt;none&gt;    9m        v1.8.2
 </code></pre>
 <h2 id="Add-ons-建立"><a href="#Add-ons-建立" class="headerlink" title="Add-ons 建立"></a>Add-ons 建立</h2><p>當完成後就可以建立一些 Addons，如 Dashboard。這邊執行以下指令進行建立：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; kube-dashboard-rbac.yml
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
-metadata:
-  name: dashboard-admin
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: kube-system
-EOF
-
-$ kubectl create -f kube-dashboard-rbac.yml
-$ kubectl create -f &quot;https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml&quot;
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 </code></pre>
+<p>&gt;</p>
 <p>確認沒問題後，透過 kubectl 查看：</p>
 <pre><code class="sh">kubectl get svc --namespace=kube-system
 NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
 kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
 kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
 </code></pre>
-<p>最後就可以存取 <a href="http://172.16.35.12:32546" target="_blank" rel="external">Kube Dashboard</a></p>
-<h2 id="簡單部署一個微服務"><a href="#簡單部署一個微服務" class="headerlink" title="簡單部署一個微服務"></a>簡單部署一個微服務</h2><p>這邊利用 Weave 公司提供的微服務來驗證系統，透過以下方式建立：</p>
+<blockquote>
+<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="external">Installation</a>。</p>
+</blockquote>
+<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Kube Dashboard</a>。</p>
+<h2 id="簡單部署一個服務"><a href="#簡單部署一個服務" class="headerlink" title="簡單部署一個服務"></a>簡單部署一個服務</h2><p>這邊利用 Weave 公司提供的服務來驗證系統，透過以下方式建立：</p>
 <pre><code class="sh">$ kubectl create namespace sock-shop
 $ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true&quot;
 </code></pre>

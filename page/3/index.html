@@ -179,6 +179,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -189,14 +197,6 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -335,13 +335,16 @@
 
             
                 <div class="entry green-link-context">
-                    <p><a href="https://kubernetes.io/docs/getting-started-guides/kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm/milestone/1" target="_blank" rel="external">kubeadm Roadmap for v1.6</a> 來更進一步知道功能發展狀態。</p>
+                    <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="external">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+<blockquote>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="external">kubeadm-ansible</a>。</p>
+</blockquote>
 <p>本環境安裝資訊：</p>
 <ul>
-<li>Kubernetes v1.6.1(2017/04/03 Update).</li>
+<li>Kubernetes v1.8.2</li>
 <li>Etcd v3</li>
-<li>Flannel v0.7.0</li>
-<li>Docker v17.04.0-ce</li>
+<li>Flannel v0.9.0</li>
+<li>Docker v17.10.0-ce</li>
 </ul>
                 </div>
             
@@ -418,9 +421,9 @@
         
             <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
         
-            <a href="/tags/Mesos/" class="chip pink lighten-1">Mesos</a>
-        
             <a href="/tags/DC-OS/" class="chip pink lighten-1">DC/OS</a>
+        
+            <a href="/tags/Mesos/" class="chip pink lighten-1">Mesos</a>
         
     </div>
 
