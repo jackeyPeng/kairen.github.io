@@ -171,16 +171,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -399,15 +399,14 @@ $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 </code></pre>
 <h2 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最重要的一環，Kubernetes 會將大部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集運作與溝通正常。</p>
 <p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
-<pre><code class="sh">$ cd /opt
-$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
+<pre><code class="sh">$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
+$ cd /opt
 $ wget -qO- --show-progress &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
 $ mv etcd-v3.2.9-linux-amd64 etcd
 $ cd etcd/ &amp;&amp; ln etcd /usr/local/bin/ &amp;&amp; ln etcdctl /usr/local/bin/
 </code></pre>
 <p>完成後新建 Etcd Group 與 User，並建立 Etcd 設定檔目錄：</p>
-<pre><code class="sh">$ groupadd etcd
-$ useradd -c &quot;Etcd user&quot; -g etcd -s /sbin/nologin -r etcd
+<pre><code class="sh">$ groupadd etcd &amp;&amp; useradd -c &quot;Etcd user&quot; -g etcd -s /sbin/nologin -r etcd
 $ mkdir /etc/etcd
 </code></pre>
 <p>下載<code>etcd</code>相關檔案，我們將來管理 Etcd：</p>
