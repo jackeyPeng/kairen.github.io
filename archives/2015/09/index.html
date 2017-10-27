@@ -7,7 +7,7 @@
 
     
 
-    <title>Ansible Inventory | KaiRen&#39;s Blog</title>
+    <title>Archives: 2015/9 | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="Ansible Inventory"/>
+    
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -257,283 +257,46 @@
 
     <main>
         <div class="container main-container">
-    <nav class="page-nav hide-on-small-only">
+    
+
+<nav class="page-nav hide-on-small-only">
     <div class="nav-wrapper indigo">
-        <span class="breadcrumb">Current page(Categories)</span>
-        
-            
-    
-    
-    <a class="breadcrumb" href="/categories/DevOps/">DevOps</a>
-
-
+        <span class="breadcrumb">Current page(Archives)</span>
         
 
         
     </div>
 </nav>
 
-<article>
-    <div class="card">
-        <div class="card-content">
-            
-
-            <div class="article-title">
-                
-    
-        <h1>Ansible Inventory</h1>
-    
 
 
-            </div>
-            <time class="green-link-context" datetime="2016-02-17T04:23:01.000Z"><a href="/2016/02/17/devops/ansible/ansible-inventory/">2016-02-17</a></time>
-
-            <span id="busuanzi_container_page_pv" class="read-times-container">
-    <i class="fa fa-eye"></i>
-    <span id="busuanzi_value_page_pv"></span>
-</span>
-
-            
-    <div class="tags-row">
+    <ul class="collapsible mt-0" data-collapsible="accordion">
         
-            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
         
-            <a href="/tags/Automation-Engine/" class="chip pink lighten-1">Automation Engine</a>
+            <li>
+                <div class="collapsible-header active">
+                    <i class="fa fa-archive"></i>2015
+                </div>
+                <div class="collapsible-body">
+                    <div class="collection">
+                        
+                            <a href="/2015/09/19/data-engineer/spark-yarn/" class="collection-item grey-text text-darken-1">
+                                <time datetime="2015-09-19T09:08:54.000Z">2015-09-19</time>
+                                <span>&nbsp;&nbsp;&nbsp;</span>
+                                Spark on Hadoop YARN 單機安裝
+                            </a>
+                        
+                            <a href="/2015/09/18/data-engineer/spark-standalone/" class="collection-item grey-text text-darken-1">
+                                <time datetime="2015-09-18T09:08:54.000Z">2015-09-18</time>
+                                <span>&nbsp;&nbsp;&nbsp;</span>
+                                Spark Standalone 模擬分散式運算
+                            </a>
+                        
+                    </div>
+                </div>
+            </li>
         
-            <a href="/tags/Ansible/" class="chip pink lighten-1">Ansible</a>
-        
-    </div>
-
-
-            <div class="toc green-link-context hide-on-med-and-down">
-    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Hosts-and-Groups"><span class="section table-of-contents-text">Hosts and Groups</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Host-Variables"><span class="section table-of-contents-text">Host Variables</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Group-Variables"><span class="section table-of-contents-text">Group Variables</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Groups-of-Groups-and-Group-Variables"><span class="section table-of-contents-text">Groups of Groups, and Group Variables</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Splitting-Out-Host-and-Group-Specific-Data"><span class="section table-of-contents-text">Splitting Out Host and Group Specific Data</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#List-of-Behavioral-Inventory-Parameters"><span class="section table-of-contents-text">List of Behavioral Inventory Parameters</span></a></li></ol>
-</div>
-
-
-            <div class="entry green-link-context">
-                <p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
-<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="external">Dynamic Inventory</a>。</p>
-<a id="more"></a>
-<h3 id="Hosts-and-Groups"><a href="#Hosts-and-Groups" class="headerlink" title="Hosts and Groups"></a>Hosts and Groups</h3><p>Inventory 是一個<code>INI-like</code>格式的檔案，如以下範例所示：</p>
-<pre><code>mail.example.com
-
-[webservers]
-foo.example.com
-bar.example.com
-
-[dbservers]
-one.example.com
-two.example.com
-three.example.com
-</code></pre><p>如果 SSH 不是標準 Port 的話，可以使用<code>:</code>來對應要使用的 Port。但在 SSH config 檔案所列出來的主機將不會與 paramiko 進行連線，但是會與 OpenSSH 進行連接使用。</p>
-<pre><code>badwolf.example.com:5309
-</code></pre><blockquote>
-<p>雖然可以使用以上方式達到不同 Port 連接，但是還是建議使用預設 Port。</p>
-</blockquote>
-<p>假設只有靜態 IP，但又希望透過一些別名（aliases）來表示主機，或透過不同 Port 連接的話，可以表示如以下：</p>
-<pre><code>jumper ansible_port=5555 ansible_host=192.168.1.50
-</code></pre><p>若要一次列出多個主機可以使用以下 Pattern：</p>
-<pre><code>[webservers]
-www[01:50].example.com
-</code></pre><p>在數字 Pattern，前導的 0 可以根據需求刪除或加入。不只可以定義數字型，還能定義英文字母範圍：</p>
-<pre><code>[databases]
-db-[a:f].example.com
-</code></pre><p>也可以為每台主機的設定基礎連線類型與使用者資訊：</p>
-<pre><code>[targets]
-localhost           ansible_connection=local
-other1.example.com  ansible_connection=ssh  ansible_user=mpdehaan
-other2.example.com  ansible_connection=ssh  ansible_user=mdehaan
-</code></pre><h3 id="Host-Variables"><a href="#Host-Variables" class="headerlink" title="Host Variables"></a>Host Variables</h3><p>如上述範例，我們可以很容易將變數分配給將在 Playbooks 使用的主機：</p>
-<pre><code>[atlanta]
-host1   http_port=80    maxRequestsPerChild=808
-host2   http_port=303   maxRequestsPerChild=909
-</code></pre><h3 id="Group-Variables"><a href="#Group-Variables" class="headerlink" title="Group Variables"></a>Group Variables</h3><p>變數也能夠被應用到整個群組裡：</p>
-<pre><code>[atlanta]
-host1
-host2
-
-[atlanta:vars]
-ntp_server=ntp.atlanta.example.com
-proxy=proxy.atlanta.example.com
-</code></pre><h3 id="Groups-of-Groups-and-Group-Variables"><a href="#Groups-of-Groups-and-Group-Variables" class="headerlink" title="Groups of Groups, and Group Variables"></a>Groups of Groups, and Group Variables</h3><p>另外，也可以用<code>:children</code> 來建立群組中的群組，並使用<code>:vars</code>來設定變數：</p>
-<pre><code>[atlanta]
-host1
-host2
-
-[raleigh]
-host2
-host3
-
-[southeast:children]
-atlanta
-raleigh
-
-[southeast:vars]
-some_server=foo.southeast.example.com
-halon_system_timeout=30
-self_destruct_countdown=60
-escape_pods=2
-
-[usa:children]
-southeast
-northeast
-southwest
-northwest
-</code></pre><h3 id="Splitting-Out-Host-and-Group-Specific-Data"><a href="#Splitting-Out-Host-and-Group-Specific-Data" class="headerlink" title="Splitting Out Host and Group Specific Data"></a>Splitting Out Host and Group Specific Data</h3><p>該部分說明想要儲存 list 與 hash table 資料，或者從 Inventory 檔案保持分離主機與群組的特定變數。在 Ansible 的第一優先作法實際上是不儲存變數於主 Inventort 檔案。</p>
-<p>除了直接在 INI 檔案儲存變數外，主機與群組變數也可以儲存在個人相對的 Inventory 檔案。這些變數檔案格式為 YAML。有效的副檔名如<code>.yml</code>、<code>.yaml</code>，以及<code>.json</code>或<code>沒有副檔名</code>。</p>
-<p>一般當 remote host 數量不多時，把變數定義在 inventory 中是 ok 的；但若 remote host 的數量越來越多時，將變數的宣告定義在外部的檔案中會是比較好的方式。</p>
-<p>假設 Inventory 檔案路徑為：</p>
-<pre><code>/etc/ansible/hosts
-</code></pre><p>如果主機被命名為<code>foosball</code>以及在<code>raleigh</code>與<code>webservers</code>的群組，以下位置的 YAML 檔案變數將提供給主機使用：</p>
-<pre><code class="sh"># can optionally end in &#39;.yml&#39;, &#39;.yaml&#39;, or &#39;.json&#39;
-/etc/ansible/group_vars/raleigh
-/etc/ansible/group_vars/webservers
-/etc/ansible/host_vars/foosball
-</code></pre>
-<p>ansible 會自動尋找 playbook 所在的目錄中的<code>host_vars</code>目錄 以及<code>group_vars</code>目錄 中所包含的檔案，並使用定義在這兩個目錄中的變數資訊。</p>
-<p>舉例來說，inventory / playbook / host_vars / group_vars 可以用類似以下的方式進行配置：</p>
-<ul>
-<li><strong>inventory</strong>：/home/vagrant/ansible/playbooks/inventory</li>
-<li><strong>playbook</strong>：/home/vagrant/ansible/playbooks/myplaybook</li>
-<li><strong>host_vars</strong>：/home/vagrant/ansible/playbooks/host_vars/prod1.example.com.tw</li>
-<li><strong>group_vars</strong>：/home/vagrant/ansible/playbooks/group_vars/production</li>
-</ul>
-<p>變數定義的方式有兩種方式：</p>
-<pre><code class="sh">db_primary_host: prod1.example.com.tw
-db_replica_host: prod2.example.com.tw
-db_name: widget_production
-db_user: widgetuser
-db_password: lastpassword
-redis_host: redis_stag.example.com.tw
-</code></pre>
-<p>也可以用 YAML 的方式定義：</p>
-<pre><code class="sh">---
-db:
-    user: widgetuser
-    password: lastpassword
-    name: widget_production
-    primary:
-        host: prod1.example.com.tw
-        port: 5432
-    replica:
-        host: prod2.example.com.tw
-        port: 5432
-redis:
-    host: redis_stag.example.com.tw
-    port: 6379
-</code></pre>
-<p>甚至可以在繼續細分，定義檔案<code>../playbooks/group_vars/production/db</code>：</p>
-<pre><code class="sh">---
-db:
-    user: widgetuser
-    password: lastpassword
-    name: widget_production
-    primary:
-        host: prod1.example.com.tw
-        port: 5432
-    replica:
-        host: prod2.example.com.tw
-        port: 5432
-</code></pre>
-<h3 id="List-of-Behavioral-Inventory-Parameters"><a href="#List-of-Behavioral-Inventory-Parameters" class="headerlink" title="List of Behavioral Inventory Parameters"></a>List of Behavioral Inventory Parameters</h3><p>正如上述提到，設定以下變數可以定義 Ansible 該如何控制以及遠端主機。如主機連線：</p>
-<pre><code class="sh">ansible_connection
-  Connection type to the host. Candidates are local, smart, ssh or paramiko.  The default is smart.
-</code></pre>
-<p>SSH connection：</p>
-<pre><code>ansible_host
-  The name of the host to connect to, if different from the alias you wish to give to it.
-ansible_port
-  The ssh port number, if not 22
-ansible_user
-  The default ssh user name to use.
-ansible_ssh_pass
-  The ssh password to use (this is insecure, we strongly recommend using --ask-pass or SSH keys)
-ansible_ssh_private_key_file
-  Private key file used by ssh.  Useful if using multiple keys and you don&#39;t want to use SSH agent.
-ansible_ssh_common_args
-  This setting is always appended to the default command line for
-  sftp, scp, and ssh. Useful to configure a ``ProxyCommand`` for a
-  certain host (or group).
-ansible_sftp_extra_args
-  This setting is always appended to the default sftp command line.
-ansible_scp_extra_args
-  This setting is always appended to the default scp command line.
-ansible_ssh_extra_args
-  This setting is always appended to the default ssh command line.
-ansible_ssh_pipelining
-  Determines whether or not to use SSH pipelining. This can override the
-  ``pipelining`` setting in ``ansible.cfg``.
-</code></pre><p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="external">Ansible Privilege Escalation</a>）：</p>
-<pre><code>ansible_become
-  Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation
-ansible_become_method
-  Allows to set privilege escalation method
-ansible_become_user
-  Equivalent to ansible_sudo_user or ansible_su_user, allows to set the user you become through privilege escalation
-ansible_become_pass
-  Equivalent to ansible_sudo_pass or ansible_su_pass, allows you to set the privilege escalation password
-</code></pre><p>遠端主機環境參數：</p>
-<pre><code>ansible_shell_type
-  The shell type of the target system. Commands are formatted using &#39;sh&#39;-style syntax by default. Setting this to &#39;csh&#39; or &#39;fish&#39; will cause commands executed on target systems to follow those shell&#39;s syntax instead.
-ansible_python_interpreter
-  The target host python path. This is useful for systems with more
-  than one Python or not located at &quot;/usr/bin/python&quot; such as \*BSD, or where /usr/bin/python
-  is not a 2.X series Python.  We do not use the &quot;/usr/bin/env&quot; mechanism as that requires the remote user&#39;s
-  path to be set right and also assumes the &quot;python&quot; executable is named python, where the executable might
-  be named something like &quot;python26&quot;.
-ansible\_\*\_interpreter
-  Works for anything such as ruby or perl and works just like ansible_python_interpreter.
-  This replaces shebang of modules which will run on that host.
-</code></pre><p>一個主機檔案範例：</p>
-<pre><code>some_host         ansible_port=2222     ansible_user=manager
-aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
-freebsd_host      ansible_python_interpreter=/usr/local/bin/python
-ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
-</code></pre>
-                
-<p class="green-link-context">
-    <a href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/" rel="next" title="Ansible Dynamic Inventory">
-    Prev: Ansible Dynamic Inventory
-  </a>
-</p>
-
-
-
-<p class="green-link-context">
-    <a href="/2016/02/17/devops/ansible/ansible-adhoc/" rel="next" title="Ansible Ad-Hoc 指令與 Modules">
-    Next: Ansible Ad-Hoc 指令與 Modules
-  </a>
-</p>
-
-
-            </div>
-			
-        </div>
-    </div>
-</article>
-
-
-
-
-    <section id="comment">
-        <div id="disqus_thread"></div>
-        <script>
-            var url_parts = window.location.href.split("?");
-            var disqus_url = url_parts[0];
-            (function() {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = "//ky1ebai.disqus.com/embed.js";
-                dsq.setAttribute('data-timestamp', + new Date());
-                (document.head || d.body ).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the
-            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-        </noscript>
-    </section>
-
+    </ul>
 
 
 </div>
