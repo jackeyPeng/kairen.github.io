@@ -1,1 +1,1 @@
-{"CN":"kubernetes-admin","hosts":["172.16.35.10","172.16.35.11","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:masters","OU":"Kubernetes manual"}]}
+{"CN":"kubernetes-admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:masters","OU":"Kubernetes manual"}]}

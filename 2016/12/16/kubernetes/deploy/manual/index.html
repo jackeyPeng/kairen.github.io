@@ -7,7 +7,7 @@
 
     
 
-    <title>Kubernetes 全手動苦工安裝教學(TL;DR) | KaiRen&#39;s Blog</title>
+    <title>Kubernetes v1.8.2 全手動苦工安裝教學(TL;DR) | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="Kubernetes 全手動苦工安裝教學(TL;DR)"/>
+    <meta property="og:title" content="Kubernetes v1.8.2 全手動苦工安裝教學(TL;DR)"/>
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -195,16 +195,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">14</span></a>
                 </a>
             </li>
 
@@ -281,7 +281,7 @@
             <div class="article-title">
                 
     
-        <h1>Kubernetes 全手動苦工安裝教學(TL;DR)</h1>
+        <h1>Kubernetes v1.8.2 全手動苦工安裝教學(TL;DR)</h1>
     
 
 
@@ -350,7 +350,7 @@
 </tbody>
 </table>
 <blockquote>
-<p>這邊 master 為主要控制節點也是<code>部署節點</code>，node 為應用程式工作節點。<br>另外所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。</p>
+<p>這邊 master 為主要控制節點也是<code>部署節點</code>，node 為應用程式工作節點。<br>另外所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。<br>可以下載<code>https://kairen.github.io/files/manual/Vagrantfile</code>來建立 Virtual box 虛擬機叢集。</p>
 </blockquote>
 <p>首先安裝前要確認以下幾項都已將準備完成：</p>
 <ul>
@@ -410,27 +410,14 @@ $ cd etcd/ &amp;&amp; ln etcd /usr/local/bin/ &amp;&amp; ln etcdctl /usr/local/b
 $ useradd -c &quot;Etcd user&quot; -g etcd -s /sbin/nologin -r etcd
 $ mkdir /etc/etcd
 </code></pre>
-<p>新增<code>/etc/etcd/etcd.conf</code>檔案，加入以下內容：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/etcd/etcd.conf
-ETCD_NAME=master1
-ETCD_DATA_DIR=/var/lib/etcd
-ETCD_INITIAL_ADVERTISE_PEER_URLS=http://172.16.35.12:2380
-ETCD_INITIAL_CLUSTER=master1=http://172.16.35.12:2380
-ETCD_INITIAL_CLUSTER_STATE=new
-ETCD_INITIAL_CLUSTER_TOKEN=etcd-k8s-cluster
-ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
-ETCD_ADVERTISE_CLIENT_URLS=http://172.16.35.12:2379
-ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-ETCD_PROXY=off
-EOF
-</code></pre>
-<blockquote>
-<p>P.S. 若與該教學 IP 不同的話，請用自己 IP 取代<code>172.16.35.12</code>。</p>
-</blockquote>
-<p>下載<code>etcd.service</code>檔案來管理 Etcd：</p>
+<p>下載<code>etcd</code>相關檔案，我們將來管理 Etcd：</p>
 <pre><code class="sh">$ export ETCD_CONF_URL=&quot;https://kairen.github.io/files/manual/master/etcd&quot;
+$ wget &quot;${ETCD_CONF_URL}/etcd.conf&quot; -O /etc/etcd/etcd.conf
 $ wget &quot;${ETCD_CONF_URL}/etcd.service&quot; -O /lib/systemd/system/etcd.service
 </code></pre>
+<blockquote>
+<p>若與該教學 IP 不同的話，請用自己 IP 取代<code>172.16.35.12</code>。</p>
+</blockquote>
 <p>建立 var 存放資訊，然後啟動 Etcd 服務:</p>
 <pre><code class="sh">$ mkdir -p /var/lib/etcd &amp;&amp; chown etcd:etcd -R /var/lib/etcd
 $ systemctl enable etcd.service &amp;&amp; systemctl start etcd.service
@@ -439,6 +426,8 @@ $ systemctl enable etcd.service &amp;&amp; systemctl start etcd.service
 <pre><code class="sh">$ etcdctl cluster-health
 member 95b428c288413b46 is healthy: got healthy result from http://172.16.35.12:2379
 cluster is healthy
+
+$ ETCDCTL_API=3 etcdctl member list
 </code></pre>
 <h2 id="Kubernetes-Master-安裝與設定"><a href="#Kubernetes-Master-安裝與設定" class="headerlink" title="Kubernetes Master 安裝與設定"></a>Kubernetes Master 安裝與設定</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。本步驟將下載 Kubernetes 並安裝至 <code>master1</code>上，然後產生相關 TLS Cert 與 CA 金鑰，提供給叢集元件認證使用。</p>
 <h3 id="下載-Kubernetes-元件"><a href="#下載-Kubernetes-元件" class="headerlink" title="下載 Kubernetes 元件"></a>下載 Kubernetes 元件</h3><p>首先透過網路取得所有需要的執行檔案：</p>
@@ -603,6 +592,7 @@ $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
+  -hostname=master1,172.16.35.12 \
   -profile=kubernetes \
   kubelet-csr.json | cfssljson -bare kubelet
 
@@ -656,8 +646,8 @@ $ for FILE in apiserver manager scheduler; do
 <pre><code class="sh">$ head -c 32 /dev/urandom | base64
 SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
 </code></pre>
-<p>在<code>/etc/kubernetes/</code>目錄下，建立<code>encryption-config.yml</code>的加密檔案：</p>
-<pre><code class="sh">$ cat &gt; /etc/kubernetes/encryption-config.yml &lt;&lt;EOF
+<p>在<code>/etc/kubernetes/</code>目錄下，建立<code>encryption.yml</code>的加密檔案：</p>
+<pre><code class="sh">$ cat &gt; /etc/kubernetes/encryption.yml &lt;&lt;EOF
 kind: EncryptionConfig
 apiVersion: v1
 resources:
@@ -671,6 +661,9 @@ resources:
       - identity: {}
 EOF
 </code></pre>
+<blockquote>
+<p>Etcd 資料加入可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="external">Encrypting data at rest</a>。</p>
+</blockquote>
 <p>下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
 <pre><code class="sh">$ export KUBELET_URL=&quot;https://kairen.github.io/files/manual/master/kubelet&quot;
 $ mkdir -p /etc/systemd/system/kubelet.service.d
@@ -693,6 +686,8 @@ tcp6       0      0 :::6443                 :::*                    LISTEN      
 </blockquote>
 <p>完成後，複製 admin kubeconfig 檔案，並透過簡單指令驗證：</p>
 <pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
+$ kubectl get componentstatuses
+
 $ kubectl get node
 NAME      STATUS     ROLES     AGE       VERSION
 master1   NotReady   master    4m        v1.8.2
@@ -706,8 +701,8 @@ kube-scheduler-master1            1/1       Running   0          4m
 <h2 id="Kubernetes-Node-安裝與設定"><a href="#Kubernetes-Node-安裝與設定" class="headerlink" title="Kubernetes Node 安裝與設定"></a>Kubernetes Node 安裝與設定</h2><p>Node 是主要執行容器實例的節點，可視為工作節點。在這步驟我們會下載 Kubernetes binary 檔，並建立 node 的 certificate 來提供給節點註冊認證用。Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。</p>
 <p>在開始前，我們先在<code>master1</code>將<code>ca*.pem</code>複製到 Node 節點上：</p>
 <pre><code class="sh">$ for NODE in node1 node2; do
+    ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki/&quot;
     for FILE in ca.pem ca-key.pem; do
-      ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki/&quot;
       scp /etc/kubernetes/pki/${FILE} ${NODE}:/etc/kubernetes/pki/
     done
   done
@@ -736,6 +731,7 @@ $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
+  -hostname=node1,172.16.35.10 \
   -profile=kubernetes \
   kubelet-csr.json | cfssljson -bare kubelet
 
