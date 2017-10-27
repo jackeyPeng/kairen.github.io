@@ -3347,11 +3347,6 @@ SELINUX=disabled
 172.16.35.11 node2
 172.16.35.12 master1
 </code></pre><ul>
-<li>所有節點需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數，完成用<code>sysctl -p /etc/sysctl.d/k8s.conf</code>來生效。</li>
-</ul>
-<pre><code>net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-</code></pre><ul>
 <li>所有節點需要安裝<code>Docker</code>或<code>rtk</code>引擎。這邊採用<code>Docker</code>來當作容器引擎，安裝方式如下：</li>
 </ul>
 <pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
@@ -3362,6 +3357,11 @@ net.bridge.bridge-nf-call-iptables = 1
 </code></pre>
 </blockquote>
 <ul>
+<li>所有節點需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數，完成用<code>sysctl -p /etc/sysctl.d/k8s.conf</code>來生效。</li>
+</ul>
+<pre><code>net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+</code></pre><ul>
 <li>所有節點需要安裝<code>CFSSL</code>工具，這將會用來建立 TLS certificates。</li>
 </ul>
 <pre><code class="sh">$ export CFSS_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
@@ -3373,7 +3373,7 @@ $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 <p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
 <pre><code class="sh">$ cd /opt
 $ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
-$ wget -qO- &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
+$ wget -qO- --show-progress &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
 $ mv etcd-v3.2.9-linux-amd64 etcd
 $ cd etcd/ &amp;&amp; ln etcd /usr/local/bin/ &amp;&amp; ln etcdctl /usr/local/bin/
 </code></pre>
@@ -3416,23 +3416,22 @@ cluster is healthy
 <h3 id="下載-Kubernetes-元件"><a href="#下載-Kubernetes-元件" class="headerlink" title="下載 Kubernetes 元件"></a>下載 Kubernetes 元件</h3><p>首先透過網路取得所有需要的執行檔案：</p>
 <pre><code class="sh"># Download Kubernetes
 $ export KUBE_URL=&quot;https://storage.googleapis.com/kubernetes-release/release/v1.8.2/bin/linux/amd64&quot;
-$ wget &quot;${KUBE_URL}/kubelet&quot; -O /usr/bin/kubelet
-$ wget &quot;${KUBE_URL}/kubectl&quot; -O /usr/bin/kubectl
-$ chmod +x /usr/bin/kubelet /usr/bin/kubectl
+$ wget &quot;${KUBE_URL}/kubelet&quot; -O /usr/local/bin/kubelet
+$ wget &quot;${KUBE_URL}/kubectl&quot; -O /usr/local/bin/kubectl
+$ chmod +x /usr/local/bin/kubelet /usr/local/bin/kubectl
 
 # Download CNI
 $ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
 $ export CNI_URL=&quot;https://github.com/containernetworking/plugins/releases/download&quot;
-$ wget -qO- &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
+$ wget -qO- --show-progress &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
 </code></pre>
-<h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 Client 與 Server 的各元件 Cert，並且替 Kubernetes admin user 產生 Client 簽證。</p>
+<h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 client 與 server 的各元件 certificates，並且替 Kubernetes admin user 產生 client 簽證。</p>
 <p>建立<code>pki</code>資料夾，然後進入目錄完成以下操作。</p>
 <pre><code class="sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
 $ export CA_URL=&quot;https://kairen.github.io/files/manual/master/pki&quot;
 </code></pre>
 <p>下載<code>ca-config.json</code>與<code>ca-csr.json</code>檔案，並產生 CA 金鑰：</p>
-<pre><code class="sh">$ wget &quot;${CA_URL}/ca-config.json&quot;
-$ wget &quot;${CA_URL}/ca-csr.json&quot;
+<pre><code class="sh">$ wget &quot;${CA_URL}/ca-config.json&quot; &quot;${CA_URL}/ca-csr.json&quot;
 $ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 $ ls ca*.pem
 ca-key.pem  ca.pem
@@ -3449,6 +3448,9 @@ $ cfssl gencert \
 $ ls admin*.pem
 admin-key.pem  admin.pem
 </code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>admin-csr.json</code>的<code>hosts</code>。</p>
+</blockquote>
 <p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># admin set-cluster
 $ kubectl config set-cluster kubernetes-manual \
@@ -3485,6 +3487,9 @@ $ cfssl gencert \
 $ ls apiserver*.pem
 apiserver-key.pem  apiserver.pem
 </code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>apiserver-csr.json</code>的<code>hosts</code>。</p>
+</blockquote>
 <h4 id="Controller-manager-certificate"><a href="#Controller-manager-certificate" class="headerlink" title="Controller manager certificate"></a>Controller manager certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 簽證：</p>
 <pre><code class="sh">$ wget &quot;${CA_URL}/manager-csr.json&quot;
 $ cfssl gencert \
@@ -3496,6 +3501,9 @@ $ cfssl gencert \
 
 $ ls controller-manager*.pem
 </code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>manager-csr.json</code>的<code>hosts</code>。</p>
+</blockquote>
 <p>接著透過以下指令產生名稱為 <code>controller-manager.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># controller-manager set-cluster
 $ kubectl config set-cluster kubernetes \
@@ -3533,6 +3541,9 @@ $ cfssl gencert \
 $ ls scheduler*.pem
 scheduler-key.pem  scheduler.pem
 </code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>scheduler-csr.json</code>的<code>hosts</code>。</p>
+</blockquote>
 <p>接著透過以下指令產生名稱為 <code>scheduler.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># scheduler set-cluster
 $ kubectl config set-cluster kubernetes \
@@ -3592,6 +3603,10 @@ $ kubectl config set-context system:node:master1@kubernetes \
 
 # set default context
 $ kubectl config use-context system:node:master1@kubernetes --kubeconfig=../kubelet.conf
+</code></pre>
+<p>確認<code>/etc/kubernetes</code>有以下檔案：</p>
+<pre><code class="sh">$ ls /etc/kubernetes/
+admin.conf  controller-manager.conf  kubelet.conf  pki  scheduler.conf
 </code></pre>
 <p>完成後刪除不必要檔案：</p>
 <pre><code class="sh">$ rm -rf *.json
@@ -7076,6 +7091,104 @@ a1.sinks.k1.channel=c1
     </entry>
     
     <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[DRBD 進行跨節點的區塊儲存備份]]></title>
       <url>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</url>
       <content type="html"><![CDATA[<p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
@@ -7221,104 +7334,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -12363,12 +12378,6 @@ lib/spark-examples*.jar \
     </entry>
     
     <entry>
-      <title><![CDATA[categories]]></title>
-      <url>https://kairen.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[使用 Kuryr 與 Kubernetes 網路整合]]></title>
       <url>https://kairen.github.io/files/kuryr-kubernetes.html</url>
       <content type="html"><![CDATA[<pre><code class="sh">$ openstack network create k8s-pod-net
@@ -12399,27 +12408,15 @@ $ openstack security group rule create \
     </entry>
     
     <entry>
-      <title><![CDATA[tags]]></title>
-      <url>https://kairen.github.io/tags/index.html</url>
+      <title><![CDATA[categories]]></title>
+      <url>https://kairen.github.io/categories/index.html</url>
       <content type="html"></content>
     </entry>
     
     <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/master/core/apiserver.json</url>
-      <content type="html"><![CDATA[{"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{"scheduler.alpha.kubernetes.io/critical-pod":""},"labels":{"component":"kube-apiserver","tier":"control-plane"},"name":"kube-apiserver","namespace":"kube-system"},"spec":{"hostNetwork":true,"containers":[{"name":"kube-apiserver","image":"gcr.io/google_containers/kube-apiserver-amd64:v1.8.2","command":["kube-apiserver","--logtostderr=true","--v=0","--allow-privileged=true","--advertise-address=172.16.35.12","--bind-address=0.0.0.0","--secure-port=6443","--insecure-port=0","--etcd-servers=http://172.16.35.12:2379","--storage-backend=etcd3","--service-cluster-ip-range=10.96.0.0/12","--service-node-port-range=30000-32767","--service-account-key-file=/etc/kubernetes/pki/ca-key.pem","--client-ca-file=/etc/kubernetes/pki/ca.pem","--tls-ca-file=/etc/kubernetes/pki/ca.pem","--tls-cert-file=/etc/kubernetes/pki/apiserver.pem","--tls-private-key-file=/etc/kubernetes/pki/apiserver-key.pem","--kubelet-certificate-authority=/etc/kubernetes/pki/ca.pem","--kubelet-client-certificate=/etc/kubernetes/pki/apiserver.pem","--kubelet-client-key=/etc/kubernetes/pki/apiserver-key.pem","--runtime-config=api/all","--event-ttl=1h","--admission-control=Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota","--kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname","--authorization-mode=Node,RBAC","--kubelet-https=true","--experimental-encryption-provider-config=/etc/kubernetes/encryption-config.yml","--experimental-bootstrap-token-auth=true","--enable-swagger-ui=true","--audit-log-maxage=30","--audit-log-maxbackup=3","--audit-log-maxsize=100","--audit-log-path=/var/log/kubernetes/audit.log"],"livenessProbe":{"failureThreshold":8,"httpGet":{"host":"127.0.0.1","path":"/healthz","port":6443,"scheme":"HTTPS"},"initialDelaySeconds":15,"timeoutSeconds":15},"resources":{"requests":{"cpu":"250m"}},"volumeMounts":[{"mountPath":"/etc/kubernetes/pki","name":"k8s-certs","readOnly":true},{"mountPath":"/etc/ssl/certs","name":"ca-certs","readOnly":true}]}],"volumes":[{"hostPath":{"path":"/etc/kubernetes/pki","type":"DirectoryOrCreate"},"name":"k8s-certs"},{"hostPath":{"path":"/etc/ssl/certs","type":"DirectoryOrCreate"},"name":"ca-certs"}]}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/master/core/manager.json</url>
-      <content type="html"><![CDATA[{"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{"scheduler.alpha.kubernetes.io/critical-pod":""},"labels":{"component":"kube-controller-manager","tier":"control-plane"},"name":"kube-controller-manager","namespace":"kube-system"},"spec":{"hostNetwork":true,"containers":[{"name":"kube-controller-manager","image":"gcr.io/google_containers/kube-controller-manager-amd64:v1.8.2","command":["kube-controller-manager","--v=0","--logtostderr=true","--address=127.0.0.1","--master=https://172.16.35.12:6443","--cluster-signing-cert-file=/etc/kubernetes/pki/ca.pem","--cluster-signing-key-file=/etc/kubernetes/pki/ca-key.pem","--root-ca-file=/etc/kubernetes/pki/ca.pem","--service-account-private-key-file=/etc/kubernetes/pki/ca-key.pem","--insecure-experimental-approve-all-kubelet-csrs-for-group=system:bootstrappers","--kubeconfig=/etc/kubernetes/controller-manager.conf","--leader-elect=true","--use-service-account-credentials=true","--controllers=*,bootstrapsigner,tokencleaner","--allocate-node-cidrs=true","--service-cluster-ip-range=10.96.0.0/12","--cluster-cidr=10.244.0.0/16","--node-cidr-mask-size=24"],"livenessProbe":{"failureThreshold":8,"httpGet":{"host":"127.0.0.1","path":"/healthz","port":10252,"scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":15},"resources":{"requests":{"cpu":"200m"}},"volumeMounts":[{"mountPath":"/etc/kubernetes/pki","name":"k8s-certs","readOnly":true},{"mountPath":"/etc/ssl/certs","name":"ca-certs","readOnly":true},{"mountPath":"/etc/kubernetes/controller-manager.conf","name":"kubeconfig","readOnly":true},{"mountPath":"/usr/libexec/kubernetes/kubelet-plugins/volume/exec","name":"flexvolume-dir"}]}],"volumes":[{"hostPath":{"path":"/etc/kubernetes/pki","type":"DirectoryOrCreate"},"name":"k8s-certs"},{"hostPath":{"path":"/etc/ssl/certs","type":"DirectoryOrCreate"},"name":"ca-certs"},{"hostPath":{"path":"/etc/kubernetes/controller-manager.conf","type":"FileOrCreate"},"name":"kubeconfig"},{"hostPath":{"path":"/usr/libexec/kubernetes/kubelet-plugins/volume/exec","type":"DirectoryOrCreate"},"name":"flexvolume-dir"}]}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/master/core/scheduler.json</url>
-      <content type="html"><![CDATA[{"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{"scheduler.alpha.kubernetes.io/critical-pod":""},"labels":{"component":"kube-scheduler","tier":"control-plane"},"name":"kube-scheduler","namespace":"kube-system"},"spec":{"hostNetwork":true,"containers":[{"name":"kube-scheduler","image":"gcr.io/google_containers/kube-scheduler-amd64:v1.8.2","command":["kube-scheduler","--v=0","--logtostderr=true","--address=127.0.0.1","--leader-elect=true","--kubeconfig=/etc/kubernetes/scheduler.conf"],"livenessProbe":{"failureThreshold":8,"httpGet":{"host":"127.0.0.1","path":"/healthz","port":10251,"scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":15},"resources":{"requests":{"cpu":"100m"}},"volumeMounts":[{"mountPath":"/etc/kubernetes/scheduler.conf","name":"kubeconfig","readOnly":true}]}],"volumes":[{"hostPath":{"path":"/etc/kubernetes/scheduler.conf","type":"FileOrCreate"},"name":"kubeconfig"}]}}]]></content>
+      <title><![CDATA[tags]]></title>
+      <url>https://kairen.github.io/tags/index.html</url>
+      <content type="html"></content>
     </entry>
     
     <entry>
@@ -12436,12 +12433,6 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"Kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"CA"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual/master/pki/apiserver-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes-apiserver","hosts":["127.0.0.1","172.16.35.10","172.16.35.11","172.16.35.12","10.96.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes manual"}]}]]></content>
     </entry>
@@ -12450,6 +12441,12 @@ $ openstack security group rule create \
       <title></title>
       <url>https://kairen.github.io/files/manual/master/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/master/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"Kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"CA"}]}]]></content>
     </entry>
     
     <entry>
