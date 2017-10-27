@@ -1,1 +1,0 @@
-{"CN":"system:node:$NODE","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:nodes","OU":"Kubernetes manual"}]}

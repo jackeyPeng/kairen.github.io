@@ -684,6 +684,10 @@ tcp6       0      0 :::6443                 :::*                    LISTEN      
 <p>完成後，複製 admin kubeconfig 檔案，並透過簡單指令驗證：</p>
 <pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get componentstatuses
+NAME                 STATUS    MESSAGE              ERROR
+etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
+controller-manager   Healthy   ok
+scheduler            Healthy   ok
 
 $ kubectl get node
 NAME      STATUS     ROLES     AGE       VERSION

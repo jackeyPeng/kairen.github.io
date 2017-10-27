@@ -2546,9 +2546,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
@@ -3661,6 +3661,10 @@ tcp6       0      0 :::6443                 :::*                    LISTEN      
 <p>完成後，複製 admin kubeconfig 檔案，並透過簡單指令驗證：</p>
 <pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get componentstatuses
+NAME                 STATUS    MESSAGE              ERROR
+etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
+controller-manager   Healthy   ok
+scheduler            Healthy   ok
 
 $ kubectl get node
 NAME      STATUS     ROLES     AGE       VERSION
@@ -12408,74 +12412,50 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/addon/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"8760h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"8760h"}}}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/addon/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/admin-csr.json</url>
+      <url>https://kairen.github.io/files/manual/pki/admin-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes-admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:masters","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"8760h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"8760h"}}}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/apiserver-csr.json</url>
+      <url>https://kairen.github.io/files/manual/pki/apiserver-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes-apiserver","hosts":["127.0.0.1","172.16.35.10","172.16.35.11","172.16.35.12","10.96.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"frognew":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"Kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"CA"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"Kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"k8s","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/kubelet-csr.json</url>
+      <url>https://kairen.github.io/files/manual/pki/kubelet-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:nodes","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/manager-csr.json</url>
+      <url>https://kairen.github.io/files/manual/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/pki/manager-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","hosts":["172.16.35.10","172.16.35.11","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/master/pki/scheduler-csr.json</url>
+      <url>https://kairen.github.io/files/manual/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","hosts":["172.16.35.10","172.16.35.11","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/node/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"8760h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"8760h"}}}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/node/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:nodes","OU":"Kubernetes manual"}]}]]></content>
     </entry>
     
   
