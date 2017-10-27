@@ -171,16 +171,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -428,6 +428,7 @@ member 95b428c288413b46 is healthy: got healthy result from http://172.16.35.12:
 cluster is healthy
 
 $ ETCDCTL_API=3 etcdctl member list
+95b428c288413b46, started, master1, http://172.16.35.12:2380, http://172.16.35.12:2379
 </code></pre>
 <h2 id="Kubernetes-Master-安裝與設定"><a href="#Kubernetes-Master-安裝與設定" class="headerlink" title="Kubernetes Master 安裝與設定"></a>Kubernetes Master 安裝與設定</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。本步驟將下載 Kubernetes 並安裝至 <code>master1</code>上，然後產生相關 TLS Cert 與 CA 金鑰，提供給叢集元件認證使用。</p>
 <h3 id="下載-Kubernetes-元件"><a href="#下載-Kubernetes-元件" class="headerlink" title="下載 Kubernetes 元件"></a>下載 Kubernetes 元件</h3><p>首先透過網路取得所有需要的執行檔案：</p>
@@ -465,9 +466,6 @@ $ cfssl gencert \
 $ ls admin*.pem
 admin-key.pem  admin.pem
 </code></pre>
-<blockquote>
-<p>若節點 IP 不同，需要修改<code>admin-csr.json</code>的<code>hosts</code>。</p>
-</blockquote>
 <p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># admin set-cluster
 $ kubectl config set-cluster kubernetes-manual \
@@ -586,7 +584,7 @@ $ kubectl config set-context system:kube-scheduler@kubernetes \
 $ kubectl config use-context system:kube-scheduler@kubernetes --kubeconfig=../scheduler.conf
 </code></pre>
 <h4 id="Kubelet-certificate"><a href="#Kubelet-certificate" class="headerlink" title="Kubelet certificate"></a>Kubelet certificate</h4><p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 簽證：</p>
-<pre><code class="sh">$ wget &quot;${CA_URL}/kubelet-csr.json&quot;
+<pre><code class="sh">$ wget &quot;${PKI_URL}/kubelet-csr.json&quot;
 $ sed -i &#39;s/$NODE/master1/g&#39; kubelet-csr.json
 $ cfssl gencert \
   -ca=ca.pem \
