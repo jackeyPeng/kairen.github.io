@@ -7,7 +7,7 @@
 
     
 
-    <title>自製 Kubernetes Ansible 快速部署實體機 HA 叢集 | KaiRen&#39;s Blog</title>
+    <title>kube-ansible 快速部署實體機 HA 叢集 | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="自製 Kubernetes Ansible 快速部署實體機 HA 叢集"/>
+    <meta property="og:title" content="kube-ansible 快速部署實體機 HA 叢集"/>
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -281,7 +281,7 @@
             <div class="article-title">
                 
     
-        <h1>自製 Kubernetes Ansible 快速部署實體機 HA 叢集</h1>
+        <h1>kube-ansible 快速部署實體機 HA 叢集</h1>
     
 
 
@@ -311,10 +311,10 @@
 
 
             <div class="entry green-link-context">
-                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">Kubernetes Ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
-<li>Kubernetes v1.7.0+</li>
+<li>Kubernetes v1.7.9</li>
 <li>Etcd v3.2.8</li>
 <li>Flannel v0.9.0</li>
 <li>Docker v1.13.0+(latest on v17.10.0-ce)</li>
@@ -428,7 +428,7 @@ masters
 nodes
 </code></pre><p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
 <pre><code class="yml"># Kubernetes component version
-kube_version: 1.7.8
+kube_version: 1.7.9
 
 # Network plugin implementation(&#39;flannel&#39;, &#39;calico&#39;, &#39;canal&#39;, &#39;weave&#39;, &#39;router&#39;)
 network: calico
@@ -444,12 +444,6 @@ service_node_port_range: 30000-32767
 lb_vip_address: 172.20.3.90
 lb_secure_port: 6443
 lb_api_url: &quot;https://{{ lb_vip_address }}:{{ lb_secure_port }}&quot;
-
-# 額外認證方式
-extra_auth:
-  basic:
-    accounts:
-    - &#39;p@ssw0rd,admin,admin&#39;
 
 # 若有內部 registry 則需要設定
 insecure_registrys:
@@ -505,7 +499,7 @@ NAME                                    READY     STATUS    RESTARTS   AGE
 kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 </code></pre>
 <blockquote>
-<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90/ui" target="_blank" rel="external">Dashboard</a>，輸入 admin 與 p@ssw0rd 來登入。</p>
+<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
 </blockquote>
 <p>接著透過 Etcd 來查看目前 Leader 狀態：</p>
 <pre><code class="sh">$ etcdctl member list
@@ -527,8 +521,8 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
 
 
 <p class="green-link-context">
-    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" rel="next" title="自製 Kubernetes Ansible 快速部署 HA 測試環境">
-    Next: 自製 Kubernetes Ansible 快速部署 HA 測試環境
+    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" rel="next" title="kube-ansible 快速部署 HA 測試環境">
+    Next: kube-ansible 快速部署 HA 測試環境
   </a>
 </p>
 

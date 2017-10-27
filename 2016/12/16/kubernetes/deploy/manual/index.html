@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -398,7 +398,7 @@ $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 $ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
 $ wget -qO- &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
 $ mv etcd-v3.2.9-linux-amd64 etcd
-$ cd etcd/ &amp;&amp; ln etcd /usr/bin/ &amp;&amp; ln etcdctl /usr/bin/
+$ cd etcd/ &amp;&amp; ln etcd /usr/local/bin/ &amp;&amp; ln etcdctl /usr/local/bin/
 </code></pre>
 <p>完成後新建 Etcd Group 與 User，並建立 Etcd 設定檔目錄：</p>
 <pre><code class="sh">$ groupadd etcd
@@ -422,26 +422,9 @@ EOF
 <blockquote>
 <p>P.S. 若與該教學 IP 不同的話，請用自己 IP 取代<code>172.16.35.12</code>。</p>
 </blockquote>
-<p>新增<code>/lib/systemd/system/etcd.service</code>來管理 Etcd，並加入以下內容：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/etcd.service
-[Unit]
-Description=Etcd Service
-After=network.target
-
-[Service]
-Environment=ETCD_DATA_DIR=/var/lib/etcd/default
-EnvironmentFile=-/etc/etcd/etcd.conf
-Type=notify
-User=etcd
-PermissionsStartOnly=true
-ExecStart=/usr/bin/etcd
-Restart=on-failure
-RestartSec=10
-LimitNOFILE=65536
-
-[Install]
-WantedBy=multi-user.target
-EOF
+<p>下載<code>etcd.service</code>檔案來管理 Etcd：</p>
+<pre><code class="sh">$ export ETCD_CONF_URL=&quot;https://kairen.github.io/files/manual/master/etcd&quot;
+$ wget &quot;${ETCD_CONF_URL}/etcd.service&quot; -O /lib/systemd/system/etcd.service
 </code></pre>
 <p>建立 var 存放資訊，然後啟動 Etcd 服務:</p>
 <pre><code class="sh">$ mkdir -p /var/lib/etcd &amp;&amp; chown etcd:etcd -R /var/lib/etcd
@@ -536,6 +519,31 @@ $ cfssl gencert \
 
 $ ls controller-manager*.pem
 </code></pre>
+<p>接著透過以下指令產生名稱為 <code>controller-manager.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># controller-manager set-cluster
+$ kubectl config set-cluster kubernetes \
+    --certificate-authority=/etc/kubernetes/pki/ca.pem \
+    --embed-certs=true \
+    --server=&quot;https://172.16.35.12:6443&quot; \
+    --kubeconfig=../controller-manager.conf
+
+# controller-manager set-credentials
+$ kubectl config set-credentials system:kube-controller-manager \
+    --client-certificate=/etc/kubernetes/pki/controller-manager.pem \
+    --embed-certs=true \
+    --client-key=/etc/kubernetes/pki/controller-manager-key.pem \
+    --kubeconfig=../controller-manager.conf
+
+# controller-manager set-context
+$ kubectl config set-context system:kube-controller-manager@kubernetes \
+    --cluster=kubernetes \
+    --user=system:kube-controller-manager \
+    --kubeconfig=../controller-manager.conf
+
+# controller-manager set default context
+$ kubectl config use-context system:kube-controller-manager@kubernetes \
+    --kubeconfig=../controller-manager.conf
+</code></pre>
 <h4 id="Scheduler-certificate"><a href="#Scheduler-certificate" class="headerlink" title="Scheduler certificate"></a>Scheduler certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 簽證：</p>
 <pre><code class="sh">$ wget &quot;${CA_URL}/scheduler-csr.json&quot;
 $ cfssl gencert \
@@ -546,8 +554,33 @@ $ cfssl gencert \
   scheduler-csr.json | cfssljson -bare scheduler
 
 $ ls scheduler*.pem
+scheduler-key.pem  scheduler.pem
 </code></pre>
-<p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 簽證：</p>
+<p>接著透過以下指令產生名稱為 <code>scheduler.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># scheduler set-cluster
+$ kubectl config set-cluster kubernetes \
+    --certificate-authority=/etc/kubernetes/pki/ca.pem \
+    --embed-certs=true \
+    --server=&quot;https://172.16.35.12:6443&quot; \
+    --kubeconfig=../scheduler.conf
+
+# scheduler set-credentials
+$ kubectl config set-credentials system:kube-scheduler \
+    --client-certificate=/etc/kubernetes/pki/scheduler.pem \
+    --embed-certs=true \
+    --client-key=/etc/kubernetes/pki/scheduler-key.pem \
+    --kubeconfig=../scheduler.conf
+
+# scheduler set-context
+$ kubectl config set-context system:kube-scheduler@kubernetes \
+    --cluster=kubernetes \
+    --user=system:kube-scheduler \
+    --kubeconfig=../scheduler.conf
+
+# scheduler set default context
+$ kubectl config use-context system:kube-scheduler@kubernetes --kubeconfig=../scheduler.conf
+</code></pre>
+<h4 id="Kubelet-certificate"><a href="#Kubelet-certificate" class="headerlink" title="Kubelet certificate"></a>Kubelet certificate</h4><p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 簽證：</p>
 <pre><code class="sh">$ wget &quot;${CA_URL}/kubelet-csr.json&quot;
 $ sed -i &#39;s/$NODE/master1/g&#39; kubelet-csr.json
 $ cfssl gencert \
@@ -559,7 +592,7 @@ $ cfssl gencert \
 
 $ ls kubelet*.pem
 </code></pre>
-<h4 id="Kubelet-certificate"><a href="#Kubelet-certificate" class="headerlink" title="Kubelet certificate"></a>Kubelet certificate</h4><p>接著透過以下指令產生名稱為 <code>kubelet.conf</code> 的 kubeconfig 檔：</p>
+<p>接著透過以下指令產生名稱為 <code>kubelet.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># set-cluster
 $ kubectl config set-cluster kubernetes-manual \
     --certificate-authority=/etc/kubernetes/pki/ca.pem \
@@ -581,16 +614,16 @@ $ kubectl config set-context system:node:master1@kubernetes \
     --kubeconfig=../kubelet.conf
 
 # set default context
-$ kubectl config use-context default --kubeconfig=../kubelet.conf
+$ kubectl config use-context system:node:master1@kubernetes --kubeconfig=../kubelet.conf
 </code></pre>
 <p>完成後刪除不必要檔案：</p>
 <pre><code class="sh">$ rm -rf *.json
 </code></pre>
 <h3 id="安裝-Kubernetes-核心元件"><a href="#安裝-Kubernetes-核心元件" class="headerlink" title="安裝 Kubernetes 核心元件"></a>安裝 Kubernetes 核心元件</h3><p>首先下載 Kubernetes 核心元件 YAML 檔案，這邊我們不透過 Binary 方案來建立 Mater 核心元件，而是採用 Self-hosted 方式來達成，因此需要下載所有核心元件的<code>Static Pod</code>檔案到<code>/etc/kubernetes/manifests</code>目錄：</p>
 <pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual/master/core&quot;
-$ cd /etc/kubernetes/manifests
+$ mkdir -p /etc/kubernetes/manifests &amp;&amp; cd /etc/kubernetes/manifests
 $ for FILE in apiserver manager scheduler; do
-    wget &quot;${CORE_URL}/${FILE}.conf&quot; -O ${FILE}.yml
+    wget &quot;${CORE_URL}/${FILE}.yml&quot; -O ${FILE}.yml
   done
 </code></pre>
 <blockquote>
@@ -613,28 +646,14 @@ resources:
               secret: SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
       - identity: {}
 </code></pre>
-<p>新增<code>/lib/systemd/system/kubelet.service</code>來管理 kubelet：</p>
-<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /lib/systemd/system/kubelet.service
-[Unit]
-Description=Kubernetes kubelet service
-After=docker.service
-Requires=docker.service
-
-[Service]
-WorkingDirectory=/var/lib/kubelet
-ExecStart=/usr/bin/kubelet \$KUBELET_ADDRESS \$KUBELET_POD_INFRA_CONTAINER \$KUBELET_ARGS \$KUBE_NODE_LABEL \$KUBE_LOGTOSTDERR \$KUBE_ALLOW_PRIV \$KUBELET_NETWORK_ARGS \$KUBELET_DNS_ARGS
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-EOF
+<p>下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
+<pre><code class="sh">$ export KUBELET_URL=&quot;https://kairen.github.io/files/manual/master/kubelet&quot;
+$ mkdir /etc/systemd/system/kubelet.service.d
+$ wget &quot;${KUBELET_URL}/kubelet.service&quot; -O /lib/systemd/system/kubelet.service
+$ wget &quot;${KUBELET_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet.service.d/10-kubelet.conf
 </code></pre>
-<blockquote>
-<p><code>/etc/systemd/system/kubelet.service</code>為<code>CentOS 7</code>使用的路徑。</p>
-</blockquote>
 <p>最後建立 var 存放資訊，然後啟動 kubelet 服務:</p>
 <pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes
-$ systemctl daemon-reload
 $ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 </code></pre>
 <p>完成後會需要一段時間來下載與啟動元件，可以利用該指令來監看：</p>
@@ -905,8 +924,8 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
 
                 
 <p class="green-link-context">
-    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" rel="next" title="自製 Kubernetes Ansible 快速部署 HA 測試環境">
-    Prev: 自製 Kubernetes Ansible 快速部署 HA 測試環境
+    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" rel="next" title="kube-ansible 快速部署 HA 測試環境">
+    Prev: kube-ansible 快速部署 HA 測試環境
   </a>
 </p>
 

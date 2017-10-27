@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -478,16 +478,15 @@ node2     Ready     &lt;none&gt;    9m        v1.8.2
 <h2 id="Add-ons-建立"><a href="#Add-ons-建立" class="headerlink" title="Add-ons 建立"></a>Add-ons 建立</h2><p>當完成後就可以建立一些 Addons，如 Dashboard。這邊執行以下指令進行建立：</p>
 <pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 </code></pre>
-<p>&gt;</p>
+<blockquote>
+<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="external">Installation</a>。</p>
+</blockquote>
 <p>確認沒問題後，透過 kubectl 查看：</p>
 <pre><code class="sh">kubectl get svc --namespace=kube-system
 NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
 kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
 kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
 </code></pre>
-<blockquote>
-<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="external">Installation</a>。</p>
-</blockquote>
 <p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Kube Dashboard</a>。</p>
 <h2 id="簡單部署一個服務"><a href="#簡單部署一個服務" class="headerlink" title="簡單部署一個服務"></a>簡單部署一個服務</h2><p>這邊利用 Weave 公司提供的服務來驗證系統，透過以下方式建立：</p>
 <pre><code class="sh">$ kubectl create namespace sock-shop
