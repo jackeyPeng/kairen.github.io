@@ -3356,10 +3356,19 @@ SELINUX=disabled
 <pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
 </code></pre>
 </blockquote>
+<p>編輯<code>/lib/systemd/system/docker.service</code>，在<code>ExecStart=..</code>上加入：</p>
+<pre><code>..
+ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+</code></pre><blockquote>
+<p>完成後，重新啟動 docker 服務：</p>
+<pre><code class="sh">$ systemctl daemon-reload &amp;&amp; systemctl restart docker
+</code></pre>
+</blockquote>
 <ul>
 <li>所有節點需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數。</li>
 </ul>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/sysctl.d/k8s.conf
+net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
@@ -3376,7 +3385,7 @@ $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 </code></pre>
 <h2 id="Etcd"><a href="#Etcd" class="headerlink" title="Etcd"></a>Etcd</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最重要的一環，Kubernetes 會將大部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集運作與溝通正常。</p>
 <h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 client 與 server 的各元件 certificates，並且替 Kubernetes admin user 產生 client 簽證。</p>
-<p>建立<code>pki</code>資料夾，然後進入目錄完成以下操作。</p>
+<p>建立<code>/etc/etcd/ssl</code>資料夾，然後進入目錄完成以下操作。</p>
 <pre><code class="sh">$ mkdir -p /etc/etcd/ssl &amp;&amp; cd /etc/etcd/ssl
 $ export PKI_URL=&quot;https://kairen.github.io/files/manual/pki&quot;
 </code></pre>
@@ -3384,6 +3393,7 @@ $ export PKI_URL=&quot;https://kairen.github.io/files/manual/pki&quot;
 <pre><code class="sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/etcd-ca-csr.json&quot;
 $ cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
 $ ls etcd-ca*.pem
+etcd-ca-key.pem  etcd-ca.pem
 </code></pre>
 <p>下載<code>etcd-csr.json</code>檔案，並產生 kube-apiserver certificate 簽證：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/etcd-csr.json&quot;
@@ -3391,6 +3401,7 @@ $ cfssl gencert \
   -ca=etcd-ca.pem \
   -ca-key=etcd-ca-key.pem \
   -config=ca-config.json \
+  -profile=kubernetes \
   etcd-csr.json | cfssljson -bare etcd
 
 $ ls etcd*.pem
@@ -3398,6 +3409,13 @@ $ ls etcd*.pem
 <blockquote>
 <p>若節點 IP 不同，需要修改<code>etcd-csr.json</code>的<code>hosts</code>。</p>
 </blockquote>
+<p>完成後刪除不必要檔案：</p>
+<pre><code class="sh">$ rm -rf *.json
+</code></pre>
+<p>確認<code>/etc/etcd/ssl</code>有以下檔案：</p>
+<pre><code class="sh">$ ls /etc/etcd/ssl
+etcd-ca.csr  etcd-ca-key.pem  etcd-ca.pem  etcd.csr  etcd-key.pem  etcd.pem
+</code></pre>
 <h3 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h3><p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
 <pre><code class="sh">$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
 $ wget -qO- --show-progress &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
@@ -3406,7 +3424,6 @@ $ cd ../ &amp;&amp; rm -rf etcd-v3.2.9-linux-amd64
 </code></pre>
 <p>完成後新建 Etcd Group 與 User，並建立 Etcd 設定檔目錄：</p>
 <pre><code class="sh">$ groupadd etcd &amp;&amp; useradd -c &quot;Etcd user&quot; -g etcd -s /sbin/nologin -r etcd
-$ mkdir /etc/etcd
 </code></pre>
 <p>下載<code>etcd</code>相關檔案，我們將來管理 Etcd：</p>
 <pre><code class="sh">$ export ETCD_CONF_URL=&quot;https://kairen.github.io/files/manual/master&quot;
@@ -3417,7 +3434,8 @@ $ wget &quot;${ETCD_CONF_URL}/etcd.service&quot; -O /lib/systemd/system/etcd.ser
 <p>若與該教學 IP 不同的話，請用自己 IP 取代<code>172.16.35.12</code>。</p>
 </blockquote>
 <p>建立 var 存放資訊，然後啟動 Etcd 服務:</p>
-<pre><code class="sh">$ mkdir -p /var/lib/etcd &amp;&amp; chown etcd:etcd -R /var/lib/etcd
+<pre><code class="sh">$ mkdir -p /var/lib/etcd
+$ chown etcd:etcd -R /var/lib/etcd /etc/etcd
 $ systemctl enable etcd.service &amp;&amp; systemctl start etcd.service
 </code></pre>
 <p>透過簡單指令驗證：</p>
@@ -3428,6 +3446,8 @@ $ ETCDCTL_API=3 etcdctl \
     --key=${CA}/etcd-key.pem \
     --endpoints=https://172.16.35.12:2379 \
     endpoint health
+# output
+https://172.16.35.12:2379 is healthy: successfully committed proposal: took = 641.36µs
 </code></pre>
 <h2 id="Kubernetes-Master"><a href="#Kubernetes-Master" class="headerlink" title="Kubernetes Master"></a>Kubernetes Master</h2><p>Master 是 Kubernetes 的大總管，主要建置<code>API Server</code>、<code>Controller Manager Server</code>與<code>Scheduler</code>來元件管理所有 Node。本步驟將下載 Kubernetes 並安裝至 <code>master1</code>上，然後產生相關 TLS Cert 與 CA 金鑰，提供給叢集元件認證使用。</p>
 <h3 id="下載-Kubernetes-元件"><a href="#下載-Kubernetes-元件" class="headerlink" title="下載 Kubernetes 元件"></a>下載 Kubernetes 元件</h3><p>首先透過網路取得所有需要的執行檔案：</p>
@@ -3477,25 +3497,25 @@ $ cat &lt;&lt;EOF &gt; /etc/kubernetes/token.csv
 ${BOOTSTRAP_TOKEN},kubelet-bootstrap,10001,&quot;system:kubelet-bootstrap&quot;
 EOF
 
-# admin set-cluster
+# bootstrap set-cluster
 $ kubectl config set-cluster kubernetes \
     --certificate-authority=ca.pem \
     --embed-certs=true \
     --server=${KUBE_APISERVER} \
     --kubeconfig=../bootstrap.conf
 
-# admin set-credentials
+# bootstrap set-credentials
 $ kubectl config set-credentials kubelet-bootstrap \
     --token=${BOOTSTRAP_TOKEN} \
     --kubeconfig=../bootstrap.conf
 
-# admin set-context
+# bootstrap set-context
 $ kubectl config set-context default \
     --cluster=kubernetes \
     --user=kubelet-bootstrap \
    --kubeconfig=../bootstrap.conf
 
-# admin set default context
+# bootstrap set default context
 $ kubectl config use-context default --kubeconfig=../bootstrap.conf
 </code></pre>
 <blockquote>
@@ -3658,12 +3678,12 @@ $ kubectl config set-context system:node:master1@kubernetes \
 $ kubectl config use-context system:node:master1@kubernetes \
     --kubeconfig=../kubelet.conf
 </code></pre>
+<p>完成後刪除不必要檔案：</p>
+<pre><code class="sh">$ rm -rf *.json
+</code></pre>
 <p>確認<code>/etc/kubernetes</code>有以下檔案：</p>
 <pre><code class="sh">$ ls /etc/kubernetes/
 admin.conf  bootstrap.conf  controller-manager.conf  kubelet.conf  pki  scheduler.conf  token.csv
-</code></pre>
-<p>完成後刪除不必要檔案：</p>
-<pre><code class="sh">$ rm -rf *.json
 </code></pre>
 <h3 id="安裝-Kubernetes-核心元件"><a href="#安裝-Kubernetes-核心元件" class="headerlink" title="安裝 Kubernetes 核心元件"></a>安裝 Kubernetes 核心元件</h3><p>首先下載 Kubernetes 核心元件 YAML 檔案，這邊我們不透過 Binary 方案來建立 Mater 核心元件，而是採用 Self-hosted 方式來達成，因此需要下載所有核心元件的<code>Static Pod</code>檔案到<code>/etc/kubernetes/manifests</code>目錄：</p>
 <pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual/master&quot;
@@ -3794,15 +3814,18 @@ $ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 <p>在<code>master</code>透過簡單指令驗證，會看到節點處於<code>pending</code>：</p>
 <pre><code class="sh">$ kubectl get csr
 NAME                                                   AGE       REQUESTOR           CONDITION
-node-csr-ntOksnY36_qsswY6sDCyloL-YCZgraGyDrRR3o_DEqE   1m        kubelet-bootstrap   Pending
-node-csr-sRYU96hmGEvO1xtAaK1_q8-Omg4HHXlNL_zosJKdfic   1m        kubelet-bootstrap   Pending
+node-csr-YWf97ZrLCTlr2hmXsNLfjVLwaLfZRsu52FRKOYjpcBE   2s        kubelet-bootstrap   Pending
+node-csr-eq4q6ffOwT4yqYQNU6sT7mphPOQdFN6yulMVZeu6pkE   2s        kubelet-bootstrap   Pending
 </code></pre>
 <p>透過 kubectl 來允許節點加入叢集：</p>
 <pre><code class="sh">$ kubectl get csr | grep Pending | awk &#39;{print $1}&#39; | xargs kubectl certificate approve
+certificatesigningrequest &quot;node-csr-YWf97ZrLCTlr2hmXsNLfjVLwaLfZRsu52FRKOYjpcBE&quot; approved
+certificatesigningrequest &quot;node-csr-eq4q6ffOwT4yqYQNU6sT7mphPOQdFN6yulMVZeu6pkE&quot; approved
+
 $ kubectl get csr
 NAME                                                   AGE       REQUESTOR           CONDITION
-node-csr-ntOksnY36_qsswY6sDCyloL-YCZgraGyDrRR3o_DEqE   1m        kubelet-bootstrap   Approved,Issued
-node-csr-sRYU96hmGEvO1xtAaK1_q8-Omg4HHXlNL_zosJKdfic   1m        kubelet-bootstrap   Approved,Issued
+node-csr-YWf97ZrLCTlr2hmXsNLfjVLwaLfZRsu52FRKOYjpcBE   30s       kubelet-bootstrap   Approved,Issued
+node-csr-eq4q6ffOwT4yqYQNU6sT7mphPOQdFN6yulMVZeu6pkE   30s       kubelet-bootstrap   Approved,Issued
 
 $ kubectl get no
 NAME      STATUS     ROLES     AGE       VERSION
@@ -3851,13 +3874,13 @@ $ kubectl config set-context system:kube-proxy@kubernetes \
 $ kubectl config use-context system:kube-proxy@kubernetes \
     --kubeconfig=../kube-proxy.conf
 </code></pre>
+<p>完成後刪除不必要檔案：</p>
+<pre><code class="sh">$ rm -rf *.json
+</code></pre>
 <p>確認<code>/etc/kubernetes</code>有以下檔案：</p>
 <pre><code class="sh">$ ls /etc/kubernetes/
 admin.conf        bootstrap.conf           encryption.yml  kube-proxy.conf  pki             token.csv
 audit-policy.yml  controller-manager.conf  kubelet.conf    manifests        scheduler.conf
-</code></pre>
-<p>完成後刪除不必要檔案：</p>
-<pre><code class="sh">$ rm -rf *.json
 </code></pre>
 <p>在<code>master1</code>將<code>kube-proxy</code>相關檔案複製到 Node 節點上：</p>
 <pre><code class="sh">$ for NODE in node1 node2; do
@@ -3868,6 +3891,7 @@ audit-policy.yml  controller-manager.conf  kubelet.conf    manifests        sche
 </code></pre>
 <p>完成後，在<code>master1</code>透過 kubectl 來建立 kube-proxy daemon：</p>
 <pre><code class="sh">$ export ADDON_URL=&quot;https://kairen.github.io/files/manual/addon&quot;
+$ mkdir -p /etc/kubernetes/addons &amp;&amp; cd /etc/kubernetes/addons
 $ wget &quot;${ADDON_URL}/kube-proxy.yml.conf&quot; -O kube-proxy.yml
 $ kubectl apply -f kube-proxy.yml
 $ kubectl -n kube-system get po -l k8s-app=kube-proxy
@@ -3886,7 +3910,13 @@ NAME                        READY     STATUS    RESTARTS   AGE
 kube-dns-6cb549f55f-wxgvw   3/3       Running   0          39s
 </code></pre>
 <h2 id="Calico-Network-安裝與設定"><a href="#Calico-Network-安裝與設定" class="headerlink" title="Calico Network 安裝與設定"></a>Calico Network 安裝與設定</h2><p>Calico 是一款純 Layer 3 的資料中心網路方案(不需要 Overlay 網路)，Calico 好處是他已與各種雲原生平台有良好的整合，而 Calico 在每一個節點利用 Linux Kernel 實現高效的 vRouter 來負責資料的轉發，而當資料複雜度增加時，可以用 BGP route reflector 來達成。</p>
-<p>首先在<code>master1</code>下載 Calico CLI 工具：</p>
+<p>首先在<code>master1</code>透過 kubectl 建立 Calico policy controller：</p>
+<pre><code class="sh">$ export CALICO_CONF_URL=&quot;https://kairen.github.io/files/manual/network&quot;
+$ wget &quot;${CALICO_CONF_URL}/calico-controller.yml.conf&quot; -O calico-controller.yml
+$ kubectl apply -f calico-controller.yml
+$ kubectl -n kube-system get po -l k8s-app=calico-policy
+</code></pre>
+<p>在<code>master1</code>下載 Calico CLI 工具：</p>
 <pre><code class="sh">$ wget https://github.com/projectcalico/calicoctl/releases/download/v1.6.1/calicoctl
 $ chmod +x calicoctl &amp;&amp; mv calicoctl /usr/local/bin/
 </code></pre>
@@ -3909,17 +3939,19 @@ $ wget &quot;${CALICO_CONF_URL}/calico-node.service&quot; -O /lib/systemd/system
 <pre><code class="sh">$ systemctl enable calico-node.service &amp;&amp; systemctl start calico-node.service
 </code></pre>
 <p>在<code>master1</code>查看 Calico nodes:</p>
-<pre><code class="sh">$ calicoctl get node -o wide
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; ~/calico-rc
+export ETCD_ENDPOINTS=&quot;https://172.16.35.12:2379&quot;
+export ETCD_CA_CERT_FILE=&quot;/etc/etcd/ssl/etcd-ca.pem&quot;
+export ETCD_CERT_FILE=&quot;/etc/etcd/ssl/etcd.pem&quot;
+export ETCD_KEY_FILE=&quot;/etc/etcd/ssl/etcd-key.pem&quot;
+EOF
+
+$ . ~/calico-rc
+$ calicoctl get node -o wide
 NAME      ASN       IPV4              IPV6
 master1   (64512)   172.16.35.12/24
 node1     (64512)   172.16.35.10/24
 node2     (64512)   172.16.35.11/24
-</code></pre>
-<p>在<code>master1</code>透過 kubectl 建立 Calico policy controller：</p>
-<pre><code class="sh">$ export CALICO_CONF_URL=&quot;https://kairen.github.io/files/manual/network&quot;
-$ wget &quot;${CALICO_CONF_URL}/calico-controller.yml.conf&quot; calico-controller.yml
-$ kubectl apply -f calico-controller.yml
-$ kubectl -n kube-system get po -l k8s-app=calico-policy
 </code></pre>
 <p>最後若想省事，可以直接用 <a href="https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/hosted" target="_blank" rel="external">Standard Hosted</a> 方式安裝。</p>
 <h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
@@ -12470,14 +12502,14 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"k8s","OU":"System"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"k8s","OU":"System"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
@@ -12488,8 +12520,8 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"System"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -12500,14 +12532,14 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"System"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"System"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"System"}]}]]></content>
     </entry>
     
     <entry>
