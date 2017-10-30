@@ -445,8 +445,7 @@ etcd-ca.csr  etcd-ca-key.pem  etcd-ca.pem  etcd.csr  etcd-key.pem  etcd.pem
 <h3 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h3><p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
 <pre><code class="sh">$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
 $ cd &amp;&amp; wget -qO- --show-progress &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
-$ cd etcd-v3.2.9-linux-amd64 &amp;&amp; mv etcd* /usr/local/bin/
-$ cd ../ &amp;&amp; rm -rf etcd-v3.2.9-linux-amd64
+$ mv etcd-v3.2.9-linux-amd64/etcd* /usr/local/bin/ &amp;&amp; rm -rf etcd-v3.2.9-linux-amd64
 </code></pre>
 <p>完成後新建 Etcd Group 與 User，並建立 Etcd 設定檔目錄：</p>
 <pre><code class="sh">$ groupadd etcd &amp;&amp; useradd -c &quot;Etcd user&quot; -g etcd -s /sbin/nologin -r etcd
@@ -460,8 +459,7 @@ $ wget &quot;${ETCD_CONF_URL}/etcd.service&quot; -O /lib/systemd/system/etcd.ser
 <p>若與該教學 IP 不同的話，請用自己 IP 取代<code>172.16.35.12</code>。</p>
 </blockquote>
 <p>建立 var 存放資訊，然後啟動 Etcd 服務:</p>
-<pre><code class="sh">$ mkdir -p /var/lib/etcd
-$ chown etcd:etcd -R /var/lib/etcd /etc/etcd
+<pre><code class="sh">$ mkdir -p /var/lib/etcd &amp;&amp; chown etcd:etcd -R /var/lib/etcd /etc/etcd
 $ systemctl enable etcd.service &amp;&amp; systemctl start etcd.service
 </code></pre>
 <p>透過簡單指令驗證：</p>
@@ -670,7 +668,7 @@ $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname=master1,172.16.35.12 \
+  -hostname=172.16.35.12,master1 \
   -profile=kubernetes \
   kubelet-csr.json | cfssljson -bare kubelet
 
@@ -745,7 +743,6 @@ EOF
 </blockquote>
 <p>在<code>/etc/kubernetes/</code>目錄下，建立<code>audit-policy.yml</code>的進階稽核策略 YAML 檔：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
-# Log all requests at the Metadata level.
 apiVersion: audit.k8s.io/v1beta1
 kind: Policy
 rules:
