@@ -203,16 +203,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">5</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">14</span></a>
                 </a>
             </li>
 
@@ -545,17 +545,17 @@ $ kubectl config use-context default --kubeconfig=../bootstrap.conf
 <blockquote>
 <p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="external">Kubelet certificate</a>。</p>
 </blockquote>
-<h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 簽證：</p>
-<pre><code class="sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
+<h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>apiserver-client-csr.json</code>檔案，並產生 admin certificate 簽證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/apiserver-client-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
   -profile=kubernetes \
-  admin-csr.json | cfssljson -bare admin
+  apiserver-client-csr.json | cfssljson -bare apiserver-kubelet-client
 
-$ ls admin*.pem
-admin-key.pem  admin.pem
+$ ls apiserver-kubelet-client*.pem
+apiserver-kubelet-client-key.pem  apiserver-kubelet-client.pem
 </code></pre>
 <p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># admin set-cluster
