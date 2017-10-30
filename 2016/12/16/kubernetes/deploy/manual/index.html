@@ -203,16 +203,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">5</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">14</span></a>
                 </a>
             </li>
 
@@ -430,6 +430,7 @@ $ cfssl gencert \
   etcd-csr.json | cfssljson -bare etcd
 
 $ ls etcd*.pem
+etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pe
 </code></pre>
 <blockquote>
 <p>若節點 IP 不同，需要修改<code>etcd-csr.json</code>的<code>hosts</code>。</p>
@@ -443,7 +444,7 @@ etcd-ca.csr  etcd-ca-key.pem  etcd-ca.pem  etcd.csr  etcd-key.pem  etcd.pem
 </code></pre>
 <h3 id="Etcd-安裝與設定"><a href="#Etcd-安裝與設定" class="headerlink" title="Etcd 安裝與設定"></a>Etcd 安裝與設定</h3><p>首先在<code>master1</code>節點下載 Etcd，並解壓縮放到 /opt 底下與安裝：</p>
 <pre><code class="sh">$ export ETCD_URL=&quot;https://github.com/coreos/etcd/releases/download&quot;
-$ wget -qO- --show-progress &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
+$ cd &amp;&amp; wget -qO- --show-progress &quot;${ETCD_URL}/v3.2.9/etcd-v3.2.9-linux-amd64.tar.gz&quot; | tar -zx
 $ cd etcd-v3.2.9-linux-amd64 &amp;&amp; mv etcd* /usr/local/bin/
 $ cd ../ &amp;&amp; rm -rf etcd-v3.2.9-linux-amd64
 </code></pre>

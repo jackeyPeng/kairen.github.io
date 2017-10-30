@@ -1,1 +1,1 @@
-{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"k8s","OU":"System"}]}
+{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"kubernetes","OU":"Kubernetes manual"}]}
