@@ -187,6 +187,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
                 </a>
@@ -196,15 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                    Kubernetes <span class="right">15</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,58 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/02/24/kubernetes/deploy/official-ansible/">透過官方 Ansible 部署 Kubernetes(Unrecommended)</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-02-24T09:08:54.000Z"><a href="/2016/02/24/kubernetes/deploy/official-ansible/">2016-02-24</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Ansible/" class="chip pink lighten-1">Ansible</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Creating a Kubernetes Cluster</a>。</p>
+<center><img src="/images/kube/kube-ansible.png" alt=""></center>
+
+<p>本次安裝版本為：</p>
+<ul>
+<li>Kubernetes v1.5.2</li>
+<li>Etcd v3.1.0</li>
+<li>Flannel v0.5.5</li>
+<li>Docker v1.12.6</li>
+</ul>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/02/24/kubernetes/deploy/official-ansible/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -669,49 +721,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2016/02/13/devops/puppet-basic/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2016/02/12/devops/saltstack-basic/">SaltStack 介紹</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-02-12T04:23:01.000Z"><a href="/2016/02/12/devops/saltstack-basic/">2016-02-12</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
-        
-            <a href="/tags/Automation-Engine/" class="chip pink lighten-1">Automation Engine</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Saltstack 是一套基礎設施管理開發套件、簡單易部署、可擴展到管理成千上萬的伺服器、控制速度佳(以 ms 為單位)。Saltstack 提供了動態基礎設施溝通總線用於編配、遠端執行、配置管理等等。Saltstack 是從 2011 年開始的專案，已經是很成熟的開源專案。該專案簡單的兩大基礎功能就是配置管理與遠端指令執行。</p>
-<p>Saltstack 採用集中化管理，我們一般可以理解為 Puppet 的簡化版本與 <a href="https://fedorahosted.org/func/" target="_blank" rel="external">Func</a><br>的加強版本。Saltstack 是基於 Python 語言開發的，結合輕量級訊息佇列（ZeroMQ）以及 Python 第三方模組（Pyzmq、PyCrypto、Pyjinja2、python-msgpack與PyYAML等）。</p>
-<p><img src="/images/devops/saltstack-arch.png" alt=""></p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/02/12/devops/saltstack-basic/">READ MORE</a>
         </ div>
         
     </div>

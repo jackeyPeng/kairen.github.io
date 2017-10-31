@@ -7,7 +7,7 @@
 
     
 
-    <title>使用 Kuryr 與 Kubernetes 網路整合 | KaiRen&#39;s Blog</title>
+    <title>Archives: 2017/10 | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="使用 Kuryr 與 Kubernetes 網路整合"/>
+    
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -187,6 +187,14 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
                 </a>
@@ -196,15 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">14</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                    Kubernetes <span class="right">15</span></a>
                 </a>
             </li>
 
@@ -257,119 +257,40 @@
 
     <main>
         <div class="container main-container">
-    <nav class="page-nav hide-on-small-only">
+    
+
+<nav class="page-nav hide-on-small-only">
     <div class="nav-wrapper indigo">
-        <span class="breadcrumb">Current page(Categories)</span>
-        
-            
-    
-    
-    <a class="breadcrumb" href="/undefined">undefined</a><a class="breadcrumb" href="/undefined">undefined</a>
-
-
+        <span class="breadcrumb">Current page(Archives)</span>
         
 
         
     </div>
 </nav>
 
-<article>
-    <div class="card">
-        <div class="card-content">
-            
-
-            <div class="article-title">
-                
-    
-        <h1>使用 Kuryr 與 Kubernetes 網路整合</h1>
-    
 
 
-            </div>
-            <time class="green-link-context" datetime="2016-08-22T08:23:01.000Z"><a href="/files/kuryr-kubernetes.html">2016-08-22</a></time>
-
-            <span id="busuanzi_container_page_pv" class="read-times-container">
-    <i class="fa fa-eye"></i>
-    <span id="busuanzi_value_page_pv"></span>
-</span>
-
-            
-    <div class="tags-row">
+    <ul class="collapsible mt-0" data-collapsible="accordion">
         
-            <a href="/undefined" class="chip pink lighten-1">undefined</a>
         
-            <a href="/undefined" class="chip pink lighten-1">undefined</a>
+            <li>
+                <div class="collapsible-header active">
+                    <i class="fa fa-archive"></i>2017
+                </div>
+                <div class="collapsible-body">
+                    <div class="collection">
+                        
+                            <a href="/2017/10/27/kubernetes/deploy/manual-v1.8/" class="collection-item grey-text text-darken-1">
+                                <time datetime="2017-10-27T09:08:54.000Z">2017-10-27</time>
+                                <span>&nbsp;&nbsp;&nbsp;</span>
+                                Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)
+                            </a>
+                        
+                    </div>
+                </div>
+            </li>
         
-            <a href="/undefined" class="chip pink lighten-1">undefined</a>
-        
-            <a href="/undefined" class="chip pink lighten-1">undefined</a>
-        
-    </div>
-
-
-            <div class="toc green-link-context hide-on-med-and-down">
-    
-</div>
-
-
-            <div class="entry green-link-context">
-                <pre><code class="sh">$ openstack network create k8s-pod-net
-$ openstack subnet create \
-                   --network k8s-pod-net \
-                   --dns-nameserver 8.8.4.4 \
-                   --gateway 10.244.0.1 \
-                   --subnet-range 10.244.0.0/16 k8s-pod-subnet
-
-$ openstack network create k8s-service-net
-$ openstack subnet create \
-                   --network k8s-service-net \
-                   --dns-nameserver 8.8.4.4 \
-                   --gateway 192.160.0.1 \
-                   --subnet-range 192.160.0.0/12 k8s-service-subnet
-</code></pre>
-<pre><code class="sh">$ openstack security group create \
-    --project admin service_pod_access
-
-$ openstack security group rule create \
-      --project admin \
-      --remote-ip 192.160.0.0/12 \
-      --ethertype IPv4 \
-      --protocol tcp \
-      service_pod_access
-</code></pre>
-
-                
-
-
-
-            </div>
-			
-        </div>
-    </div>
-</article>
-
-
-
-
-    <section id="comment">
-        <div id="disqus_thread"></div>
-        <script>
-            var url_parts = window.location.href.split("?");
-            var disqus_url = url_parts[0];
-            (function() {
-                var dsq = document.createElement('script');
-                dsq.type = 'text/javascript';
-                dsq.async = true;
-                dsq.src = "//ky1ebai.disqus.com/embed.js";
-                dsq.setAttribute('data-timestamp', + new Date());
-                (document.head || d.body ).appendChild(dsq);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the
-            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-        </noscript>
-    </section>
-
+    </ul>
 
 
 </div>
