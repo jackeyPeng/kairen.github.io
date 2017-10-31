@@ -1,1 +1,1 @@
-{"CN":"kube-apiserver","hosts":["10.96.0.1","172.16.35.12","master1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"kubernetes","OU":"Kubernetes-manual"}]}
+{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}

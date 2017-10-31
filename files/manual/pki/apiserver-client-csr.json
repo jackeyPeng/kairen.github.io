@@ -1,1 +1,0 @@
-{"CN":"kube-apiserver-kubelet-client","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}

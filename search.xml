@@ -3378,13 +3378,13 @@ $ sysctl -p /etc/sysctl.d/k8s.conf
 <ul>
 <li>在<code>master1</code>需要安裝<code>CFSSL</code>工具，這將會用來建立 TLS certificates。</li>
 </ul>
-<pre><code class="sh">$ export CFSS_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
-$ wget &quot;${CFSS_URL}/cfssl_linux-amd64&quot; -O /usr/local/bin/cfssl
-$ wget &quot;${CFSS_URL}/cfssljson_linux-amd64&quot; -O /usr/local/bin/cfssljson
+<pre><code class="sh">$ export CFSSL_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
+$ wget &quot;${CFSSL_URL}/cfssl_linux-amd64&quot; -O /usr/local/bin/cfssl
+$ wget &quot;${CFSSL_URL}/cfssljson_linux-amd64&quot; -O /usr/local/bin/cfssljson
 $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 </code></pre>
 <h2 id="Etcd"><a href="#Etcd" class="headerlink" title="Etcd"></a>Etcd</h2><p>在開始安裝 Kubernetes 之前，需要先將一些必要系統建置完成，其中 Etcd 就是 Kubernetes 最重要的一環，Kubernetes 會將大部分資訊儲存於 Etcd 上，來提供給其他節點索取，以確保整個叢集運作與溝通正常。</p>
-<h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 client 與 server 的各元件 certificates，並且替 Kubernetes admin user 產生 client 簽證。</p>
+<h3 id="建立叢集-CA-與-Certificates"><a href="#建立叢集-CA-與-Certificates" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 client 與 server 的各元件 certificates，並且替 Kubernetes admin user 產生 client 證書。</p>
 <p>建立<code>/etc/etcd/ssl</code>資料夾，然後進入目錄完成以下操作。</p>
 <pre><code class="sh">$ mkdir -p /etc/etcd/ssl &amp;&amp; cd /etc/etcd/ssl
 $ export PKI_URL=&quot;https://kairen.github.io/files/manual/pki&quot;
@@ -3395,7 +3395,7 @@ $ cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
 $ ls etcd-ca*.pem
 etcd-ca-key.pem  etcd-ca.pem
 </code></pre>
-<p>下載<code>etcd-csr.json</code>檔案，並產生 kube-apiserver certificate 簽證：</p>
+<p>下載<code>etcd-csr.json</code>檔案，並產生 kube-apiserver certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/etcd-csr.json&quot;
 $ cfssl gencert \
   -ca=etcd-ca.pem \
@@ -3461,7 +3461,7 @@ $ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
 $ export CNI_URL=&quot;https://github.com/containernetworking/plugins/releases/download&quot;
 $ wget -qO- --show-progress &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
 </code></pre>
-<h3 id="建立叢集-CA-與-Certificates-1"><a href="#建立叢集-CA-與-Certificates-1" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 client 與 server 的各元件 certificates，並且替 Kubernetes admin user 產生 client 簽證。</p>
+<h3 id="建立叢集-CA-與-Certificates-1"><a href="#建立叢集-CA-與-Certificates-1" class="headerlink" title="建立叢集 CA 與 Certificates"></a>建立叢集 CA 與 Certificates</h3><p>在這部分，將會需要產生 client 與 server 的各元件 certificates，並且替 Kubernetes admin user 產生 client 證書。</p>
 <p>建立<code>pki</code>資料夾，然後進入目錄完成以下操作。</p>
 <pre><code class="sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
 $ export PKI_URL=&quot;https://kairen.github.io/files/manual/pki&quot;
@@ -3473,12 +3473,13 @@ $ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 $ ls ca*.pem
 ca-key.pem  ca.pem
 </code></pre>
-<h4 id="API-server-certificate"><a href="#API-server-certificate" class="headerlink" title="API server certificate"></a>API server certificate</h4><p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver certificate 簽證：</p>
+<h4 id="API-server-certificate"><a href="#API-server-certificate" class="headerlink" title="API server certificate"></a>API server certificate</h4><p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/apiserver-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
+  -hostname=10.96.0.1,172.16.35.12,127.0.0.1,kubernetes.default \
   -profile=kubernetes \
   apiserver-csr.json | cfssljson -bare apiserver
 
@@ -3488,7 +3489,27 @@ apiserver-key.pem  apiserver.pem
 <blockquote>
 <p>若節點 IP 不同，需要修改<code>apiserver-csr.json</code>的<code>hosts</code>。</p>
 </blockquote>
-<h4 id="Bootstrap-Token"><a href="#Bootstrap-Token" class="headerlink" title="Bootstrap Token"></a>Bootstrap Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次簽證時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS 認證，再由 apiserver 自動給符合條件的 Node 證書來授權加入叢集。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="external">TLS bootstrapping</a>。</p>
+<h4 id="Front-proxy-certificate"><a href="#Front-proxy-certificate" class="headerlink" title="Front proxy certificate"></a>Front proxy certificate</h4><p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front proxy CA 金鑰：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-ca-csr.json&quot;
+$ cfssl gencert \
+  -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
+
+$ ls front-proxy-ca*.pem
+front-proxy-ca-key.pem  front-proxy-ca.pem
+</code></pre>
+<p>下載<code>front-proxy-client-csr.json</code>檔案，並產生 front-proxy-client 證書：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-client-csr.json&quot;
+$ cfssl gencert \
+  -ca=front-proxy-ca.pem \
+  -ca-key=front-proxy-ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  front-proxy-client-csr.json | cfssljson -bare front-proxy-client
+
+$ ls front-proxy-client*.pem
+front-proxy-client-key.pem  front-proxy-client.pem
+</code></pre>
+<h4 id="Bootstrap-Token"><a href="#Bootstrap-Token" class="headerlink" title="Bootstrap Token"></a>Bootstrap Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次證書時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS 認證，再由 apiserver 自動給符合條件的 Node 證書來授權加入叢集。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="external">TLS bootstrapping</a>。</p>
 <p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。</p>
 <p>首先建立一個變數來產生<code>BOOTSTRAP_TOKEN</code>，並建立 <code>bootstrap.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh">$ export BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d &#39; &#39;)
@@ -3520,17 +3541,17 @@ $ kubectl config use-context default --kubeconfig=../bootstrap.conf
 <blockquote>
 <p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="external">Kubelet certificate</a>。</p>
 </blockquote>
-<h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>apiserver-client-csr.json</code>檔案，並產生 admin certificate 簽證：</p>
-<pre><code class="sh">$ wget &quot;${PKI_URL}/apiserver-client-csr.json&quot;
+<h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 證書：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
   -profile=kubernetes \
-  apiserver-client-csr.json | cfssljson -bare apiserver-kubelet-client
+  admin-csr.json | cfssljson -bare admin
 
-$ ls apiserver-kubelet-client*.pem
-apiserver-kubelet-client-key.pem  apiserver-kubelet-client.pem
+$ ls admin*.pem
+admin-key.pem  admint.pem
 </code></pre>
 <p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># admin set-cluster
@@ -3557,7 +3578,7 @@ $ kubectl config set-context kubernetes-admin@kubernetes \
 $ kubectl config use-context kubernetes-admin@kubernetes \
     --kubeconfig=../admin.conf
 </code></pre>
-<h4 id="Controller-manager-certificate"><a href="#Controller-manager-certificate" class="headerlink" title="Controller manager certificate"></a>Controller manager certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 簽證：</p>
+<h4 id="Controller-manager-certificate"><a href="#Controller-manager-certificate" class="headerlink" title="Controller manager certificate"></a>Controller manager certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/manager-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
@@ -3596,7 +3617,7 @@ $ kubectl config set-context system:kube-controller-manager@kubernetes \
 $ kubectl config use-context system:kube-controller-manager@kubernetes \
     --kubeconfig=../controller-manager.conf
 </code></pre>
-<h4 id="Scheduler-certificate"><a href="#Scheduler-certificate" class="headerlink" title="Scheduler certificate"></a>Scheduler certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 簽證：</p>
+<h4 id="Scheduler-certificate"><a href="#Scheduler-certificate" class="headerlink" title="Scheduler certificate"></a>Scheduler certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/scheduler-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
@@ -3636,7 +3657,7 @@ $ kubectl config set-context system:kube-scheduler@kubernetes \
 $ kubectl config use-context system:kube-scheduler@kubernetes \
     --kubeconfig=../scheduler.conf
 </code></pre>
-<h4 id="Kubelet-master-certificate"><a href="#Kubelet-master-certificate" class="headerlink" title="Kubelet master certificate"></a>Kubelet master certificate</h4><p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 簽證：</p>
+<h4 id="Kubelet-master-certificate"><a href="#Kubelet-master-certificate" class="headerlink" title="Kubelet master certificate"></a>Kubelet master certificate</h4><p>下載<code>kubelet-csr.json</code>檔案，並產生 master node certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/kubelet-csr.json&quot;
 $ sed -i &#39;s/$NODE/master1/g&#39; kubelet-csr.json
 $ cfssl gencert \
@@ -3648,6 +3669,7 @@ $ cfssl gencert \
   kubelet-csr.json | cfssljson -bare kubelet
 
 $ ls kubelet*.pem
+kubelet-key.pem  kubelet.pem
 </code></pre>
 <blockquote>
 <p>這邊<code>$NODE</code>需要隨節點名稱不同而改變。</p>
@@ -3833,7 +3855,7 @@ node2     NotReady   &lt;none&gt;    6s        v1.8.2
 </code></pre>
 <h2 id="Kubernetes-Core-Addons-部署"><a href="#Kubernetes-Core-Addons-部署" class="headerlink" title="Kubernetes Core Addons 部署"></a>Kubernetes Core Addons 部署</h2><p>當完成上面所有步驟後，接著我們需要安裝一些插件，而這些有部分是非常重要跟好用的，如<code>Kube-dns</code>與<code>Kube-proxy</code>等。</p>
 <h3 id="Kube-proxy-addon"><a href="#Kube-proxy-addon" class="headerlink" title="Kube-proxy addon"></a>Kube-proxy addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="external">Kube-proxy</a> 是實現 Service 的關鍵元件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。這邊我們會需要建議一個 DaemonSet 來執行，並且建立一些需要的 certificate。</p>
-<p>首先下載<code>kube-proxy-csr.json</code>檔案，並產生 kube-proxy certificate 簽證：</p>
+<p>首先下載<code>kube-proxy-csr.json</code>檔案，並產生 kube-proxy certificate 證書：</p>
 <pre><code class="sh">$ export PKI_URL=&quot;https://kairen.github.io/files/manual/pki&quot;
 $ cd /etc/kubernetes/pki
 $ wget &quot;${PKI_URL}/kube-proxy-csr.json&quot; &quot;${PKI_URL}/ca-config.json&quot;
@@ -5441,9 +5463,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> Mesos </tag>
-            
             <tag> DC/OS </tag>
+            
+            <tag> Mesos </tag>
             
         </tags>
         
@@ -12503,26 +12525,20 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/apiserver-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver-kubelet-client","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","hosts":["10.96.0.1","172.16.35.12","master1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"kubernetes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual/pki/ca-config.json</url>
       <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -12539,8 +12555,14 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -12551,14 +12573,26 @@ $ openstack security group rule create \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   
