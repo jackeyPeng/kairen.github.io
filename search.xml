@@ -212,7 +212,7 @@ apiserver-key.pem  apiserver.pem
 <blockquote>
 <p>若節點 IP 不同，需要修改<code>apiserver-csr.json</code>的<code>hosts</code>。</p>
 </blockquote>
-<h4 id="Front-proxy-certificate"><a href="#Front-proxy-certificate" class="headerlink" title="Front proxy certificate"></a>Front proxy certificate</h4><p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front proxy CA 金鑰：</p>
+<h4 id="Front-proxy-certificate"><a href="#Front-proxy-certificate" class="headerlink" title="Front proxy certificate"></a>Front proxy certificate</h4><p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front proxy CA 金鑰，Front proxy 主要是用在 API aggregator 上:</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-ca-csr.json&quot;
 $ cfssl gencert \
   -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
@@ -232,8 +232,8 @@ $ cfssl gencert \
 $ ls front-proxy-client*.pem
 front-proxy-client-key.pem  front-proxy-client.pem
 </code></pre>
-<h4 id="Bootstrap-Token"><a href="#Bootstrap-Token" class="headerlink" title="Bootstrap Token"></a>Bootstrap Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次證書時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS 認證，再由 apiserver 自動給符合條件的 Node 證書來授權加入叢集。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="external">TLS bootstrapping</a>。</p>
-<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。</p>
+<h4 id="Bootstrap-Token"><a href="#Bootstrap-Token" class="headerlink" title="Bootstrap Token"></a>Bootstrap Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次簽證時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS Bootstrapping 方式進行授權，由 apiserver 自動給符合條件的 Node 發送證書來授權加入叢集。</p>
+<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="external">TLS bootstrapping</a>。</p>
 <p>首先建立一個變數來產生<code>BOOTSTRAP_TOKEN</code>，並建立 <code>bootstrap.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh">$ export BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d &#39; &#39;)
 $ cat &lt;&lt;EOF &gt; /etc/kubernetes/token.csv
@@ -274,7 +274,7 @@ $ cfssl gencert \
   admin-csr.json | cfssljson -bare admin
 
 $ ls admin*.pem
-admin-key.pem  admint.pem
+admin-key.pem  admin.pem
 </code></pre>
 <p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh"># admin set-cluster
@@ -439,7 +439,7 @@ $ ls /etc/kubernetes/pki
 admin-key.pem  apiserver-key.pem  ca-key.pem  controller-manager-key.pem  front-proxy-ca-key.pem  front-proxy-client-key.pem  kubelet-key.pem  sa.key  scheduler-key.pem
 admin.pem      apiserver.pem      ca.pem      controller-manager.pem      front-proxy-ca.pem      front-proxy-client.pem      kubelet.pem      sa.pub  scheduler.pem
 </code></pre>
-<h3 id="安裝-Kubernetes-核心元件"><a href="#安裝-Kubernetes-核心元件" class="headerlink" title="安裝 Kubernetes 核心元件"></a>安裝 Kubernetes 核心元件</h3><p>首先下載 Kubernetes 核心元件 YAML 檔案，這邊我們不透過 Binary 方案來建立 Mater 核心元件，而是採用 Self-hosted 方式來達成，因此需要下載所有核心元件的<code>Static Pod</code>檔案到<code>/etc/kubernetes/manifests</code>目錄：</p>
+<h3 id="安裝-Kubernetes-核心元件"><a href="#安裝-Kubernetes-核心元件" class="headerlink" title="安裝 Kubernetes 核心元件"></a>安裝 Kubernetes 核心元件</h3><p>首先下載 Kubernetes 核心元件 YAML 檔案，這邊我們不透過 Binary 方案來建立 Master 核心元件，而是利用 Kubernetes Static Pod 來達成，因此需下載所有核心元件的<code>Static Pod</code>檔案到<code>/etc/kubernetes/manifests</code>目錄：</p>
 <pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.8/master&quot;
 $ mkdir -p /etc/kubernetes/manifests &amp;&amp; cd /etc/kubernetes/manifests
 $ for FILE in apiserver manager scheduler; do
@@ -469,7 +469,7 @@ resources:
 EOF
 </code></pre>
 <blockquote>
-<p>Etcd 資料加入可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="external">Encrypting data at rest</a>。</p>
+<p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="external">Encrypting data at rest</a>。</p>
 </blockquote>
 <p>在<code>/etc/kubernetes/</code>目錄下，建立<code>audit-policy.yml</code>的進階稽核策略 YAML 檔：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
@@ -492,7 +492,7 @@ $ wget &quot;${KUBELET_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet
 <pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes
 $ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 </code></pre>
-<p>完成後會需要一段時間來下載與啟動元件，可以利用該指令來監看：</p>
+<p>完成後會需要一段時間來下載映像檔與啟動元件，可以利用該指令來監看：</p>
 <pre><code class="sh">$ watch netstat -ntlp
 tcp        0      0 127.0.0.1:10248         0.0.0.0:*               LISTEN      23012/kubelet
 tcp        0      0 127.0.0.1:10251         0.0.0.0:*               LISTEN      22305/kube-schedule
@@ -525,7 +525,7 @@ kube-scheduler-master1            1/1       Running   0          4m
 Error from server (Forbidden): Forbidden (user=kube-apiserver, verb=get, resource=nodes, subresource=proxy) ( pods/log kube-apiserver-master1)
 </code></pre>
 <blockquote>
-<p>這邊會發現出現 403 Forbidden 問題，這是因為<code>kube-apiserver</code> user 並沒有 nodes 的資源權限，屬於正常。</p>
+<p>這邊會發現出現 403 Forbidden 問題，這是因為 <code>kube-apiserver</code> user 並沒有 nodes 的資源權限，屬於正常。</p>
 </blockquote>
 <p>由於上述權限問題，我們必需建立一個 <code>apiserver-to-kubelet-rbac.yml</code> 來定義權限，以供我們執行 logs、exec 等指令：</p>
 <pre><code class="sh">$ cd /etc/kubernetes/
@@ -577,7 +577,7 @@ $ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 <blockquote>
 <p>P.S. 重複一樣動作來完成其他節點。</p>
 </blockquote>
-<h3 id="授權-Kubernetes-node"><a href="#授權-Kubernetes-node" class="headerlink" title="授權 Kubernetes node"></a>授權 Kubernetes node</h3><p>當所有節點都完成後，在<code>master</code>節點，因為我們採用 TLS Bootstrapping，所需要建立一個 ClusterRoleBinding：</p>
+<h3 id="授權-Kubernetes-Node"><a href="#授權-Kubernetes-Node" class="headerlink" title="授權 Kubernetes Node"></a>授權 Kubernetes Node</h3><p>當所有節點都完成後，在<code>master</code>節點，因為我們採用 TLS Bootstrapping，所需要建立一個 ClusterRoleBinding：</p>
 <pre><code class="sh">$ kubectl create clusterrolebinding kubelet-bootstrap \
     --clusterrole=system:node-bootstrapper \
     --user=kubelet-bootstrap
@@ -606,7 +606,7 @@ node2     NotReady   &lt;none&gt;    6s        v1.8.2
 </code></pre>
 <h2 id="Kubernetes-Core-Addons-部署"><a href="#Kubernetes-Core-Addons-部署" class="headerlink" title="Kubernetes Core Addons 部署"></a>Kubernetes Core Addons 部署</h2><p>當完成上面所有步驟後，接著我們需要安裝一些插件，而這些有部分是非常重要跟好用的，如<code>Kube-dns</code>與<code>Kube-proxy</code>等。</p>
 <h3 id="Kube-proxy-addon"><a href="#Kube-proxy-addon" class="headerlink" title="Kube-proxy addon"></a>Kube-proxy addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="external">Kube-proxy</a> 是實現 Service 的關鍵元件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。這邊我們會需要建議一個 DaemonSet 來執行，並且建立一些需要的 certificate。</p>
-<p>首先下載<code>kube-proxy-csr.json</code>檔案，並產生 kube-proxy certificate 證書：</p>
+<p>首先在<code>master1</code>下載<code>kube-proxy-csr.json</code>檔案，並產生 kube-proxy certificate 證書：</p>
 <pre><code class="sh">$ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.8/pki&quot;
 $ cd /etc/kubernetes/pki
 $ wget &quot;${PKI_URL}/kube-proxy-csr.json&quot; &quot;${PKI_URL}/ca-config.json&quot;
@@ -680,7 +680,7 @@ $ kubectl -n kube-system get po -l k8s-app=kube-dns
 NAME                        READY     STATUS    RESTARTS   AGE
 kube-dns-6cb549f55f-h4zr5   0/3       Pending   0          40s
 </code></pre>
-<h2 id="Calico-Network-安裝與設定"><a href="#Calico-Network-安裝與設定" class="headerlink" title="Calico Network 安裝與設定"></a>Calico Network 安裝與設定</h2><p>Calico 是一款純 Layer 3 的資料中心網路方案(不需要 Overlay 網路)，Calico 好處是他已與各種雲原生平台有良好的整合，而 Calico 在每一個節點利用 Linux Kernel 實現高效的 vRouter 來負責資料的轉發，而當資料複雜度增加時，可以用 BGP route reflector 來達成。</p>
+<h2 id="Calico-Network-安裝與設定"><a href="#Calico-Network-安裝與設定" class="headerlink" title="Calico Network 安裝與設定"></a>Calico Network 安裝與設定</h2><p>Calico 是一款純 Layer 3 的資料中心網路方案(不需要 Overlay 網路)，Calico 好處是他已與各種雲原生平台有良好的整合，而 Calico 在每一個節點利用 Linux Kernel 實現高效的 vRouter 來負責資料的轉發，而當資料中心複雜度增加時，可以用 BGP route reflector 來達成。</p>
 <p>首先在<code>master1</code>透過 kubectl 建立 Calico policy controller：</p>
 <pre><code class="sh">$ export CALICO_CONF_URL=&quot;https://kairen.github.io/files/manual-v1.8/network&quot;
 $ wget &quot;${CALICO_CONF_URL}/calico-controller.yml.conf&quot; -O calico-controller.yml
@@ -763,7 +763,7 @@ NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   A
 svc/kubernetes-dashboard   ClusterIP   10.98.120.209   &lt;none&gt;        443/TCP   56s
 </code></pre>
 <blockquote>
-<p>P.S. 這邊會額外建立一個名稱為<code>anonymous-open-door</code> Cluster Role Binding，這僅作為測試時使用，在一般情況下不要開啟，不然就會直接被存取所有 API。</p>
+<p>P.S. 這邊會額外建立一個名稱為<code>anonymous-open-door</code> Cluster Role Binding，這僅作為方便測試時使用，在一般情況下不要開啟，不然就會直接被存取所有 API。</p>
 </blockquote>
 <p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
 <h3 id="Heapster-addon"><a href="#Heapster-addon" class="headerlink" title="Heapster addon"></a>Heapster addon</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="external">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
@@ -3372,9 +3372,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
@@ -6058,9 +6058,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> DC/OS </tag>
-            
             <tag> Mesos </tag>
+            
+            <tag> DC/OS </tag>
             
         </tags>
         
@@ -7790,6 +7790,104 @@ a1.sinks.k1.channel=c1
     </entry>
     
     <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[DRBD 進行跨節點的區塊儲存備份]]></title>
       <url>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</url>
       <content type="html"><![CDATA[<p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
@@ -7935,104 +8033,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -13114,26 +13114,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -13144,14 +13132,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
