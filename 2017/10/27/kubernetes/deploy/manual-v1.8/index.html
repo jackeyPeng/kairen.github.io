@@ -171,16 +171,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -692,7 +692,7 @@ $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
   -config=ca-config.json \
-  -hostname=master1,172.16.35.12,172.16.35.12 \
+  -hostname=master1,172.16.35.12 \
   -profile=kubernetes \
   kubelet-csr.json | cfssljson -bare kubelet
 
