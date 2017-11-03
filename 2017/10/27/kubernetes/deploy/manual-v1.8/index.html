@@ -163,16 +163,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">8</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -203,16 +203,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">15</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">15</span></a>
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">5</span></a>
                 </a>
             </li>
 
@@ -386,7 +386,7 @@ SELINUX=disabled
 </code></pre>
 </blockquote>
 <p>編輯<code>/lib/systemd/system/docker.service</code>，在<code>ExecStart=..</code>上面加入：</p>
-<pre><code>ExecStartPost=/sbin/iptables -I FORWARD -s 0.0.0.0/0 -j ACCEPT
+<pre><code>ExecStartPost=/sbin/iptables -A FORWARD -s 0.0.0.0/0 -j ACCEPT
 </code></pre><blockquote>
 <p>完成後，重新啟動 docker 服務：</p>
 <pre><code class="sh">$ systemctl daemon-reload &amp;&amp; systemctl restart docker
