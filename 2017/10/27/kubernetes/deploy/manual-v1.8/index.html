@@ -187,16 +187,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -423,7 +423,7 @@ $ cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
 $ ls etcd-ca*.pem
 etcd-ca-key.pem  etcd-ca.pem
 </code></pre>
-<p>下載<code>etcd-csr.json</code>檔案，並產生 kube-apiserver certificate 證書：</p>
+<p>下載<code>etcd-csr.json</code>檔案，並產生 etcd certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/etcd-csr.json&quot;
 $ cfssl gencert \
   -ca=etcd-ca.pem \
@@ -433,7 +433,7 @@ $ cfssl gencert \
   etcd-csr.json | cfssljson -bare etcd
 
 $ ls etcd*.pem
-etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pe
+etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pem
 </code></pre>
 <blockquote>
 <p>若節點 IP 不同，需要修改<code>etcd-csr.json</code>的<code>hosts</code>。</p>
