@@ -163,16 +163,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">8</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -427,7 +427,7 @@ $ bin/kafka-server-start.sh config/server.properties &amp;
 
 # 會看到類似以下資訊
 Topic:test    PartitionCount:1    ReplicationFactor:3    Configs:
-    Topic: test2    Partition: 0    Leader: 2    Replicas: 2,0,1    Isr: 2,0,1
+    Topic: test    Partition: 0    Leader: 2    Replicas: 2,0,1    Isr: 2,0,1
 </code></pre>
 <p>接下來透過 Publish 來傳送訊息：</p>
 <pre><code class="sh">$ /opt/kafka/bin/kafka-console-producer.sh \
@@ -440,11 +440,11 @@ ggeeder
 </code></pre>
 <p>接著就要讀取訊息，透過 Subscribe 來訂閱收取資料：</p>
 <pre><code class="sh">$ /opt/kafka/bin/kafka-console-consumer.sh \
---zookeeper 172.17.0.2:2181,172.17.0.3:2181 \
+--zookeeper 172.17.0.2:2181,172.17.0.3:2181,172.17.0.4:2181 \
 --topic test \
 --from-beginning
 </code></pre>
-<p>測試 replication 是否有正確運作，我們可以看到上面範例 Leader 為 2，這時透過手動方式關閉該 broker：</p>
+<p>這時透過手動方式關閉該 broker，來測試 replication 是否有正確運作：</p>
 <pre><code class="sh">$ jps
 83 Kafka
 

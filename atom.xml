@@ -359,9 +359,9 @@
     
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="Helm" scheme="https://kairen.github.io/tags/Helm/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
   </entry>
   

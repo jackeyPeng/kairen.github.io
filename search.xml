@@ -3372,9 +3372,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -6058,9 +6058,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> DC/OS </tag>
-            
             <tag> Mesos </tag>
+            
+            <tag> DC/OS </tag>
             
         </tags>
         
@@ -6572,9 +6572,9 @@ clean
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -7040,9 +7040,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -7518,9 +7518,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -8030,9 +8030,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
         </tags>
         
@@ -9997,11 +9997,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
+            <tag> Docker </tag>
+            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
-            
-            <tag> Docker </tag>
             
         </tags>
         
@@ -11143,13 +11143,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> Storage </tag>
-            
-            <tag> File System </tag>
-            
             <tag> OpenStack </tag>
             
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
+            
+            <tag> File System </tag>
             
         </tags>
         
@@ -12103,7 +12103,7 @@ $ bin/kafka-server-start.sh config/server.properties &amp;
 
 # 會看到類似以下資訊
 Topic:test    PartitionCount:1    ReplicationFactor:3    Configs:
-    Topic: test2    Partition: 0    Leader: 2    Replicas: 2,0,1    Isr: 2,0,1
+    Topic: test    Partition: 0    Leader: 2    Replicas: 2,0,1    Isr: 2,0,1
 </code></pre>
 <p>接下來透過 Publish 來傳送訊息：</p>
 <pre><code class="sh">$ /opt/kafka/bin/kafka-console-producer.sh \
@@ -12116,11 +12116,11 @@ ggeeder
 </code></pre>
 <p>接著就要讀取訊息，透過 Subscribe 來訂閱收取資料：</p>
 <pre><code class="sh">$ /opt/kafka/bin/kafka-console-consumer.sh \
---zookeeper 172.17.0.2:2181,172.17.0.3:2181 \
+--zookeeper 172.17.0.2:2181,172.17.0.3:2181,172.17.0.4:2181 \
 --topic test \
 --from-beginning
 </code></pre>
-<p>測試 replication 是否有正確運作，我們可以看到上面範例 Leader 為 2，這時透過手動方式關閉該 broker：</p>
+<p>這時透過手動方式關閉該 broker，來測試 replication 是否有正確運作：</p>
 <pre><code class="sh">$ jps
 83 Kafka
 
@@ -13108,20 +13108,20 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -13132,8 +13132,8 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -13150,14 +13150,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   
