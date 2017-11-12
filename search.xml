@@ -3717,8 +3717,8 @@ Hello, TensorFlow!
       <content type="html"><![CDATA[<p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
-<li>Kubernetes v1.7.9</li>
-<li>Etcd v3.2.8</li>
+<li>Kubernetes v1.8.2</li>
+<li>Etcd v3.2.9</li>
 <li>Flannel v0.9.0</li>
 <li>Docker v1.13.0+(latest on v17.10.0-ce)</li>
 </ul>
@@ -3814,28 +3814,30 @@ $ sudo yum -y install ansible cowsay
 $ cd kube-ansible
 </code></pre>
 <p>然後編輯<code>inventory</code>檔案，來加入要部署的節點角色：</p>
-<pre><code>[etcd]
+<pre><code>[etcds]
 172.20.3.[91:93]
 
 [masters]
 172.20.3.[91:93]
 
-[sslhost]
-172.20.3.91
-
 [nodes]
 172.20.3.[94:98]
 
-[cluster:children]
+[kube-cluster:children]
 masters
 nodes
 </code></pre><p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
-<pre><code class="yml"># Kubernetes component version
-kube_version: 1.7.9
+<pre><code class="yml"># Kubenrtes version, only support 1.8.0+.
+kube_version: 1.8.2
 
-# Network plugin implementation(&#39;flannel&#39;, &#39;calico&#39;, &#39;canal&#39;, &#39;weave&#39;, &#39;router&#39;)
+# CRI plugin,
+# Supported runtime: docker, containerd.
+cri_plugin: docker
+
+# CNI plugin,
+# Supported network: flannel, calico, canal, weave or router.
 network: calico
-pod_network_cidr: &quot;10.244.0.0/16&quot;
+pod_network_cidr: 10.244.0.0/16
 
 # Kubernetes cluster network
 cluster_subnet: 10.96.0
@@ -3905,7 +3907,14 @@ kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 <p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
 </blockquote>
 <p>接著透過 Etcd 來查看目前 Leader 狀態：</p>
-<pre><code class="sh">$ etcdctl member list
+<pre><code class="sh">$ export CA=&quot;/etc/etcd/ssl&quot;
+$ ETCDCTL_API=3 etcdctl \
+    --cacert=${CA}/etcd-ca.pem \
+    --cert=${CA}/etcd.pem \
+    --key=${CA}/etcd-key.pem \
+    --endpoints=&quot;https://172.20.3.91:2379&quot; \
+    etcdctl member list
+
 2de3b0eee054a36f: name=master1 peerURLs=http://172.20.3.91:2380 clientURLs=http://172.20.3.91:2379 isLeader=false
 75809e2ee8d8d4b4: name=master2 peerURLs=http://172.20.3.92:2380 clientURLs=http://172.20.3.92:2379 isLeader=false
 af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http://172.20.3.93:2379 isLeader=true
@@ -3968,49 +3977,34 @@ Usage : setup-vagrant [options]
  -f|--force       Force deployment.
 </code></pre>
 <p>這邊執行以下指令來建立三台 Master 與三台 Node 的環境：</p>
-<pre><code class="sh">$ /setup-vagrant -b 3 -m 2048 -w 3 -n flannel
-Cluster Size: 3 master, 3 worker.
+<pre><code class="sh">$ ./tools/setup -m 2048 -n calico -i eth1
+Cluster Size: 1 master, 2 worker.
      VM Size: 1 vCPU, 2048 MB
      VM Info: ubuntu16, virtualbox
-         CNI: flannel
-Start deploying?(y):
+         CNI: calico, Binding iface: eth1
+Start deploying?(y):y
 </code></pre>
-<blockquote>
-<p>預設 CPU 為 1vCPU，而 Memory 為 1024MB。</p>
-</blockquote>
 <p>執行後需要等一點時間，當完成後就可以進入任何一台 Master 進行操作：</p>
-<pre><code class="sh">$ kubectl get node
-NAME      STATUS            AGE
-master1   Ready,master      1m
-master2   Ready,master      1m
-master3   Ready,master      1m
-node1     Ready             1m
-node2     Ready             1m
-node3     Ready             1m
-</code></pre>
-<p>確認節點沒問題後就可以查看 Pod 狀態：</p>
-<pre><code class="sh">$ kubectl get po --all-namespaces -o wide
-NAMESPACE     NAME                                    READY     STATUS    RESTARTS   AGE       IP             NODE
-kube-system   haproxy-master1                         1/1       Running   0          6m        172.16.35.13   master1
-kube-system   haproxy-master2                         1/1       Running   1          3m        172.16.35.14   master2
-kube-system   haproxy-master3                         1/1       Running   0          6m        172.16.35.15   master3
-kube-system   kube-apiserver-master1                  1/1       Running   0          6m        172.16.35.13   master1
-kube-system   kube-apiserver-master2                  1/1       Running   1          3m        172.16.35.14   master2
-kube-system   kube-apiserver-master3                  1/1       Running   0          5m        172.16.35.15   master3
-kube-system   kube-controller-manager-master1         1/1       Running   0          6m        172.16.35.13   master1
-kube-system   kube-controller-manager-master2         1/1       Running   1          3m        172.16.35.14   master2
-kube-system   kube-controller-manager-master3         1/1       Running   0          6m        172.16.35.15   master3
-kube-system   kube-dns-v20-0wkl3                      3/3       Running   0          6m        172.20.8.2     node3
-kube-system   kube-proxy-amd64-5dlqg                  1/1       Running   0          6m        172.16.35.14   master2
-kube-system   kube-proxy-amd64-f20xg                  1/1       Running   0          6m        172.16.35.10   node1
-kube-system   kube-proxy-amd64-g095q                  1/1       Running   0          6m        172.16.35.13   master1
-kube-system   kube-proxy-amd64-kf2d9                  1/1       Running   0          6m        172.16.35.12   node3
-kube-system   kube-proxy-amd64-r180j                  1/1       Running   0          6m        172.16.35.15   master3
-kube-system   kube-proxy-amd64-r9sk0                  1/1       Running   0          6m        172.16.35.11   node2
-kube-system   kube-scheduler-master1                  1/1       Running   0          6m        172.16.35.13   master1
-kube-system   kube-scheduler-master2                  1/1       Running   1          3m        172.16.35.14   master2
-kube-system   kube-scheduler-master3                  1/1       Running   1          5m        172.16.35.15   master3
-kube-system   kubernetes-dashboard-3697905830-bnvfd   1/1       Running   0          6m        172.20.85.2    node1
+<pre><code class="sh">$ kubectl -n kube-system get po
+NAME                                        READY     STATUS    RESTARTS   AGE
+calico-node-657hv                           2/2       Running   0          57s
+calico-node-gmd8b                           2/2       Running   0          57s
+calico-node-w7nj8                           2/2       Running   0          57s
+calico-policy-controller-55dfcd9c69-t8s8z   1/1       Running   0          57s
+haproxy-master1                             1/1       Running   0          22s
+haproxy-node2                               1/1       Running   0          1m
+keepalived-master1                          1/1       Running   0          30s
+keepalived-node2                            1/1       Running   0          1m
+kube-apiserver-master1                      1/1       Running   0          23s
+kube-apiserver-node2                        1/1       Running   0          1m
+kube-controller-manager-master1             1/1       Running   0          17s
+kube-controller-manager-node2               1/1       Running   0          1m
+kube-dns-6cb549f55f-8mgsd                   3/3       Running   0          46s
+kube-proxy-l54d7                            1/1       Running   0          1m
+kube-proxy-rm4nn                            1/1       Running   0          1m
+kube-proxy-tvfs7                            1/1       Running   0          1m
+kube-scheduler-master1                      1/1       Running   0          39s
+kube-scheduler-node2                        1/1       Running   0          1m
 </code></pre>
 <p>這樣一個 HA 叢集就部署完成了，可以試著將一台 Master 關閉來驗證可靠性，若 Master 是三台的話，即表示可容忍最多一台故障。</p>
 <h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>當完成部署後，可以透過簡單的應用程式部署來驗證系統是否正常運作：</p>
@@ -4062,32 +4056,7 @@ kubernetes      192.160.0.1       &lt;none&gt;        443/TCP        15m
 nginx-service   192.173.165.220   &lt;nodes&gt;       80:30000/TCP   11s
 </code></pre>
 <p>由於範例使用 NodePort 的類型，所以任何一台節點都可以透過 TCP 30000 Port 來存取服務，包含 VIP 172.16.35.9 也可以存取。</p>
-<h2 id="驗證-Master-HA-功能"><a href="#驗證-Master-HA-功能" class="headerlink" title="驗證 Master HA 功能"></a>驗證 Master HA 功能</h2><p>最後我們針對 Kubernetes Master HA 進行功能驗證，首先我們先取得目前 kube-scheduler 與 kube-controller-manager 的 Leader：</p>
-<pre><code class="sh">$ etcdctl member list
-2de3b0eee054a36f: name=master1 peerURLs=http://172.16.35.13:2380 clientURLs=http://172.16.35.13:2379 isLeader=false
-75809e2ee8d8d4b4: name=master2 peerURLs=http://172.16.35.14:2380 clientURLs=http://172.16.35.14:2379 isLeader=false
-af31edd02fc70872: name=master3 peerURLs=http://172.16.35.15:2380 clientURLs=http://172.16.35.15:2379 isLeader=true
-</code></pre>
-<blockquote>
-<p>這邊可以看到 master3 為 Leader。</p>
-</blockquote>
-<p>當確認 Leader 後，即可關閉該節點進行測試，進入到其他 master:</p>
-<pre><code class="sh">master3# sudo poweroff
-master1# etcdctl member list
-2de3b0eee054a36f: name=master1 peerURLs=http://172.16.35.13:2380 clientURLs=http://172.16.35.13:2379 isLeader=true
-75809e2ee8d8d4b4: name=master2 peerURLs=http://172.16.35.14:2380 clientURLs=http://172.16.35.14:2379 isLeader=false
-af31edd02fc70872: name=master3 peerURLs=http://172.16.35.15:2380 clientURLs=http://172.16.35.15:2379 isLeader=false
-
-master1# kubectl get node
-NAME      STATUS            AGE
-master1   Ready,master      1h
-master2   Ready,master      1h
-master3   NotReady,master   1h
-node1     Ready             1h
-node2     Ready             1h
-node3     Ready             1h
-</code></pre>
-<p>上面可以看到 master3 已經掛掉，並且 Leader 已經換人了，這邊可以進一步操作 Kubernetes 其他指令來驗證。最後若在關閉一台將會發生 Etcd 叢集錯誤，造成 Kubernetes 功能無法正常。</p>
+<p>最後，我們可以關閉 master1 來測試是否有 HA 效果。</p>
 ]]></content>
       
         <categories>
@@ -6058,9 +6027,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> Mesos </tag>
-            
             <tag> DC/OS </tag>
+            
+            <tag> Mesos </tag>
             
         </tags>
         
@@ -6572,9 +6541,9 @@ clean
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -7040,9 +7009,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -7518,9 +7487,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -8030,9 +7999,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
@@ -9997,11 +9966,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -11143,13 +11112,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> OpenStack </tag>
-            
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
             
             <tag> File System </tag>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
@@ -13071,7 +13040,7 @@ lib/spark-examples*.jar \
       <title><![CDATA[關於我]]></title>
       <url>https://kairen.github.io/about/index.html</url>
       <content type="html"><![CDATA[<p>大家好!我是 Kyle，目前任職於 inwinSTACK 擔任軟體工程師，主要開發與研究虛擬化、分散式儲存與容器化應用，無聊時就嘗試一些技術性東西，並將筆記整理至這邊，有任何問題也歡迎聯絡。</p>
-<p>自己在⼤學期間主要撰寫於 Java 與 Objc 程式語⾔，並專注開發 iOS Mobile 應用程式，期間共開發 20 項相關專案，而次要研讀 Hadoop 與 Spark 巨量資料運算框架，以及 Linux 相關技術，在大學期間從 Backend、Frontend 至 Mobile 都有參與開發及設計。自己本身喜歡接觸有挑戰性的事情，在學期間利用產學合作，與業界進行 Co-work 開發該企業軟體，合作企業橫跨不同領域，諸如：旅遊產業、雲端產業、健⾝器材產業等等，幫助許多企業降低⽣產成本與提升產品附加價值，在開發專案與不同領域的夥伴相互合作，來⾃不同領域科系互補與意⾒，體會產品與作品需深思熟慮很多層⾯。</p>
+<p>自己在⼤學期間主要撰寫於 Java 與 objc 程式語⾔，並專注開發 iOS Mobile 應用程式，期間共開發 20 項相關專案，而次要研讀 Hadoop 與 Spark 巨量資料運算框架，以及 Linux 相關技術，在大學期間從 Backend、Frontend 至 Mobile 都有參與開發及設計。自己本身喜歡接觸有挑戰性的事情，在學期間利用產學合作，與業界進行 Co-work 開發該企業軟體，合作企業橫跨不同領域，諸如：旅遊產業、雲端產業、健⾝器材產業等等，幫助許多企業降低⽣產成本與提升產品附加價值，在開發專案與不同領域的夥伴相互合作，來⾃不同領域科系互補與意⾒，體會產品與作品需深思熟慮很多層⾯。</p>
 <p>由於雲端的普及，虛擬化技術⽇漸成熟，因應其需求，在研究所主要專研於雲端相關知識與技術，並以雲端開源軟體 OpenStack、Ceph 分散式檔案儲存系統與 Docker 輕量虛擬化做深⼊研究，進⼀步了解其架構與運作⽅式，並將其建置與應⽤於實務上，也透過參與相關活動及貢獻來與國際接軌，學習不同領域知識與技術，希望未來能把所學發揮出來。</p>
 ]]></content>
     </entry>
@@ -13096,20 +13065,8 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -13120,8 +13077,20 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -13144,6 +13113,12 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
@@ -13152,12 +13127,6 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   
