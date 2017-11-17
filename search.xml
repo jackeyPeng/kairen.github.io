@@ -3372,9 +3372,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
@@ -3382,7 +3382,7 @@ $ helm repo add example http://repo-url
     
     <entry>
       <title><![CDATA[Kubespray 部署實體機 Kubernetes v1.6 叢集]]></title>
-      <url>https://kairen.github.io/2017/03/17/kubernetes/deploy/kargo-baremetal/</url>
+      <url>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</url>
       <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="external">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
 <ul>
 <li>可以部署在 AWS, GCE, Azure, OpenStack 或者 Baremetal.</li>
@@ -3717,7 +3717,7 @@ Hello, TensorFlow!
       <content type="html"><![CDATA[<p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
-<li>Kubernetes v1.8.2</li>
+<li>Kubernetes v1.8.3</li>
 <li>Etcd v3.2.9</li>
 <li>Flannel v0.9.0</li>
 <li>Docker v1.13.0+(latest on v17.10.0-ce)</li>
@@ -3828,7 +3828,7 @@ masters
 nodes
 </code></pre><p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
 <pre><code class="yml"># Kubenrtes version, only support 1.8.0+.
-kube_version: 1.8.2
+kube_version: 1.8.3
 
 # CRI plugin,
 # Supported runtime: docker, containerd.
@@ -3949,7 +3949,7 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
       <content type="html"><![CDATA[<p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
 <p>kube-ansible 提供了以下幾項功能：</p>
 <ul>
-<li>Kubernetes 1.7.0+.</li>
+<li>Kubernetes 1.8.0+.</li>
 <li>Ceph on Kubernetes cluster.</li>
 <li>Common addons.</li>
 </ul>
@@ -6027,9 +6027,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> DC/OS </tag>
-            
             <tag> Mesos </tag>
+            
+            <tag> DC/OS </tag>
             
         </tags>
         
@@ -7759,104 +7759,6 @@ a1.sinks.k1.channel=c1
     </entry>
     
     <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
       <title><![CDATA[DRBD 進行跨節點的區塊儲存備份]]></title>
       <url>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</url>
       <content type="html"><![CDATA[<p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
@@ -8002,6 +7904,104 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
             
         </tags>
         
@@ -13071,26 +13071,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
       <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -13113,14 +13113,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
