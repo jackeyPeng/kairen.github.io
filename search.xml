@@ -3372,9 +3372,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
@@ -5560,7 +5560,7 @@ $ kubeadm token generate
 b0f7b8.8d1767876297d85c
 
 $ kubeadm init --service-cidr 10.96.0.0/12 \
-               --kubernetes-version v1.8.2 \
+               --kubernetes-version v1.8.4 \
                --pod-network-cidr 10.244.0.0/16 \
                --apiserver-advertise-address 172.16.35.12 \
                --token b0f7b8.8d1767876297d85c
@@ -5572,7 +5572,7 @@ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
 <pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get node
 NAME      STATUS    ROLES     AGE       VERSION
-master1   Ready     master    10m       v1.8.2
+master1   Ready     master    10m       v1.8.4
 </code></pre>
 <p>當執行正確後要接著部署網路，但要注意<code>一個叢集只能用一種網路</code>，這邊採用 Flannel：</p>
 <pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml
@@ -13048,14 +13048,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -13078,20 +13078,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -13102,8 +13096,8 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -13116,6 +13110,12 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   
