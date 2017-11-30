@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -423,13 +423,13 @@ $ sudo systemctl enable docker
 </code></pre>
 </blockquote>
 <h2 id="安裝-Bootstrap-Node"><a href="#安裝-Bootstrap-Node" class="headerlink" title="安裝 Bootstrap Node"></a>安裝 Bootstrap Node</h2><p>Bootstrap 節點主要提供佈署的功能，可以採用 UI 或 CLI 來進行部署，以下將說明如何透過建置 Bootstrap 來完成 DC/OS 佈署。</p>
-<h3 id="GUI-安裝"><a href="#GUI-安裝" class="headerlink" title="GUI 安裝"></a>GUI 安裝</h3><p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="external">DC/OS installer</a>：</p>
+<h3 id="GUI-安裝"><a href="#GUI-安裝" class="headerlink" title="GUI 安裝"></a>GUI 安裝</h3><p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="noopener">DC/OS installer</a>：</p>
 <pre><code class="sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
 </code></pre>
 <p>接著執行啟動 DC/OS UI：</p>
 <pre><code class="sh">$ sudo bash dcos_generate_config.sh --web -v
 </code></pre>
-<p>完成後，即可開啟瀏覽器輸入 <a href="http://&lt;bootstrap-node-public-ip&gt;:9000" target="_blank" rel="external">bootstrap web</a></p>
+<p>完成後，即可開啟瀏覽器輸入 <a href="http://&lt;bootstrap-node-public-ip&gt;:9000" target="_blank" rel="noopener">bootstrap web</a></p>
 <p>這邊需要輸入 Bootstrap 節點的 SSH 私有金鑰，透過以下方式產生與印出：</p>
 <pre><code class="sh">$ ssh-keygen -t rsa
 $ cat .ssh/id_rsa
@@ -543,7 +543,7 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING POSTFLIGHT
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START run_postflight
 </code></pre>
-<p>都完成後就可以查看 <a href="http://&lt;master-public-ip&gt;:8181/exhibitor/v1/ui/index.html" target="_blank" rel="external">Zookpeer</a> 與 <a href="http://&lt;public-master-ip&gt;/" target="_blank" rel="external">DC/OS</a>。</p>
+<p>都完成後就可以查看 <a href="http://&lt;master-public-ip&gt;:8181/exhibitor/v1/ui/index.html" target="_blank" rel="noopener">Zookpeer</a> 與 <a href="http://&lt;public-master-ip&gt;/" target="_blank" rel="noopener">DC/OS</a>。</p>
 
                 
 <p class="green-link-context">

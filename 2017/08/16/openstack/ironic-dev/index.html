@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,8 +311,8 @@
 
 
             <div class="entry green-link-context">
-                <p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
-<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
+                <p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="noopener">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
+<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="noopener">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
 <p>本環境安裝資訊：</p>
 <ul>
 <li>OpenStack Pike</li>
@@ -422,7 +422,7 @@ $ openstack user list
 | pxe_ipmitool        | ironic-dev     |
 +---------------------+----------------+
 </code></pre>
-<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="external">Configure the Networking service for bare metal provisioning</a>。</p>
+<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="noopener">Configure the Networking service for bare metal provisioning</a>。</p>
 <p>首先編輯<code>/etc/neutron/plugins/ml2/ml2_conf.ini</code>修改以下內容：</p>
 <pre><code>[ml2_type_flat]
 flat_networks = public, physnet1
@@ -476,9 +476,9 @@ $ neutron subnet-create sharednet1 172.22.132.0/24 \
                         --enable-dhcp
 </code></pre>
 <blockquote>
-<p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="external">Provider network</a>。</p>
+<p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="noopener">Provider network</a>。</p>
 </blockquote>
-<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="external">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
+<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="noopener">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
 <pre><code class="sh">$ openstack network list
 +--------------------------------------+------------+----------------------------------------------------------------------------+
 | ID                                   | Name       | Subnets                                                                    |
@@ -500,7 +500,7 @@ $ sudo systemctl restart devstack@ir-cond.service
 <li><code>Deploy images</code>: 用來準備裸機服務機器以進行實際的作業系統部署，在 Cleaning 等階段會使用到。</li>
 <li><code>User images</code>:最後安裝至裸機服務提供給使用者使用的作業系統映像檔。</li>
 </ul>
-<p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="external">Building or downloading a deploy ramdisk image</a>。</p>
+<p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="noopener">Building or downloading a deploy ramdisk image</a>。</p>
 <p>首先我們必須先安裝<code>disk-image-builder</code>工具來提供建構映像檔：</p>
 <pre><code class="sh">$ virtualenv dib
 $ source dib/bin/activate
@@ -573,7 +573,7 @@ $ openstack image create k8s \
 +---------------------+----------------+
 </code></pre>
 <blockquote>
-<p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="external">Set up the drivers for the Bare Metal service</a>。</p>
+<p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="noopener">Set up the drivers for the Bare Metal service</a>。</p>
 </blockquote>
 <p>確認有支援後，透過以下指令來建立 Node，並進行註冊：</p>
 <pre><code class="sh">$ export DEPLOY_VMLINUZ_UUID=$(openstack image list | awk &#39;/ipmitool.kernel/ { print $2 }&#39;)
@@ -588,7 +588,7 @@ $ ironic node-create -d agent_ipmitool \
                      -i deploy_ramdisk=$DEPLOY_INITRD_UUID
 </code></pre>
 <blockquote>
-<p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
+<p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="noopener">Configuring Web or Serial Console</a>。</p>
 </blockquote>
 <p>接著更新機器資訊，這邊透過手動方式來更新資訊：</p>
 <pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
@@ -648,7 +648,7 @@ $ ironic node-list
 +--------------------------------------+--------+---------------+-------------+--------------------+-------------+
 </code></pre>
 <blockquote>
-<p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="external">Ironic’s State Machine</a>。</p>
+<p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="noopener">Ironic’s State Machine</a>。</p>
 </blockquote>
 <p><img src="/images/openstack/ironic-clean.png" alt=""></p>
 <h2 id="透過-Nova-部署-baremetal-機器"><a href="#透過-Nova-部署-baremetal-機器" class="headerlink" title="透過 Nova 部署 baremetal 機器"></a>透過 Nova 部署 baremetal 機器</h2><p>最後我們要透過 Nova API 來部署裸機，在開始前要建立一個 flavor 跟上傳 keypair 來提供使用：</p>

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -335,7 +335,7 @@ sudo apt-get update
 <pre><code class="sh">$ sudo maas-region createadmin
 </code></pre>
 <blockquote>
-<p>這時候就可以登入 <a href="http://&lt;maas.ip&gt;/MAAS/" target="_blank" rel="external">MAAS</a>。</p>
+<p>這時候就可以登入 <a href="http://&lt;maas.ip&gt;/MAAS/" target="_blank" rel="noopener">MAAS</a>。</p>
 </blockquote>
 <p>登入後，需要設定 PXE 網路與下載 Image。當完成後就可以開其他主機來測試 PXE-boot。</p>
 <h3 id="安裝-JuJu"><a href="#安裝-JuJu" class="headerlink" title="安裝 JuJu"></a>安裝 JuJu</h3><p>安裝 JuJu quick start：</p>
@@ -358,7 +358,7 @@ $ sudo apt-get install maas-image-builder
 <pre><code class="sh">$ maas login &lt;user_name&gt; &lt;maas_url&gt; &lt;api_key&gt;
 </code></pre>
 <blockquote>
-<p><code>user_name&gt;</code>為使用者帳號名稱。<br><code>&lt;maas_url&gt;</code>為 MAAS 網址，如 <a href="http://192.168.1.2/MAAS" target="_blank" rel="external">http://192.168.1.2/MAAS</a><br><code>&lt;api_key&gt;</code>為帳號 API Key。r00tme</p>
+<p><code>user_name&gt;</code>為使用者帳號名稱。<br><code>&lt;maas_url&gt;</code>為 MAAS 網址，如 <a href="http://192.168.1.2/MAAS" target="_blank" rel="noopener">http://192.168.1.2/MAAS</a><br><code>&lt;api_key&gt;</code>為帳號 API Key。r00tme</p>
 </blockquote>
 <p>登入後，就可以使用以下指令進行上傳客製化的映像檔了：</p>
 <pre><code class="sh">$ maas &lt;user_name&gt; boot-resources create name=centos/centos7 architecture=amd64/generic content@=centos7-amd64-root-tgz

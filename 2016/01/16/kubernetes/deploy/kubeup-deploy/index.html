@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方腳本<code>kube-up.sh</code>來部署 Kubernetes 到 Ubuntu 14.04 系統上。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Creating a Kubernetes Cluster</a>。</p>
+                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方腳本<code>kube-up.sh</code>來部署 Kubernetes 到 Ubuntu 14.04 系統上。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
 <p>本環境安裝資訊：</p>
 <ul>
 <li>Kubernetes v1.5.4</li>
@@ -417,7 +417,7 @@ DNS_DOMAIN=${DNS_DOMAIN:-&quot;cluster.local&quot;}
 <p>透過 kubectl 查看資訊，這邊服務屬於系統的，所以預設會被分到<code>kube-system</code>命名空間：</p>
 <pre><code class="sh">$ kubectl get pods --namespace=kube-system
 </code></pre>
-<p>最後就可以透過瀏覽器查看 <a href="http://172.16.35.12:8080/ui" target="_blank" rel="external">Dashboard</a>。</p>
+<p>最後就可以透過瀏覽器查看 <a href="http://172.16.35.12:8080/ui" target="_blank" rel="noopener">Dashboard</a>。</p>
 <h2 id="建立-Nginx-應用程式"><a href="#建立-Nginx-應用程式" class="headerlink" title="建立 Nginx 應用程式"></a>建立 Nginx 應用程式</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將使用兩種方式建立一個簡單的 Nginx 服務。</p>
 <h3 id="利用-ad-hoc-指令建立"><a href="#利用-ad-hoc-指令建立" class="headerlink" title="利用 ad-hoc 指令建立"></a>利用 ad-hoc 指令建立</h3><p>kubectl 提供了 run 指令來快速建立應用程式部署，如下建立 Nginx 應用程式：</p>
 <pre><code class="sh">$ kubectl run nginx --image=nginx
@@ -499,10 +499,10 @@ $ kubectl delete -f nginx-svc.yaml
 </code></pre>
 <h2 id="其他-Kubernetes-網路技術"><a href="#其他-Kubernetes-網路技術" class="headerlink" title="其他 Kubernetes 網路技術"></a>其他 Kubernetes 網路技術</h2><p>Kubernetes 支援多種網路整合，若 Flannel 用不爽可以改以下幾種：</p>
 <ul>
-<li><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/admin/ovs-networking.md" target="_blank" rel="external">OpenVSwitch with GRE/VxLAN</a></li>
-<li><a href="http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/" target="_blank" rel="external">Linux Bridge L2 networks</a></li>
-<li><a href="https://github.com/zettio/weave" target="_blank" rel="external">Weave</a></li>
-<li><a href="https://github.com/Metaswitch/calico" target="_blank" rel="external">Calico</a>(使用 BGP Routing)</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/admin/ovs-networking.md" target="_blank" rel="noopener">OpenVSwitch with GRE/VxLAN</a></li>
+<li><a href="http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/" target="_blank" rel="noopener">Linux Bridge L2 networks</a></li>
+<li><a href="https://github.com/zettio/weave" target="_blank" rel="noopener">Weave</a></li>
+<li><a href="https://github.com/Metaswitch/calico" target="_blank" rel="noopener">Calico</a>(使用 BGP Routing)</li>
 </ul>
 
                 

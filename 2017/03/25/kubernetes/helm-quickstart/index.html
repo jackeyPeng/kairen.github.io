@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -298,9 +298,9 @@
         
             <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
         
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
             <a href="/tags/Helm/" class="chip pink lighten-1">Helm</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
         
     </div>
 
@@ -311,9 +311,9 @@
 
 
             <div class="entry green-link-context">
-                <p><a href="https://github.com/kubernetes/helm" target="_blank" rel="external">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：</p>
+                <p><a href="https://github.com/kubernetes/helm" target="_blank" rel="noopener">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：</p>
 <ul>
-<li>查詢與使用熱門的 <a href="https://github.com/kubernetes/charts" target="_blank" rel="external">Kubernetes Chart</a> 軟體套件。</li>
+<li>查詢與使用熱門的 <a href="https://github.com/kubernetes/charts" target="_blank" rel="noopener">Kubernetes Chart</a> 軟體套件。</li>
 <li>以 Kuberntes Chart 來分享自己的應用程式。</li>
 <li>可利用 Chart 來重複建立應用程式。</li>
 <li>智能地管理 Kubernetes manifest 檔案。</li>
@@ -324,12 +324,12 @@
 <ul>
 <li><strong>Chart</strong>：主要定義要被執行的應用程式中，所需要的工具、資源、服務等資訊，有點類似 Homebrew 的 Formula 或是 APT 的 dpkg 檔案。</li>
 <li><strong>Release</strong>：一個被執行於 Kubernetes 的 Chart 實例。Chart 能夠在一個叢集中擁有多個 Release，例如 MySQL Chart，可以在叢集建立基於該 Chart 的兩個資料庫實例，其中每個 Release 都會有獨立的名稱。</li>
-<li><strong>Repository</strong>：主要用來存放 Chart 的倉庫，如 <a href="https://kubeapps.com/" target="_blank" rel="external">KubeApps</a>。</li>
+<li><strong>Repository</strong>：主要用來存放 Chart 的倉庫，如 <a href="https://kubeapps.com/" target="_blank" rel="noopener">KubeApps</a>。</li>
 </ul>
 <p>可以理解 Helm 主要目標就是從 Chart Repository 中，查找部署者需要的應用程式 Chart，然後以 Release 形式來部署到 Kubernetes 中進行管理。</p>
 <h2 id="Helm-系統元件"><a href="#Helm-系統元件" class="headerlink" title="Helm 系統元件"></a>Helm 系統元件</h2><p>Helm 主要分為兩種元件，Helm Client 與 Tiller Server，兩者功能如下：</p>
 <ul>
-<li><strong>Helm Client</strong>：一個安裝 Helm CLI 的機器，該機器透過 gRPC 連接 Tiller Server 來對 Repository、Chart 與 Release 等進行管理與操作，如建立、刪除與升級等操作，細節可以查看 <a href="https://github.com/kubernetes/helm/blob/master/docs/index.md" target="_blank" rel="external">Helm Documentation</a>。</li>
+<li><strong>Helm Client</strong>：一個安裝 Helm CLI 的機器，該機器透過 gRPC 連接 Tiller Server 來對 Repository、Chart 與 Release 等進行管理與操作，如建立、刪除與升級等操作，細節可以查看 <a href="https://github.com/kubernetes/helm/blob/master/docs/index.md" target="_blank" rel="noopener">Helm Documentation</a>。</li>
 <li><strong>Tiller Server</strong>：主要負責接收來至 Client 的指令，並透過 kube-apiserver 與 Kubernetes 叢集做溝通，根據 Chart 定義的內容，來產生與管理各種對應 API 物件的 Kubernetes 部署檔案(又稱為 <code>Release</code>)。</li>
 </ul>
 <p>兩者溝通架構圖如下所示：</p>
@@ -374,7 +374,7 @@ $ helm version
 Client: &amp;version.Version{SemVer:&quot;v2.4.2&quot;, GitCommit:&quot;82d8e9498d96535cc6787a6a9194a76161d29b4c&quot;, GitTreeState:&quot;clean&quot;}
 Server: &amp;version.Version{SemVer:&quot;v2.4.2&quot;, GitCommit:&quot;82d8e9498d96535cc6787a6a9194a76161d29b4c&quot;, GitTreeState:&quot;clean&quot;}
 </code></pre>
-<h2 id="部署-Chart-Release-實例"><a href="#部署-Chart-Release-實例" class="headerlink" title="部署 Chart Release 實例"></a>部署 Chart Release 實例</h2><p>當完成初始化後，就可以透過 helm ctl 來管理與部署 Chart Release，我們可以到 <a href="https://kubeapps.com/" target="_blank" rel="external">KubeApps</a> 查找想要部署的 Chart，如以下快速部屬 Jenkins　範例，首先先透過搜尋來查看目前應用程式版本：</p>
+<h2 id="部署-Chart-Release-實例"><a href="#部署-Chart-Release-實例" class="headerlink" title="部署 Chart Release 實例"></a>部署 Chart Release 實例</h2><p>當完成初始化後，就可以透過 helm ctl 來管理與部署 Chart Release，我們可以到 <a href="https://kubeapps.com/" target="_blank" rel="noopener">KubeApps</a> 查找想要部署的 Chart，如以下快速部屬 Jenkins　範例，首先先透過搜尋來查看目前應用程式版本：</p>
 <pre><code class="sh">$ helm search jenkins
 NAME              VERSION    DESCRIPTION
 stable/jenkins    0.6.3      Open source continuous integration server. It s...
@@ -498,7 +498,7 @@ NAME           CLUSTER-IP        EXTERNAL-IP    PORT(S)                         
 demo-jenkins   192.169.143.140   ,172.20.3.90   8080:30152/TCP,50000:31806/TCP   10m
 </code></pre>
 <blockquote>
-<p>這時候就可以透過 <a href="http://172.20.3.90:8080" target="_blank" rel="external">http://172.20.3.90:8080</a> 連進去 Jenkins 了，其預設帳號為 <code>admin</code>。</p>
+<p>這時候就可以透過 <a href="http://172.20.3.90:8080" target="_blank" rel="noopener">http://172.20.3.90:8080</a> 連進去 Jenkins 了，其預設帳號為 <code>admin</code>。</p>
 </blockquote>
 <p>透過以下指令來取得 Jenkins admin 密碼：</p>
 <pre><code class="sh">$ printf $(kubectl get secret --namespace default demo-jenkins -o jsonpath=&quot;{.data.jenkins-admin-password}&quot; | base64 --decode);echo

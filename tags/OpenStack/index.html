@@ -7,7 +7,7 @@
 
     
 
-    <title>OpenStack | KaiRen&#39;s Blog</title>
+    <title>Openstack | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -265,7 +265,7 @@
         
 
         
-            <a class="breadcrumb" href="/tags/OpenStack/">OpenStack</a>
+            <a class="breadcrumb" href="/tags/Openstack/">Openstack</a>
         
     </div>
 </nav>
@@ -274,46 +274,10 @@
 
     <div class="collection mt-0">
         
-            <a href="/2017/08/29/openstack/kuryr-kubernetes/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-08-29T08:23:01.000Z">2017-08-29</time>
+            <a href="/2017/11/29/openstack/openstack-helm/" class="collection-item grey-text text-darken-1">
+                <time datetime="2017-11-29T08:23:01.000Z">2017-11-29</time>
                 <span>&nbsp;&nbsp;&nbsp;</span>
-                利用 Kuryr 整合 OpenStack 與 Kubernetes 網路
-            </a>
-        
-            <a href="/2017/08/16/openstack/ironic-dev/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-08-16T08:23:01.000Z">2017-08-16</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                利用 OpenStack Ironic 提供裸機部署服務
-            </a>
-        
-            <a href="/2016/07/21/openstack/kolla-ansible/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-07-21T08:23:01.000Z">2016-07-21</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                OpenStack Kolla 初體驗
-            </a>
-        
-            <a href="/2016/06/02/openstack/kuryr-install/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-06-02T08:23:01.000Z">2016-06-02</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Docker 串接 OpenStack Neutron Kuryr 網路
-            </a>
-        
-            <a href="/2016/04/01/openstack/how-to-contribute/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-04-01T08:23:01.000Z">2016-04-01</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                OpenStack 貢獻基本流程
-            </a>
-        
-            <a href="/2015/12/06/container/docker-machine-driver/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-12-06T09:08:54.000Z">2015-12-06</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Docker Machine Driver 使用
-            </a>
-        
-            <a href="/2015/11/24/linux/ubuntu/nfs/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-11-24T04:23:01.000Z">2015-11-24</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                NFS 簡單安裝與使用
+                Deploy OpenStack on Kubernetes using OpenStack-helm
             </a>
         
     </div>
@@ -569,6 +533,64 @@
                                     // cut out 100 characters
                                     var start = first_occur - 20;
                                     var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>
+80;
                                     if (start < 0) {
                                         start = 0;
                                     }

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -395,17 +395,17 @@ to login with a token:
         http://localhost:8888/?token=7ddd6ef31fed5f22696c1003a905782b9219a6ec9a19b97c
 </code></pre>
 <blockquote>
-<p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="external">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
+<p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="noopener">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
 </blockquote>
 <p>若要支援 GPU(CUDA) 的容器的話，可以透過以下指令來提供：</p>
 <pre><code class="sh">$ nvidia-docker run -d -p 8888:8888 --name tf-gpu tensorflow/tensorflow:latest-gpu
 $ docker logs tf-cpu
 </code></pre>
 <blockquote>
-<p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="external">tags</a>。</p>
+<p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="noopener">tags</a>。</p>
 </blockquote>
 <h2 id="利用-Docker-提供-Serving"><a href="#利用-Docker-提供-Serving" class="headerlink" title="利用 Docker 提供 Serving"></a>利用 Docker 提供 Serving</h2><p>TensorFlow Serving 是靈活、高效能的機器學習模型服務系統，是專門為生產環境而設計的，它可以很簡單部署新的演算法與實驗來提供同樣的架構與 API 進行服務。</p>
-<p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="external">Dockerfile </a> 來進行建置：</p>
+<p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="noopener">Dockerfile </a> 來進行建置：</p>
 <pre><code class="sh">$ mkdir serving &amp;&amp; cd serving
 $ wget &quot;https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel&quot;
 $ sed -i &#39;s/BAZEL_VERSION.*0.4.2/BAZEL_VERSION 0.4.5/g&#39; Dockerfile.devel

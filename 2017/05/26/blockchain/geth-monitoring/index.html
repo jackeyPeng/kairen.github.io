@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -312,7 +312,7 @@
 
             <div class="entry green-link-context">
                 <p>Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。</p>
-<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="external">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
+<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="noopener">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
 <a id="more"></a>
 <h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
 <ul>
@@ -337,7 +337,7 @@ $ grunt
 $ PORT=&quot;3000&quot; WS_SECRET=&quot;admin&quot; npm start
 </code></pre>
 <blockquote>
-<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="external">eth-netstats</a>。</p>
+<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。</p>
 <p>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
 </blockquote>
 <p>撰寫一個腳本<code>eth-netstats.sh</code>放置到背景服務執行：</p>
@@ -419,7 +419,7 @@ $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
 <li><a href="#docker-monitoring-site">Docker Monitoring site</a></li>
 <li><a href="#docker-client-side">Docker Client side</a></li>
 </ul>
-<h4 id="Docker-Monitoring-site"><a href="#Docker-Monitoring-site" class="headerlink" title="Docker Monitoring site"></a>Docker Monitoring site</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethstats/" target="_blank" rel="external">DockerHub</a> 找到，建議直接執行以下指令來啟動 eth-netstats 容器：</p>
+<h4 id="Docker-Monitoring-site"><a href="#Docker-Monitoring-site" class="headerlink" title="Docker Monitoring site"></a>Docker Monitoring site</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethstats/" target="_blank" rel="noopener">DockerHub</a> 找到，建議直接執行以下指令來啟動 eth-netstats 容器：</p>
 <pre><code class="sh">$ docker run -d \
             -p 3000:3000 \
             -e WS_SECRET=&quot;admin&quot; \
@@ -427,10 +427,10 @@ $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
             kairen/ethstats
 </code></pre>
 <blockquote>
-<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="external">eth-netstats</a>。</p>
+<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。</p>
 <p>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
 </blockquote>
-<h4 id="Docker-Client-side"><a href="#Docker-Client-side" class="headerlink" title="Docker Client side"></a>Docker Client side</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethnetintel/" target="_blank" rel="external">DockerHub</a> 找到，也推薦透過執行以下指令來啟動 eth-netintel 容器：</p>
+<h4 id="Docker-Client-side"><a href="#Docker-Client-side" class="headerlink" title="Docker Client side"></a>Docker Client side</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethnetintel/" target="_blank" rel="noopener">DockerHub</a> 找到，也推薦透過執行以下指令來啟動 eth-netintel 容器：</p>
 <pre><code class="sh">$ docker run -d \
             -p 30303:30303 \
             -p 30303:30303/udp \

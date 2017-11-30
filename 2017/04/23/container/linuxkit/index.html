@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -313,7 +313,7 @@
 
 
             <div class="entry green-link-context">
-                <p><a href="https://github.com/linuxkit/linuxkit" target="_blank" rel="external">LinuxKit</a> 是 <a href="http://www.nebulaworks.com/blog/2017/04/22/docker-captains-dockercon-2017-review/" target="_blank" rel="external">DockerCon 2017</a> 中推出的工具之一，其主要是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，Docker 公司一直透過 LinuxKit 來建立相關產品，如 Docker for Mac 等。由於要最快的了解功能，因此這邊透過建立簡單的映像檔來學習。</p>
+                <p><a href="https://github.com/linuxkit/linuxkit" target="_blank" rel="noopener">LinuxKit</a> 是 <a href="http://www.nebulaworks.com/blog/2017/04/22/docker-captains-dockercon-2017-review/" target="_blank" rel="noopener">DockerCon 2017</a> 中推出的工具之一，其主要是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，Docker 公司一直透過 LinuxKit 來建立相關產品，如 Docker for Mac 等。由於要最快的了解功能，因此這邊透過建立簡單的映像檔來學習。</p>
 <center><img src="/images/docker/linux-kit.png" alt=""></center>
 
 <a id="more"></a>
@@ -324,7 +324,7 @@
 <li>安裝 GUN make 工具。</li>
 <li>安裝 GUN tar 工具。</li>
 </ul>
-<h2 id="建構-Moby-工具"><a href="#建構-Moby-工具" class="headerlink" title="建構 Moby 工具"></a>建構 Moby 工具</h2><p>首先我們要建構名為 Moby 的工具，這個工具主要提供指定的 YAML 檔來執行描述的建構流程與功能，並利用 Docker 來建構出 Linux 作業系統。在本教學中，最後我們會利用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="external">xhyve</a> 這個 OS X 的虛擬化來提供執行系統實例，當然也可以透過官方的 <a href="https://github.com/moby/hyperkit" target="_blank" rel="external">HyperKit</a> 來進行。</p>
+<h2 id="建構-Moby-工具"><a href="#建構-Moby-工具" class="headerlink" title="建構 Moby 工具"></a>建構 Moby 工具</h2><p>首先我們要建構名為 Moby 的工具，這個工具主要提供指定的 YAML 檔來執行描述的建構流程與功能，並利用 Docker 來建構出 Linux 作業系統。在本教學中，最後我們會利用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="noopener">xhyve</a> 這個 OS X 的虛擬化來提供執行系統實例，當然也可以透過官方的 <a href="https://github.com/moby/hyperkit" target="_blank" rel="noopener">HyperKit</a> 來進行。</p>
 <p>首先透過 Git 來抓取 LinuxKit repos，並進入建構 Moby：</p>
 <pre><code class="sh">$ git clone https://github.com/linuxkit/linuxkit.git
 $ cd linuxkit
@@ -457,7 +457,7 @@ outputs:
 <li><strong>outputs</strong>:輸出的映像檔格式。</li>
 </ul>
 <blockquote>
-<p>更多 YAML 格式說明可以參考官方 <a href="https://github.com/linuxkit/linuxkit/blob/master/docs/yaml.md" target="_blank" rel="external">LinuxKit YAML</a>。目前 LinuxKit 的映像檔來源可以參考 <a href="https://hub.docker.com/u/linuxkit/" target="_blank" rel="external">Docker Hub</a></p>
+<p>更多 YAML 格式說明可以參考官方 <a href="https://github.com/linuxkit/linuxkit/blob/master/docs/yaml.md" target="_blank" rel="noopener">LinuxKit YAML</a>。目前 LinuxKit 的映像檔來源可以參考 <a href="https://hub.docker.com/u/linuxkit/" target="_blank" rel="noopener">Docker Hub</a></p>
 </blockquote>
 <p>撰寫完後，就可以透過 Moby 工具進行建構 Linux 映像檔了：</p>
 <pre><code class="sh">$ moby build docker-sshd.yml
@@ -475,7 +475,7 @@ Create outputs:
 <li>docker-sshd-cmdline: Command line options 檔案.</li>
 <li>docker-sshd.iso: Docker SSHD ISO 格式映像檔.</li>
 </ul>
-<h3 id="測試映像檔"><a href="#測試映像檔" class="headerlink" title="測試映像檔"></a>測試映像檔</h3><p>當完成建構映像檔後，就可以透過一些工具來進行測試，這邊採用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="external">xhyve</a> 來執行實例，首先透過 Git 取得 xhyve repos，並建構與安裝：</p>
+<h3 id="測試映像檔"><a href="#測試映像檔" class="headerlink" title="測試映像檔"></a>測試映像檔</h3><p>當完成建構映像檔後，就可以透過一些工具來進行測試，這邊採用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="noopener">xhyve</a> 來執行實例，首先透過 Git 取得 xhyve repos，並建構與安裝：</p>
 <pre><code class="sh">$ git clone https://github.com/mist64/xhyve
 $ cd xhyve
 $ make &amp;&amp; cp build/xhyve /usr/local/bin/
@@ -484,7 +484,7 @@ Usage: xhyve [-behuwxMACHPWY] [-c vcpus] [-g &lt;gdb port&gt;] [-l &lt;lpc&gt;]
              [-m mem] [-p vcpu:hostcpu] [-s &lt;pci&gt;] [-U uuid] -f &lt;fw&gt;
 </code></pre>
 <blockquote>
-<p>xhyve 是 FreeBSD 虛擬化技術 bhyve 的 OS X 版本，是以  <a href="https://developer.apple.com/library/mac/documentation/DriversKernelHardware/Reference/Hypervisor/index.html" target="_blank" rel="external">Hypervisor.framework</a> 為基底的上層工具，這是除了 VirtualBox 與 VMwar 的另外選擇，並且該工具非常的輕巧，只有幾 KB 的容量。</p>
+<p>xhyve 是 FreeBSD 虛擬化技術 bhyve 的 OS X 版本，是以  <a href="https://developer.apple.com/library/mac/documentation/DriversKernelHardware/Reference/Hypervisor/index.html" target="_blank" rel="noopener">Hypervisor.framework</a> 為基底的上層工具，這是除了 VirtualBox 與 VMwar 的另外選擇，並且該工具非常的輕巧，只有幾 KB 的容量。</p>
 </blockquote>
 <p>接著撰寫 xhyve 腳本來啟動映像檔：</p>
 <pre><code class="sh">#!/bin/sh

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -534,7 +534,7 @@ $ sudo rbd-nbd map rbd/bd
 /dev/nbd0
 </code></pre>
 <blockquote>
-<p>P.S. 在新版的 ceph 已經有內建 rbd nbd，參考 <a href="http://docs.ceph.com/docs/jewel/man/8/rbd/#commands" target="_blank" rel="external">rbd - manage command</a>。</p>
+<p>P.S. 在新版的 ceph 已經有內建 rbd nbd，參考 <a href="http://docs.ceph.com/docs/jewel/man/8/rbd/#commands" target="_blank" rel="noopener">rbd - manage command</a>。</p>
 </blockquote>
 <p>最後透過 dd 指令測試 nbd 寫入效能：</p>
 <pre><code class="sh">$ dd if=/dev/zero of=./mnt-nbd/test bs=4096 count=4000000

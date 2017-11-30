@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -317,12 +317,12 @@
 <a id="more"></a>
 <h2 id="Ceph-目標"><a href="#Ceph-目標" class="headerlink" title="Ceph 目標"></a>Ceph 目標</h2><p>開發檔案系統是一種複雜的投入，但是如果能夠準確地解決問題的話，則擁有著不可估量的價值。我們可以把 Ceph 的目標可以簡單定義為以下：</p>
 <ul>
-<li><strong>容易擴充到 <a href="http://en.wikipedia.org/wiki/Petabyte" target="_blank" rel="external">PB 級別</a>的儲存容量</strong></li>
+<li><strong>容易擴充到 <a href="http://en.wikipedia.org/wiki/Petabyte" target="_blank" rel="noopener">PB 級別</a>的儲存容量</strong></li>
 <li><strong>在不同負載情況下的高效能（每秒輸入/輸出操作數[IPOS]、帶寬）</strong></li>
 <li><strong>高可靠性</strong></li>
 </ul>
 <p>但這些目標彼此間相互矛盾(例如:可擴充性會減少或阻礙效能，或影響可靠性)。 Ceph 開發了一些有趣的概念(例如<strong>動態 metadata 分區</strong>、<strong>資料分散</strong>、<strong>複製</strong>)。</p>
-<p>Ceph 的設計也實作了<code>容錯性</code>來防止<code>單一節點故障問題（SOPF）</code>，並假設，大規模（PB 級）中儲存的故障是一種常態，而非異常。最後，它的設計沒有假設特定的工作負荷，而是包含了可變的分散式工作負荷的適應能力，從而提供最佳的效能。它以<a href="http://zh.wikipedia.org/wiki/POSIX" target="_blank" rel="external">POSIX</a> 兼容為目標完成這些工作，允許它透明的部署於那些依賴於 POSIX 語義上現有的應用(通過Ceph增強功能)。最後，Ceph 是開源分散式儲存和 Linux 主流核心的一部分。</p>
+<p>Ceph 的設計也實作了<code>容錯性</code>來防止<code>單一節點故障問題（SOPF）</code>，並假設，大規模（PB 級）中儲存的故障是一種常態，而非異常。最後，它的設計沒有假設特定的工作負荷，而是包含了可變的分散式工作負荷的適應能力，從而提供最佳的效能。它以<a href="http://zh.wikipedia.org/wiki/POSIX" target="_blank" rel="noopener">POSIX</a> 兼容為目標完成這些工作，允許它透明的部署於那些依賴於 POSIX 語義上現有的應用(通過Ceph增強功能)。最後，Ceph 是開源分散式儲存和 Linux 主流核心的一部分。</p>
 <center><img src="/images/ceph/stack.png" alt="完整架構"></center>
 
 <p>其中最底層的 RADOS 是由 OSD、Monitor 與 MDS 三種所組成。</p>
@@ -354,7 +354,7 @@
 <blockquote>
 <p><strong>P.S 若只使用 Ceph Object Storage 與 Ceph Block Device 的話，將不需要部署 MDS 節點。</strong></p>
 </blockquote>
-<h3 id="Ceph-Monitor（MON）"><a href="#Ceph-Monitor（MON）" class="headerlink" title="Ceph Monitor（MON）"></a>Ceph Monitor（MON）</h3><p>Ceph 包含實施叢集映射管理的監控者，但是故障管理的一些要素是在物件儲存本身執行的。當物件儲存裝置發生故障或者新裝置加入時，監控者就會檢測和維護一個有效的叢集映射。這個功能會按一種分散式的方法執行，這種方式中映射升級可以和當前的流量溝通。Ceph 使用<a href="http://zh.wikipedia.org/zh-tw/Paxos%E7%AE%97%E6%B3%95" target="_blank" rel="external">Paxos</a>，它是一系列分散式共識演算法。</p>
+<h3 id="Ceph-Monitor（MON）"><a href="#Ceph-Monitor（MON）" class="headerlink" title="Ceph Monitor（MON）"></a>Ceph Monitor（MON）</h3><p>Ceph 包含實施叢集映射管理的監控者，但是故障管理的一些要素是在物件儲存本身執行的。當物件儲存裝置發生故障或者新裝置加入時，監控者就會檢測和維護一個有效的叢集映射。這個功能會按一種分散式的方法執行，這種方式中映射升級可以和當前的流量溝通。Ceph 使用<a href="http://zh.wikipedia.org/zh-tw/Paxos%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">Paxos</a>，它是一系列分散式共識演算法。</p>
 <p>在每一個 Ceph 儲存中，都有一到多個 Monitor 存在，為了有效的在分散式的環境下存取檔案，每一個 Ceph Monitor daemon 維護著很多份與 叢集相關的映射資料(map)，包含：</p>
 <ul>
 <li><strong>Monitor map</strong>：包含叢集的 fsid 、位置、名稱、IP 位址和 Port，也包括目前 epoch、此狀態圖何時建立與最近修改時間。</li>
@@ -468,12 +468,12 @@
 </tbody>
 </table>
 <h2 id="參考"><a href="#參考" class="headerlink" title="參考"></a>參考</h2><ul>
-<li><a href="http://mirrors.myccdn.info/ceph/doc/docs_zh/output/html/" target="_blank" rel="external">Ceph中文文件</a></li>
-<li><a href="http://godleon.blogspot.tw/2014/10/ceph.html" target="_blank" rel="external">小信豬 Ceph</a></li>
-<li><a href="http://ceph.com/docs/master/" target="_blank" rel="external">Ceph 官方文件</a></li>
-<li><a href="http://ceph.com/resources/development/" target="_blank" rel="external">Ceph Development</a></li>
-<li><a href="http://cloud.51cto.com/art/201504/470780_all.htm" target="_blank" rel="external">Ceph 整合案例</a></li>
-<li><a href="https://books.google.com.tw/books?hl=zh-TW&amp;lr&amp;id=HftzBgAAQBAJ&amp;oi=fnd&amp;pg=PP1&amp;dq=openstack%20ceph&amp;ots=OWwptmw5Mm&amp;sig=d1uC5NThemjRudfktDXmuQ6TqA0&amp;redir_esc=y#v=onepage&amp;q=openstack%20ceph&amp;f=false" target="_blank" rel="external">Ceph Book</a></li>
+<li><a href="http://mirrors.myccdn.info/ceph/doc/docs_zh/output/html/" target="_blank" rel="noopener">Ceph中文文件</a></li>
+<li><a href="http://godleon.blogspot.tw/2014/10/ceph.html" target="_blank" rel="noopener">小信豬 Ceph</a></li>
+<li><a href="http://ceph.com/docs/master/" target="_blank" rel="noopener">Ceph 官方文件</a></li>
+<li><a href="http://ceph.com/resources/development/" target="_blank" rel="noopener">Ceph Development</a></li>
+<li><a href="http://cloud.51cto.com/art/201504/470780_all.htm" target="_blank" rel="noopener">Ceph 整合案例</a></li>
+<li><a href="https://books.google.com.tw/books?hl=zh-TW&amp;lr&amp;id=HftzBgAAQBAJ&amp;oi=fnd&amp;pg=PP1&amp;dq=openstack%20ceph&amp;ots=OWwptmw5Mm&amp;sig=d1uC5NThemjRudfktDXmuQ6TqA0&amp;redir_esc=y#v=onepage&amp;q=openstack%20ceph&amp;f=false" target="_blank" rel="noopener">Ceph Book</a></li>
 </ul>
 
                 

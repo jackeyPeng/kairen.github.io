@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -324,15 +324,15 @@
 
 <h2 id="TensorFlow-基本使用"><a href="#TensorFlow-基本使用" class="headerlink" title="TensorFlow 基本使用"></a>TensorFlow 基本使用</h2><p>在開始進行 TensorFlow 之前，需要了解幾個觀念：</p>
 <ul>
-<li>使用 <a href="https://www.tensorflow.org/api_docs/python/tf/Graph" target="_blank" rel="external">tf.Graph</a> 來表示計算任務.</li>
+<li>使用 <a href="https://www.tensorflow.org/api_docs/python/tf/Graph" target="_blank" rel="noopener">tf.Graph</a> 來表示計算任務.</li>
 <li>採用<code>tensorflow::Session</code>的上下文(Context)來執行圖.</li>
 <li>以 Tensor 來表示所有資料，可看成擁有靜態資料類型，但有動態大小的多維陣列與列表，如 Boolean 或 String 轉成數值類型.</li>
 <li>透過<code>tf.Variable</code>來維護狀態.</li>
 <li>透過 feed 與 fetch 來任意操作(Arbitrary operation)給予值或從中取得資料.</li>
 </ul>
-<p>TensorFlow 的圖中的節點被稱為 <a href="https://www.tensorflow.org/api_docs/python/tf/Operation" target="_blank" rel="external">op(operation)</a>。一個<code>op</code>會有 0 至多個 Tensor，而每個 Tensor 是一種類別化的多維陣列，例如把一個圖集合表示成四維浮點陣列，分別為<code>[batch, height, width, channels]</code>。</p>
+<p>TensorFlow 的圖中的節點被稱為 <a href="https://www.tensorflow.org/api_docs/python/tf/Operation" target="_blank" rel="noopener">op(operation)</a>。一個<code>op</code>會有 0 至多個 Tensor，而每個 Tensor 是一種類別化的多維陣列，例如把一個圖集合表示成四維浮點陣列，分別為<code>[batch, height, width, channels]</code>。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2630831-5da81623d4661886.jpg?imageMogr2/auto-orient/strip" alt=""></p>
-<p>利用三種不同稱呼來描述 Tensor 的維度，Shape、Rank 與 Dimension。可參考 <a href="https://www.tensorflow.org/programmers_guide/dims_types" target="_blank" rel="external">Rank, Shape, 和 Type</a>。</p>
+<p>利用三種不同稱呼來描述 Tensor 的維度，Shape、Rank 與 Dimension。可參考 <a href="https://www.tensorflow.org/programmers_guide/dims_types" target="_blank" rel="noopener">Rank, Shape, 和 Type</a>。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2630831-3625a021343b5da3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 <p>一般只有 shape 能夠直接被 print，而 Tensor 則需要 Session 來提供，一般需要三個操作步驟：</p>
 <ol>
@@ -402,8 +402,8 @@ it_sess.close()
 </code></pre>
 <blockquote>
 <ul>
-<li>範例來至 <a href="https://www.tensorflow.org/versions/r0.10/get_started/basic_usage" target="_blank" rel="external">Basic Usage</a>。</li>
-<li>指定 Device 可以看這邊 <a href="https://www.tensorflow.org/versions/r0.10/how_tos/using_gpu/" target="_blank" rel="external">Using GPU</a>.</li>
+<li>範例來至 <a href="https://www.tensorflow.org/versions/r0.10/get_started/basic_usage" target="_blank" rel="noopener">Basic Usage</a>。</li>
+<li>指定 Device 可以看這邊 <a href="https://www.tensorflow.org/versions/r0.10/how_tos/using_gpu/" target="_blank" rel="noopener">Using GPU</a>.</li>
 </ul>
 </blockquote>
 <p>上面範例可以看到建立了一個 Graph 的計算過程<code>c</code>，而當直接執行到<code>c</code>時，並不會真的執行運算，而是在<code>sess</code>會話建立後，並透過<code>sess</code>執行分配給 CPU 或 GPU 之類設備進行運算後，才會回傳一個節點的 Tensor，在 Python 中 Tensor 是一個 Numpy 的 ndarry 物件。</p>
@@ -432,7 +432,7 @@ with tf.Session() as sess:
     print sess.run(state)
 </code></pre>
 <blockquote>
-<p>更多細節可以查看 <a href="https://www.tensorflow.org/programmers_guide/variables" target="_blank" rel="external">Variables</a>。</p>
+<p>更多細節可以查看 <a href="https://www.tensorflow.org/programmers_guide/variables" target="_blank" rel="noopener">Variables</a>。</p>
 </blockquote>
 <p>另外可以利用 Fetch 方式來一次取得多個節點的 Tensor，範例如下：</p>
 <pre><code class="python="># coding=utf-8
@@ -496,7 +496,7 @@ with tf.Session() as sess:
 <p><img src="http://arimo.com/wp-content/uploads/2016/03/TF_Image_1.png" alt=""></p>
 <blockquote>
 <ul>
-<li><a href="http://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="external">Parameter Server 詳解</a></li>
+<li><a href="http://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="noopener">Parameter Server 詳解</a></li>
 </ul>
 </blockquote>
 <p>一般對於<code>小型規模訓練</code>，這種資料與參數量不多時，可以用一個 CPU 來同時執行兩種任務。而<code>中型規模訓練</code>，資料量較大，但參數量不多時，計算梯度的工作負載較高，而參數更新負載較低，所以計算梯度交給若干個 CPU 或 GPU 去執行，而更新參數則交給一個 CPU 即可。對於<code>大型規模訓練</code>，資料與參數量多時，不僅計算梯度需要部署多個 CPU 或 GPU，連更新參數也要不說到多個 CPU 中。</p>

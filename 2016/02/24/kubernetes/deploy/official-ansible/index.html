@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Creating a Kubernetes Cluster</a>。</p>
+                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
 <center><img src="/images/kube/kube-ansible.png" alt=""></center>
 
 <p>本次安裝版本為：</p>
@@ -439,7 +439,7 @@ kube-system   monitoring-grafana      10.254.193.233   &lt;none&gt;        80/TC
 kube-system   monitoring-influxdb     10.254.135.115   &lt;none&gt;        8083/TCP,8086/TCP   3h
 </code></pre>
 <blockquote>
-<p>完成後，透過瀏覽器進入 <a href="http://k8s-master:8080/ui" target="_blank" rel="external">Dashboard</a>。</p>
+<p>完成後，透過瀏覽器進入 <a href="http://k8s-master:8080/ui" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <h2 id="Targeted-runs"><a href="#Targeted-runs" class="headerlink" title="Targeted runs"></a>Targeted runs</h2><p>Ansible 提供 Tag 來指定執行或者忽略，這邊腳本也提供了該功能，如以下只部署 Etcd：</p>
 <pre><code class="sh">$ ./deploy-cluster.sh --tags=etcd

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,9 +311,9 @@
 
 
             <div class="entry green-link-context">
-                <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="external">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+                <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
 <blockquote>
-<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="external">kubeadm-ansible</a>。</p>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="noopener">kubeadm-ansible</a>。</p>
 </blockquote>
 <p>本環境安裝資訊：</p>
 <ul>
@@ -483,7 +483,7 @@ node2     Ready     &lt;none&gt;    9m        v1.8.4
 <pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 </code></pre>
 <blockquote>
-<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="external">Installation</a>。</p>
+<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="noopener">Installation</a>。</p>
 </blockquote>
 <p>確認沒問題後，透過 kubectl 查看：</p>
 <pre><code class="sh">kubectl get svc --namespace=kube-system
@@ -491,7 +491,7 @@ NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
 kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
 kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
 </code></pre>
-<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Kube Dashboard</a>。</p>
+<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Kube Dashboard</a>。</p>
 <h2 id="簡單部署一個服務"><a href="#簡單部署一個服務" class="headerlink" title="簡單部署一個服務"></a>簡單部署一個服務</h2><p>這邊利用 Weave 公司提供的服務來驗證系統，透過以下方式建立：</p>
 <pre><code class="sh">$ kubectl create namespace sock-shop
 $ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true&quot;
@@ -500,7 +500,7 @@ $ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/micr
 <pre><code class="sh">$ kubectl describe svc front-end -n sock-shop
 $ kubectl get pods -n sock-shop
 </code></pre>
-<p>最後存取 <a href="http://172.16.35.12:30001" target="_blank" rel="external">http://172.16.35.12:30001</a> 即可看到服務的 Frontend。</p>
+<p>最後存取 <a href="http://172.16.35.12:30001" target="_blank" rel="noopener">http://172.16.35.12:30001</a> 即可看到服務的 Frontend。</p>
 <h2 id="移除節點"><a href="#移除節點" class="headerlink" title="移除節點"></a>移除節點</h2><p>最後，若要將現有節點移除的話，kubeadm 已經有內建的指令來完成這件事，只要執行以下即可：</p>
 <pre><code class="sh">$ kubeadm reset
 </code></pre>

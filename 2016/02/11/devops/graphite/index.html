@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -338,7 +338,7 @@ pattern = .*
 retentions = 60s:1d
 </code></pre>
 <blockquote>
-<p>更多如何配置 Carbon storage 的資訊，可以參考 <a href="http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf" target="_blank" rel="external"> storage-schemas.con</a>。</p>
+<p>更多如何配置 Carbon storage 的資訊，可以參考 <a href="http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf" target="_blank" rel="noopener"> storage-schemas.con</a>。</p>
 </blockquote>
 <p>之後複製預設的聚合組態到<code>/etc/carbon</code>：</p>
 <pre><code class="sh">$ sudo cp /usr/share/doc/graphite-carbon/examples/storage-aggregation.conf.example /etc/carbon/storage-aggregation.conf
@@ -380,7 +380,7 @@ TIME_ZONE = &#39;UTC&#39;
 SECRET_KEY = &#39;some-secret-key&#39;
 </code></pre>
 <blockquote>
-<p><code>TIME_ZONE</code> 可以查詢 <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" rel="external">Wikipedia’s timezone database</a></p>
+<p><code>TIME_ZONE</code> 可以查詢 <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" rel="noopener">Wikipedia’s timezone database</a></p>
 <p><code>SECRET_KEY</code>可以使用<code>openssl rand -hex 10</code>指令來建立。</p>
 </blockquote>
 <p>初始化資料庫：</p>
@@ -412,9 +412,9 @@ $ sudo service apache2 reload
 <pre><code class="sh">$ for i in 4 6 8 16 2; do echo &quot;test.count $i `date +%s`&quot; | nc -q0 127.0.0.1 2003; sleep 6; done
 </code></pre>
 <h2 id="參考連結"><a href="#參考連結" class="headerlink" title="參考連結"></a>參考連結</h2><ul>
-<li><a href="https://www.linode.com/docs/uptime/monitoring/deploy-graphite-with-grafana-on-ubuntu-14-04" target="_blank" rel="external">Deploy Graphite with Grafana on Ubuntu 14.04</a></li>
-<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-graphite-on-an-ubuntu-14-04-server" target="_blank" rel="external">How To Install and Use Graphite on an Ubuntu 14.04 Server</a></li>
-<li><a href="http://www.vpsee.com/2015/03/a-modern-monitoring-system-built-with-grafana-collected-influxdb/" target="_blank" rel="external">Grafana＋collectd＋InfluxDB</a></li>
+<li><a href="https://www.linode.com/docs/uptime/monitoring/deploy-graphite-with-grafana-on-ubuntu-14-04" target="_blank" rel="noopener">Deploy Graphite with Grafana on Ubuntu 14.04</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-graphite-on-an-ubuntu-14-04-server" target="_blank" rel="noopener">How To Install and Use Graphite on an Ubuntu 14.04 Server</a></li>
+<li><a href="http://www.vpsee.com/2015/03/a-modern-monitoring-system-built-with-grafana-collected-influxdb/" target="_blank" rel="noopener">Grafana＋collectd＋InfluxDB</a></li>
 </ul>
 
                 

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -309,7 +309,7 @@
 
 
             <div class="entry green-link-context">
-                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
 <li>Kubernetes v1.6.4</li>
@@ -551,7 +551,7 @@ IP.2 = 172.16.35.12
 EOF
 </code></pre>
 <blockquote>
-<p><code>IP.2</code> 請修改成自己的<code>master</code> IP。<br>細節請參考<a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p><code>IP.2</code> 請修改成自己的<code>master</code> IP。<br>細節請參考<a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>建立 OpenSSL Keypairs 與 Certificate：</p>
 <pre><code class="sh">DIR=/etc/kubernetes/pki
@@ -566,7 +566,7 @@ openssl req -new -key ${DIR}/apiserver-key.pem -out ${DIR}/apiserver.csr -subj &
 openssl x509 -req -in ${DIR}/apiserver.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/apiserver.pem -days 1000 -extensions v3_req -extfile ${DIR}/openssl.conf
 </code></pre>
 <blockquote>
-<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>接著下載 Kubernetes 相關檔案至<code>/etc/kubernetes</code>：</p>
 <pre><code class="sh">cd /etc/kubernetes/
@@ -618,7 +618,7 @@ tcp   0  0 127.0.0.1:10252  0.0.0.0:*  LISTEN  20815/kube-controll
 tcp6  0  0 :::8080          :::*       LISTEN  20333/kube-apiserve
 </code></pre>
 <blockquote>
-<p>若看到以上已經被 binding 後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/" target="_blank" rel="external">API Service</a>，並輸入帳號<code>admin</code>與密碼<code>p@ssw0rd</code>。</p>
+<p>若看到以上已經被 binding 後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/" target="_blank" rel="noopener">API Service</a>，並輸入帳號<code>admin</code>與密碼<code>p@ssw0rd</code>。</p>
 </blockquote>
 <p>透過簡單指令驗證：</p>
 <pre><code class="sh">$ kubectl get node
@@ -669,7 +669,7 @@ DNS.1=node1
 EOF
 </code></pre>
 <blockquote>
-<p>P.S. 這邊<code>IP.1</code>與<code>DNS.1</code>需要隨機器不同設定。細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p>P.S. 這邊<code>IP.1</code>與<code>DNS.1</code>需要隨機器不同設定。細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>將<code>master1</code>上的 OpenSSL key 複製到<code>/etc/kubernetes/pki</code>：</p>
 <pre><code class="sh">for file in ca-key.pem ca.pem admin.pem admin-key.pem; do
@@ -687,7 +687,7 @@ openssl req -new -key ${DIR}/node-key.pem -out ${DIR}/node.csr -subj &#39;/CN=ku
 openssl x509 -req -in ${DIR}/node.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/node.pem -days 1000 -extensions v3_req -extfile ${DIR}/openssl.conf
 </code></pre>
 <blockquote>
-<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>接著下載 Kubernetes 相關檔案至<code>/etc/kubernetes/</code>：</p>
 <pre><code class="sh">cd /etc/kubernetes/
@@ -767,7 +767,7 @@ kube-proxy-amd64-gqq2p                 1/1       Running   0          2m
 kube-scheduler-master1                 1/1       Running   0          33m
 kubernetes-dashboard-210558060-zw814   1/1       Running   2          2m
 </code></pre>
-<p>確定都啟動後，可以開啟 <a href="https://172.16.35.12:6443/ui" target="_blank" rel="external">https://172.16.35.12:6443/ui</a> 來查看。<br><img src="/images/kube/dash-preview.png" alt=""></p>
+<p>確定都啟動後，可以開啟 <a href="https://172.16.35.12:6443/ui" target="_blank" rel="noopener">https://172.16.35.12:6443/ui</a> 來查看。<br><img src="/images/kube/dash-preview.png" alt=""></p>
 <h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
 <pre><code class="sh">$ kubectl run nginx --image=nginx --replicas=1 --port=80
 $ kubectl get pods -o wide
@@ -785,7 +785,7 @@ svc/nginx        192.160.57.181   ,172.16.35.12   80:32054/TCP   21s
 <blockquote>
 <p>這邊<code>type</code>可以選擇 NodePort 與 LoadBalancer。另外需隨機器 IP 不同而修改 <code>external-ip</code>。</p>
 </blockquote>
-<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12/。" target="_blank" rel="external">http://172.16.35.12/。</a></p>
+<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12/。" target="_blank" rel="noopener">http://172.16.35.12/。</a></p>
 <h3 id="擴展服務數量"><a href="#擴展服務數量" class="headerlink" title="擴展服務數量"></a>擴展服務數量</h3><p>若叢集<code>node</code>節點增加了，而想讓 Nginx 服務提供可靠性的話，可以透過以下方式來擴展服務的副本：</p>
 <pre><code class="sh">$ kubectl scale deploy nginx --replicas=2
 

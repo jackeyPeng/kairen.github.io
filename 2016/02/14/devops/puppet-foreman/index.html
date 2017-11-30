@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -316,7 +316,7 @@
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>由於 foreman 是取決於 puppet 執行主機的組態管理，他需要部署一個 puppet master 與 agent 環境。下面的列表為在安裝之前需要備設定的項目：</p>
 <ul>
 <li>Root 權限：所有伺服器能夠使用<code>sudo</code>。</li>
-<li>私人網路 DNS：Forward 與 reverse 的 DNS 必須被設定，可參考<a href="https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-private-network-dns-server-on-ubuntu-14-04" target="_blank" rel="external">How To Configure BIND as a Private Network DNS Server on Ubuntu 14.04</a>。</li>
+<li>私人網路 DNS：Forward 與 reverse 的 DNS 必須被設定，可參考<a href="https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-private-network-dns-server-on-ubuntu-14-04" target="_blank" rel="noopener">How To Configure BIND as a Private Network DNS Server on Ubuntu 14.04</a>。</li>
 <li>防火牆有開啟使用的 port： Puppet master 必須可以被存取<code>8140</code>埠口。</li>
 </ul>
 <h2 id="安裝-Foreman"><a href="#安裝-Foreman" class="headerlink" title="安裝 Foreman"></a>安裝 Foreman</h2><p>安裝 Foreman 最簡單的方法是使用 Foreman 安裝程式。Foreman 安裝程式與配置必要的元件來執行 Foreman，包含以下內容：</p>
@@ -361,7 +361,7 @@ Notice: Installing -- do not interrupt ...
   └── puppetlabs-stdlib (v4.10.0)
 </code></pre>
 <h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
-<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-foreman-to-manage-puppet-nodes-on-ubuntu-14-04" target="_blank" rel="external">How To Use Foreman To Manage Puppet Nodes on Ubuntu 14.04</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-foreman-to-manage-puppet-nodes-on-ubuntu-14-04" target="_blank" rel="noopener">How To Use Foreman To Manage Puppet Nodes on Ubuntu 14.04</a></li>
 </ul>
 
                 

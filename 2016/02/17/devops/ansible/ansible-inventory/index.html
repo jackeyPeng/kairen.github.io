@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -312,7 +312,7 @@
 
             <div class="entry green-link-context">
                 <p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
-<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="external">Dynamic Inventory</a>。</p>
+<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="noopener">Dynamic Inventory</a>。</p>
 <a id="more"></a>
 <h3 id="Hosts-and-Groups"><a href="#Hosts-and-Groups" class="headerlink" title="Hosts and Groups"></a>Hosts and Groups</h3><p>Inventory 是一個<code>INI-like</code>格式的檔案，如以下範例所示：</p>
 <pre><code>mail.example.com
@@ -463,7 +463,7 @@ ansible_ssh_extra_args
 ansible_ssh_pipelining
   Determines whether or not to use SSH pipelining. This can override the
   ``pipelining`` setting in ``ansible.cfg``.
-</code></pre><p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="external">Ansible Privilege Escalation</a>）：</p>
+</code></pre><p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="noopener">Ansible Privilege Escalation</a>）：</p>
 <pre><code>ansible_become
   Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation
 ansible_become_method
@@ -492,16 +492,16 @@ ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>
                 
 <p class="green-link-context">
-    <a href="/2016/02/17/devops/ansible/ansible-adhoc/" rel="next" title="Ansible Ad-Hoc 指令與 Modules">
-    Prev: Ansible Ad-Hoc 指令與 Modules
+    <a href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/" rel="next" title="Ansible Dynamic Inventory">
+    Prev: Ansible Dynamic Inventory
   </a>
 </p>
 
 
 
 <p class="green-link-context">
-    <a href="/2016/02/16/devops/ansible/ansible-basic/" rel="next" title="Ansible 介紹與使用">
-    Next: Ansible 介紹與使用
+    <a href="/2016/02/17/devops/ansible/ansible-adhoc/" rel="next" title="Ansible Ad-Hoc 指令與 Modules">
+    Next: Ansible Ad-Hoc 指令與 Modules
   </a>
 </p>
 

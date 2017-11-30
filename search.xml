@@ -4,9 +4,726 @@
   
     
     <entry>
+      <title><![CDATA[Deploy OpenStack on Kubernetes using OpenStack-helm]]></title>
+      <url>https://kairen.github.io/2017/11/29/openstack/openstack-helm/</url>
+      <content type="html"><![CDATA[<p><a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">OpenStack Helm</a> 是一個提供部署建置的專案，其目的是為了推動 OpenStack 生產環境的解決方案，而這種部署方式採用容器化方式，並執行於 Kubernetes 系統上來提供 OpenStack 服務的管理與排程等使用。</p>
+<p><img src="https://i.imgur.com/8sMjowM.png" alt=""></p>
+<a id="more"></a>
+<p>而本篇文章將說明如何建置多節點的 OpenStack Helm 環境來進行功能驗證。</p>
+<h2 id="節點與安裝版本"><a href="#節點與安裝版本" class="headerlink" title="節點與安裝版本"></a>節點與安裝版本</h2><p>以下為各節點的硬體資訊。</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Role</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.10</td>
+<td>vip</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>172.22.132.101</td>
+<td>master1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.22</td>
+<td>node1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.24</td>
+<td>node2</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.28</td>
+<td>node3</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<p>使用 Kernel、作業系統與軟體版本：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>資訊描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>作業系統版本</td>
+<td>16.04.3 LTS (Xenial Xerus)</td>
+</tr>
+<tr>
+<td>Kernel 版本</td>
+<td>4.4.0-101-generic</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>v1.8.4</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>Docker 17.09.0-ce</td>
+</tr>
+<tr>
+<td>Calico</td>
+<td>v2.6.2</td>
+</tr>
+<tr>
+<td>Etcd</td>
+<td>v3.2.9</td>
+</tr>
+<tr>
+<td>Ceph</td>
+<td>v10.2.10</td>
+</tr>
+<tr>
+<td>Helm</td>
+<td>v2.7.0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Kubernetes-叢集"><a href="#Kubernetes-叢集" class="headerlink" title="Kubernetes 叢集"></a>Kubernetes 叢集</h2><p>本節說明如何建立 Kubernetes Cluster，這邊採用 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 工具來建立。</p>
+<h3 id="初始化與設定基本需求"><a href="#初始化與設定基本需求" class="headerlink" title="初始化與設定基本需求"></a>初始化與設定基本需求</h3><p>安裝前需要確認以下幾個項目：</p>
+<ul>
+<li>所有節點的網路之間可以互相溝通。</li>
+<li><code>部署節點</code>對其他節點不需要 SSH 密碼即可登入。</li>
+<li>所有節點都擁有 Sudoer 權限，並且不需要輸入密碼。</li>
+<li>所有節點需要安裝<code>Python</code>。</li>
+<li>所有節點需要設定<code>/etc/host</code>解析到所有主機。</li>
+<li><code>部署節點</code>需要安裝 <strong>Ansible &gt;= 2.4.0</strong>。</li>
+</ul>
+<pre><code class="shell"># Ubuntu install
+$ sudo apt-get install -y software-properties-common
+$ sudo apt-add-repository -y ppa:ansible/ansible
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible git make
+
+# CentOS install
+$ sudo yum install -y epel-release
+$ sudo yum -y install ansible cowsay
+</code></pre>
+<h3 id="安裝與設定-Kube-ansible"><a href="#安裝與設定-Kube-ansible" class="headerlink" title="安裝與設定 Kube-ansible"></a>安裝與設定 Kube-ansible</h3><p>首先取得最新穩定版本的 Kubernetes Ansible:</p>
+<pre><code class="shell">$ git clone https://github.com/kairen/kube-ansible.git
+$ cd kube-ansible
+</code></pre>
+<p>然後新增<code>inventory</code>檔案來描述要部屬的主機角色:</p>
+<pre><code>[etcds]
+172.22.132.101 ansible_user=ubuntu
+
+[masters]
+172.22.132.101 ansible_user=ubuntu
+
+[nodes]
+172.22.132.22 ansible_user=ubuntu
+172.22.132.24 ansible_user=ubuntu
+172.22.132.28 ansible_user=ubuntu
+
+[kube-cluster:children]
+masters
+nodes
+</code></pre><p>接著編輯<code>group_vars/all.yml</code>檔案來添加與修改以下內容：</p>
+<pre><code class="yaml"># Kubenrtes version, only support 1.8.0+.
+kube_version: 1.8.4
+
+# CNI plugin
+# Support: flannel, calico, canal, weave or router.
+network: calico
+pod_network_cidr: 10.244.0.0/16
+# CNI opts: flannel(--iface=enp0s8), calico(interface=enp0s8), canal(enp0s8).
+cni_iface: &quot;&quot;
+
+# Kubernetes cluster network.
+cluster_subnet: 10.96.0
+kubernetes_service_ip: &quot;{{ cluster_subnet }}.1&quot;
+service_ip_range: &quot;{{ cluster_subnet }}.0/12&quot;
+service_node_port_range: 30000-32767
+api_secure_port: 5443
+
+# Highly Available configuration.
+haproxy: true
+keepalived: true # set `lb_vip_address` as keepalived vip, if this enable.
+keepalived_vip_interface: &quot;{{ ansible_default_ipv4.interface }}&quot;
+
+lb_vip_address: 172.22.132.10
+lb_secure_port: 6443
+lb_api_url: &quot;https://{{ lb_vip_address }}:{{ lb_secure_port }}&quot;
+
+etcd_iface: &quot;&quot;
+
+insecure_registrys:
+- &quot;172.22.132.253:5000&quot; # 有需要的話
+</code></pre>
+<blockquote>
+<ul>
+<li>這邊<code>insecure_registrys</code>為 deploy 節點的 Docker registry ip 與 port。</li>
+<li>Extra addons 部分針對需求開啟，預設不會開啟。</li>
+<li>若想把 Etcd, VIP 與 Network plugin 綁定在指定網路的話，請修改<code>etcd_iface</code>, <code>keepalived_vip_interface</code> 與 <code>cni_iface</code>。其中<code>cni_iface</code>需要針對不同 Plugin 來改變。</li>
+<li>若想要修改部署版本的 Packages 的話，請編輯<code>roles/commons/packages/defaults/main.yml</code>來修改版本。</li>
+</ul>
+</blockquote>
+<p>接著由於 OpenStack-helm 使用的 Kubernetes Controller Manager 不同，因此要修改<code>roles/commons/container-images/defaults/main.yml</code>的 Image 來源如下：</p>
+<pre><code class="yaml">...
+  manager:
+  name: kube-controller-manager
+  repos: kairen/
+  tag: &quot;v{{ kube_version }}&quot;
+...
+</code></pre>
+<p>完後成修改 storage roles 設定版本並進行安裝。</p>
+<p>首先編輯<code>roles/storage/ceph/defaults/main.yml</code>修改版本為以下：</p>
+<pre><code class="yaml">ceph_version: jewel
+</code></pre>
+<p>接著編輯<code>roles/storage/ceph/tasks/main.yml</code>修改成以下內容：</p>
+<pre><code class="yaml">---
+
+- name: Install Ceph dependency packages
+  include_tasks: install-ceph.yml
+
+# - name: Create and copy generator config file
+#   include_tasks: gen-config.yml
+#   delegate_to: &quot;{{ groups['masters'][0] }}&quot;
+#   run_once: true
+#
+# - name: Deploy Ceph components on Kubernetes
+#   include_tasks: ceph-on-k8s.yml
+#   delegate_to: &quot;{{ groups['masters'][0] }}&quot;
+#   run_once: true
+
+# - name: Label all storage nodes
+#   shell: &quot;kubectl label nodes node-type=storage&quot;
+#   delegate_to: &quot;{{ groups['masters'][0] }}&quot;
+#   run_once: true
+#   ignore_errors: true
+</code></pre>
+<h3 id="部屬-Kubernetes-叢集"><a href="#部屬-Kubernetes-叢集" class="headerlink" title="部屬 Kubernetes 叢集"></a>部屬 Kubernetes 叢集</h3><p>確認<code>group_vars/all.yml</code>與其他設定都完成後，就透過 ansible ping 來檢查叢集狀態：</p>
+<pre><code class="shell">$ ansible -i inventory all -m ping
+...
+172.22.132.101 | SUCCESS =&gt; {
+    &quot;changed&quot;: false,
+    &quot;failed&quot;: false,
+    &quot;ping&quot;: &quot;pong&quot;
+}
+...
+</code></pre>
+<p>接著就可以透過以下指令進行部署叢集：</p>
+<pre><code class="shell">$ ansible-playbook cluster.yml
+...
+TASK [cni : Apply calico network daemonset] *********************************************************************************************************************************
+changed: [172.22.132.101 -&gt; 172.22.132.101]
+
+PLAY RECAP ******************************************************************************************************************************************************************
+172.22.132.101             : ok=155  changed=58   unreachable=0    failed=0
+172.22.132.22              : ok=117  changed=28   unreachable=0    failed=0
+172.22.132.24              : ok=50   changed=18   unreachable=0    failed=0
+172.22.132.28              : ok=51   changed=19   unreachable=0    failed=0
+</code></pre>
+<p>完成後，進入<code>master</code>節點執行以下指令確認叢集：</p>
+<pre><code class="shell">$ kubectl get node
+NAME           STATUS    ROLES     AGE       VERSION
+kube-master1   Ready     master    1h        v1.8.4
+kube-node1     Ready     &lt;none&gt;    1h        v1.8.4
+kube-node2     Ready     &lt;none&gt;    1h        v1.8.4
+kube-node3     Ready     &lt;none&gt;    1h        v1.8.4
+
+$ kubectl -n kube-system get po
+NAME                                       READY     STATUS    RESTARTS   AGE
+calico-node-js6qp                          2/2       Running   2          1h
+calico-node-kx9xn                          2/2       Running   2          1h
+calico-node-lxrjl                          2/2       Running   2          1h
+calico-node-vwn5f                          2/2       Running   2          1h
+calico-policy-controller-d549764f6-9kn9l   1/1       Running   1          1h
+haproxy-kube-master1                       1/1       Running   1          1h
+keepalived-kube-master1                    1/1       Running   1          1h
+kube-apiserver-kube-master1                1/1       Running   1          1h
+kube-controller-manager-kube-master1       1/1       Running   1          1h
+kube-dns-7bd4879dc9-kxmx6                  3/3       Running   3          1h
+kube-proxy-7tqkm                           1/1       Running   1          1h
+kube-proxy-glzmm                           1/1       Running   1          1h
+kube-proxy-krqxs                           1/1       Running   1          1h
+kube-proxy-x9zdb                           1/1       Running   1          1h
+kube-scheduler-kube-master1                1/1       Running   1          1h
+</code></pre>
+<p>檢查 kube-dns 是否連 host 都能夠解析:</p>
+<pre><code class="shell">$ nslookup kubernetes
+Server:        10.96.0.10
+Address:    10.96.0.10#53
+
+Non-authoritative answer:
+Name:    kubernetes.default.svc.cluster.local
+Address: 10.96.0.1
+</code></pre>
+<h2 id="OpenStack-helm-叢集"><a href="#OpenStack-helm-叢集" class="headerlink" title="OpenStack-helm 叢集"></a>OpenStack-helm 叢集</h2><p>本節說明如何建立 OpenStack on Kubernetes 使用 Helm，部署是使用 <a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">openstack-helm</a>。過程將透過 OpenStack-helm 來在 Kubernetes 建置 OpenStack 叢集。以下所有操作都在<code>kube-master1</code>上進行。</p>
+<h3 id="Helm-init"><a href="#Helm-init" class="headerlink" title="Helm init"></a>Helm init</h3><p>在開始前需要先將 Helm 進行初始化，以提供後續使用，然而這邊由於使用到 RBAC 的關係，因此需建立一個 Service account 來提供給 Helm 使用：</p>
+<pre><code class="shell">$ kubectl -n kube-system create sa tiller
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
+</code></pre>
+<blockquote>
+<p>由於 kube-ansible 本身包含 Helm, 因此只需要進行 init 即可。</p>
+</blockquote>
+<p>新增 openrc 來提供環境變數：</p>
+<pre><code class="shell">export HELM_HOST=$(kubectl describe svc/tiller-deploy -n kube-system | awk &#39;/Endpoints/{print $2}&#39;)
+export OSD_CLUSTER_NETWORK=172.22.132.0/24
+export OSD_PUBLIC_NETWORK=172.22.132.0/24
+export WORK_DIR=local
+export CEPH_RGW_KEYSTONE_ENABLED=true
+</code></pre>
+<blockquote>
+<ul>
+<li><code>OSD_CLUSTER_NETWORK</code>與<code>OSD_PUBLIC_NETWORK</code>都是使用實體機器網路，這邊 daemonset 會使用 hostNetwork。</li>
+<li><code>CEPH_RGW_KEYSTONE_ENABLED</code> 在 Kubernetes 版本有點不穩，可依需求關閉。</li>
+</ul>
+</blockquote>
+<p>完成後，透過 source 指令引入:</p>
+<pre><code class="shell">$ source openrc
+$ helm version
+Client: &amp;version.Version{SemVer:&quot;v2.7.0&quot;, GitCommit:&quot;08c1144f5eb3e3b636d9775617287cc26e53dba4&quot;, GitTreeState:&quot;clean&quot;}
+Server: &amp;version.Version{SemVer:&quot;v2.7.0&quot;, GitCommit:&quot;08c1144f5eb3e3b636d9775617287cc26e53dba4&quot;, GitTreeState:&quot;clean&quot;}
+</code></pre>
+<h3 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h3><p>首先透過 Kubernetes label 來標示每個節點的角色：</p>
+<pre><code class="shell">kubectl label nodes openstack-control-plane=enabled --all
+kubectl label nodes ceph-mon=enabled --all
+kubectl label nodes ceph-osd=enabled --all
+kubectl label nodes ceph-mds=enabled --all
+kubectl label nodes ceph-rgw=enabled --all
+kubectl label nodes openvswitch=enabled --all
+kubectl label nodes openstack-compute-node=enabled --all
+</code></pre>
+<blockquote>
+<p>這邊為了避免過度的節點污染，因此不讓 masters 充當任何角色：</p>
+<pre><code class="shell">kubectl label nodes kube-master1 openstack-control-plane-
+kubectl label nodes kube-master1 ceph-mon-
+kubectl label nodes kube-master1 ceph-osd-
+kubectl label nodes kube-master1 ceph-mds-
+kubectl label nodes kube-master1 ceph-rgw-
+kubectl label nodes kube-master1 openvswitch-
+kubectl label nodes kube-master1 openstack-compute-node-
+</code></pre>
+</blockquote>
+<p>由於使用 RBAC，而目前 openstack-helm 有 bug，不會正確建立 service account 的 ClusterRoleBindings，因此要手動建立(這邊偷懶一下直接使用 Admin roles)：</p>
+<pre><code class="shell">$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: ceph-sa-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:serviceaccount:ceph:default
+EOF
+
+$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: openstack-sa-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:serviceaccount:openstack:default
+EOF
+</code></pre>
+<blockquote>
+<p>若沒有正常建立的話，錯誤資訊如下：</p>
+<pre><code>Error from server (Forbidden): error when creating &quot;STDIN&quot;: secrets is forbidden: User &quot;system:serviceaccount:ceph:default&quot; cannot create secrets in the namespace &quot;ceph&quot;
+</code></pre></blockquote>
+<p>下載最新版本 OpenStack-helm 專案：</p>
+<pre><code class="shell">$ git clone https://github.com/openstack/openstack-helm.git
+$ cd openstack-helm
+</code></pre>
+<p>現在須建立 openstack-helm chart 來提供部署使用：</p>
+<pre><code class="shell">$ helm serve &amp;
+$ helm repo add local http://localhost:8879/charts
+$ make
+# output
+...
+1 chart(s) linted, no failures
+if [ -d congress ]; then helm package congress; fi
+Successfully packaged chart and saved it to: /root/openstack-helm/congress-0.1.0.tgz
+make[1]: Leaving directory &#39;/root/openstack-helm&#39;
+</code></pre>
+<h3 id="Ceph-Chart"><a href="#Ceph-Chart" class="headerlink" title="Ceph Chart"></a>Ceph Chart</h3><p>在部署 OpenStack 前，需要先部署 Ceph 叢集，這邊透過以下指令建置：</p>
+<pre><code class="shell">$ helm install --namespace=ceph ${WORK_DIR}/ceph --name=ceph \
+  --set endpoints.identity.namespace=openstack \
+  --set endpoints.object_store.namespace=ceph \
+  --set endpoints.ceph_mon.namespace=ceph \
+  --set ceph.rgw_keystone_auth=${CEPH_RGW_KEYSTONE_ENABLED} \
+  --set network.public=${OSD_PUBLIC_NETWORK} \
+  --set network.cluster=${OSD_CLUSTER_NETWORK} \
+  --set deployment.storage_secrets=true \
+  --set deployment.ceph=true \
+  --set deployment.rbd_provisioner=true \
+  --set deployment.client_secrets=false \
+  --set deployment.rgw_keystone_user_and_endpoints=false \
+  --set bootstrap.enabled=true
+</code></pre>
+<blockquote>
+<ul>
+<li><code>CEPH_RGW_KEYSTONE_ENABLED</code>是否啟動 Ceph RGW Keystone。</li>
+<li><code>OSD_PUBLIC_NETWORK</code>與<code>OSD_PUBLIC_NETWORK</code>為 Ceph 叢集網路。</li>
+</ul>
+</blockquote>
+<p>成功安裝 Ceph chart 後，就可以透過 kubectl 來查看結果：</p>
+<pre><code class="shell">$ kubectl -n ceph get po
+NAME                                   READY     STATUS    RESTARTS   AGE
+ceph-mds-57798cc8f6-r898r              1/1       Running   2          10min
+ceph-mon-96p9r                         1/1       Running   0          10min
+ceph-mon-check-bd8875f87-whvhd         1/1       Running   0          10min
+ceph-mon-qkj95                         1/1       Running   0          10min
+ceph-mon-zx7tw                         1/1       Running   0          10min
+ceph-osd-5fvfl                         1/1       Running   0          10min
+ceph-osd-kvw9b                         1/1       Running   0          10min
+ceph-osd-wcf5j                         1/1       Running   0          10min
+ceph-rbd-provisioner-599ff9575-mdqnf   1/1       Running   0          10min
+ceph-rbd-provisioner-599ff9575-vpcr6   1/1       Running   0          10min
+ceph-rgw-7c8c5d4f6f-8fq9c              1/1       Running   3          10min
+</code></pre>
+<p>確認 Ceph 叢集建立正確：</p>
+<pre><code class="shell">$ MON_POD=$(kubectl get pods \
+  --namespace=ceph \
+  --selector=&quot;application=ceph&quot; \
+  --selector=&quot;component=mon&quot; \
+  --no-headers | awk &#39;{ print $1; exit }&#39;)
+$ kubectl exec -n ceph ${MON_POD} -- ceph -s
+
+    cluster 02ad8724-dee0-4f55-829f-3cc24e2c7571
+     health HEALTH_WARN
+            too many PGs per OSD (856 &gt; max 300)
+     monmap e2: 3 mons at {kube-node1=172.22.132.22:6789/0,kube-node2=172.22.132.24:6789/0,kube-node3=172.22.132.28:6789/0}
+            election epoch 8, quorum 0,1,2 kube-node1,kube-node2,kube-node3
+      fsmap e5: 1/1/1 up {0=mds-ceph-mds-57798cc8f6-r898r=up:active}
+     osdmap e21: 3 osds: 3 up, 3 in
+            flags sortbitwise,require_jewel_osds
+      pgmap v6053: 856 pgs, 10 pools, 3656 bytes data, 191 objects
+            43091 MB used, 2133 GB / 2291 GB avail
+                 856 active+clean
+</code></pre>
+<blockquote>
+<p>Warn 這邊忽略，機器太少….。</p>
+</blockquote>
+<p>接著為了讓 Ceph 可以在其他 Kubernetes namespace 中存取 PVC，這邊要產生 client secret key 於 openstack namespace 中來提供給 OpenStack 元件使用，這邊執行以下 Chart 來產生：</p>
+<pre><code class="shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=ceph-openstack-config \
+  --set endpoints.identity.namespace=openstack \
+  --set endpoints.object_store.namespace=ceph \
+  --set endpoints.ceph_mon.namespace=ceph \
+  --set ceph.rgw_keystone_auth=${CEPH_RGW_KEYSTONE_ENABLED} \
+  --set network.public=${OSD_PUBLIC_NETWORK} \
+  --set network.cluster=${OSD_CLUSTER_NETWORK} \
+  --set deployment.storage_secrets=false \
+  --set deployment.ceph=false \
+  --set deployment.rbd_provisioner=false \
+  --set deployment.client_secrets=true \
+  --set deployment.rgw_keystone_user_and_endpoints=false
+</code></pre>
+<p>檢查 pod 與 secret 是否建立成功：</p>
+<pre><code class="shell">$ kubectl -n openstack get secret,po -a
+NAME                          TYPE                                  DATA      AGE
+secrets/default-token-q2r87   kubernetes.io/service-account-token   3         2m
+secrets/pvc-ceph-client-key   kubernetes.io/rbd                     1         2m
+
+NAME                                           READY     STATUS      RESTARTS   AGE
+po/ceph-namespace-client-key-generator-w84n4   0/1       Completed   0          2m
+</code></pre>
+<h3 id="OpenStack-Chart"><a href="#OpenStack-Chart" class="headerlink" title="OpenStack Chart"></a>OpenStack Chart</h3><p>確認沒問題後，就可以開始部署 OpenStack chart 了。首先先安裝 Mariadb cluster:</p>
+<pre><code class="shell">$ helm install --name=mariadb ./mariadb --namespace=openstack
+</code></pre>
+<blockquote>
+<p>這邊跑超久…34mins…，原因可能是 Storage 效能問題。</p>
+</blockquote>
+<p>這邊正確執行後，會依序依據 StatefulSet 建立起 Pod 組成 Cluster：</p>
+<pre><code class="shell">$ kubectl -n openstack get po
+NAME        READY     STATUS    RESTARTS   AGE
+mariadb-0   1/1       Running   0          37m
+mariadb-1   1/1       Running   0          4m
+mariadb-2   1/1       Running   0          2m
+</code></pre>
+<p>當 Mariadb cluster 完成後，就可以部署一些需要的服務，如 RabbitMQ, OVS 等：</p>
+<pre><code class="shell">helm install --name=memcached ./memcached --namespace=openstack
+helm install --name=etcd-rabbitmq ./etcd --namespace=openstack
+helm install --name=rabbitmq ./rabbitmq --namespace=openstack
+helm install --name=ingress ./ingress --namespace=openstack
+helm install --name=libvirt ./libvirt --namespace=openstack
+helm install --name=openvswitch ./openvswitch --namespace=openstack
+</code></pre>
+<p>上述指令若正確執行的話，會分別建立起以下服務：</p>
+<pre><code class="shell">$ kubectl -n openstack get po
+NAME                                   READY     STATUS    RESTARTS   AGE
+etcd-5c9bc8c97f-jpm2k                  1/1       Running   0          4m
+ingress-api-jhjjv                      1/1       Running   0          4m
+ingress-api-nx5qm                      1/1       Running   0          4m
+ingress-api-vr8xf                      1/1       Running   0          4m
+ingress-error-pages-86b9db69cc-mmq4p   1/1       Running   0          4m
+libvirt-94xq5                          1/1       Running   0          4m
+libvirt-lzfzs                          1/1       Running   0          4m
+libvirt-vswxb                          1/1       Running   0          4m
+mariadb-0                              1/1       Running   0          42m
+mariadb-1                              1/1       Running   0          9m
+mariadb-2                              1/1       Running   0          7m
+memcached-746fcc894-cwhpr              1/1       Running   0          4m
+openvswitch-db-7fjr2                   1/1       Running   0          4m
+openvswitch-db-gtmcr                   1/1       Running   0          4m
+openvswitch-db-hqmbt                   1/1       Running   0          4m
+openvswitch-vswitchd-gptp9             1/1       Running   0          4m
+openvswitch-vswitchd-s4cwd             1/1       Running   0          4m
+openvswitch-vswitchd-tvxlg             1/1       Running   0          4m
+rabbitmq-6fdb8879df-6vmz8              1/1       Running   0          4m
+rabbitmq-6fdb8879df-875zz              1/1       Running   0          4m
+rabbitmq-6fdb8879df-h5wj6              1/1       Running   0          4m
+</code></pre>
+<p>一旦所有基礎服務與元件都建立完成後，就可以開始部署 OpenStack 的專案 Chart，首先建立 Keystone 來提供身份認證服務：</p>
+<pre><code class="shell">$ helm install --namespace=openstack --name=keystone ./keystone \
+  --set pod.replicas.api=1
+
+$ kubectl -n openstack get po -l application=keystone
+NAME                            READY     STATUS     RESTARTS   AGE
+keystone-api-74c774d448-dkqmj   0/1       Init:0/1   0          4m
+keystone-bootstrap-xpdtl        0/1       Init:0/1   0          4m
+keystone-db-sync-2bxtp          1/1       Running    0          4m        0          29s
+</code></pre>
+<blockquote>
+<p>這邊由於叢集規模問題，副本數都為一份。</p>
+</blockquote>
+<p>這時候會先建立 Keystone database tables，完成後將啟動 API pod，如以下結果：</p>
+<pre><code class="shell">$ kubectl -n openstack get po -l application=keystone
+NAME                            READY     STATUS    RESTARTS   AGE
+keystone-api-74c774d448-dkqmj   1/1       Running   0          11m
+</code></pre>
+<p>如果安裝支援 RGW 的 Keystone endpoint 的話，可以使用以下方式建立：</p>
+<pre><code class="shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=radosgw-openstack \
+  --set endpoints.identity.namespace=openstack \
+  --set endpoints.object_store.namespace=ceph \
+  --set endpoints.ceph_mon.namespace=ceph \
+  --set ceph.rgw_keystone_auth=${CEPH_RGW_KEYSTONE_ENABLED} \
+  --set network.public=${OSD_PUBLIC_NETWORK} \
+  --set network.cluster=${OSD_CLUSTER_NETWORK} \
+  --set deployment.storage_secrets=false \
+  --set deployment.ceph=false \
+  --set deployment.rbd_provisioner=false \
+  --set deployment.client_secrets=false \
+  --set deployment.rgw_keystone_user_and_endpoints=true
+
+$ kubectl -n openstack get po -a -l application=ceph
+NAME                                        READY     STATUS      RESTARTS   AGE
+ceph-ks-endpoints-vfg4l                     0/3       Completed   0          1m
+ceph-ks-service-tr9xt                       0/1       Completed   0          1m
+ceph-ks-user-z5tlt                          0/1       Completed   0          1m
+</code></pre>
+<p>完成後，安裝 Horizon chart 來提供 OpenStack dashbaord：</p>
+<pre><code class="shell">$ helm install --namespace=openstack --name=horizon ./horizon \
+  --set network.enable_node_port=true \
+  --set network.node_port=31000
+
+$ kubectl -n openstack get po -l application=horizon
+NAME                       READY     STATUS    RESTARTS   AGE
+horizon-7c54878549-45668   1/1       Running   0          3m
+</code></pre>
+<p>接著安裝 Glance chart 來提供 OpenStack image service。目前 Glance 支援幾個 backend storage:</p>
+<ul>
+<li>pvc: 一個簡單的 Kubernetes PVCs 檔案後端。</li>
+<li>rbd: 使用 Ceph RBD 來儲存 images。</li>
+<li>radosgw: 使用 Ceph RGW 來儲存 images。</li>
+<li>swift: 另用 OpenStack switf 所提供的物件儲存服務來儲存 images.</li>
+</ul>
+<p>這邊可以利用以下方式來部署不同的儲存後端：</p>
+<pre><code class="shell">$ export GLANCE_BACKEND=radosgw
+$ helm install --namespace=openstack --name=glance ./glance \
+  --set pod.replicas.api=1 \
+  --set pod.replicas.registry=1 \
+  --set storage=${GLANCE_BACKEND}
+
+$ kubectl -n openstack get po -l application=glance
+NAME                               READY     STATUS    RESTARTS   AGE
+glance-api-6cd8b856d6-lhzfs        1/1       Running   0          14m
+glance-registry-599f8b857b-gt4c6   1/1       Running   0          14m
+</code></pre>
+<p>接著安裝 Neutron chart 來提供 OpenStack 虛擬化網路服務：</p>
+<pre><code class="shell">$ helm install --namespace=openstack --name=neutron ./neutron \
+  --set pod.replicas.server=1
+
+$ kubectl -n openstack get po -l application=neutron
+NAME                              READY     STATUS    RESTARTS   AGE
+neutron-dhcp-agent-2z49d          1/1       Running   0          9h
+neutron-dhcp-agent-d2kn8          1/1       Running   0          9h
+neutron-dhcp-agent-mrstl          1/1       Running   0          9h
+neutron-l3-agent-9f9mw            1/1       Running   0          9h
+neutron-l3-agent-cshzw            1/1       Running   0          9h
+neutron-l3-agent-j5vb9            1/1       Running   0          9h
+neutron-metadata-agent-6bfb2      1/1       Running   0          9h
+neutron-metadata-agent-kxk9c      1/1       Running   0          9h
+neutron-metadata-agent-w8cnl      1/1       Running   0          9h
+neutron-ovs-agent-j2549           1/1       Running   0          9h
+neutron-ovs-agent-plj9t           1/1       Running   0          9h
+neutron-ovs-agent-xlx7z           1/1       Running   0          9h
+neutron-server-6f45d74b87-6wmck   1/1       Running   0          9h
+</code></pre>
+<p>接著安裝 Nova chart 來提供 OpenStack 虛擬機運算服務:</p>
+<pre><code class="shell">$ helm install --namespace=openstack --name=nova ./nova \
+  --set pod.replicas.api_metadata=1 \
+  --set pod.replicas.osapi=1 \
+  --set pod.replicas.conductor=1 \
+  --set pod.replicas.consoleauth=1 \
+  --set pod.replicas.scheduler=1 \
+  --set pod.replicas.novncproxy=1
+
+$ kubectl -n openstack get po -l application=nova
+NAME                                 READY     STATUS    RESTARTS   AGE
+nova-api-metadata-84fdc84fd7-ldzrh   1/1       Running   1          9h
+nova-api-osapi-57f599c6d6-pqrjv      1/1       Running   0          9h
+nova-compute-8rvm9                   2/2       Running   0          9h
+nova-compute-cbk7h                   2/2       Running   0          9h
+nova-compute-tf2jb                   2/2       Running   0          9h
+nova-conductor-7f5bc76d79-bxwnb      1/1       Running   0          9h
+nova-consoleauth-6946b5884f-nss6n    1/1       Running   0          9h
+nova-novncproxy-d789dccff-7ft9q      1/1       Running   0          9h
+nova-placement-api-f7c79578f-hj2g9   1/1       Running   0          9h
+nova-scheduler-778866f555-mmksg      1/1       Running   0          9h
+</code></pre>
+<p>接著安裝 Cinfer chart 來提供 OpenStack 區塊儲存服務:</p>
+<pre><code class="shell">$ helm install --namespace=openstack --name=cinder ./cinder \
+  --set pod.replicas.api=1
+
+$ kubectl -n openstack get po -l application=cinder
+NAME                                READY     STATUS    RESTARTS   AGE
+cinder-api-5cc89f5467-ssm8k         1/1       Running   0          32m
+cinder-backup-67c4d8dfdb-zfsq4      1/1       Running   0          32m
+cinder-scheduler-65f9dd49bf-6htwg   1/1       Running   0          32m
+cinder-volume-69bfb67b4-bmst2       1/1       Running   0          32m
+</code></pre>
+<p>(option)都完成後，將 Horizon 服務透過 NodePort 方式曝露出來(如果上面 Horizon chart 沒反應的話)，執行以下指令編輯：</p>
+<pre><code class="shell">$ kubectl -n openstack edit svc horizon-int
+# 修改 type:
+  type: NodePort
+</code></pre>
+<p>最後連接 <a href="http://172.22.132.10:31000" target="_blank" rel="noopener">Horizon Dashboard</a>，預設使用者為<code>admin/password</code>。</p>
+<p><img src="https://i.imgur.com/8yunUPy.png" alt=""></p>
+<p>其他 Chart 可以利用以下方式來安裝，如 Heat chart：</p>
+<pre><code class="shell">$ helm install --namespace=openstack --name=heat ./heat
+
+$ kubectl -n openstack get po -l application=heat
+NAME                              READY     STATUS    RESTARTS   AGE
+heat-api-5cf45d9d44-qrt69         1/1       Running   0          13m
+heat-cfn-79dbf55789-bq4wh         1/1       Running   0          13m
+heat-cloudwatch-bcc4647f4-4c4ln   1/1       Running   0          13m
+heat-engine-55cfcc86f8-cct4m      1/1       Running   0          13m
+</code></pre>
+<h2 id="測試-OpenStack-功能"><a href="#測試-OpenStack-功能" class="headerlink" title="測試 OpenStack 功能"></a>測試 OpenStack 功能</h2><p>在<code>kube-master1</code>安裝 openstack client:</p>
+<pre><code class="shell">$ sudo pip install python-openstackclient
+</code></pre>
+<p>建立<code>adminrc</code>來提供 client 環境變數：</p>
+<pre><code class="shell">export OS_PROJECT_DOMAIN_NAME=default
+export OS_USER_DOMAIN_NAME=default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=password
+export OS_AUTH_URL=http://keystone.openstack.svc.cluster.local:80/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+</code></pre>
+<p>引入環境變數，並透過 openstack client 測試：</p>
+<pre><code class="shell">$ source adminrc
+$ openstack user list
++----------------------------------+-----------+
+| ID                               | Name      |
++----------------------------------+-----------+
+| 42f0d2e7823e413cb469f9cce731398a | glance    |
+| 556a2744811f450098f64b37d34192d4 | nova      |
+| a97ec73724aa4445b2d575be54f23240 | cinder    |
+| b28a5dcfd18948419e14acba7ecf6f63 | swift     |
+| d1f312b6bb7c460eb7d8d78c8bf350fc | admin     |
+| dc326aace22c4314a0100865fe4f57c2 | neutron   |
+| ec5d6d3c529847b29a1c9187599c8a6b | placement |
++----------------------------------+-----------+
+</code></pre>
+<p>接著需要設定對外網路來提供給 VM 存取，在有<code>neutron-l3-agent</code>節點上，新增一個腳本<code>setup-gateway.sh</code>：</p>
+<pre><code class="shell">#!/bin/bash
+set -x
+
+# Assign IP address to br-ex
+OSH_BR_EX_ADDR=&quot;172.24.4.1/24&quot;
+OSH_EXT_SUBNET=&quot;172.24.4.0/24&quot;
+sudo ip addr add ${OSH_BR_EX_ADDR} dev br-ex
+sudo ip link set br-ex up
+
+# Setup masquerading on default route dev to public subnet
+DEFAULT_ROUTE_DEV=&quot;enp3s0&quot;
+sudo iptables -t nat -A POSTROUTING -o ${DEFAULT_ROUTE_DEV} -s ${OSH_EXT_SUBNET} -j MASQUERADE
+</code></pre>
+<blockquote>
+<p>網卡記得修改<code>DEFAULT_ROUTE_DEV</code>。<br>這邊因為沒有額外提供其他張網卡，所以先用 bridge 處理。</p>
+</blockquote>
+<p>然後透過執行該腳本建立一個 bridge 網路：</p>
+<pre><code class="shell">$ chmod u+x setup-gateway.sh
+$ ./setup-gateway.sh
+</code></pre>
+<p>確認完成後，接著建立 Neutron ext net，透過以下指令進行建立：</p>
+<pre><code class="shell">$ openstack network create \
+   --share --external \
+   --provider-physical-network external \
+   --provider-network-type flat ext-net
+
+$ openstack subnet create --network ext-net \
+    --allocation-pool start=172.24.4.10,end=172.24.4.100 \
+    --dns-nameserver 8.8.8.8 --gateway 172.24.4.1 \
+    --subnet-range 172.24.4.0/24 \
+    --no-dhcp ext-subnet
+
+$ openstack router create router1
+$ neutron router-gateway-set router1 ext-net
+</code></pre>
+<p>直接進入 Dashboard 新增 Self-service Network:<br><img src="https://i.imgur.com/lqMrgqs.png" alt=""></p>
+<p>加入到 router1:<br><img src="https://i.imgur.com/4aNnF3O.png" alt=""></p>
+<p>完成後，就可以建立 instance，這邊都透過 Dashboard 來操作：<br><img src="https://i.imgur.com/fCYkxSC.png" alt=""></p>
+<p>透過 SSH 進入 instance：<br><img src="https://i.imgur.com/Ijylo9X.png" alt=""></p>
+<h2 id="Refers"><a href="#Refers" class="headerlink" title="Refers"></a>Refers</h2><ul>
+<li><a href="https://github.com/portdirect/sydney-workshop" target="_blank" rel="noopener">sydney-workshop</a></li>
+<li><a href="https://docs.openstack.org/openstack-helm/latest/install/multinode.html" target="_blank" rel="noopener">Multi Node</a></li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
+            
+            <tag> Openstack </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)]]></title>
       <url>https://kairen.github.io/2017/10/27/kubernetes/deploy/manual-v1.8/</url>
-      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
 <li>Kubernetes v1.8.2</li>
@@ -233,7 +950,7 @@ $ ls front-proxy-client*.pem
 front-proxy-client-key.pem  front-proxy-client.pem
 </code></pre>
 <h4 id="Bootstrap-Token"><a href="#Bootstrap-Token" class="headerlink" title="Bootstrap Token"></a>Bootstrap Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次簽證時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS Bootstrapping 方式進行授權，由 apiserver 自動給符合條件的 Node 發送證書來授權加入叢集。</p>
-<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="external">TLS bootstrapping</a>。</p>
+<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="noopener">TLS bootstrapping</a>。</p>
 <p>首先建立一個變數來產生<code>BOOTSTRAP_TOKEN</code>，並建立 <code>bootstrap.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh">$ export BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d &#39; &#39;)
 $ cat &lt;&lt;EOF &gt; /etc/kubernetes/token.csv
@@ -262,7 +979,7 @@ $ kubectl config set-context default \
 $ kubectl config use-context default --kubeconfig=../bootstrap.conf
 </code></pre>
 <blockquote>
-<p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="external">Kubelet certificate</a>。</p>
+<p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="noopener">Kubelet certificate</a>。</p>
 </blockquote>
 <h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
@@ -447,7 +1164,7 @@ $ for FILE in apiserver manager scheduler; do
   done
 </code></pre>
 <blockquote>
-<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>apiserver.yml</code>、<code>manager.yml</code>、<code>scheduler.yml</code>。<br>apiserver 中的 <code>NodeRestriction</code> 請參考 <a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Using Node Authorization</a>。</p>
+<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>apiserver.yml</code>、<code>manager.yml</code>、<code>scheduler.yml</code>。<br>apiserver 中的 <code>NodeRestriction</code> 請參考 <a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="noopener">Using Node Authorization</a>。</p>
 </blockquote>
 <p>產生一個用來加密 Etcd 的 Key：</p>
 <pre><code class="sh">$ head -c 32 /dev/urandom | base64
@@ -469,7 +1186,7 @@ resources:
 EOF
 </code></pre>
 <blockquote>
-<p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="external">Encrypting data at rest</a>。</p>
+<p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="noopener">Encrypting data at rest</a>。</p>
 </blockquote>
 <p>在<code>/etc/kubernetes/</code>目錄下，建立<code>audit-policy.yml</code>的進階稽核策略 YAML 檔：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
@@ -480,7 +1197,7 @@ rules:
 EOF
 </code></pre>
 <blockquote>
-<p>Audit Policy 請參考這篇 <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/" target="_blank" rel="external">Auditing</a>。</p>
+<p>Audit Policy 請參考這篇 <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/" target="_blank" rel="noopener">Auditing</a>。</p>
 </blockquote>
 <p>下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
 <pre><code class="sh">$ export KUBELET_URL=&quot;https://kairen.github.io/files/manual-v1.8/master&quot;
@@ -538,7 +1255,7 @@ $ kubectl -n kube-system logs -f kube-scheduler-master1
 ...
 I1031 03:22:42.527697       1 leaderelection.go:184] successfully acquired lease kube-system/kube-scheduler
 </code></pre>
-<h2 id="Kubernetes-Node"><a href="#Kubernetes-Node" class="headerlink" title="Kubernetes Node"></a>Kubernetes Node</h2><p>Node 是主要執行容器實例的節點，可視為工作節點。在這步驟我們會下載 Kubernetes binary 檔，並建立 node 的 certificate 來提供給節點註冊認證用。Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。</p>
+<h2 id="Kubernetes-Node"><a href="#Kubernetes-Node" class="headerlink" title="Kubernetes Node"></a>Kubernetes Node</h2><p>Node 是主要執行容器實例的節點，可視為工作節點。在這步驟我們會下載 Kubernetes binary 檔，並建立 node 的 certificate 來提供給節點註冊認證用。Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="noopener">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。</p>
 <p>在開始前，我們先在<code>master1</code>將需要的 ca 與 cert 複製到 Node 節點上：</p>
 <pre><code class="sh">$ for NODE in node1 node2; do
     ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki/&quot;
@@ -605,7 +1322,7 @@ node1     NotReady   &lt;none&gt;    8m        v1.8.2
 node2     NotReady   &lt;none&gt;    6s        v1.8.2
 </code></pre>
 <h2 id="Kubernetes-Core-Addons-部署"><a href="#Kubernetes-Core-Addons-部署" class="headerlink" title="Kubernetes Core Addons 部署"></a>Kubernetes Core Addons 部署</h2><p>當完成上面所有步驟後，接著我們需要安裝一些插件，而這些有部分是非常重要跟好用的，如<code>Kube-dns</code>與<code>Kube-proxy</code>等。</p>
-<h3 id="Kube-proxy-addon"><a href="#Kube-proxy-addon" class="headerlink" title="Kube-proxy addon"></a>Kube-proxy addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="external">Kube-proxy</a> 是實現 Service 的關鍵元件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。這邊我們會需要建議一個 DaemonSet 來執行，並且建立一些需要的 certificate。</p>
+<h3 id="Kube-proxy-addon"><a href="#Kube-proxy-addon" class="headerlink" title="Kube-proxy addon"></a>Kube-proxy addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="noopener">Kube-proxy</a> 是實現 Service 的關鍵元件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。這邊我們會需要建議一個 DaemonSet 來執行，並且建立一些需要的 certificate。</p>
 <p>首先在<code>master1</code>下載<code>kube-proxy-csr.json</code>檔案，並產生 kube-proxy certificate 證書：</p>
 <pre><code class="sh">$ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.8/pki&quot;
 $ cd /etc/kubernetes/pki
@@ -671,7 +1388,7 @@ kube-proxy-bpp7q   1/1       Running   0          47s
 kube-proxy-cztvh   1/1       Running   0          47s
 kube-proxy-q7mm4   1/1       Running   0          47s
 </code></pre>
-<h3 id="Kube-dns-addon"><a href="#Kube-dns-addon" class="headerlink" title="Kube-dns addon"></a>Kube-dns addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="external">Kube DNS</a> 是 Kubernetes 叢集內部 Pod 之間互相溝通的重要 Addon，它允許 Pod 可以透過 Domain Name 方式來連接 Service，其主要由 Kube DNS 與 Sky DNS 組合而成，透過 Kube DNS 監聽 Service 與 Endpoint 變化，來提供給 Sky DNS 資訊，已更新解析位址。</p>
+<h3 id="Kube-dns-addon"><a href="#Kube-dns-addon" class="headerlink" title="Kube-dns addon"></a>Kube-dns addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="noopener">Kube DNS</a> 是 Kubernetes 叢集內部 Pod 之間互相溝通的重要 Addon，它允許 Pod 可以透過 Domain Name 方式來連接 Service，其主要由 Kube DNS 與 Sky DNS 組合而成，透過 Kube DNS 監聽 Service 與 Endpoint 變化，來提供給 Sky DNS 資訊，已更新解析位址。</p>
 <p>安裝只需要在<code>master1</code>透過 kubectl 來建立 kube-dns deployment 即可：</p>
 <pre><code class="sh">$ export ADDON_URL=&quot;https://kairen.github.io/files/manual-v1.8/addon&quot;
 $ wget &quot;${ADDON_URL}/kube-dns.yml.conf&quot; -O kube-dns.yml
@@ -738,9 +1455,9 @@ kube-proxy-l72bq                            1/1       Running   0          6m
 kube-proxy-m6rfw                            1/1       Running   0          6m
 kube-scheduler-master1                      1/1       Running   0          20m
 </code></pre>
-<p>最後若想省事，可以直接用 <a href="https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/hosted" target="_blank" rel="external">Standard Hosted</a> 方式安裝。</p>
+<p>最後若想省事，可以直接用 <a href="https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/hosted" target="_blank" rel="noopener">Standard Hosted</a> 方式安裝。</p>
 <h2 id="Kubernetes-Extra-Addons-部署"><a href="#Kubernetes-Extra-Addons-部署" class="headerlink" title="Kubernetes Extra Addons 部署"></a>Kubernetes Extra Addons 部署</h2><p>本節說明如何部署一些官方常用的 Addons，如 Dashboard、Heapster 等。</p>
-<h3 id="Dashboard-addon"><a href="#Dashboard-addon" class="headerlink" title="Dashboard addon"></a>Dashboard addon</h3><p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="external">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
+<h3 id="Dashboard-addon"><a href="#Dashboard-addon" class="headerlink" title="Dashboard addon"></a>Dashboard addon</h3><p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
 <p>首先我們要建立<code>kubernetes-dashboard-certs</code>，來提供給 Dashboard TLS 使用：</p>
 <pre><code class="sh">$ mkdir -p /etc/kubernetes/addons/certs &amp;&amp; cd /etc/kubernetes/addons
 $ openssl genrsa -des3 -passout pass:x -out certs/dashboard.pass.key 2048
@@ -765,8 +1482,8 @@ svc/kubernetes-dashboard   ClusterIP   10.98.120.209   &lt;none&gt;        443/T
 <blockquote>
 <p>P.S. 這邊會額外建立一個名稱為<code>anonymous-open-door</code> Cluster Role Binding，這僅作為方便測試時使用，在一般情況下不要開啟，不然就會直接被存取所有 API。</p>
 </blockquote>
-<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
-<h3 id="Heapster-addon"><a href="#Heapster-addon" class="headerlink" title="Heapster addon"></a>Heapster addon</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="external">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
+<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
+<h3 id="Heapster-addon"><a href="#Heapster-addon" class="headerlink" title="Heapster addon"></a>Heapster addon</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="noopener">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
 <p>在<code>master1</code>透過 kubectl 來建立 kubernetes monitor  即可：</p>
 <pre><code class="sh">$ export ADDON_URL=&quot;https://kairen.github.io/files/manual-v1.8/addon&quot;
 $ wget ${ADDON_URL}/kube-monitor.yml.conf -O kube-monitor.yml
@@ -784,7 +1501,7 @@ svc/monitoring-grafana     ClusterIP   10.101.106.180   &lt;none&gt;        80/T
 svc/monitoring-influxdb    ClusterIP   10.109.245.142   &lt;none&gt;        8083/TCP,8086/TCP   7m
 ···
 </code></pre>
-<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana" target="_blank" rel="external">Grafana Dashboard</a>。</p>
+<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana" target="_blank" rel="noopener">Grafana Dashboard</a>。</p>
 <h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
 <pre><code class="sh">$ kubectl run nginx --image=nginx --port=80
 $ kubectl expose deploy nginx --port=80 --type=LoadBalancer --external-ip=172.16.35.12
@@ -799,7 +1516,7 @@ po/nginx-7cbc4b4d9c-7796l   1/1       Running   0          28s       192.160.57.
 <blockquote>
 <p>這邊<code>type</code>可以選擇 NodePort 與 LoadBalancer，在本地裸機部署，兩者差異在於<code>NodePort</code>只映射 Host port 到 Container port，而<code>LoadBalancer</code>則繼承<code>NodePort</code>額外多出映射 Host target port 到 Container port。</p>
 </blockquote>
-<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12。" target="_blank" rel="external">http://172.16.35.12。</a></p>
+<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12。" target="_blank" rel="noopener">http://172.16.35.12。</a></p>
 <h3 id="擴展服務數量"><a href="#擴展服務數量" class="headerlink" title="擴展服務數量"></a>擴展服務數量</h3><p>若叢集<code>node</code>節點增加了，而想讓 Nginx 服務提供可靠性的話，可以透過以下方式來擴展服務的副本：</p>
 <pre><code class="sh">$ kubectl scale deploy nginx --replicas=2
 
@@ -832,7 +1549,7 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
     <entry>
       <title><![CDATA[利用 Kuryr 整合 OpenStack 與 Kubernetes 網路]]></title>
       <url>https://kairen.github.io/2017/08/29/openstack/kuryr-kubernetes/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="external">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="noopener">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
 <p><img src="https://i.imgur.com/2XfP3vb.png" alt=""></p>
 <a id="more"></a>
 <p>Kuryr-Kubernetes 整合有兩個主要組成部分：</p>
@@ -1004,11 +1721,11 @@ $ ./tools/generate_config_file_samples.sh
 $ sudo mkdir -p /etc/kuryr/
 $ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
 </code></pre>
-<p>接著使用 OpenStack Dashboard 建立相關專案，在瀏覽器輸入<a href="http://172.24.0.34" target="_blank" rel="external">Dashboard</a>，並執行以下步驟。</p>
+<p>接著使用 OpenStack Dashboard 建立相關專案，在瀏覽器輸入<a href="http://172.24.0.34" target="_blank" rel="noopener">Dashboard</a>，並執行以下步驟。</p>
 <ol>
 <li>新增 K8s project。</li>
 <li>修改 K8s project member 加入到 service project。</li>
-<li>在該 Project 中新增 Security Groups，參考 <a href="https://docs.openstack.org/kuryr-kubernetes/latest/installation/manual.html" target="_blank" rel="external">kuryr-kubernetes manually</a>。</li>
+<li>在該 Project 中新增 Security Groups，參考 <a href="https://docs.openstack.org/kuryr-kubernetes/latest/installation/manual.html" target="_blank" rel="noopener">kuryr-kubernetes manually</a>。</li>
 <li>在該 Project 中新增 pod_subnet 子網路。</li>
 <li>在該 Project 中新增 service_subnet 子網路。</li>
 </ol>
@@ -1103,8 +1820,8 @@ $ sudo pip install &#39;oslo.privsep&gt;=1.20.0&#39; &#39;os-vif&gt;=1.5.0&#39;
     <entry>
       <title><![CDATA[利用 OpenStack Ironic 提供裸機部署服務]]></title>
       <url>https://kairen.github.io/2017/08/16/openstack/ironic-dev/</url>
-      <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
-<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
+      <content type="html"><![CDATA[<p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="noopener">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
+<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="noopener">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
 <p>本環境安裝資訊：</p>
 <ul>
 <li>OpenStack Pike</li>
@@ -1214,7 +1931,7 @@ $ openstack user list
 | pxe_ipmitool        | ironic-dev     |
 +---------------------+----------------+
 </code></pre>
-<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="external">Configure the Networking service for bare metal provisioning</a>。</p>
+<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="noopener">Configure the Networking service for bare metal provisioning</a>。</p>
 <p>首先編輯<code>/etc/neutron/plugins/ml2/ml2_conf.ini</code>修改以下內容：</p>
 <pre><code>[ml2_type_flat]
 flat_networks = public, physnet1
@@ -1268,9 +1985,9 @@ $ neutron subnet-create sharednet1 172.22.132.0/24 \
                         --enable-dhcp
 </code></pre>
 <blockquote>
-<p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="external">Provider network</a>。</p>
+<p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="noopener">Provider network</a>。</p>
 </blockquote>
-<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="external">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
+<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="noopener">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
 <pre><code class="sh">$ openstack network list
 +--------------------------------------+------------+----------------------------------------------------------------------------+
 | ID                                   | Name       | Subnets                                                                    |
@@ -1292,7 +2009,7 @@ $ sudo systemctl restart devstack@ir-cond.service
 <li><code>Deploy images</code>: 用來準備裸機服務機器以進行實際的作業系統部署，在 Cleaning 等階段會使用到。</li>
 <li><code>User images</code>:最後安裝至裸機服務提供給使用者使用的作業系統映像檔。</li>
 </ul>
-<p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="external">Building or downloading a deploy ramdisk image</a>。</p>
+<p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="noopener">Building or downloading a deploy ramdisk image</a>。</p>
 <p>首先我們必須先安裝<code>disk-image-builder</code>工具來提供建構映像檔：</p>
 <pre><code class="sh">$ virtualenv dib
 $ source dib/bin/activate
@@ -1365,7 +2082,7 @@ $ openstack image create k8s \
 +---------------------+----------------+
 </code></pre>
 <blockquote>
-<p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="external">Set up the drivers for the Bare Metal service</a>。</p>
+<p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="noopener">Set up the drivers for the Bare Metal service</a>。</p>
 </blockquote>
 <p>確認有支援後，透過以下指令來建立 Node，並進行註冊：</p>
 <pre><code class="sh">$ export DEPLOY_VMLINUZ_UUID=$(openstack image list | awk &#39;/ipmitool.kernel/ { print $2 }&#39;)
@@ -1380,7 +2097,7 @@ $ ironic node-create -d agent_ipmitool \
                      -i deploy_ramdisk=$DEPLOY_INITRD_UUID
 </code></pre>
 <blockquote>
-<p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="external">Configuring Web or Serial Console</a>。</p>
+<p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="noopener">Configuring Web or Serial Console</a>。</p>
 </blockquote>
 <p>接著更新機器資訊，這邊透過手動方式來更新資訊：</p>
 <pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
@@ -1440,7 +2157,7 @@ $ ironic node-list
 +--------------------------------------+--------+---------------+-------------+--------------------+-------------+
 </code></pre>
 <blockquote>
-<p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="external">Ironic’s State Machine</a>。</p>
+<p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="noopener">Ironic’s State Machine</a>。</p>
 </blockquote>
 <p><img src="/images/openstack/ironic-clean.png" alt=""></p>
 <h2 id="透過-Nova-部署-baremetal-機器"><a href="#透過-Nova-部署-baremetal-機器" class="headerlink" title="透過 Nova 部署 baremetal 機器"></a>透過 Nova 部署 baremetal 機器</h2><p>最後我們要透過 Nova API 來部署裸機，在開始前要建立一個 flavor 跟上傳 keypair 來提供使用：</p>
@@ -1595,7 +2312,7 @@ nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
 <pre><code class="sh">$ docker run -it --rm -p 6080:80 dorowu/ubuntu-desktop-lxde-vnc
 </code></pre>
 <blockquote>
-<p>完成後透過瀏覽器連接 <a href="localhost:6080" target="_blank" rel="external">HTLM VNC</a></p>
+<p>完成後透過瀏覽器連接 <a href="localhost:6080" target="_blank" rel="noopener">HTLM VNC</a></p>
 </blockquote>
 <p><img src="/images/kube/docker-desktop.png" alt=""></p>
 <p>最後關閉節點只需要執行以下即可：</p>
@@ -1730,9 +2447,9 @@ nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
 </ul>
 </blockquote>
 <h2 id="參考連結"><a href="#參考連結" class="headerlink" title="參考連結"></a>參考連結</h2><ul>
-<li><a href="https://medium.com/@kpcb_edge/our-thoughts-on-ethereum-31520b164e00#.2q1i88278" target="_blank" rel="external">Our thoughts on Ethereum</a></li>
-<li><a href="https://www.ethereum.org/greeter" target="_blank" rel="external">Building a smart contract using the command line</a></li>
-<li><a href="https://developer.ibm.com/clouddataservices/2016/05/19/block-chain-technology-smart-contracts-and-ethereum/" target="_blank" rel="external">Block chain technology, smart contracts and Ethereum</a></li>
+<li><a href="https://medium.com/@kpcb_edge/our-thoughts-on-ethereum-31520b164e00#.2q1i88278" target="_blank" rel="noopener">Our thoughts on Ethereum</a></li>
+<li><a href="https://www.ethereum.org/greeter" target="_blank" rel="noopener">Building a smart contract using the command line</a></li>
+<li><a href="https://developer.ibm.com/clouddataservices/2016/05/19/block-chain-technology-smart-contracts-and-ethereum/" target="_blank" rel="noopener">Block chain technology, smart contracts and Ethereum</a></li>
 </ul>
 ]]></content>
       
@@ -1761,7 +2478,7 @@ nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
       <title><![CDATA[利用 Browser Solidity 部署智能合約]]></title>
       <url>https://kairen.github.io/2017/05/27/blockchain/browser-solidity/</url>
       <content type="html"><![CDATA[<p>Browser Solidity 是一個 Web-based 的 Solidity 編譯器與 IDE。本節將說明如何安裝於 Linux 與 Docker 中。</p>
-<p>這邊可以連結官方的 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="external">https://ethereum.github.io/browser-solidity</a> 來使用; 該網站會是該專案的最新版本預覽。</p>
+<p>這邊可以連結官方的 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="noopener">https://ethereum.github.io/browser-solidity</a> 來使用; 該網站會是該專案的最新版本預覽。</p>
 <a id="more"></a>
 <h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
 <pre><code class="sh">$ sudo apt-get install -y apache2 make g++ git
@@ -1784,7 +2501,7 @@ $ sudo npm run build
 <blockquote>
 <p>完成後就可以開啟網頁了。</p>
 </blockquote>
-<h3 id="Docker-快速安裝"><a href="#Docker-快速安裝" class="headerlink" title="Docker 快速安裝"></a>Docker 快速安裝</h3><p>目前 Browser Solidity 有提供 <a href="https://hub.docker.com/r/kairen/solidity/" target="_blank" rel="external">Docker Image</a> 下載。這邊只需要透過以下指令就能夠建立 Browser Solidity Dashboard 環境：</p>
+<h3 id="Docker-快速安裝"><a href="#Docker-快速安裝" class="headerlink" title="Docker 快速安裝"></a>Docker 快速安裝</h3><p>目前 Browser Solidity 有提供 <a href="https://hub.docker.com/r/kairen/solidity/" target="_blank" rel="noopener">Docker Image</a> 下載。這邊只需要透過以下指令就能夠建立 Browser Solidity Dashboard 環境：</p>
 <pre><code class="sh">$ docker run -d \
             -p 80:80 \
             --name solidity \
@@ -1817,7 +2534,7 @@ $ sudo npm run build
       <title><![CDATA[監控 Go Ethereum 的區塊鏈狀況]]></title>
       <url>https://kairen.github.io/2017/05/26/blockchain/geth-monitoring/</url>
       <content type="html"><![CDATA[<p>Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。</p>
-<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="external">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
+<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="noopener">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
 <a id="more"></a>
 <h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
 <ul>
@@ -1842,7 +2559,7 @@ $ grunt
 $ PORT=&quot;3000&quot; WS_SECRET=&quot;admin&quot; npm start
 </code></pre>
 <blockquote>
-<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="external">eth-netstats</a>。</p>
+<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。</p>
 <p>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
 </blockquote>
 <p>撰寫一個腳本<code>eth-netstats.sh</code>放置到背景服務執行：</p>
@@ -1924,7 +2641,7 @@ $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
 <li><a href="#docker-monitoring-site">Docker Monitoring site</a></li>
 <li><a href="#docker-client-side">Docker Client side</a></li>
 </ul>
-<h4 id="Docker-Monitoring-site"><a href="#Docker-Monitoring-site" class="headerlink" title="Docker Monitoring site"></a>Docker Monitoring site</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethstats/" target="_blank" rel="external">DockerHub</a> 找到，建議直接執行以下指令來啟動 eth-netstats 容器：</p>
+<h4 id="Docker-Monitoring-site"><a href="#Docker-Monitoring-site" class="headerlink" title="Docker Monitoring site"></a>Docker Monitoring site</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethstats/" target="_blank" rel="noopener">DockerHub</a> 找到，建議直接執行以下指令來啟動 eth-netstats 容器：</p>
 <pre><code class="sh">$ docker run -d \
             -p 3000:3000 \
             -e WS_SECRET=&quot;admin&quot; \
@@ -1932,10 +2649,10 @@ $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
             kairen/ethstats
 </code></pre>
 <blockquote>
-<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="external">eth-netstats</a>。</p>
+<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。</p>
 <p>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
 </blockquote>
-<h4 id="Docker-Client-side"><a href="#Docker-Client-side" class="headerlink" title="Docker Client side"></a>Docker Client side</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethnetintel/" target="_blank" rel="external">DockerHub</a> 找到，也推薦透過執行以下指令來啟動 eth-netintel 容器：</p>
+<h4 id="Docker-Client-side"><a href="#Docker-Client-side" class="headerlink" title="Docker Client side"></a>Docker Client side</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethnetintel/" target="_blank" rel="noopener">DockerHub</a> 找到，也推薦透過執行以下指令來啟動 eth-netintel 容器：</p>
 <pre><code class="sh">$ docker run -d \
             -p 30303:30303 \
             -p 30303:30303/udp \
@@ -2053,7 +2770,7 @@ screen -dmS geth /usr/bin/geth \
             -verbosity 6
 </code></pre>
 <blockquote>
-<p>更多的參數，請參考 <a href="https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options" target="_blank" rel="external">Command-Line-Options</a>。</p>
+<p>更多的參數，請參考 <a href="https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options" target="_blank" rel="noopener">Command-Line-Options</a>。</p>
 </blockquote>
 <p>建立完成後，修改執行權限：</p>
 <pre><code class="sh">$ chmod u+x geth-private.sh
@@ -2276,7 +2993,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
         return storedData;
     }
 }
-</code></pre><p>接著將內容貼到 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="external">browser-solidity</a> 進行編譯成 JavaScript。如快照畫面所示。</p>
+</code></pre><p>接著將內容貼到 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="noopener">browser-solidity</a> 進行編譯成 JavaScript。如快照畫面所示。</p>
 <center><img src="/images/blockchain/snapshot-contract.png" alt=""></center>
 
 <p>透過這個 IDE 可以將 Solidity 語言轉換成 web3 code(JavaScript)，複製 web3 code 的內容，並儲存成<code>SimpleStorage.js</code>檔案放置到<code>geth-1</code>上。接著 attach 進入 geth 執行以下指令：</p>
@@ -2308,7 +3025,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
     <entry>
       <title><![CDATA[Enterprise 的 Docker registry 平台 Harbor]]></title>
       <url>https://kairen.github.io/2017/05/10/container/harbor-install/</url>
-      <content type="html"><![CDATA[<p>Harbor 是一個企業級 Registry 伺服器用於儲存和分散 Docker Image 的，透過新增一些企業常用的功能，例如：安全性、身分驗證和管理等功能擴展了開源的 <a href="https://github.com/docker/distribution" target="_blank" rel="external">Docker Distribution</a>。作為一個企業級的私有 Registry 伺服器，Harbor 提供了更好的效能與安全性。Harbor 支援安裝多個 Registry 並將 Image 在多個 Registry 做 replicated。除此之外，Harbor 亦提供了高級的安全性功能，像是用戶管理(user managment)，存取控制(access control)和活動審核(activity auditing)。</p>
+      <content type="html"><![CDATA[<p>Harbor 是一個企業級 Registry 伺服器用於儲存和分散 Docker Image 的，透過新增一些企業常用的功能，例如：安全性、身分驗證和管理等功能擴展了開源的 <a href="https://github.com/docker/distribution" target="_blank" rel="noopener">Docker Distribution</a>。作為一個企業級的私有 Registry 伺服器，Harbor 提供了更好的效能與安全性。Harbor 支援安裝多個 Registry 並將 Image 在多個 Registry 做 replicated。除此之外，Harbor 亦提供了高級的安全性功能，像是用戶管理(user managment)，存取控制(access control)和活動審核(activity auditing)。</p>
 <p><img src="/images/docker/harbor_logo.png" alt=""><br><a id="more"></a></p>
 <h2 id="功能特色"><a href="#功能特色" class="headerlink" title="功能特色"></a>功能特色</h2><ul>
 <li><strong>基於角色為基礎的存取控制(Role based access control)</strong>：使用者和 Repository 透過 Project 進行組織管理，一個使用者在同一個 Project 下，對於每個 Image 可以有不同權限。</li>
@@ -2327,8 +3044,8 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
 <h3 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h3><p>Harbor 會部署數個 Docker container，所以部署的主機需要能支援 Docker 的 Linux distribution。而部署主機需要安裝以下套件：</p>
 <ul>
 <li>Python 版本<code>2.7+</code>。</li>
-<li>Docker Engine 版本 <code>1.10+</code>。Docker 安裝方式，請參考：<a href="https://docs.docker.com/engine/installation/" target="_blank" rel="external">Install Docker</a></li>
-<li>Docker Compose 版本 <code>1.6.0+</code>。Docker Compose 安裝方式，請參考：<a href="https://docs.docker.com/compose/install/" target="_blank" rel="external">Install Docker Compose</a></li>
+<li>Docker Engine 版本 <code>1.10+</code>。Docker 安裝方式，請參考：<a href="https://docs.docker.com/engine/installation/" target="_blank" rel="noopener">Install Docker</a></li>
+<li>Docker Compose 版本 <code>1.6.0+</code>。Docker Compose 安裝方式，請參考：<a href="https://docs.docker.com/compose/install/" target="_blank" rel="noopener">Install Docker Compose</a></li>
 </ul>
 <blockquote>
 <p>官方安裝指南說明是 Linux 且要支援 Docker，但 Windows 支援 Docker 部署 Harbor 還需要驗證是否可行。</p>
@@ -2339,7 +3056,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
 <li>設定 Harbor</li>
 <li>執行安裝腳本</li>
 </ol>
-<h4 id="下載-installer"><a href="#下載-installer" class="headerlink" title="下載 installer"></a>下載 installer</h4><p>installer 的二進制檔案可以從 <a href="https://github.com/vmware/harbor/releases" target="_blank" rel="external">release page</a> 下載，選擇您需要 Online installer 或者 Offline installer，下載完成後，使用<code>tar</code>將 package 解壓縮：</p>
+<h4 id="下載-installer"><a href="#下載-installer" class="headerlink" title="下載 installer"></a>下載 installer</h4><p>installer 的二進制檔案可以從 <a href="https://github.com/vmware/harbor/releases" target="_blank" rel="noopener">release page</a> 下載，選擇您需要 Online installer 或者 Offline installer，下載完成後，使用<code>tar</code>將 package 解壓縮：</p>
 <p>Online installer：</p>
 <pre><code class="sh">$ tar xvf harbor-online-installer-&lt;version&gt;.tgz
 </code></pre>
@@ -2364,7 +3081,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
     container: docker_images
 </code></pre>
 <blockquote>
-<p>更多 storage backend 的資訊，請參考：<a href="https://docs.docker.com/registry/configuration/" target="_blank" rel="external">Registry Configuration Reference</a>。<br>另外官方提供的是改 <code>common/templates/registry/config.yml</code>，感覺寫錯，需再測試其正確性。</p>
+<p>更多 storage backend 的資訊，請參考：<a href="https://docs.docker.com/registry/configuration/" target="_blank" rel="noopener">Registry Configuration Reference</a>。<br>另外官方提供的是改 <code>common/templates/registry/config.yml</code>，感覺寫錯，需再測試其正確性。</p>
 </blockquote>
 <h4 id="執行安裝腳本"><a href="#執行安裝腳本" class="headerlink" title="執行安裝腳本"></a>執行安裝腳本</h4><p>一旦<code>harbor.cfg</code>與 storage backend (optional) 設定完成後，可以透過<code>install.sh</code>腳本開始安裝 Harbor。從 Harbor 1.1.0 版本之後，已經整合<code>Notary</code>，但是預設的情況下安裝是不包含<code>Notary</code>支援：</p>
 <pre><code class="sh">$ sudo ./install.sh
@@ -2380,7 +3097,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
 <pre><code class="sh">DOCKER_OPTS=&quot;--insecure-registry &lt;your harbor.cfg hostname&gt;&quot;
 </code></pre>
 <blockquote>
-<p>其他細節，請參考：<a href="https://docs.docker.com/registry/insecure/#deploying-a-plain-http-registry" target="_blank" rel="external">Test an insecure registry</a>。</p>
+<p>其他細節，請參考：<a href="https://docs.docker.com/registry/insecure/#deploying-a-plain-http-registry" target="_blank" rel="noopener">Test an insecure registry</a>。</p>
 <p>若在<code>Ubuntu 16.04</code>的作業系統版本，需要修改<code>/lib/systemd/system/docker.service</code>檔案，並加入一下內容。另外在 CentOS 7.x 版本則不需要加入<code>-H fd://</code>資訊：</p>
 <pre><code class="sh">EnvironmentFile=/etc/default/docker
 ExecStart=/usr/bin/dockerd -H fd:// $DOCKER_OPTS
@@ -2400,7 +3117,7 @@ $ docker push &lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubunut:16.04
 <pre><code class="sh">$ docker pull &lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubunut:16.04
 </code></pre>
 <blockquote>
-<p>更多使用者操作，請參考：<a href="https://github.com/vmware/harbor/blob/master/docs/user_guide.md" target="_blank" rel="external">Harbor User Guide</a>。</p>
+<p>更多使用者操作，請參考：<a href="https://github.com/vmware/harbor/blob/master/docs/user_guide.md" target="_blank" rel="noopener">Harbor User Guide</a>。</p>
 </blockquote>
 ]]></content>
       
@@ -2426,7 +3143,7 @@ $ docker push &lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubunut:16.04
     <entry>
       <title><![CDATA[品嚐 Moby LinuxKit 的 Linux 作業系統]]></title>
       <url>https://kairen.github.io/2017/04/23/container/linuxkit/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/linuxkit/linuxkit" target="_blank" rel="external">LinuxKit</a> 是 <a href="http://www.nebulaworks.com/blog/2017/04/22/docker-captains-dockercon-2017-review/" target="_blank" rel="external">DockerCon 2017</a> 中推出的工具之一，其主要是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，Docker 公司一直透過 LinuxKit 來建立相關產品，如 Docker for Mac 等。由於要最快的了解功能，因此這邊透過建立簡單的映像檔來學習。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/linuxkit/linuxkit" target="_blank" rel="noopener">LinuxKit</a> 是 <a href="http://www.nebulaworks.com/blog/2017/04/22/docker-captains-dockercon-2017-review/" target="_blank" rel="noopener">DockerCon 2017</a> 中推出的工具之一，其主要是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，Docker 公司一直透過 LinuxKit 來建立相關產品，如 Docker for Mac 等。由於要最快的了解功能，因此這邊透過建立簡單的映像檔來學習。</p>
 <center><img src="/images/docker/linux-kit.png" alt=""></center>
 
 <a id="more"></a>
@@ -2437,7 +3154,7 @@ $ docker push &lt;your harbor.cfg hostname&gt;/&lt;your project&gt;/ubunut:16.04
 <li>安裝 GUN make 工具。</li>
 <li>安裝 GUN tar 工具。</li>
 </ul>
-<h2 id="建構-Moby-工具"><a href="#建構-Moby-工具" class="headerlink" title="建構 Moby 工具"></a>建構 Moby 工具</h2><p>首先我們要建構名為 Moby 的工具，這個工具主要提供指定的 YAML 檔來執行描述的建構流程與功能，並利用 Docker 來建構出 Linux 作業系統。在本教學中，最後我們會利用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="external">xhyve</a> 這個 OS X 的虛擬化來提供執行系統實例，當然也可以透過官方的 <a href="https://github.com/moby/hyperkit" target="_blank" rel="external">HyperKit</a> 來進行。</p>
+<h2 id="建構-Moby-工具"><a href="#建構-Moby-工具" class="headerlink" title="建構 Moby 工具"></a>建構 Moby 工具</h2><p>首先我們要建構名為 Moby 的工具，這個工具主要提供指定的 YAML 檔來執行描述的建構流程與功能，並利用 Docker 來建構出 Linux 作業系統。在本教學中，最後我們會利用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="noopener">xhyve</a> 這個 OS X 的虛擬化來提供執行系統實例，當然也可以透過官方的 <a href="https://github.com/moby/hyperkit" target="_blank" rel="noopener">HyperKit</a> 來進行。</p>
 <p>首先透過 Git 來抓取 LinuxKit repos，並進入建構 Moby：</p>
 <pre><code class="sh">$ git clone https://github.com/linuxkit/linuxkit.git
 $ cd linuxkit
@@ -2570,7 +3287,7 @@ outputs:
 <li><strong>outputs</strong>:輸出的映像檔格式。</li>
 </ul>
 <blockquote>
-<p>更多 YAML 格式說明可以參考官方 <a href="https://github.com/linuxkit/linuxkit/blob/master/docs/yaml.md" target="_blank" rel="external">LinuxKit YAML</a>。目前 LinuxKit 的映像檔來源可以參考 <a href="https://hub.docker.com/u/linuxkit/" target="_blank" rel="external">Docker Hub</a></p>
+<p>更多 YAML 格式說明可以參考官方 <a href="https://github.com/linuxkit/linuxkit/blob/master/docs/yaml.md" target="_blank" rel="noopener">LinuxKit YAML</a>。目前 LinuxKit 的映像檔來源可以參考 <a href="https://hub.docker.com/u/linuxkit/" target="_blank" rel="noopener">Docker Hub</a></p>
 </blockquote>
 <p>撰寫完後，就可以透過 Moby 工具進行建構 Linux 映像檔了：</p>
 <pre><code class="sh">$ moby build docker-sshd.yml
@@ -2588,7 +3305,7 @@ Create outputs:
 <li>docker-sshd-cmdline: Command line options 檔案.</li>
 <li>docker-sshd.iso: Docker SSHD ISO 格式映像檔.</li>
 </ul>
-<h3 id="測試映像檔"><a href="#測試映像檔" class="headerlink" title="測試映像檔"></a>測試映像檔</h3><p>當完成建構映像檔後，就可以透過一些工具來進行測試，這邊採用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="external">xhyve</a> 來執行實例，首先透過 Git 取得 xhyve repos，並建構與安裝：</p>
+<h3 id="測試映像檔"><a href="#測試映像檔" class="headerlink" title="測試映像檔"></a>測試映像檔</h3><p>當完成建構映像檔後，就可以透過一些工具來進行測試，這邊採用 <a href="https://github.com/mist64/xhyve" target="_blank" rel="noopener">xhyve</a> 來執行實例，首先透過 Git 取得 xhyve repos，並建構與安裝：</p>
 <pre><code class="sh">$ git clone https://github.com/mist64/xhyve
 $ cd xhyve
 $ make &amp;&amp; cp build/xhyve /usr/local/bin/
@@ -2597,7 +3314,7 @@ Usage: xhyve [-behuwxMACHPWY] [-c vcpus] [-g &lt;gdb port&gt;] [-l &lt;lpc&gt;]
              [-m mem] [-p vcpu:hostcpu] [-s &lt;pci&gt;] [-U uuid] -f &lt;fw&gt;
 </code></pre>
 <blockquote>
-<p>xhyve 是 FreeBSD 虛擬化技術 bhyve 的 OS X 版本，是以  <a href="https://developer.apple.com/library/mac/documentation/DriversKernelHardware/Reference/Hypervisor/index.html" target="_blank" rel="external">Hypervisor.framework</a> 為基底的上層工具，這是除了 VirtualBox 與 VMwar 的另外選擇，並且該工具非常的輕巧，只有幾 KB 的容量。</p>
+<p>xhyve 是 FreeBSD 虛擬化技術 bhyve 的 OS X 版本，是以  <a href="https://developer.apple.com/library/mac/documentation/DriversKernelHardware/Reference/Hypervisor/index.html" target="_blank" rel="noopener">Hypervisor.framework</a> 為基底的上層工具，這是除了 VirtualBox 與 VMwar 的另外選擇，並且該工具非常的輕巧，只有幾 KB 的容量。</p>
 </blockquote>
 <p>接著撰寫 xhyve 腳本來啟動映像檔：</p>
 <pre><code class="sh">#!/bin/sh
@@ -2705,15 +3422,15 @@ Terminated
 
 <h2 id="TensorFlow-基本使用"><a href="#TensorFlow-基本使用" class="headerlink" title="TensorFlow 基本使用"></a>TensorFlow 基本使用</h2><p>在開始進行 TensorFlow 之前，需要了解幾個觀念：</p>
 <ul>
-<li>使用 <a href="https://www.tensorflow.org/api_docs/python/tf/Graph" target="_blank" rel="external">tf.Graph</a> 來表示計算任務.</li>
+<li>使用 <a href="https://www.tensorflow.org/api_docs/python/tf/Graph" target="_blank" rel="noopener">tf.Graph</a> 來表示計算任務.</li>
 <li>採用<code>tensorflow::Session</code>的上下文(Context)來執行圖.</li>
 <li>以 Tensor 來表示所有資料，可看成擁有靜態資料類型，但有動態大小的多維陣列與列表，如 Boolean 或 String 轉成數值類型.</li>
 <li>透過<code>tf.Variable</code>來維護狀態.</li>
 <li>透過 feed 與 fetch 來任意操作(Arbitrary operation)給予值或從中取得資料.</li>
 </ul>
-<p>TensorFlow 的圖中的節點被稱為 <a href="https://www.tensorflow.org/api_docs/python/tf/Operation" target="_blank" rel="external">op(operation)</a>。一個<code>op</code>會有 0 至多個 Tensor，而每個 Tensor 是一種類別化的多維陣列，例如把一個圖集合表示成四維浮點陣列，分別為<code>[batch, height, width, channels]</code>。</p>
+<p>TensorFlow 的圖中的節點被稱為 <a href="https://www.tensorflow.org/api_docs/python/tf/Operation" target="_blank" rel="noopener">op(operation)</a>。一個<code>op</code>會有 0 至多個 Tensor，而每個 Tensor 是一種類別化的多維陣列，例如把一個圖集合表示成四維浮點陣列，分別為<code>[batch, height, width, channels]</code>。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2630831-5da81623d4661886.jpg?imageMogr2/auto-orient/strip" alt=""></p>
-<p>利用三種不同稱呼來描述 Tensor 的維度，Shape、Rank 與 Dimension。可參考 <a href="https://www.tensorflow.org/programmers_guide/dims_types" target="_blank" rel="external">Rank, Shape, 和 Type</a>。</p>
+<p>利用三種不同稱呼來描述 Tensor 的維度，Shape、Rank 與 Dimension。可參考 <a href="https://www.tensorflow.org/programmers_guide/dims_types" target="_blank" rel="noopener">Rank, Shape, 和 Type</a>。</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/2630831-3625a021343b5da3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
 <p>一般只有 shape 能夠直接被 print，而 Tensor 則需要 Session 來提供，一般需要三個操作步驟：</p>
 <ol>
@@ -2783,8 +3500,8 @@ it_sess.close()
 </code></pre>
 <blockquote>
 <ul>
-<li>範例來至 <a href="https://www.tensorflow.org/versions/r0.10/get_started/basic_usage" target="_blank" rel="external">Basic Usage</a>。</li>
-<li>指定 Device 可以看這邊 <a href="https://www.tensorflow.org/versions/r0.10/how_tos/using_gpu/" target="_blank" rel="external">Using GPU</a>.</li>
+<li>範例來至 <a href="https://www.tensorflow.org/versions/r0.10/get_started/basic_usage" target="_blank" rel="noopener">Basic Usage</a>。</li>
+<li>指定 Device 可以看這邊 <a href="https://www.tensorflow.org/versions/r0.10/how_tos/using_gpu/" target="_blank" rel="noopener">Using GPU</a>.</li>
 </ul>
 </blockquote>
 <p>上面範例可以看到建立了一個 Graph 的計算過程<code>c</code>，而當直接執行到<code>c</code>時，並不會真的執行運算，而是在<code>sess</code>會話建立後，並透過<code>sess</code>執行分配給 CPU 或 GPU 之類設備進行運算後，才會回傳一個節點的 Tensor，在 Python 中 Tensor 是一個 Numpy 的 ndarry 物件。</p>
@@ -2813,7 +3530,7 @@ with tf.Session() as sess:
     print sess.run(state)
 </code></pre>
 <blockquote>
-<p>更多細節可以查看 <a href="https://www.tensorflow.org/programmers_guide/variables" target="_blank" rel="external">Variables</a>。</p>
+<p>更多細節可以查看 <a href="https://www.tensorflow.org/programmers_guide/variables" target="_blank" rel="noopener">Variables</a>。</p>
 </blockquote>
 <p>另外可以利用 Fetch 方式來一次取得多個節點的 Tensor，範例如下：</p>
 <pre><code class="python="># coding=utf-8
@@ -2877,7 +3594,7 @@ with tf.Session() as sess:
 <p><img src="http://arimo.com/wp-content/uploads/2016/03/TF_Image_1.png" alt=""></p>
 <blockquote>
 <ul>
-<li><a href="http://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="external">Parameter Server 詳解</a></li>
+<li><a href="http://blog.csdn.net/cyh_24/article/details/50545780" target="_blank" rel="noopener">Parameter Server 詳解</a></li>
 </ul>
 </blockquote>
 <p>一般對於<code>小型規模訓練</code>，這種資料與參數量不多時，可以用一個 CPU 來同時執行兩種任務。而<code>中型規模訓練</code>，資料量較大，但參數量不多時，計算梯度的工作負載較高，而參數更新負載較低，所以計算梯度交給若干個 CPU 或 GPU 去執行，而更新參數則交給一個 CPU 即可。對於<code>大型規模訓練</code>，資料與參數量多時，不僅計算梯度需要部署多個 CPU 或 GPU，連更新參數也要不說到多個 CPU 中。</p>
@@ -3091,9 +3808,9 @@ with tf.Session(graph=g1) as sess_cpu:
     <entry>
       <title><![CDATA[Kuberentes Helm 介紹]]></title>
       <url>https://kairen.github.io/2017/03/25/kubernetes/helm-quickstart/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/helm" target="_blank" rel="external">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/helm" target="_blank" rel="noopener">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：</p>
 <ul>
-<li>查詢與使用熱門的 <a href="https://github.com/kubernetes/charts" target="_blank" rel="external">Kubernetes Chart</a> 軟體套件。</li>
+<li>查詢與使用熱門的 <a href="https://github.com/kubernetes/charts" target="_blank" rel="noopener">Kubernetes Chart</a> 軟體套件。</li>
 <li>以 Kuberntes Chart 來分享自己的應用程式。</li>
 <li>可利用 Chart 來重複建立應用程式。</li>
 <li>智能地管理 Kubernetes manifest 檔案。</li>
@@ -3104,12 +3821,12 @@ with tf.Session(graph=g1) as sess_cpu:
 <ul>
 <li><strong>Chart</strong>：主要定義要被執行的應用程式中，所需要的工具、資源、服務等資訊，有點類似 Homebrew 的 Formula 或是 APT 的 dpkg 檔案。</li>
 <li><strong>Release</strong>：一個被執行於 Kubernetes 的 Chart 實例。Chart 能夠在一個叢集中擁有多個 Release，例如 MySQL Chart，可以在叢集建立基於該 Chart 的兩個資料庫實例，其中每個 Release 都會有獨立的名稱。</li>
-<li><strong>Repository</strong>：主要用來存放 Chart 的倉庫，如 <a href="https://kubeapps.com/" target="_blank" rel="external">KubeApps</a>。</li>
+<li><strong>Repository</strong>：主要用來存放 Chart 的倉庫，如 <a href="https://kubeapps.com/" target="_blank" rel="noopener">KubeApps</a>。</li>
 </ul>
 <p>可以理解 Helm 主要目標就是從 Chart Repository 中，查找部署者需要的應用程式 Chart，然後以 Release 形式來部署到 Kubernetes 中進行管理。</p>
 <h2 id="Helm-系統元件"><a href="#Helm-系統元件" class="headerlink" title="Helm 系統元件"></a>Helm 系統元件</h2><p>Helm 主要分為兩種元件，Helm Client 與 Tiller Server，兩者功能如下：</p>
 <ul>
-<li><strong>Helm Client</strong>：一個安裝 Helm CLI 的機器，該機器透過 gRPC 連接 Tiller Server 來對 Repository、Chart 與 Release 等進行管理與操作，如建立、刪除與升級等操作，細節可以查看 <a href="https://github.com/kubernetes/helm/blob/master/docs/index.md" target="_blank" rel="external">Helm Documentation</a>。</li>
+<li><strong>Helm Client</strong>：一個安裝 Helm CLI 的機器，該機器透過 gRPC 連接 Tiller Server 來對 Repository、Chart 與 Release 等進行管理與操作，如建立、刪除與升級等操作，細節可以查看 <a href="https://github.com/kubernetes/helm/blob/master/docs/index.md" target="_blank" rel="noopener">Helm Documentation</a>。</li>
 <li><strong>Tiller Server</strong>：主要負責接收來至 Client 的指令，並透過 kube-apiserver 與 Kubernetes 叢集做溝通，根據 Chart 定義的內容，來產生與管理各種對應 API 物件的 Kubernetes 部署檔案(又稱為 <code>Release</code>)。</li>
 </ul>
 <p>兩者溝通架構圖如下所示：</p>
@@ -3154,7 +3871,7 @@ $ helm version
 Client: &amp;version.Version{SemVer:&quot;v2.4.2&quot;, GitCommit:&quot;82d8e9498d96535cc6787a6a9194a76161d29b4c&quot;, GitTreeState:&quot;clean&quot;}
 Server: &amp;version.Version{SemVer:&quot;v2.4.2&quot;, GitCommit:&quot;82d8e9498d96535cc6787a6a9194a76161d29b4c&quot;, GitTreeState:&quot;clean&quot;}
 </code></pre>
-<h2 id="部署-Chart-Release-實例"><a href="#部署-Chart-Release-實例" class="headerlink" title="部署 Chart Release 實例"></a>部署 Chart Release 實例</h2><p>當完成初始化後，就可以透過 helm ctl 來管理與部署 Chart Release，我們可以到 <a href="https://kubeapps.com/" target="_blank" rel="external">KubeApps</a> 查找想要部署的 Chart，如以下快速部屬 Jenkins　範例，首先先透過搜尋來查看目前應用程式版本：</p>
+<h2 id="部署-Chart-Release-實例"><a href="#部署-Chart-Release-實例" class="headerlink" title="部署 Chart Release 實例"></a>部署 Chart Release 實例</h2><p>當完成初始化後，就可以透過 helm ctl 來管理與部署 Chart Release，我們可以到 <a href="https://kubeapps.com/" target="_blank" rel="noopener">KubeApps</a> 查找想要部署的 Chart，如以下快速部屬 Jenkins　範例，首先先透過搜尋來查看目前應用程式版本：</p>
 <pre><code class="sh">$ helm search jenkins
 NAME              VERSION    DESCRIPTION
 stable/jenkins    0.6.3      Open source continuous integration server. It s...
@@ -3278,7 +3995,7 @@ NAME           CLUSTER-IP        EXTERNAL-IP    PORT(S)                         
 demo-jenkins   192.169.143.140   ,172.20.3.90   8080:30152/TCP,50000:31806/TCP   10m
 </code></pre>
 <blockquote>
-<p>這時候就可以透過 <a href="http://172.20.3.90:8080" target="_blank" rel="external">http://172.20.3.90:8080</a> 連進去 Jenkins 了，其預設帳號為 <code>admin</code>。</p>
+<p>這時候就可以透過 <a href="http://172.20.3.90:8080" target="_blank" rel="noopener">http://172.20.3.90:8080</a> 連進去 Jenkins 了，其預設帳號為 <code>admin</code>。</p>
 </blockquote>
 <p>透過以下指令來取得 Jenkins admin 密碼：</p>
 <pre><code class="sh">$ printf $(kubectl get secret --namespace default demo-jenkins -o jsonpath=&quot;{.data.jenkins-admin-password}&quot; | base64 --decode);echo
@@ -3372,9 +4089,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -3383,7 +4100,7 @@ $ helm repo add example http://repo-url
     <entry>
       <title><![CDATA[Kubespray 部署實體機 Kubernetes v1.6 叢集]]></title>
       <url>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="external">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="noopener">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
 <ul>
 <li>可以部署在 AWS, GCE, Azure, OpenStack 或者 Baremetal.</li>
 <li>部署 High Available Kubernetes 叢集.</li>
@@ -3577,7 +4294,7 @@ $ sudo apt-get update
 $ sudo apt-get install -y nvidia-367
 </code></pre>
 <p>完成後，需重新啟動機器。</p>
-<h2 id="CUDA-Toolkit-8-0-安裝"><a href="#CUDA-Toolkit-8-0-安裝" class="headerlink" title="CUDA Toolkit 8.0 安裝"></a>CUDA Toolkit 8.0 安裝</h2><p>由於 TensorFlow 支援 GPU 運算時，會需要使用到 CUDA Toolkit 相關功能，可以到 <a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="external">CUDA Toolkit</a> 頁面下載，這邊會下載 Ubuntu Run file 檔案，來進行安裝：</p>
+<h2 id="CUDA-Toolkit-8-0-安裝"><a href="#CUDA-Toolkit-8-0-安裝" class="headerlink" title="CUDA Toolkit 8.0 安裝"></a>CUDA Toolkit 8.0 安裝</h2><p>由於 TensorFlow 支援 GPU 運算時，會需要使用到 CUDA Toolkit 相關功能，可以到 <a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="noopener">CUDA Toolkit</a> 頁面下載，這邊會下載 Ubuntu Run file 檔案，來進行安裝：</p>
 <pre><code class="sh">$ wget &quot;https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run&quot;
 $ sudo chmod u+x cuda_8.0.61_375.26_linux-run
 $ ./cuda_8.0.61_375.26_linux-run
@@ -3625,12 +4342,12 @@ $ sudo nvidia-smi
 |    0      1764    G   compiz                                          29MiB |
 +-----------------------------------------------------------------------------+
 </code></pre>
-<h2 id="cuDNN-5-1-安裝"><a href="#cuDNN-5-1-安裝" class="headerlink" title="cuDNN 5.1 安裝"></a>cuDNN 5.1 安裝</h2><p><a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="external">NVIDIA cuDNN</a> 是一個深度神經網路運算的 GPU 加速原函式庫，這邊需要點選前面的連結，下載<code>cuDNN v5.1 Library for Linux</code>檔案：</p>
+<h2 id="cuDNN-5-1-安裝"><a href="#cuDNN-5-1-安裝" class="headerlink" title="cuDNN 5.1 安裝"></a>cuDNN 5.1 安裝</h2><p><a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="noopener">NVIDIA cuDNN</a> 是一個深度神經網路運算的 GPU 加速原函式庫，這邊需要點選前面的連結，下載<code>cuDNN v5.1 Library for Linux</code>檔案：</p>
 <pre><code class="sh">$ tar xvf cudnn-8.0-linux-x64-v5.1.tgz
 $ sudo cp cuda/include/cudnn.h /usr/local/cuda/include/
 $ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/
 </code></pre>
-<h2 id="TensorFlow-GPU-套件建構"><a href="#TensorFlow-GPU-套件建構" class="headerlink" title="TensorFlow GPU 套件建構"></a>TensorFlow GPU 套件建構</h2><p>本次教學將透過 <a href="https://github.com/tensorflow/tensorflow" target="_blank" rel="external">Source code</a> 建構安裝檔，再進行安裝 TensorFlow，首先安裝相依套件：</p>
+<h2 id="TensorFlow-GPU-套件建構"><a href="#TensorFlow-GPU-套件建構" class="headerlink" title="TensorFlow GPU 套件建構"></a>TensorFlow GPU 套件建構</h2><p>本次教學將透過 <a href="https://github.com/tensorflow/tensorflow" target="_blank" rel="noopener">Source code</a> 建構安裝檔，再進行安裝 TensorFlow，首先安裝相依套件：</p>
 <pre><code class="sh">$ sudo add-apt-repository -y ppa:webupd8team/java
 $ sudo apt-get update
 $ sudo apt-get install -y libcupti-dev python-numpy python-dev python-setuptools python-pip python-wheel git oracle-java8-installer
@@ -3654,7 +4371,7 @@ Please note that each additional compute capability significantly increases your
 Configuration finished
 </code></pre>
 <blockquote>
-<p><code>6.1</code>為 GTX 10-series 系列顯卡，其他可以查看 <a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="external">CUDA GPUS</a>。這邊除了上述特定要輸入外，其餘都是直接鍵盤<code>enter</code>。</p>
+<p><code>6.1</code>為 GTX 10-series 系列顯卡，其他可以查看 <a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">CUDA GPUS</a>。這邊除了上述特定要輸入外，其餘都是直接鍵盤<code>enter</code>。</p>
 </blockquote>
 <p>當完成組態後，即可透過 bazel 進行建構 pip 套件腳本：</p>
 <pre><code class="sh">$ bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package
@@ -3714,7 +4431,7 @@ Hello, TensorFlow!
     <entry>
       <title><![CDATA[kube-ansible 快速部署實體機 HA 叢集]]></title>
       <url>https://kairen.github.io/2017/02/19/kubernetes/deploy/kube-ansible-metal/</url>
-      <content type="html"><![CDATA[<p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+      <content type="html"><![CDATA[<p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
 <li>Kubernetes v1.8.3</li>
@@ -3904,7 +4621,7 @@ NAME                                    READY     STATUS    RESTARTS   AGE
 kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 </code></pre>
 <blockquote>
-<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
+<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <p>接著透過 Etcd 來查看目前 Leader 狀態：</p>
 <pre><code class="sh">$ export CA=&quot;/etc/etcd/ssl&quot;
@@ -3946,7 +4663,7 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
     <entry>
       <title><![CDATA[kube-ansible 快速部署 HA 測試環境]]></title>
       <url>https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-test/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
 <p>kube-ansible 提供了以下幾項功能：</p>
 <ul>
 <li>Kubernetes 1.8.0+.</li>
@@ -3957,8 +4674,8 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
 <p>而在 OS 部分以支援<code>Ubuntu 16.x</code>及<code>CentOS 7.x</code>的虛擬機與實體機部署。未來會以 Python 工具形式來提供使用。</p>
 <h2 id="快速開始"><a href="#快速開始" class="headerlink" title="快速開始"></a>快速開始</h2><p>kube-ansible 支援了 Vagrant 腳本來快速提供 VirtualBox 環境，若想單一主機模擬 Kubernetes 叢集的話，主機需要安裝以下軟體工具：</p>
 <ul>
-<li><a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="external">Vagrant</a> &gt;= 1.7.0</li>
-<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="external">VirtualBox</a> &gt;= 5.0.0</li>
+<li><a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">Vagrant</a> &gt;= 1.7.0</li>
+<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">VirtualBox</a> &gt;= 5.0.0</li>
 </ul>
 <p>當主機確認安裝完成後，即可透過 Git 下載最新版本程式，並使用<code>setup-vagrant</code>腳本：</p>
 <pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
@@ -4081,7 +4798,7 @@ nginx-service   192.173.165.220   &lt;nodes&gt;       80:30000/TCP   11s
     <entry>
       <title><![CDATA[Kubernetes v1.6.x 全手動苦工安裝教學]]></title>
       <url>https://kairen.github.io/2016/12/16/kubernetes/deploy/manual-v1.6/</url>
-      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
 <li>Kubernetes v1.6.4</li>
@@ -4323,7 +5040,7 @@ IP.2 = 172.16.35.12
 EOF
 </code></pre>
 <blockquote>
-<p><code>IP.2</code> 請修改成自己的<code>master</code> IP。<br>細節請參考<a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p><code>IP.2</code> 請修改成自己的<code>master</code> IP。<br>細節請參考<a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>建立 OpenSSL Keypairs 與 Certificate：</p>
 <pre><code class="sh">DIR=/etc/kubernetes/pki
@@ -4338,7 +5055,7 @@ openssl req -new -key ${DIR}/apiserver-key.pem -out ${DIR}/apiserver.csr -subj &
 openssl x509 -req -in ${DIR}/apiserver.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/apiserver.pem -days 1000 -extensions v3_req -extfile ${DIR}/openssl.conf
 </code></pre>
 <blockquote>
-<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>接著下載 Kubernetes 相關檔案至<code>/etc/kubernetes</code>：</p>
 <pre><code class="sh">cd /etc/kubernetes/
@@ -4390,7 +5107,7 @@ tcp   0  0 127.0.0.1:10252  0.0.0.0:*  LISTEN  20815/kube-controll
 tcp6  0  0 :::8080          :::*       LISTEN  20333/kube-apiserve
 </code></pre>
 <blockquote>
-<p>若看到以上已經被 binding 後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/" target="_blank" rel="external">API Service</a>，並輸入帳號<code>admin</code>與密碼<code>p@ssw0rd</code>。</p>
+<p>若看到以上已經被 binding 後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/" target="_blank" rel="noopener">API Service</a>，並輸入帳號<code>admin</code>與密碼<code>p@ssw0rd</code>。</p>
 </blockquote>
 <p>透過簡單指令驗證：</p>
 <pre><code class="sh">$ kubectl get node
@@ -4441,7 +5158,7 @@ DNS.1=node1
 EOF
 </code></pre>
 <blockquote>
-<p>P.S. 這邊<code>IP.1</code>與<code>DNS.1</code>需要隨機器不同設定。細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p>P.S. 這邊<code>IP.1</code>與<code>DNS.1</code>需要隨機器不同設定。細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>將<code>master1</code>上的 OpenSSL key 複製到<code>/etc/kubernetes/pki</code>：</p>
 <pre><code class="sh">for file in ca-key.pem ca.pem admin.pem admin-key.pem; do
@@ -4459,7 +5176,7 @@ openssl req -new -key ${DIR}/node-key.pem -out ${DIR}/node.csr -subj &#39;/CN=ku
 openssl x509 -req -in ${DIR}/node.csr -CA ${DIR}/ca.pem -CAkey ${DIR}/ca-key.pem -CAcreateserial -out ${DIR}/node.pem -days 1000 -extensions v3_req -extfile ${DIR}/openssl.conf
 </code></pre>
 <blockquote>
-<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="external">Cluster TLS using OpenSSL</a>。</p>
+<p>細節請參考 <a href="https://coreos.com/kubernetes/docs/latest/openssl.html" target="_blank" rel="noopener">Cluster TLS using OpenSSL</a>。</p>
 </blockquote>
 <p>接著下載 Kubernetes 相關檔案至<code>/etc/kubernetes/</code>：</p>
 <pre><code class="sh">cd /etc/kubernetes/
@@ -4539,7 +5256,7 @@ kube-proxy-amd64-gqq2p                 1/1       Running   0          2m
 kube-scheduler-master1                 1/1       Running   0          33m
 kubernetes-dashboard-210558060-zw814   1/1       Running   2          2m
 </code></pre>
-<p>確定都啟動後，可以開啟 <a href="https://172.16.35.12:6443/ui" target="_blank" rel="external">https://172.16.35.12:6443/ui</a> 來查看。<br><img src="/images/kube/dash-preview.png" alt=""></p>
+<p>確定都啟動後，可以開啟 <a href="https://172.16.35.12:6443/ui" target="_blank" rel="noopener">https://172.16.35.12:6443/ui</a> 來查看。<br><img src="/images/kube/dash-preview.png" alt=""></p>
 <h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
 <pre><code class="sh">$ kubectl run nginx --image=nginx --replicas=1 --port=80
 $ kubectl get pods -o wide
@@ -4557,7 +5274,7 @@ svc/nginx        192.160.57.181   ,172.16.35.12   80:32054/TCP   21s
 <blockquote>
 <p>這邊<code>type</code>可以選擇 NodePort 與 LoadBalancer。另外需隨機器 IP 不同而修改 <code>external-ip</code>。</p>
 </blockquote>
-<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12/。" target="_blank" rel="external">http://172.16.35.12/。</a></p>
+<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12/。" target="_blank" rel="noopener">http://172.16.35.12/。</a></p>
 <h3 id="擴展服務數量"><a href="#擴展服務數量" class="headerlink" title="擴展服務數量"></a>擴展服務數量</h3><p>若叢集<code>node</code>節點增加了，而想讓 Nginx 服務提供可靠性的話，可以透過以下方式來擴展服務的副本：</p>
 <pre><code class="sh">$ kubectl scale deploy nginx --replicas=2
 
@@ -4588,7 +5305,7 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
     <entry>
       <title><![CDATA[Ceph 使用 SPDK 加速 NVMe SSD]]></title>
       <url>https://kairen.github.io/2016/12/03/ceph/ceph-spdk/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/spdk/spdk" target="_blank" rel="external">SPDK(Storage Performance Development Kit)</a> 是 Intel 釋出的儲存效能開發工具，主要提供一套撰寫高效能、可擴展與 User-mode 的儲存應用程式工具與函式庫，而中國公司 XSKY 藉由該開發套件來加速 Ceph 在 NVMe SSD 的效能。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/spdk/spdk" target="_blank" rel="noopener">SPDK(Storage Performance Development Kit)</a> 是 Intel 釋出的儲存效能開發工具，主要提供一套撰寫高效能、可擴展與 User-mode 的儲存應用程式工具與函式庫，而中國公司 XSKY 藉由該開發套件來加速 Ceph 在 NVMe SSD 的效能。</p>
 <a id="more"></a>
 <p>首先進入 root，並 clone 專案到 local：</p>
 <pre><code class="shell=">$ sudo su -
@@ -4883,7 +5600,7 @@ $ sudo rbd-nbd map rbd/bd
 /dev/nbd0
 </code></pre>
 <blockquote>
-<p>P.S. 在新版的 ceph 已經有內建 rbd nbd，參考 <a href="http://docs.ceph.com/docs/jewel/man/8/rbd/#commands" target="_blank" rel="external">rbd - manage command</a>。</p>
+<p>P.S. 在新版的 ceph 已經有內建 rbd nbd，參考 <a href="http://docs.ceph.com/docs/jewel/man/8/rbd/#commands" target="_blank" rel="noopener">rbd - manage command</a>。</p>
 </blockquote>
 <p>最後透過 dd 指令測試 nbd 寫入效能：</p>
 <pre><code class="sh">$ dd if=/dev/zero of=./mnt-nbd/test bs=4096 count=4000000
@@ -5109,7 +5826,7 @@ networks:
     <entry>
       <title><![CDATA[Minikube 部署 Local 測試環境]]></title>
       <url>https://kairen.github.io/2016/10/23/kubernetes/deploy/minikube/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/minikube" target="_blank" rel="external">Minikube</a> 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">Minikube</a> 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。</p>
 <p>本環境安裝資訊：</p>
 <ul>
 <li>Minikube v0.22.3</li>
@@ -5174,7 +5891,7 @@ svc/kube-dns               10.0.0.10    &lt;none&gt;        53/UDP,53/TCP   2m
 svc/kubernetes-dashboard   10.0.0.222   &lt;nodes&gt;       80:30000/TCP    2m
 </code></pre>
 <blockquote>
-<p>新版本 Minikube 預設會自動啟動上述 Addons。這時可以透過瀏覽器進入 <a href="http://192.168.99.100:30000/" target="_blank" rel="external">Dashboard</a>。</p>
+<p>新版本 Minikube 預設會自動啟動上述 Addons。這時可以透過瀏覽器進入 <a href="http://192.168.99.100:30000/" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <p>想啟動 Extra addons 的話，可以透過以下指令來達成：</p>
 <pre><code class="sh">$ minikube addons list
@@ -5337,17 +6054,17 @@ to login with a token:
         http://localhost:8888/?token=7ddd6ef31fed5f22696c1003a905782b9219a6ec9a19b97c
 </code></pre>
 <blockquote>
-<p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="external">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
+<p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="noopener">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
 </blockquote>
 <p>若要支援 GPU(CUDA) 的容器的話，可以透過以下指令來提供：</p>
 <pre><code class="sh">$ nvidia-docker run -d -p 8888:8888 --name tf-gpu tensorflow/tensorflow:latest-gpu
 $ docker logs tf-cpu
 </code></pre>
 <blockquote>
-<p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="external">tags</a>。</p>
+<p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="noopener">tags</a>。</p>
 </blockquote>
 <h2 id="利用-Docker-提供-Serving"><a href="#利用-Docker-提供-Serving" class="headerlink" title="利用 Docker 提供 Serving"></a>利用 Docker 提供 Serving</h2><p>TensorFlow Serving 是靈活、高效能的機器學習模型服務系統，是專門為生產環境而設計的，它可以很簡單部署新的演算法與實驗來提供同樣的架構與 API 進行服務。</p>
-<p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="external">Dockerfile </a> 來進行建置：</p>
+<p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="noopener">Dockerfile </a> 來進行建置：</p>
 <pre><code class="sh">$ mkdir serving &amp;&amp; cd serving
 $ wget &quot;https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel&quot;
 $ sed -i &#39;s/BAZEL_VERSION.*0.4.2/BAZEL_VERSION 0.4.5/g&#39; Dockerfile.devel
@@ -5460,9 +6177,9 @@ outputs {
     <entry>
       <title><![CDATA[只要用 kubeadm 小朋友都能部署 Kubernetes]]></title>
       <url>https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/</url>
-      <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="external">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="external">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+      <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
 <blockquote>
-<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="external">kubeadm-ansible</a>。</p>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="noopener">kubeadm-ansible</a>。</p>
 </blockquote>
 <p>本環境安裝資訊：</p>
 <ul>
@@ -5632,7 +6349,7 @@ node2     Ready     &lt;none&gt;    9m        v1.8.4
 <pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 </code></pre>
 <blockquote>
-<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="external">Installation</a>。</p>
+<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="noopener">Installation</a>。</p>
 </blockquote>
 <p>確認沒問題後，透過 kubectl 查看：</p>
 <pre><code class="sh">kubectl get svc --namespace=kube-system
@@ -5640,7 +6357,7 @@ NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
 kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
 kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
 </code></pre>
-<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Kube Dashboard</a>。</p>
+<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Kube Dashboard</a>。</p>
 <h2 id="簡單部署一個服務"><a href="#簡單部署一個服務" class="headerlink" title="簡單部署一個服務"></a>簡單部署一個服務</h2><p>這邊利用 Weave 公司提供的服務來驗證系統，透過以下方式建立：</p>
 <pre><code class="sh">$ kubectl create namespace sock-shop
 $ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true&quot;
@@ -5649,7 +6366,7 @@ $ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/micr
 <pre><code class="sh">$ kubectl describe svc front-end -n sock-shop
 $ kubectl get pods -n sock-shop
 </code></pre>
-<p>最後存取 <a href="http://172.16.35.12:30001" target="_blank" rel="external">http://172.16.35.12:30001</a> 即可看到服務的 Frontend。</p>
+<p>最後存取 <a href="http://172.16.35.12:30001" target="_blank" rel="noopener">http://172.16.35.12:30001</a> 即可看到服務的 Frontend。</p>
 <h2 id="移除節點"><a href="#移除節點" class="headerlink" title="移除節點"></a>移除節點</h2><p>最後，若要將現有節點移除的話，kubeadm 已經有內建的指令來完成這件事，只要執行以下即可：</p>
 <pre><code class="sh">$ kubeadm reset
 </code></pre>
@@ -5677,7 +6394,7 @@ $ kubectl get pods -n sock-shop
     <entry>
       <title><![CDATA[Go 語言環境安裝]]></title>
       <url>https://kairen.github.io/2016/08/19/golang/go-install/</url>
-      <content type="html"><![CDATA[<p>Go 語言是 Google 開發的該世代 C 語言，延續 C 語言的一些優點，是一種靜態強刑別、編譯型，且具有並行機制與垃圾回收功能的語言。由於其<code>並行機制</code>讓 Go 在撰寫多執行緒與網路程式都非常容易。值得一提的是 Go 語言的設計者也包含過去設計 C 語言的 <a href="https://en.wikipedia.org/wiki/Ken_Thompson" target="_blank" rel="external">Ken Thompson</a>。目前 Go 語言基於 1.x 每半年發布一個版本。</p>
+      <content type="html"><![CDATA[<p>Go 語言是 Google 開發的該世代 C 語言，延續 C 語言的一些優點，是一種靜態強刑別、編譯型，且具有並行機制與垃圾回收功能的語言。由於其<code>並行機制</code>讓 Go 在撰寫多執行緒與網路程式都非常容易。值得一提的是 Go 語言的設計者也包含過去設計 C 語言的 <a href="https://en.wikipedia.org/wiki/Ken_Thompson" target="_blank" rel="noopener">Ken Thompson</a>。目前 Go 語言基於 1.x 每半年發布一個版本。</p>
 <a id="more"></a>
 <h2 id="Go-語言安裝"><a href="#Go-語言安裝" class="headerlink" title="Go 語言安裝"></a>Go 語言安裝</h2><p>Go 語言安裝非常容易，目前已支援多個平台的作業系統，以下針對幾個常見的作業系統進行教學。</p>
 <blockquote>
@@ -5693,7 +6410,7 @@ $ kubectl get pods -n sock-shop
 <pre><code>export GOROOT=/usr/local/go
 export GOPATH=${HOME}/go
 export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
-</code></pre><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><p>Mac OS X 安裝可以透過官方封裝好的檔案來進行安裝，下載 <a href="https://storage.googleapis.com/golang/go1.8.darwin-amd64.pkg" target="_blank" rel="external">go1.8.darwin-amd64.pkg</a>，然後雙擊進行安裝。</p>
+</code></pre><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><p>Mac OS X 安裝可以透過官方封裝好的檔案來進行安裝，下載 <a href="https://storage.googleapis.com/golang/go1.8.darwin-amd64.pkg" target="_blank" rel="noopener">go1.8.darwin-amd64.pkg</a>，然後雙擊進行安裝。</p>
 <p>完成後，編輯<code>.bashrc</code>檔案來加入套件的安裝路徑：</p>
 <pre><code>export PATH=$PATH:/usr/local/go/bin
 export GOPATH=~/Go
@@ -5743,8 +6460,8 @@ Hello world, GO !
 </tbody>
 </table>
 <h2 id="參考資訊"><a href="#參考資訊" class="headerlink" title="參考資訊"></a>參考資訊</h2><ul>
-<li><a href="http://gophergala.com/blog/gopher/gala/2015/01/31/finalists/" target="_blank" rel="external">Gopher Gala 2015 Finalists</a></li>
-<li><a href="https://github.com/showcases/web-application-frameworks" target="_blank" rel="external">Web application frameworks</a></li>
+<li><a href="http://gophergala.com/blog/gopher/gala/2015/01/31/finalists/" target="_blank" rel="noopener">Gopher Gala 2015 Finalists</a></li>
+<li><a href="https://github.com/showcases/web-application-frameworks" target="_blank" rel="noopener">Web application frameworks</a></li>
 </ul>
 ]]></content>
       
@@ -5882,13 +6599,13 @@ $ sudo systemctl enable docker
 </code></pre>
 </blockquote>
 <h2 id="安裝-Bootstrap-Node"><a href="#安裝-Bootstrap-Node" class="headerlink" title="安裝 Bootstrap Node"></a>安裝 Bootstrap Node</h2><p>Bootstrap 節點主要提供佈署的功能，可以採用 UI 或 CLI 來進行部署，以下將說明如何透過建置 Bootstrap 來完成 DC/OS 佈署。</p>
-<h3 id="GUI-安裝"><a href="#GUI-安裝" class="headerlink" title="GUI 安裝"></a>GUI 安裝</h3><p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="external">DC/OS installer</a>：</p>
+<h3 id="GUI-安裝"><a href="#GUI-安裝" class="headerlink" title="GUI 安裝"></a>GUI 安裝</h3><p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="noopener">DC/OS installer</a>：</p>
 <pre><code class="sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
 </code></pre>
 <p>接著執行啟動 DC/OS UI：</p>
 <pre><code class="sh">$ sudo bash dcos_generate_config.sh --web -v
 </code></pre>
-<p>完成後，即可開啟瀏覽器輸入 <a href="http://&lt;bootstrap-node-public-ip&gt;:9000" target="_blank" rel="external">bootstrap web</a></p>
+<p>完成後，即可開啟瀏覽器輸入 <a href="http://&lt;bootstrap-node-public-ip&gt;:9000" target="_blank" rel="noopener">bootstrap web</a></p>
 <p>這邊需要輸入 Bootstrap 節點的 SSH 私有金鑰，透過以下方式產生與印出：</p>
 <pre><code class="sh">$ ssh-keygen -t rsa
 $ cat .ssh/id_rsa
@@ -6002,7 +6719,7 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING POSTFLIGHT
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START run_postflight
 </code></pre>
-<p>都完成後就可以查看 <a href="http://&lt;master-public-ip&gt;:8181/exhibitor/v1/ui/index.html" target="_blank" rel="external">Zookpeer</a> 與 <a href="http://&lt;public-master-ip&gt;/" target="_blank" rel="external">DC/OS</a>。</p>
+<p>都完成後就可以查看 <a href="http://&lt;master-public-ip&gt;:8181/exhibitor/v1/ui/index.html" target="_blank" rel="noopener">Zookpeer</a> 與 <a href="http://&lt;public-master-ip&gt;/" target="_blank" rel="noopener">DC/OS</a>。</p>
 ]]></content>
       
         <categories>
@@ -6148,9 +6865,9 @@ df9a135a6949: Pushed
 <blockquote>
 <p>其他 Docker registry 列表：</p>
 <ul>
-<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="external">Portus</a></li>
-<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="external">Atomic Registry</a></li>
-<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="external">Private Registries in RancherOS</a></li>
+<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="noopener">Portus</a></li>
+<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="noopener">Atomic Registry</a></li>
+<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="noopener">Private Registries in RancherOS</a></li>
 </ul>
 </blockquote>
 <h3 id="部署節點準備"><a href="#部署節點準備" class="headerlink" title="部署節點準備"></a>部署節點準備</h3><p>當完成上述後，即可進行部署節點的相依軟體安裝，首先在<code>每台節點</code>透過以下指令更新與安裝一些套件：</p>
@@ -6219,7 +6936,7 @@ base_tag = 3.0.3
 push = true
 install_type = rdo
 registry = {registry-ip}:5000
-</code></pre><p>可參考官方文件 <a href="http://docs.openstack.org/developer/kolla/image-building.html" target="_blank" rel="external">Building Container Images</a>。</p>
+</code></pre><p>可參考官方文件 <a href="http://docs.openstack.org/developer/kolla/image-building.html" target="_blank" rel="noopener">Building Container Images</a>。</p>
 </blockquote>
 <p>當映像檔建置完成後，即可查看<code>docker-regisrtry</code>節點的 UI 介面，來確認是否上傳成功。</p>
 <h2 id="部署-OpenStack-節點"><a href="#部署-OpenStack-節點" class="headerlink" title="部署 OpenStack 節點"></a>部署 OpenStack 節點</h2><p>當完成映像檔建立後，即可開始進行部署 OpenStack 節點。</p>
@@ -6982,10 +7699,10 @@ $ sudo dmsetup remove cachedev
 </ul>
 </blockquote>
 <h3 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h3><ul>
-<li><a href="http://benjr.tw/34632" target="_blank" rel="external">Fio – Flexible I/O Tester</a></li>
-<li><a href="https://github.com/facebook/flashcache/wiki/QuickStart-Recipe-for-Ubuntu-11.10" target="_blank" rel="external">Flashcache Wiki</a></li>
-<li><a href="http://navyaijm.blog.51cto.com/4647068/1567698" target="_blank" rel="external">Flashcache初次体验</a></li>
-<li><a href="http://www.pupuliao.info/2013/12/ubuntu-bonnie%E7%A1%AC%E7%A2%9F%E6%B8%AC%E9%80%9F-linux-%E9%81%A9%E7%94%A8/" target="_blank" rel="external">Ubuntu bonnie++硬碟測速 (Linux 適用)</a></li>
+<li><a href="http://benjr.tw/34632" target="_blank" rel="noopener">Fio – Flexible I/O Tester</a></li>
+<li><a href="https://github.com/facebook/flashcache/wiki/QuickStart-Recipe-for-Ubuntu-11.10" target="_blank" rel="noopener">Flashcache Wiki</a></li>
+<li><a href="http://navyaijm.blog.51cto.com/4647068/1567698" target="_blank" rel="noopener">Flashcache初次体验</a></li>
+<li><a href="http://www.pupuliao.info/2013/12/ubuntu-bonnie%E7%A1%AC%E7%A2%9F%E6%B8%AC%E9%80%9F-linux-%E9%81%A9%E7%94%A8/" target="_blank" rel="noopener">Ubuntu bonnie++硬碟測速 (Linux 適用)</a></li>
 </ul>
 ]]></content>
       
@@ -7242,7 +7959,7 @@ Online: [ pacemaker1 pacemaker2 ]
     <entry>
       <title><![CDATA[利用 rados-java 存取 Ceph]]></title>
       <url>https://kairen.github.io/2016/05/15/ceph/rados-java/</url>
-      <content type="html"><![CDATA[<p><a href="https://github.com/ceph/rados-java" target="_blank" rel="external">rados-java</a> 透過 JNA 來綁定 librados (C) 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。</p>
+      <content type="html"><![CDATA[<p><a href="https://github.com/ceph/rados-java" target="_blank" rel="noopener">rados-java</a> 透過 JNA 來綁定 librados (C) 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。</p>
 <a id="more"></a>
 <h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>在開始進行之前，需要滿足以下幾項要求：</p>
 <ul>
@@ -7502,7 +8219,7 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
 <li>支援叢集</li>
 </ul>
 <a id="more"></a>
-<p>Akka 是基於 <a href="https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F" target="_blank" rel="external">Actor</a> 模型來開發，透過 Actor 能夠簡化死鎖與執行緒管理，可以非常容易開發正確並行化行程與系統，在 Akka 中 Actor 是最基本、最重要的元素，被用來完成工作。Actor 具有以下特性：</p>
+<p>Akka 是基於 <a href="https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener">Actor</a> 模型來開發，透過 Actor 能夠簡化死鎖與執行緒管理，可以非常容易開發正確並行化行程與系統，在 Akka 中 Actor 是最基本、最重要的元素，被用來完成工作。Actor 具有以下特性：</p>
 <ul>
 <li>提供高級別的抽象，能簡化在並行（Concurrency）/平行（Parallelism）應用下的程式開發。</li>
 <li>提供異步（Async）非阻塞、高效能的事件驅動程式模型。</li>
@@ -7511,7 +8228,7 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
 <center><img src="/images/spark/single_play.png" alt=""></center>
 
 <p>Actor 是一個運算實體，在開發程式中就是對實體之間所回應接受到的訊息做互動，同時並行的<code>傳送有限數量的訊息給其他 Actor</code>、<code>建立有限數量的 Actor</code> 以及<code>設計指定接收到下一個訊息時的行為</code>。</p>
-<p>Actor 之間是獨立的，多個 Actor 進行互動只能透過自定的訊息（Message）來完成發送與接收處理。如果一個 Actor 在某一個時刻收到多個 Actor 發送的訊息，就會發生並行問題，這時就需要一個訊息佇列來進行訊息的儲存與分散。可參考 <a href="http://www.infoq.com/cn/news/2014/11/intro-actor-model" target="_blank" rel="external">Akka 為範例，介紹 Actor 模型</a>。</p>
+<p>Actor 之間是獨立的，多個 Actor 進行互動只能透過自定的訊息（Message）來完成發送與接收處理。如果一個 Actor 在某一個時刻收到多個 Actor 發送的訊息，就會發生並行問題，這時就需要一個訊息佇列來進行訊息的儲存與分散。可參考 <a href="http://www.infoq.com/cn/news/2014/11/intro-actor-model" target="_blank" rel="noopener">Akka 為範例，介紹 Actor 模型</a>。</p>
 <p>Akka 應用場景有以下幾個項目，當然這不是全部：</p>
 <ul>
 <li>交易處理（Transaction Processing）</li>
@@ -7522,8 +8239,8 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
 </ul>
 <h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><p>Akka 一般在 Java 有兩種安裝方式，如以下：</p>
 <ul>
-<li>當作 Library 使用，就是直接 Import JAR 使用。可參考 <a href="http://doc.akka.io/docs/akka/2.4.2/java.html?_ga=1.230769695.1061481694.1456285775" target="_blank" rel="external">Java Documentation</a>。</li>
-<li>將應用放到獨立的微核心（Microkernel）裡使用。可參考 <a href="http://doc.akka.io/docs/akka/2.3.10/scala/microkernel.html" target="_blank" rel="external">Microkernel</a>。</li>
+<li>當作 Library 使用，就是直接 Import JAR 使用。可參考 <a href="http://doc.akka.io/docs/akka/2.4.2/java.html?_ga=1.230769695.1061481694.1456285775" target="_blank" rel="noopener">Java Documentation</a>。</li>
+<li>將應用放到獨立的微核心（Microkernel）裡使用。可參考 <a href="http://doc.akka.io/docs/akka/2.3.10/scala/microkernel.html" target="_blank" rel="noopener">Microkernel</a>。</li>
 </ul>
 ]]></content>
       
@@ -7754,26 +8471,26 @@ a1.sinks.k1.channel=c1
 <a id="more"></a>
 <h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
 <ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="external">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="external">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
 <li>確認自己出現在 inwinSTACK Menber List</li>
 </ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="external">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
 <ol>
 <li>填寫使用者資訊。</li>
 <li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="external">http://goo.gl/qez9tt</a></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
 </ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="external">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
 <ul>
 <li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="external">New Agreement</a></li>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
 <li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
 </ul>
 </li>
 <li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="external">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="external">generating-ssh-keys</a></li>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
 </ul>
 </li>
 </ul>
@@ -7783,7 +8500,7 @@ git config --global user.email &quot;your_email@youremail.com&quot;
 
 git config --global gitreview.username &quot;yourgerritusername&quot;
 </code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="external">Git Review install</a> 進行安裝。</p>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
 <h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
 <center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
 
@@ -7812,13 +8529,13 @@ git pull
 Implements: blueprint authentication   
 Fixes: bug # 123456
 </code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="external">GitCommitMessages</a>。</p>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
 </blockquote>
 <p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
 <pre><code class="sh">git commit -a
 git review
 </code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="external">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
 <p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
 <p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
 <pre><code class="sh">git commit -a --amend
@@ -8264,7 +8981,7 @@ listen haproxy_stats
     <entry>
       <title><![CDATA[透過官方 Ansible 部署 Kubernetes(Unrecommended)]]></title>
       <url>https://kairen.github.io/2016/02/24/kubernetes/deploy/official-ansible/</url>
-      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Creating a Kubernetes Cluster</a>。</p>
+      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
 <center><img src="/images/kube/kube-ansible.png" alt=""></center>
 
 <p>本次安裝版本為：</p>
@@ -8392,7 +9109,7 @@ kube-system   monitoring-grafana      10.254.193.233   &lt;none&gt;        80/TC
 kube-system   monitoring-influxdb     10.254.135.115   &lt;none&gt;        8083/TCP,8086/TCP   3h
 </code></pre>
 <blockquote>
-<p>完成後，透過瀏覽器進入 <a href="http://k8s-master:8080/ui" target="_blank" rel="external">Dashboard</a>。</p>
+<p>完成後，透過瀏覽器進入 <a href="http://k8s-master:8080/ui" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <h2 id="Targeted-runs"><a href="#Targeted-runs" class="headerlink" title="Targeted runs"></a>Targeted runs</h2><p>Ansible 提供 Tag 來指定執行或者忽略，這邊腳本也提供了該功能，如以下只部署 Etcd：</p>
 <pre><code class="sh">$ ./deploy-cluster.sh --tags=etcd
@@ -8428,7 +9145,7 @@ kube-system   monitoring-influxdb     10.254.135.115   &lt;none&gt;        8083/
 <li>Kubernetes v1.5.4.</li>
 </ul>
 <a id="more"></a>
-<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先必須在主機上安裝<code>Vagrant</code>工具，點選該 <a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="external">Vagrant downloads</a> 頁面抓取當前系統的版本，並完成安裝。</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先必須在主機上安裝<code>Vagrant</code>工具，點選該 <a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">Vagrant downloads</a> 頁面抓取當前系統的版本，並完成安裝。</p>
 <p>接著在主機上安裝<code>kubectl</code>，該程式是主要與 Kubernetes API 進行溝通的工具，透過 Curl 工具來下載。如果是 Linux 作業系統，請下載以下：</p>
 <pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/linux/amd64/kubectl&quot;
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
@@ -8531,9 +9248,9 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
       <content type="html"><![CDATA[<p>Playbooks 是 Ansible 的設定、部署與編配語言等。可以被用來描述一個被遠端的主機要執行的指令方案，或是一組 IT 行程執行的指令集合。</p>
 <p>在基礎層面上，Playbooks 可以被用來管理部署到遠端主機的組態檔案，在更高階層上 Playbooks 可以循序對多層式架構上的伺服器執行線上的 Polling 更新內部的操作，並將操作委派給其他主機，包含過程中發生的監視器服務、負載平衡伺服器等。</p>
 <a id="more"></a>
-<p>Playbooks 被設計成易懂與基於 Text Language 的二次開發，有許多方式可以組合 Playbooks 與其附屬的檔案。建議在閱讀 Playbooks 時，同步閱讀 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="external">Example Playbooks</a>。</p>
-<p>Playbooks 與 ad-hoc 相比是一種完全不同的 Ansible 應用方式，該方式也是 Ansible 強大之處。簡單來說 Playbooks 是一種組態管理系統與多機器部署系統基礎，與現有系統不同之處在於非常適合複雜的部署。若想參考範例，可以參閱 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="external">ansible-examples repository</a>。</p>
-<h3 id="Playbook-Language-Example"><a href="#Playbook-Language-Example" class="headerlink" title="Playbook Language Example"></a>Playbook Language Example</h3><p>Playbook 採用 <a href="http://ansible-tran.readthedocs.org/en/latest/docs/YAMLSyntax.html" target="_blank" rel="external">YAML 語法</a>來表示。playbook 由一或多個<code>plays</code>組成的內容為元素的列表。在<code>play</code>中一組機器會被映射成定義好的角色，在 Ansible 中<code>play</code>內容也被稱為<code>tasks</code>。</p>
+<p>Playbooks 被設計成易懂與基於 Text Language 的二次開發，有許多方式可以組合 Playbooks 與其附屬的檔案。建議在閱讀 Playbooks 時，同步閱讀 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">Example Playbooks</a>。</p>
+<p>Playbooks 與 ad-hoc 相比是一種完全不同的 Ansible 應用方式，該方式也是 Ansible 強大之處。簡單來說 Playbooks 是一種組態管理系統與多機器部署系統基礎，與現有系統不同之處在於非常適合複雜的部署。若想參考範例，可以參閱 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">ansible-examples repository</a>。</p>
+<h3 id="Playbook-Language-Example"><a href="#Playbook-Language-Example" class="headerlink" title="Playbook Language Example"></a>Playbook Language Example</h3><p>Playbook 採用 <a href="http://ansible-tran.readthedocs.org/en/latest/docs/YAMLSyntax.html" target="_blank" rel="noopener">YAML 語法</a>來表示。playbook 由一或多個<code>plays</code>組成的內容為元素的列表。在<code>play</code>中一組機器會被映射成定義好的角色，在 Ansible 中<code>play</code>內容也被稱為<code>tasks</code>。</p>
 <p>以下是一個簡單的範例：</p>
 <pre><code class="txt">---
 - name: Configure cluster with apache
@@ -8624,140 +9341,10 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
 <p>如此一來 ansible 就會自動讀取 inventory file 取得靜態的 inventory 資訊，並執行 script 取得動態的 inventory 資訊，將兩者 merge 後並使用。</p>
 <p>目前官方已有提供幾個 Dynamic Inventory 的範例教學，如以下：</p>
 <ul>
-<li><a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-the-cobbler-external-inventory-script" target="_blank" rel="external">Cobbler External Inventory Script</a></li>
-<li><a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-aws-ec2-external-inventory-script" target="_blank" rel="external">AWS EC2 External Inventory Script</a></li>
-<li><a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-openstack-external-inventory-script" target="_blank" rel="external">OpenStack External Inventory Script</a></li>
+<li><a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-the-cobbler-external-inventory-script" target="_blank" rel="noopener">Cobbler External Inventory Script</a></li>
+<li><a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-aws-ec2-external-inventory-script" target="_blank" rel="noopener">AWS EC2 External Inventory Script</a></li>
+<li><a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-openstack-external-inventory-script" target="_blank" rel="noopener">OpenStack External Inventory Script</a></li>
 </ul>
-]]></content>
-      
-        <categories>
-            
-            <category> DevOps </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> DevOps </tag>
-            
-            <tag> Automation Engine </tag>
-            
-            <tag> Ansible </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
-      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
-      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="external">Module Index</a>。</p>
-<a id="more"></a>
-<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
-<pre><code class="sh">[cluster]
-ansible-slave-1 ansible_host=172.16.1.206
-ansible-slave-2 ansible_host=172.16.1.207
-ansible-slave-3 ansible_host=172.16.1.208
-</code></pre>
-<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
-<pre><code class="sh">$ ssh-agent bash
-$ ssh-add ~/.ssh/id_rsa
-</code></pre>
-<blockquote>
-<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
-</blockquote>
-<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
-</code></pre>
-<blockquote>
-<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
-</code></pre>
-<p>會發現 bash 是平行執行的。</p>
-</blockquote>
-<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
-</code></pre>
-<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
-</code></pre>
-<blockquote>
-<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
-</blockquote>
-<p>也可以透過<code>--become-user</code>來切換使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
-</code></pre>
-<blockquote>
-<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
-</blockquote>
-<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
-<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
-</code></pre>
-<blockquote>
-<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
-</blockquote>
-<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
-<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
-</code></pre>
-<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
-$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
-</code></pre>
-<p><code>file</code>模組也能夠建立目錄：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
-</code></pre>
-<p>若要刪除可以使用以下方式：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
-</code></pre>
-<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
-</code></pre>
-<blockquote>
-<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
-</blockquote>
-<p>若要確認是否為最新版本，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
-</code></pre>
-<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
-</code></pre>
-<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="external">About Modules</a>。</p>
-<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
-</code></pre>
-<p>刪除則如以下：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
-</code></pre>
-<blockquote>
-<p><code>--become</code>與<code>-b</code>是等效的。</p>
-</blockquote>
-<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
-<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
-</code></pre>
-<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
-<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
-</code></pre>
-<blockquote>
-<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
-</blockquote>
-<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
-<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
-</code></pre>
-<p>獲取狀態指令如下：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<blockquote>
-<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
-</blockquote>
-<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster[0] -m setup
-</code></pre>
-<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="external">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="external">Variables</a> 進行研究。</p>
 ]]></content>
       
         <categories>
@@ -8783,7 +9370,7 @@ $ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubun
       <title><![CDATA[Ansible Inventory]]></title>
       <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</url>
       <content type="html"><![CDATA[<p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
-<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="external">Dynamic Inventory</a>。</p>
+<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="noopener">Dynamic Inventory</a>。</p>
 <a id="more"></a>
 <h3 id="Hosts-and-Groups"><a href="#Hosts-and-Groups" class="headerlink" title="Hosts and Groups"></a>Hosts and Groups</h3><p>Inventory 是一個<code>INI-like</code>格式的檔案，如以下範例所示：</p>
 <pre><code>mail.example.com
@@ -8934,7 +9521,7 @@ ansible_ssh_extra_args
 ansible_ssh_pipelining
   Determines whether or not to use SSH pipelining. This can override the
   ``pipelining`` setting in ``ansible.cfg``.
-</code></pre><p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="external">Ansible Privilege Escalation</a>）：</p>
+</code></pre><p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="noopener">Ansible Privilege Escalation</a>）：</p>
 <pre><code>ansible_become
   Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation
 ansible_become_method
@@ -8982,14 +9569,144 @@ ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
     </entry>
     
     <entry>
+      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
+      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
+      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
+<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
+<a id="more"></a>
+<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
+<pre><code class="sh">[cluster]
+ansible-slave-1 ansible_host=172.16.1.206
+ansible-slave-2 ansible_host=172.16.1.207
+ansible-slave-3 ansible_host=172.16.1.208
+</code></pre>
+<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
+<pre><code class="sh">$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+</code></pre>
+<blockquote>
+<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
+</blockquote>
+<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
+</code></pre>
+<blockquote>
+<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
+</code></pre>
+<p>會發現 bash 是平行執行的。</p>
+</blockquote>
+<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
+</code></pre>
+<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
+</code></pre>
+<blockquote>
+<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
+</blockquote>
+<p>也可以透過<code>--become-user</code>來切換使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
+</code></pre>
+<blockquote>
+<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
+</blockquote>
+<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
+<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
+</code></pre>
+<blockquote>
+<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
+</blockquote>
+<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
+<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
+</code></pre>
+<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
+$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
+</code></pre>
+<p><code>file</code>模組也能夠建立目錄：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
+</code></pre>
+<p>若要刪除可以使用以下方式：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
+</code></pre>
+<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
+</code></pre>
+<blockquote>
+<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
+</blockquote>
+<p>若要確認是否為最新版本，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
+</code></pre>
+<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
+</code></pre>
+<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
+<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
+</code></pre>
+<p>刪除則如以下：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
+</code></pre>
+<blockquote>
+<p><code>--become</code>與<code>-b</code>是等效的。</p>
+</blockquote>
+<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
+<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
+</code></pre>
+<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
+<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
+</code></pre>
+<blockquote>
+<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
+</blockquote>
+<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
+<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
+</code></pre>
+<p>獲取狀態指令如下：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<blockquote>
+<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
+</blockquote>
+<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster[0] -m setup
+</code></pre>
+<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Automation Engine </tag>
+            
+            <tag> Ansible </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Ansible 介紹與使用]]></title>
       <url>https://kairen.github.io/2016/02/16/devops/ansible/ansible-basic/</url>
       <content type="html"><![CDATA[<p>Ansible 是最近越來越夯多 DevOps 自動化組態管理軟體，從 2013 年發起的專案，由於該架構為無 agent 程式的架構，以部署靈活與程式碼易讀而受到矚目。Ansible 除了有開源版本之外，還針對企業用戶推出 Ansible Tower 版本，已有許多知名企業採用，如 Apple、Twitter 等。</p>
 <p>Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與私有雲或 CMDB（組態管理資料庫）中的主機，其中 Ansible 編排是由<code>Inventory(主機與群組規則)</code>、<code>API</code>、<code>Modules(模組)</code>與<code>Plugins(插件)</code>組合而成。</p>
 <p><center><img src="/images/devops/ansible-arch.jpg" alt=""></center><br><a id="more"></a></p>
-<p><a href="https://github.com/ansible/ansible" target="_blank" rel="external">Ansible</a> 與其他管理工具最大差異在於不需要任何 Agent，預設使用 SSH 來做遠端操控與配置，並採用 YAML 格式來描述配置資訊。</p>
+<p><a href="https://github.com/ansible/ansible" target="_blank" rel="noopener">Ansible</a> 與其他管理工具最大差異在於不需要任何 Agent，預設使用 SSH 來做遠端操控與配置，並採用 YAML 格式來描述配置資訊。</p>
 <blockquote>
-<p>Ansible 提供了一個 Playbook 分享平台，可以讓管理與開發者上傳自己的功能與角色配置的 Playbook，該網址為 <a href="https://galaxy.ansible.com/intro" target="_blank" rel="external">Ansible Galaxy</a>。</p>
+<p>Ansible 提供了一個 Playbook 分享平台，可以讓管理與開發者上傳自己的功能與角色配置的 Playbook，該網址為 <a href="https://galaxy.ansible.com/intro" target="_blank" rel="noopener">Ansible Galaxy</a>。</p>
 </blockquote>
 <p><strong>優點：</strong></p>
 <ul>
@@ -9055,13 +9772,13 @@ ansible-slave-1
 ansible-slave-2
 ansible-slave-3
 </code></pre>
-<p>若要參考更多資訊，可看 <a href="http://docs.ansible.com/ansible/intro_inventory.html" target="_blank" rel="external">Invetory File</a>。</p>
+<p>若要參考更多資訊，可看 <a href="http://docs.ansible.com/ansible/intro_inventory.html" target="_blank" rel="noopener">Invetory File</a>。</p>
 </blockquote>
 <h3 id="基本功能操作"><a href="#基本功能操作" class="headerlink" title="基本功能操作"></a>基本功能操作</h3><p>Ansible 基本操作如以下指令：</p>
 <pre><code class="sh">$ ansible &lt;pattern_goes_here&gt; -m &lt;module_name&gt; -a &lt;arguments&gt;
 </code></pre>
 <blockquote>
-<p><code>&lt;pattern_goes_here&gt;</code>部分可以參考 <a href="http://docs.ansible.com/ansible/intro_patterns.html" target="_blank" rel="external">Patterns</a>。</p>
+<p><code>&lt;pattern_goes_here&gt;</code>部分可以參考 <a href="http://docs.ansible.com/ansible/intro_patterns.html" target="_blank" rel="noopener">Patterns</a>。</p>
 </blockquote>
 <p>比如我們可以用 Ping 模組來測試是否連線成功：</p>
 <pre><code class="sh">$ ansible all -m ping
@@ -9126,7 +9843,7 @@ host_key_checking = False
     <entry>
       <title><![CDATA[Ceph Ansible 自動化建立 Ceph 叢集]]></title>
       <url>https://kairen.github.io/2016/02/15/ceph/deploy/ceph-ansible/</url>
-      <content type="html"><![CDATA[<p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-ansible" target="_blank" rel="external">ceph-ansible</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要<code>一台 Monitor</code>與<code>三台 OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
+      <content type="html"><![CDATA[<p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-ansible" target="_blank" rel="noopener">ceph-ansible</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要<code>一台 Monitor</code>與<code>三台 OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
 <a id="more"></a>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本安裝將使用四台虛擬機器作為部署主機，虛擬機器採用 OpenStack，其規格為以下：</p>
 <table>
@@ -9266,7 +9983,7 @@ journal_size: 5000
 public_network: 172.16.1.0/24
 </code></pre>
 <blockquote>
-<p>其他版本可以參考官方的說明 <a href="https://github.com/ceph/ceph-ansible" target="_blank" rel="external">ceph-ansible</a>。</p>
+<p>其他版本可以參考官方的說明 <a href="https://github.com/ceph/ceph-ansible" target="_blank" rel="noopener">ceph-ansible</a>。</p>
 </blockquote>
 <p>完成後再編輯<code>group_vars/osds</code>檔案，修改以下內容：</p>
 <pre><code class="yaml">journal_collocation: true
@@ -9331,7 +10048,7 @@ devices:
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>由於 foreman 是取決於 puppet 執行主機的組態管理，他需要部署一個 puppet master 與 agent 環境。下面的列表為在安裝之前需要備設定的項目：</p>
 <ul>
 <li>Root 權限：所有伺服器能夠使用<code>sudo</code>。</li>
-<li>私人網路 DNS：Forward 與 reverse 的 DNS 必須被設定，可參考<a href="https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-private-network-dns-server-on-ubuntu-14-04" target="_blank" rel="external">How To Configure BIND as a Private Network DNS Server on Ubuntu 14.04</a>。</li>
+<li>私人網路 DNS：Forward 與 reverse 的 DNS 必須被設定，可參考<a href="https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-private-network-dns-server-on-ubuntu-14-04" target="_blank" rel="noopener">How To Configure BIND as a Private Network DNS Server on Ubuntu 14.04</a>。</li>
 <li>防火牆有開啟使用的 port： Puppet master 必須可以被存取<code>8140</code>埠口。</li>
 </ul>
 <h2 id="安裝-Foreman"><a href="#安裝-Foreman" class="headerlink" title="安裝 Foreman"></a>安裝 Foreman</h2><p>安裝 Foreman 最簡單的方法是使用 Foreman 安裝程式。Foreman 安裝程式與配置必要的元件來執行 Foreman，包含以下內容：</p>
@@ -9376,7 +10093,7 @@ Notice: Installing -- do not interrupt ...
   └── puppetlabs-stdlib (v4.10.0)
 </code></pre>
 <h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
-<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-foreman-to-manage-puppet-nodes-on-ubuntu-14-04" target="_blank" rel="external">How To Use Foreman To Manage Puppet Nodes on Ubuntu 14.04</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-foreman-to-manage-puppet-nodes-on-ubuntu-14-04" target="_blank" rel="noopener">How To Use Foreman To Manage Puppet Nodes on Ubuntu 14.04</a></li>
 </ul>
 ]]></content>
       
@@ -9422,7 +10139,7 @@ Notice: Installing -- do not interrupt ...
 </ul>
 <a id="more"></a>
 <h2 id="基本概念介紹"><a href="#基本概念介紹" class="headerlink" title="基本概念介紹"></a>基本概念介紹</h2><h3 id="基礎設施即程式碼-Infrastructure-as-Code"><a href="#基礎設施即程式碼-Infrastructure-as-Code" class="headerlink" title="基礎設施即程式碼(Infrastructure as Code)"></a>基礎設施即程式碼(Infrastructure as Code)</h3><p>在官方可以了解到 puppet 是一個概念為<code>Infrastructure as Code</code>的工具。Infrastructure as Code 與一般撰寫的 shell scrip 類似，但是比後者更高一個層次，將這一層虛擬化，使管理者只需要定義 Infrastructure 的狀況即可。這樣除了可以模組化、reuse外，也可以清楚透過 code 了解環境安裝了什麼與設定了什麼，因此 code 就是一個 infrastructure。</p>
-<h3 id="資源-Resource"><a href="#資源-Resource" class="headerlink" title="資源(Resource)"></a>資源(Resource)</h3><p>Puppet 中一個基礎元素為<code>resource</code>，一個 resource 可以是<code>file</code>、<code>package</code>或者是<code>service</code>等，透過 resource 我們可以查看環境上檔案、套件、服務狀態等。更多資訊可以參考 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="external">Resource 列表與使用方式</a>。</p>
+<h3 id="資源-Resource"><a href="#資源-Resource" class="headerlink" title="資源(Resource)"></a>資源(Resource)</h3><p>Puppet 中一個基礎元素為<code>resource</code>，一個 resource 可以是<code>file</code>、<code>package</code>或者是<code>service</code>等，透過 resource 我們可以查看環境上檔案、套件、服務狀態等。更多資訊可以參考 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="noopener">Resource 列表與使用方式</a>。</p>
 <blockquote>
 <p>P.S resource type 要注意大小寫，當作 metaparameters 的時候寫作 Type[title] Type 要大寫。</p>
 </blockquote>
@@ -9481,7 +10198,7 @@ service { &#39;apache2&#39;:
 }
 </code></pre>
 <blockquote>
-<p>更多的 resource 可以查看 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="external">Type Reference</a>。</p>
+<p>更多的 resource 可以查看 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="noopener">Type Reference</a>。</p>
 </blockquote>
 <p>在開始之前，我們先將 <code>apache2</code> 關閉，來讓 puppet 主控伺服器關閉：</p>
 <pre><code class="sh">$ sudo service apache2 stop
@@ -9509,7 +10226,7 @@ certname = puppetmaster
 dns_alt_names = puppetmaster, puppetmaster.example.com
 </code></pre>
 <blockquote>
-<p>詳細的檔案可以參閱<a href="https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html" target="_blank" rel="external">Main Config File (puppet.conf)
+<p>詳細的檔案可以參閱<a href="https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html" target="_blank" rel="noopener">Main Config File (puppet.conf)
 </a></p>
 </blockquote>
 <p>修改完後，透過<code>puppet</code>指令建立新的憑證：</p>
@@ -9672,12 +10389,12 @@ docroot =&gt; &#39;/var/www/html&#39;
 }
 </code></pre>
 <h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
-<li><a href="https://forge.puppetlabs.com/" target="_blank" rel="external">Modules Search</a></li>
-<li><a href="http://www.infoq.com/cn/articles/introduction-puppet" target="_blank" rel="external">InfoQ Puppet 介紹</a></li>
-<li><a href="http://amyhehe.blog.51cto.com/9406021/1708500" target="_blank" rel="external">Puppet 學習</a></li>
-<li><a href="http://blog.hsatac.net/2013/02/puppet-study-note/" target="_blank" rel="external">Puppet 筆記</a></li>
-<li><a href="http://blog.csdn.net/linux_player_c/article/details/50148415" target="_blank" rel="external">puppet學習筆記：puppet資源file詳細介紹</a></li>
-<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-puppet-to-manage-your-server-infrastructure" target="_blank" rel="external">How To Install Puppet To Manage Your Server Infrastructure</a></li>
+<li><a href="https://forge.puppetlabs.com/" target="_blank" rel="noopener">Modules Search</a></li>
+<li><a href="http://www.infoq.com/cn/articles/introduction-puppet" target="_blank" rel="noopener">InfoQ Puppet 介紹</a></li>
+<li><a href="http://amyhehe.blog.51cto.com/9406021/1708500" target="_blank" rel="noopener">Puppet 學習</a></li>
+<li><a href="http://blog.hsatac.net/2013/02/puppet-study-note/" target="_blank" rel="noopener">Puppet 筆記</a></li>
+<li><a href="http://blog.csdn.net/linux_player_c/article/details/50148415" target="_blank" rel="noopener">puppet學習筆記：puppet資源file詳細介紹</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-puppet-to-manage-your-server-infrastructure" target="_blank" rel="noopener">How To Install Puppet To Manage Your Server Infrastructure</a></li>
 </ul>
 ]]></content>
       
@@ -9702,7 +10419,7 @@ docroot =&gt; &#39;/var/www/html&#39;
       <title><![CDATA[SaltStack 介紹]]></title>
       <url>https://kairen.github.io/2016/02/12/devops/saltstack-basic/</url>
       <content type="html"><![CDATA[<p>Saltstack 是一套基礎設施管理開發套件、簡單易部署、可擴展到管理成千上萬的伺服器、控制速度佳(以 ms 為單位)。Saltstack 提供了動態基礎設施溝通總線用於編配、遠端執行、配置管理等等。Saltstack 是從 2011 年開始的專案，已經是很成熟的開源專案。該專案簡單的兩大基礎功能就是配置管理與遠端指令執行。</p>
-<p>Saltstack 採用集中化管理，我們一般可以理解為 Puppet 的簡化版本與 <a href="https://fedorahosted.org/func/" target="_blank" rel="external">Func</a><br>的加強版本。Saltstack 是基於 Python 語言開發的，結合輕量級訊息佇列（ZeroMQ）以及 Python 第三方模組（Pyzmq、PyCrypto、Pyjinja2、python-msgpack與PyYAML等）。</p>
+<p>Saltstack 採用集中化管理，我們一般可以理解為 Puppet 的簡化版本與 <a href="https://fedorahosted.org/func/" target="_blank" rel="noopener">Func</a><br>的加強版本。Saltstack 是基於 Python 語言開發的，結合輕量級訊息佇列（ZeroMQ）以及 Python 第三方模組（Pyzmq、PyCrypto、Pyjinja2、python-msgpack與PyYAML等）。</p>
 <p><img src="/images/devops/saltstack-arch.png" alt=""></p>
 <a id="more"></a>
 <p><strong>優點</strong>：</p>
@@ -9722,7 +10439,7 @@ docroot =&gt; &#39;/var/www/html&#39;
 </ul>
 <p>透過 Saltstack 環境，我們可在成千上萬的伺服器進行批次的指令執行，根據不同的集中化管理配置、分散檔案、收集伺服器資料、作業系統基礎環境以及軟體套件等。</p>
 <h1 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h1><ul>
-<li><a href="http://openskill.cn/article/183?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">SaltStack介紹和架構解析</a></li>
+<li><a href="http://openskill.cn/article/183?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="noopener">SaltStack介紹和架構解析</a></li>
 </ul>
 ]]></content>
       
@@ -9746,7 +10463,7 @@ docroot =&gt; &#39;/var/www/html&#39;
     <entry>
       <title><![CDATA[Docker 快速部署 Ceph 測試叢集]]></title>
       <url>https://kairen.github.io/2016/02/11/ceph/deploy/ceph-docker/</url>
-      <content type="html"><![CDATA[<p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-docker" target="_blank" rel="external">ceph-docker</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要<code>1 Monitor</code>與<code>3 OSD</code>。另外部署 MDS 與 RGW 來進行簡單測試。</p>
+      <content type="html"><![CDATA[<p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-docker" target="_blank" rel="noopener">ceph-docker</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要<code>1 Monitor</code>與<code>3 OSD</code>。另外部署 MDS 與 RGW 來進行簡單測試。</p>
 <center><img src="/images/ceph/docker-ceph.jpg" alt=""></center>
 
 <a id="more"></a>
@@ -9768,7 +10485,7 @@ docroot =&gt; &#39;/var/www/html&#39;
 </tbody>
 </table>
 <blockquote>
-<p>若使用 Vagrant + VBox 的話，可以使用 <a href="https://gist.githubusercontent.com/kairen/c55a436718ddc22817ef820001aecb0f/raw/4be0a6cfa5087a4834494779b0809d76d701f67b/Vagrantfile" target="_blank" rel="external">Vagrantfile 腳本</a>。</p>
+<p>若使用 Vagrant + VBox 的話，可以使用 <a href="https://gist.githubusercontent.com/kairen/c55a436718ddc22817ef820001aecb0f/raw/4be0a6cfa5087a4834494779b0809d76d701f67b/Vagrantfile" target="_blank" rel="noopener">Vagrantfile 腳本</a>。</p>
 </blockquote>
 <p>而該虛擬機要額外建立三顆虛擬區塊裝置，如下所示：</p>
 <table>
@@ -9995,7 +10712,7 @@ pattern = .*
 retentions = 60s:1d
 </code></pre>
 <blockquote>
-<p>更多如何配置 Carbon storage 的資訊，可以參考 <a href="http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf" target="_blank" rel="external"> storage-schemas.con</a>。</p>
+<p>更多如何配置 Carbon storage 的資訊，可以參考 <a href="http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf" target="_blank" rel="noopener"> storage-schemas.con</a>。</p>
 </blockquote>
 <p>之後複製預設的聚合組態到<code>/etc/carbon</code>：</p>
 <pre><code class="sh">$ sudo cp /usr/share/doc/graphite-carbon/examples/storage-aggregation.conf.example /etc/carbon/storage-aggregation.conf
@@ -10037,7 +10754,7 @@ TIME_ZONE = &#39;UTC&#39;
 SECRET_KEY = &#39;some-secret-key&#39;
 </code></pre>
 <blockquote>
-<p><code>TIME_ZONE</code> 可以查詢 <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" rel="external">Wikipedia’s timezone database</a></p>
+<p><code>TIME_ZONE</code> 可以查詢 <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" rel="noopener">Wikipedia’s timezone database</a></p>
 <p><code>SECRET_KEY</code>可以使用<code>openssl rand -hex 10</code>指令來建立。</p>
 </blockquote>
 <p>初始化資料庫：</p>
@@ -10069,9 +10786,9 @@ $ sudo service apache2 reload
 <pre><code class="sh">$ for i in 4 6 8 16 2; do echo &quot;test.count $i `date +%s`&quot; | nc -q0 127.0.0.1 2003; sleep 6; done
 </code></pre>
 <h2 id="參考連結"><a href="#參考連結" class="headerlink" title="參考連結"></a>參考連結</h2><ul>
-<li><a href="https://www.linode.com/docs/uptime/monitoring/deploy-graphite-with-grafana-on-ubuntu-14-04" target="_blank" rel="external">Deploy Graphite with Grafana on Ubuntu 14.04</a></li>
-<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-graphite-on-an-ubuntu-14-04-server" target="_blank" rel="external">How To Install and Use Graphite on an Ubuntu 14.04 Server</a></li>
-<li><a href="http://www.vpsee.com/2015/03/a-modern-monitoring-system-built-with-grafana-collected-influxdb/" target="_blank" rel="external">Grafana＋collectd＋InfluxDB</a></li>
+<li><a href="https://www.linode.com/docs/uptime/monitoring/deploy-graphite-with-grafana-on-ubuntu-14-04" target="_blank" rel="noopener">Deploy Graphite with Grafana on Ubuntu 14.04</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-graphite-on-an-ubuntu-14-04-server" target="_blank" rel="noopener">How To Install and Use Graphite on an Ubuntu 14.04 Server</a></li>
+<li><a href="http://www.vpsee.com/2015/03/a-modern-monitoring-system-built-with-grafana-collected-influxdb/" target="_blank" rel="noopener">Grafana＋collectd＋InfluxDB</a></li>
 </ul>
 ]]></content>
       
@@ -10097,7 +10814,7 @@ $ sudo service apache2 reload
     <entry>
       <title><![CDATA[kube-up 腳本部署 Kubernetes 叢集(Deprecated)]]></title>
       <url>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</url>
-      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方腳本<code>kube-up.sh</code>來部署 Kubernetes 到 Ubuntu 14.04 系統上。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Creating a Kubernetes Cluster</a>。</p>
+      <content type="html"><![CDATA[<p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方腳本<code>kube-up.sh</code>來部署 Kubernetes 到 Ubuntu 14.04 系統上。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
 <p>本環境安裝資訊：</p>
 <ul>
 <li>Kubernetes v1.5.4</li>
@@ -10203,7 +10920,7 @@ DNS_DOMAIN=${DNS_DOMAIN:-&quot;cluster.local&quot;}
 <p>透過 kubectl 查看資訊，這邊服務屬於系統的，所以預設會被分到<code>kube-system</code>命名空間：</p>
 <pre><code class="sh">$ kubectl get pods --namespace=kube-system
 </code></pre>
-<p>最後就可以透過瀏覽器查看 <a href="http://172.16.35.12:8080/ui" target="_blank" rel="external">Dashboard</a>。</p>
+<p>最後就可以透過瀏覽器查看 <a href="http://172.16.35.12:8080/ui" target="_blank" rel="noopener">Dashboard</a>。</p>
 <h2 id="建立-Nginx-應用程式"><a href="#建立-Nginx-應用程式" class="headerlink" title="建立 Nginx 應用程式"></a>建立 Nginx 應用程式</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將使用兩種方式建立一個簡單的 Nginx 服務。</p>
 <h3 id="利用-ad-hoc-指令建立"><a href="#利用-ad-hoc-指令建立" class="headerlink" title="利用 ad-hoc 指令建立"></a>利用 ad-hoc 指令建立</h3><p>kubectl 提供了 run 指令來快速建立應用程式部署，如下建立 Nginx 應用程式：</p>
 <pre><code class="sh">$ kubectl run nginx --image=nginx
@@ -10285,10 +11002,10 @@ $ kubectl delete -f nginx-svc.yaml
 </code></pre>
 <h2 id="其他-Kubernetes-網路技術"><a href="#其他-Kubernetes-網路技術" class="headerlink" title="其他 Kubernetes 網路技術"></a>其他 Kubernetes 網路技術</h2><p>Kubernetes 支援多種網路整合，若 Flannel 用不爽可以改以下幾種：</p>
 <ul>
-<li><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/admin/ovs-networking.md" target="_blank" rel="external">OpenVSwitch with GRE/VxLAN</a></li>
-<li><a href="http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/" target="_blank" rel="external">Linux Bridge L2 networks</a></li>
-<li><a href="https://github.com/zettio/weave" target="_blank" rel="external">Weave</a></li>
-<li><a href="https://github.com/Metaswitch/calico" target="_blank" rel="external">Calico</a>(使用 BGP Routing)</li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/admin/ovs-networking.md" target="_blank" rel="noopener">OpenVSwitch with GRE/VxLAN</a></li>
+<li><a href="http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/" target="_blank" rel="noopener">Linux Bridge L2 networks</a></li>
+<li><a href="https://github.com/zettio/weave" target="_blank" rel="noopener">Weave</a></li>
+<li><a href="https://github.com/Metaswitch/calico" target="_blank" rel="noopener">Calico</a>(使用 BGP Routing)</li>
 </ul>
 ]]></content>
       
@@ -10765,7 +11482,7 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
     }
 </code></pre><p>重啟 Logstash Forwarder：</p>
 <pre><code>sudo service logstash-forwarder restart
-</code></pre><p>完成後，即可開啟瀏覽器，網址列輸入<a href="locahost:5601" target="_blank" rel="external">locahost:5601</a>。</p>
+</code></pre><p>完成後，即可開啟瀏覽器，網址列輸入<a href="locahost:5601" target="_blank" rel="noopener">locahost:5601</a>。</p>
 ]]></content>
       
         <categories>
@@ -10792,7 +11509,7 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
     <entry>
       <title><![CDATA[自己建立 Docker Registry]]></title>
       <url>https://kairen.github.io/2016/01/02/container/docker-registry/</url>
-      <content type="html"><![CDATA[<p>Docker Registry 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>、<a href="https://quay.io/" target="_blank" rel="external">QUAY</a> 與 <a href="https://console.cloud.google.com/gcr/images/google-containers/GLOBAL" target="_blank" rel="external">GCP registry</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="external">Deploying a registry server</a>。</p>
+      <content type="html"><![CDATA[<p>Docker Registry 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>、<a href="https://quay.io/" target="_blank" rel="noopener">QUAY</a> 與 <a href="https://console.cloud.google.com/gcr/images/google-containers/GLOBAL" target="_blank" rel="noopener">GCP registry</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="noopener">Deploying a registry server</a>。</p>
 <a id="more"></a>
 <h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
@@ -10830,7 +11547,7 @@ registry:2
 -e ENV_DOCKER_REGISTRY_PORT=5000 \
 konradkleine/docker-registry-frontend:v2
 </code></pre>
-<p>完成後就可以透過瀏覽器進入 <a href="172.16.35.13:5001" target="_blank" rel="external">Docker registry UI</a> 查看資訊。也可以透過以下指令檢查是否部署成功：</p>
+<p>完成後就可以透過瀏覽器進入 <a href="172.16.35.13:5001" target="_blank" rel="noopener">Docker registry UI</a> 查看資訊。也可以透過以下指令檢查是否部署成功：</p>
 <pre><code class="sh">$ docker pull ubuntu:14.04
 $ docker tag ubuntu:14.04 localhost:5000/ubuntu:14.04
 $ docker push localhost:5000/ubuntu:14.04
@@ -10843,10 +11560,10 @@ df9a135a6949: Pushed
 <blockquote>
 <p>其他 Docker registry 列表：</p>
 <ul>
-<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="external">Portus</a></li>
-<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="external">Atomic Registry</a></li>
-<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="external">Private Registries in RancherOS</a></li>
-<li><a href="https://github.com/vmware/harbor" target="_blank" rel="external">VMware Harbor</a></li>
+<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="noopener">Portus</a></li>
+<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="noopener">Atomic Registry</a></li>
+<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="noopener">Private Registries in RancherOS</a></li>
+<li><a href="https://github.com/vmware/harbor" target="_blank" rel="noopener">VMware Harbor</a></li>
 </ul>
 </blockquote>
 ]]></content>
@@ -10967,7 +11684,7 @@ sudo apt-get update
 <pre><code class="sh">$ sudo maas-region createadmin
 </code></pre>
 <blockquote>
-<p>這時候就可以登入 <a href="http://&lt;maas.ip&gt;/MAAS/" target="_blank" rel="external">MAAS</a>。</p>
+<p>這時候就可以登入 <a href="http://&lt;maas.ip&gt;/MAAS/" target="_blank" rel="noopener">MAAS</a>。</p>
 </blockquote>
 <p>登入後，需要設定 PXE 網路與下載 Image。當完成後就可以開其他主機來測試 PXE-boot。</p>
 <h3 id="安裝-JuJu"><a href="#安裝-JuJu" class="headerlink" title="安裝 JuJu"></a>安裝 JuJu</h3><p>安裝 JuJu quick start：</p>
@@ -10990,7 +11707,7 @@ $ sudo apt-get install maas-image-builder
 <pre><code class="sh">$ maas login &lt;user_name&gt; &lt;maas_url&gt; &lt;api_key&gt;
 </code></pre>
 <blockquote>
-<p><code>user_name&gt;</code>為使用者帳號名稱。<br><code>&lt;maas_url&gt;</code>為 MAAS 網址，如 <a href="http://192.168.1.2/MAAS" target="_blank" rel="external">http://192.168.1.2/MAAS</a><br><code>&lt;api_key&gt;</code>為帳號 API Key。r00tme</p>
+<p><code>user_name&gt;</code>為使用者帳號名稱。<br><code>&lt;maas_url&gt;</code>為 MAAS 網址，如 <a href="http://192.168.1.2/MAAS" target="_blank" rel="noopener">http://192.168.1.2/MAAS</a><br><code>&lt;api_key&gt;</code>為帳號 API Key。r00tme</p>
 </blockquote>
 <p>登入後，就可以使用以下指令進行上傳客製化的映像檔了：</p>
 <pre><code class="sh">$ maas &lt;user_name&gt; boot-resources create name=centos/centos7 architecture=amd64/generic content@=centos7-amd64-root-tgz
@@ -11200,7 +11917,7 @@ $ sudo ceph-fuse -m {ip-address-of-monitor}:6789 /mnt/myceph-fuse
     <entry>
       <title><![CDATA[使用 ceph-deploy 工具部署 Ceph 叢集]]></title>
       <url>https://kairen.github.io/2015/11/20/ceph/deploy/ceph-deploy/</url>
-      <content type="html"><![CDATA[<p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-deploy" target="_blank" rel="external">ceph-deploy</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台<code>Monitor</code>與三台<code>OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
+      <content type="html"><![CDATA[<p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-deploy" target="_blank" rel="noopener">ceph-deploy</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台<code>Monitor</code>與三台<code>OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
 <a id="more"></a>
 <h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：</p>
 <pre><code class="sh">                           +------------------+
@@ -11365,12 +12082,12 @@ $ ceph osd tree
 <a id="more"></a>
 <h2 id="Ceph-目標"><a href="#Ceph-目標" class="headerlink" title="Ceph 目標"></a>Ceph 目標</h2><p>開發檔案系統是一種複雜的投入，但是如果能夠準確地解決問題的話，則擁有著不可估量的價值。我們可以把 Ceph 的目標可以簡單定義為以下：</p>
 <ul>
-<li><strong>容易擴充到 <a href="http://en.wikipedia.org/wiki/Petabyte" target="_blank" rel="external">PB 級別</a>的儲存容量</strong></li>
+<li><strong>容易擴充到 <a href="http://en.wikipedia.org/wiki/Petabyte" target="_blank" rel="noopener">PB 級別</a>的儲存容量</strong></li>
 <li><strong>在不同負載情況下的高效能（每秒輸入/輸出操作數[IPOS]、帶寬）</strong></li>
 <li><strong>高可靠性</strong></li>
 </ul>
 <p>但這些目標彼此間相互矛盾(例如:可擴充性會減少或阻礙效能，或影響可靠性)。 Ceph 開發了一些有趣的概念(例如<strong>動態 metadata 分區</strong>、<strong>資料分散</strong>、<strong>複製</strong>)。</p>
-<p>Ceph 的設計也實作了<code>容錯性</code>來防止<code>單一節點故障問題（SOPF）</code>，並假設，大規模（PB 級）中儲存的故障是一種常態，而非異常。最後，它的設計沒有假設特定的工作負荷，而是包含了可變的分散式工作負荷的適應能力，從而提供最佳的效能。它以<a href="http://zh.wikipedia.org/wiki/POSIX" target="_blank" rel="external">POSIX</a> 兼容為目標完成這些工作，允許它透明的部署於那些依賴於 POSIX 語義上現有的應用(通過Ceph增強功能)。最後，Ceph 是開源分散式儲存和 Linux 主流核心的一部分。</p>
+<p>Ceph 的設計也實作了<code>容錯性</code>來防止<code>單一節點故障問題（SOPF）</code>，並假設，大規模（PB 級）中儲存的故障是一種常態，而非異常。最後，它的設計沒有假設特定的工作負荷，而是包含了可變的分散式工作負荷的適應能力，從而提供最佳的效能。它以<a href="http://zh.wikipedia.org/wiki/POSIX" target="_blank" rel="noopener">POSIX</a> 兼容為目標完成這些工作，允許它透明的部署於那些依賴於 POSIX 語義上現有的應用(通過Ceph增強功能)。最後，Ceph 是開源分散式儲存和 Linux 主流核心的一部分。</p>
 <center><img src="/images/ceph/stack.png" alt="完整架構"></center>
 
 <p>其中最底層的 RADOS 是由 OSD、Monitor 與 MDS 三種所組成。</p>
@@ -11402,7 +12119,7 @@ $ ceph osd tree
 <blockquote>
 <p><strong>P.S 若只使用 Ceph Object Storage 與 Ceph Block Device 的話，將不需要部署 MDS 節點。</strong></p>
 </blockquote>
-<h3 id="Ceph-Monitor（MON）"><a href="#Ceph-Monitor（MON）" class="headerlink" title="Ceph Monitor（MON）"></a>Ceph Monitor（MON）</h3><p>Ceph 包含實施叢集映射管理的監控者，但是故障管理的一些要素是在物件儲存本身執行的。當物件儲存裝置發生故障或者新裝置加入時，監控者就會檢測和維護一個有效的叢集映射。這個功能會按一種分散式的方法執行，這種方式中映射升級可以和當前的流量溝通。Ceph 使用<a href="http://zh.wikipedia.org/zh-tw/Paxos%E7%AE%97%E6%B3%95" target="_blank" rel="external">Paxos</a>，它是一系列分散式共識演算法。</p>
+<h3 id="Ceph-Monitor（MON）"><a href="#Ceph-Monitor（MON）" class="headerlink" title="Ceph Monitor（MON）"></a>Ceph Monitor（MON）</h3><p>Ceph 包含實施叢集映射管理的監控者，但是故障管理的一些要素是在物件儲存本身執行的。當物件儲存裝置發生故障或者新裝置加入時，監控者就會檢測和維護一個有效的叢集映射。這個功能會按一種分散式的方法執行，這種方式中映射升級可以和當前的流量溝通。Ceph 使用<a href="http://zh.wikipedia.org/zh-tw/Paxos%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">Paxos</a>，它是一系列分散式共識演算法。</p>
 <p>在每一個 Ceph 儲存中，都有一到多個 Monitor 存在，為了有效的在分散式的環境下存取檔案，每一個 Ceph Monitor daemon 維護著很多份與 叢集相關的映射資料(map)，包含：</p>
 <ul>
 <li><strong>Monitor map</strong>：包含叢集的 fsid 、位置、名稱、IP 位址和 Port，也包括目前 epoch、此狀態圖何時建立與最近修改時間。</li>
@@ -11516,12 +12233,12 @@ $ ceph osd tree
 </tbody>
 </table>
 <h2 id="參考"><a href="#參考" class="headerlink" title="參考"></a>參考</h2><ul>
-<li><a href="http://mirrors.myccdn.info/ceph/doc/docs_zh/output/html/" target="_blank" rel="external">Ceph中文文件</a></li>
-<li><a href="http://godleon.blogspot.tw/2014/10/ceph.html" target="_blank" rel="external">小信豬 Ceph</a></li>
-<li><a href="http://ceph.com/docs/master/" target="_blank" rel="external">Ceph 官方文件</a></li>
-<li><a href="http://ceph.com/resources/development/" target="_blank" rel="external">Ceph Development</a></li>
-<li><a href="http://cloud.51cto.com/art/201504/470780_all.htm" target="_blank" rel="external">Ceph 整合案例</a></li>
-<li><a href="https://books.google.com.tw/books?hl=zh-TW&amp;lr&amp;id=HftzBgAAQBAJ&amp;oi=fnd&amp;pg=PP1&amp;dq=openstack%20ceph&amp;ots=OWwptmw5Mm&amp;sig=d1uC5NThemjRudfktDXmuQ6TqA0&amp;redir_esc=y#v=onepage&amp;q=openstack%20ceph&amp;f=false" target="_blank" rel="external">Ceph Book</a></li>
+<li><a href="http://mirrors.myccdn.info/ceph/doc/docs_zh/output/html/" target="_blank" rel="noopener">Ceph中文文件</a></li>
+<li><a href="http://godleon.blogspot.tw/2014/10/ceph.html" target="_blank" rel="noopener">小信豬 Ceph</a></li>
+<li><a href="http://ceph.com/docs/master/" target="_blank" rel="noopener">Ceph 官方文件</a></li>
+<li><a href="http://ceph.com/resources/development/" target="_blank" rel="noopener">Ceph Development</a></li>
+<li><a href="http://cloud.51cto.com/art/201504/470780_all.htm" target="_blank" rel="noopener">Ceph 整合案例</a></li>
+<li><a href="https://books.google.com.tw/books?hl=zh-TW&amp;lr&amp;id=HftzBgAAQBAJ&amp;oi=fnd&amp;pg=PP1&amp;dq=openstack%20ceph&amp;ots=OWwptmw5Mm&amp;sig=d1uC5NThemjRudfktDXmuQ6TqA0&amp;redir_esc=y#v=onepage&amp;q=openstack%20ceph&amp;f=false" target="_blank" rel="noopener">Ceph Book</a></li>
 </ul>
 ]]></content>
       
@@ -11564,7 +12281,7 @@ $ ceph osd tree
 <a id="more"></a>
 <center><img src="/images/spark/cassandra_arch.png" alt=""></center>
 
-<p>若要瞭解更多 Cassandra 可以閱讀 <a href="http://wiki.apache.org/cassandra/GettingStarted" target="_blank" rel="external">Cassandra Wiki
+<p>若要瞭解更多 Cassandra 可以閱讀 <a href="http://wiki.apache.org/cassandra/GettingStarted" target="_blank" rel="noopener">Cassandra Wiki
 </a>。</p>
 <h2 id="部署多節點叢集"><a href="#部署多節點叢集" class="headerlink" title="部署多節點叢集"></a>部署多節點叢集</h2><p>本節將安裝一個簡單的 Cassandra 叢集，來提供 NoSQL 資料庫以存取資料，以下為節點配置：</p>
 <table>
@@ -11695,11 +12412,11 @@ cqlsh&gt; select * from emp;
 </code></pre>
 <p>首先檢查設定檔<code>/etc/cassandra/cassandra.yaml</code>裡面的<code>rpc_address</code>是否為<code>0.0.0.0</code>。</p>
 </blockquote>
-<p>最後，若要復原與備份可以閱讀 <a href="http://blog.powerupcloud.com/2015/09/13/cassandra-backup-and-recovery/" target="_blank" rel="external">Cassandra Backup and Recovery</a>。</p>
+<p>最後，若要復原與備份可以閱讀 <a href="http://blog.powerupcloud.com/2015/09/13/cassandra-backup-and-recovery/" target="_blank" rel="noopener">Cassandra Backup and Recovery</a>。</p>
 <h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
-<li><a href="https://www.byvoid.com/blog/cassandra-intro" target="_blank" rel="external">Cassandra简介</a></li>
-<li><a href="http://blog.powerupcloud.com/2016/01/10/install-and-configure-a-3-node-cassandra-cluster-on-ubuntu-14-04/" target="_blank" rel="external">Install and Configure a 3 node Cassandra Cluster on Ubuntu 14.04</a></li>
-<li><a href="http://www.infoq.com/cn/articles/cassandra-mythology" target="_blank" rel="external">關於 Cassandra 的錯誤觀點</a></li>
+<li><a href="https://www.byvoid.com/blog/cassandra-intro" target="_blank" rel="noopener">Cassandra简介</a></li>
+<li><a href="http://blog.powerupcloud.com/2016/01/10/install-and-configure-a-3-node-cassandra-cluster-on-ubuntu-14-04/" target="_blank" rel="noopener">Install and Configure a 3 node Cassandra Cluster on Ubuntu 14.04</a></li>
+<li><a href="http://www.infoq.com/cn/articles/cassandra-mythology" target="_blank" rel="noopener">關於 Cassandra 的錯誤觀點</a></li>
 </ul>
 ]]></content>
       
@@ -11786,7 +12503,7 @@ cqlsh&gt; select * from emp;
     <entry>
       <title><![CDATA[Docker 基礎介紹]]></title>
       <url>https://kairen.github.io/2015/11/09/container/docker/</url>
-      <content type="html"><![CDATA[<p><a href="http://www.docker.com/" target="_blank" rel="external">Docker</a> 是一個開源的專案，主要提供容器化應用程式的部署與自動化的管理，透過部署 Docker engine 於 Linux 作業系統上，提供軟體抽象層以及作業系統層虛擬化自動管理機制。Docker 使用一些 Linux Kernel 中的軟體，如 Control Groups（cgroups）、namespaces（核心命名空間）、Another UnionFS 等來達到建置獨立的環境與存取 CPU、Memory 以及網路資源等，最終提供一個輕量級的虛擬化。Docker 的發展非常迅速，從 0.9.0 版本後，採用自己開發的 Libcontainer 函式庫作為直接存取由 Linux Kernel 提供的虛擬化基礎設施。Docker 也支援了多平台，從個人電腦到私有、公有雲都能夠進行使用與部署輕量級虛擬化。</p>
+      <content type="html"><![CDATA[<p><a href="http://www.docker.com/" target="_blank" rel="noopener">Docker</a> 是一個開源的專案，主要提供容器化應用程式的部署與自動化的管理，透過部署 Docker engine 於 Linux 作業系統上，提供軟體抽象層以及作業系統層虛擬化自動管理機制。Docker 使用一些 Linux Kernel 中的軟體，如 Control Groups（cgroups）、namespaces（核心命名空間）、Another UnionFS 等來達到建置獨立的環境與存取 CPU、Memory 以及網路資源等，最終提供一個輕量級的虛擬化。Docker 的發展非常迅速，從 0.9.0 版本後，採用自己開發的 Libcontainer 函式庫作為直接存取由 Linux Kernel 提供的虛擬化基礎設施。Docker 也支援了多平台，從個人電腦到私有、公有雲都能夠進行使用與部署輕量級虛擬化。</p>
 <blockquote>
 <p>Docker 並非一個新興技術，而是過往的 Linux Container 技術的基礎上進行封裝。因此使用者只需要關注應用程式如何被部署與執行就好，而不用管容器是如何被建置出來。</p>
 </blockquote>
@@ -11820,29 +12537,29 @@ cqlsh&gt; select * from emp;
 <p>P.S 盡量不要在一個 Container 執行過多的服務。</p>
 </blockquote>
 </li>
-<li><p><strong>Docker registries</strong>：Registries 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="external">Deploying a registry server</a>。</p>
+<li><p><strong>Docker registries</strong>：Registries 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="noopener">Deploying a registry server</a>。</p>
 </li>
 </ul>
 <p>Docker 的推出與發展非常迅速，相關的部署工具與資源相繼出現，更因此讓原名為 dotcloud 變成 Docker, Inc。Docker 也在 2014 - 2015 年推出了以下三大工具：</p>
 <ul>
-<li><strong><a href="https://docs.docker.com/machine/overview/" target="_blank" rel="external">docker-machine</a></strong>：Docker machine 是可以透過指令來安裝 Docker engine 的工具。該工具可以讓使用者不需要學習一堆安裝指令來部署容器環境，目前已經支援了許多驅動程式，例如：OpenStack、Amazon EC2、Google Cloud Engine 與 Microsoft Azure等，更可以被用來建立混合環境。</li>
-<li><strong><a href="https://docs.docker.com/compose/overview/" target="_blank" rel="external">docker-compose</a></strong>：Compose 是 Docker 的編配工具，可以用來建置 Swarm 上的多節點容器化叢集與單一節點的應用程式。Compose 的前身是 Fig，使用者可以透過定義 YAML 檔案來描述與維護所有應用程式服務定義與部署，如多個服務之間如何連接等，使用 Compose 部署的應用程式可以在不影響其他服務情況下自動更新。</li>
-<li><strong><a href="https://docs.docker.com/swarm/overview/" target="_blank" rel="external">docker-swarm</a></strong>：Swarm 是 Docker 的原生叢集與調度工具，它基於應用程式生命週期、容器使用、效能需求自動優化分散式應用程式的基礎架構。且 Swarm 可以透過許多服務發現（Service Discovery）套件來打造 HA 的叢集，Swarm 也提供很高的靈活性，使應用程式可以簡單的分散部署在多主機環境上。</li>
+<li><strong><a href="https://docs.docker.com/machine/overview/" target="_blank" rel="noopener">docker-machine</a></strong>：Docker machine 是可以透過指令來安裝 Docker engine 的工具。該工具可以讓使用者不需要學習一堆安裝指令來部署容器環境，目前已經支援了許多驅動程式，例如：OpenStack、Amazon EC2、Google Cloud Engine 與 Microsoft Azure等，更可以被用來建立混合環境。</li>
+<li><strong><a href="https://docs.docker.com/compose/overview/" target="_blank" rel="noopener">docker-compose</a></strong>：Compose 是 Docker 的編配工具，可以用來建置 Swarm 上的多節點容器化叢集與單一節點的應用程式。Compose 的前身是 Fig，使用者可以透過定義 YAML 檔案來描述與維護所有應用程式服務定義與部署，如多個服務之間如何連接等，使用 Compose 部署的應用程式可以在不影響其他服務情況下自動更新。</li>
+<li><strong><a href="https://docs.docker.com/swarm/overview/" target="_blank" rel="noopener">docker-swarm</a></strong>：Swarm 是 Docker 的原生叢集與調度工具，它基於應用程式生命週期、容器使用、效能需求自動優化分散式應用程式的基礎架構。且 Swarm 可以透過許多服務發現（Service Discovery）套件來打造 HA 的叢集，Swarm 也提供很高的靈活性，使應用程式可以簡單的分散部署在多主機環境上。</li>
 </ul>
 <h2 id="使用者操作-Docker-的方法"><a href="#使用者操作-Docker-的方法" class="headerlink" title="使用者操作 Docker 的方法"></a>使用者操作 Docker 的方法</h2><p>Docker 主機上會執行一個 Docker daemon，就能夠開啟許多 Container。如果要對 Docker 進行操作的話，可以使用 Docker client 軟體，如 docker client、docker-py、Kitematic，這些工具會分別採用以下兩種方式來對部署 Docker daemon 進行管理：</p>
 <ol>
-<li><a href="http://en.wikipedia.org/wiki/Unix_domain_socket" target="_blank" rel="external">UNIX Sockets</a></li>
-<li><a href="http://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank" rel="external">RESTful API</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Unix_domain_socket" target="_blank" rel="noopener">UNIX Sockets</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank" rel="noopener">RESTful API</a></li>
 </ol>
-<p>溝通方式如下圖所示，其中 Docker daemon 可以同時安裝 Docker client 來直接進行 Docker 使用（一般安裝都會有），詳細資訊可以參閱 <a href="https://docs.docker.com/reference/api/docker_remote_api/" target="_blank" rel="external">Docker Remote API - Docker Documentation</a>。</p>
+<p>溝通方式如下圖所示，其中 Docker daemon 可以同時安裝 Docker client 來直接進行 Docker 使用（一般安裝都會有），詳細資訊可以參閱 <a href="https://docs.docker.com/reference/api/docker_remote_api/" target="_blank" rel="noopener">Docker Remote API - Docker Documentation</a>。</p>
 <center><img src="/images/docker/communication.png" alt="溝通方式"></center>
 
-<p>最後有興趣看每週 Docker 的新聞可以訂閱 Docker Weekly，參閱   <a href="https://www.docker.com/newsletter-subscription" target="_blank" rel="external">Docker Newsletter</a></p>
+<p>最後有興趣看每週 Docker 的新聞可以訂閱 Docker Weekly，參閱   <a href="https://www.docker.com/newsletter-subscription" target="_blank" rel="noopener">Docker Newsletter</a></p>
 <h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
-<li><a href="https://www.docker.com/" target="_blank" rel="external">Docker 官方</a></li>
-<li><a href="https://blog.docker.com/2016/03/swarmweek-swarm-maintainers/?mkt_tok=3RkMMJWWfF9wsRonuqTMZKXonjHpfsX54uQqUKO1lMI%2F0ER3fOvrPUfGjI4DS8piI%2BSLDwEYGJlv6SgFQ7LMMaZq1rgMXBk%3D" target="_blank" rel="external">Docker Blog</a></li>
-<li><a href="http://www.infoq.com/cn/dockerdeep/" target="_blank" rel="external">InfoQ Docker 深入淺出</a></li>
-<li><a href="https://www.gitbook.com/book/philipzheng/docker_practice/details" target="_blank" rel="external">Docker —— 從入門到實踐</a></li>
+<li><a href="https://www.docker.com/" target="_blank" rel="noopener">Docker 官方</a></li>
+<li><a href="https://blog.docker.com/2016/03/swarmweek-swarm-maintainers/?mkt_tok=3RkMMJWWfF9wsRonuqTMZKXonjHpfsX54uQqUKO1lMI%2F0ER3fOvrPUfGjI4DS8piI%2BSLDwEYGJlv6SgFQ7LMMaZq1rgMXBk%3D" target="_blank" rel="noopener">Docker Blog</a></li>
+<li><a href="http://www.infoq.com/cn/dockerdeep/" target="_blank" rel="noopener">InfoQ Docker 深入淺出</a></li>
+<li><a href="https://www.gitbook.com/book/philipzheng/docker_practice/details" target="_blank" rel="noopener">Docker —— 從入門到實踐</a></li>
 </ul>
 ]]></content>
       
@@ -12277,7 +12994,7 @@ sudo sh -c &quot;echo manual &gt; /etc/init/mesos-master.override&quot;
 mesos-execute --master=$MASTER --name=&quot;cluster-test&quot; --command=&quot;sleep 5&quot;
 </code></pre>
 <blockquote>
-<p>若要查看細節資訊，可以用瀏覽器開啟 <a href="http://&lt;master-ip&gt;:5050" target="_blank" rel="external">Mesos Console</a>、<a href="http://&lt;master-ip&gt;:8080" target="_blank" rel="external">Marathon console</a></p>
+<p>若要查看細節資訊，可以用瀏覽器開啟 <a href="http://&lt;master-ip&gt;:5050" target="_blank" rel="noopener">Mesos Console</a>、<a href="http://&lt;master-ip&gt;:8080" target="_blank" rel="noopener">Marathon console</a></p>
 </blockquote>
 <h2 id="安裝-Spark-Driver"><a href="#安裝-Spark-Driver" class="headerlink" title="安裝 Spark Driver"></a>安裝 Spark Driver</h2><p>首先下載 Spark，並修改權限：</p>
 <pre><code class="sh">$ curl -s &quot;http://archive.apache.org/dist/spark/spark-1.5.2/spark-1.5.2-bin-hadoop2.6.tgz&quot; | sudo tar -xz -C /opt/
@@ -12700,8 +13417,8 @@ vim /etc/fstab
 df
 </code></pre>
 <ul>
-<li><a href="http://192.168.28.130/install/centos6.5" target="_blank" rel="external">HTTP</a></li>
-<li><a href="ftp://192.168.28.130/install/centos6.5" target="_blank" rel="external">FTP</a></li>
+<li><a href="http://192.168.28.130/install/centos6.5" target="_blank" rel="noopener">HTTP</a></li>
+<li><a href="ftp://192.168.28.130/install/centos6.5" target="_blank" rel="noopener">FTP</a></li>
 </ul>
 ]]></content>
       
@@ -12838,7 +13555,7 @@ $ ./start-dfs.sh
 4383 SecondaryNameNode
 </code></pre>
 <blockquote>
-<p>開啟 <a href="http://localhost:8088" target="_blank" rel="external">Website YARN Dashboard</a> 與 <a href="http://localhost:50070" target="_blank" rel="external">HDFS Dashboard</a></p>
+<p>開啟 <a href="http://localhost:8088" target="_blank" rel="noopener">Website YARN Dashboard</a> 與 <a href="http://localhost:50070" target="_blank" rel="noopener">HDFS Dashboard</a></p>
 </blockquote>
 <p>設定環境變數：</p>
 <pre><code class="sh">$ cd
@@ -12878,7 +13595,7 @@ $ sudo mv /opt/spark-1.5.2-bin-hadoop2.6 /opt/spark
 $ sudo chown $USER:$USER -R /opt/spark
 </code></pre>
 <blockquote>
-<p>其他 Hadoop 版本可以到這邊<a href="http://d3kbcqa49mib13.cloudfront.net" target="_blank" rel="external">Spark-Hadoop</a>查看。</p>
+<p>其他 Hadoop 版本可以到這邊<a href="http://d3kbcqa49mib13.cloudfront.net" target="_blank" rel="noopener">Spark-Hadoop</a>查看。</p>
 </blockquote>
 <p>設定 Spark 環境參數：</p>
 <pre><code class="sh">$ echo &quot;export HADOOP_CONF_DIR=\$HADOOP_HOME/etc/hadoop&quot; | sudo tee -a /opt/spark/conf/spark-env.sh
@@ -12989,7 +13706,7 @@ scp -r /opt/spark ubuntu@hadoop-slave2:/opt
 <pre><code class="sh">/opt/spark/sbin/start-all.sh
 </code></pre>
 <blockquote>
-<p>這樣 Spark 就啟動完成了，開啟 <a href="http://&lt;ip&gt;:8090" target="_blank" rel="external">Web UI</a> 來檢查狀態。</p>
+<p>這樣 Spark 就啟動完成了，開啟 <a href="http://&lt;ip&gt;:8090" target="_blank" rel="noopener">Web UI</a> 來檢查狀態。</p>
 </blockquote>
 <p>設定使用者環境參數：</p>
 <pre><code class="sh">$ echo &quot;export SPARK_HOME=/opt/spark&quot; | sudo tee -a ~/.bashrc
@@ -13060,14 +13777,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -13078,14 +13795,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -13096,26 +13813,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   

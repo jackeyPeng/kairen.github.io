@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -329,7 +329,7 @@
 </ul>
 <a id="more"></a>
 <h2 id="基本概念介紹"><a href="#基本概念介紹" class="headerlink" title="基本概念介紹"></a>基本概念介紹</h2><h3 id="基礎設施即程式碼-Infrastructure-as-Code"><a href="#基礎設施即程式碼-Infrastructure-as-Code" class="headerlink" title="基礎設施即程式碼(Infrastructure as Code)"></a>基礎設施即程式碼(Infrastructure as Code)</h3><p>在官方可以了解到 puppet 是一個概念為<code>Infrastructure as Code</code>的工具。Infrastructure as Code 與一般撰寫的 shell scrip 類似，但是比後者更高一個層次，將這一層虛擬化，使管理者只需要定義 Infrastructure 的狀況即可。這樣除了可以模組化、reuse外，也可以清楚透過 code 了解環境安裝了什麼與設定了什麼，因此 code 就是一個 infrastructure。</p>
-<h3 id="資源-Resource"><a href="#資源-Resource" class="headerlink" title="資源(Resource)"></a>資源(Resource)</h3><p>Puppet 中一個基礎元素為<code>resource</code>，一個 resource 可以是<code>file</code>、<code>package</code>或者是<code>service</code>等，透過 resource 我們可以查看環境上檔案、套件、服務狀態等。更多資訊可以參考 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="external">Resource 列表與使用方式</a>。</p>
+<h3 id="資源-Resource"><a href="#資源-Resource" class="headerlink" title="資源(Resource)"></a>資源(Resource)</h3><p>Puppet 中一個基礎元素為<code>resource</code>，一個 resource 可以是<code>file</code>、<code>package</code>或者是<code>service</code>等，透過 resource 我們可以查看環境上檔案、套件、服務狀態等。更多資訊可以參考 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="noopener">Resource 列表與使用方式</a>。</p>
 <blockquote>
 <p>P.S resource type 要注意大小寫，當作 metaparameters 的時候寫作 Type[title] Type 要大寫。</p>
 </blockquote>
@@ -388,7 +388,7 @@ service { &#39;apache2&#39;:
 }
 </code></pre>
 <blockquote>
-<p>更多的 resource 可以查看 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="external">Type Reference</a>。</p>
+<p>更多的 resource 可以查看 <a href="http://docs.puppetlabs.com/references/latest/type.html" target="_blank" rel="noopener">Type Reference</a>。</p>
 </blockquote>
 <p>在開始之前，我們先將 <code>apache2</code> 關閉，來讓 puppet 主控伺服器關閉：</p>
 <pre><code class="sh">$ sudo service apache2 stop
@@ -416,7 +416,7 @@ certname = puppetmaster
 dns_alt_names = puppetmaster, puppetmaster.example.com
 </code></pre>
 <blockquote>
-<p>詳細的檔案可以參閱<a href="https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html" target="_blank" rel="external">Main Config File (puppet.conf)
+<p>詳細的檔案可以參閱<a href="https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html" target="_blank" rel="noopener">Main Config File (puppet.conf)
 </a></p>
 </blockquote>
 <p>修改完後，透過<code>puppet</code>指令建立新的憑證：</p>
@@ -579,12 +579,12 @@ docroot =&gt; &#39;/var/www/html&#39;
 }
 </code></pre>
 <h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
-<li><a href="https://forge.puppetlabs.com/" target="_blank" rel="external">Modules Search</a></li>
-<li><a href="http://www.infoq.com/cn/articles/introduction-puppet" target="_blank" rel="external">InfoQ Puppet 介紹</a></li>
-<li><a href="http://amyhehe.blog.51cto.com/9406021/1708500" target="_blank" rel="external">Puppet 學習</a></li>
-<li><a href="http://blog.hsatac.net/2013/02/puppet-study-note/" target="_blank" rel="external">Puppet 筆記</a></li>
-<li><a href="http://blog.csdn.net/linux_player_c/article/details/50148415" target="_blank" rel="external">puppet學習筆記：puppet資源file詳細介紹</a></li>
-<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-puppet-to-manage-your-server-infrastructure" target="_blank" rel="external">How To Install Puppet To Manage Your Server Infrastructure</a></li>
+<li><a href="https://forge.puppetlabs.com/" target="_blank" rel="noopener">Modules Search</a></li>
+<li><a href="http://www.infoq.com/cn/articles/introduction-puppet" target="_blank" rel="noopener">InfoQ Puppet 介紹</a></li>
+<li><a href="http://amyhehe.blog.51cto.com/9406021/1708500" target="_blank" rel="noopener">Puppet 學習</a></li>
+<li><a href="http://blog.hsatac.net/2013/02/puppet-study-note/" target="_blank" rel="noopener">Puppet 筆記</a></li>
+<li><a href="http://blog.csdn.net/linux_player_c/article/details/50148415" target="_blank" rel="noopener">puppet學習筆記：puppet資源file詳細介紹</a></li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-puppet-to-manage-your-server-infrastructure" target="_blank" rel="noopener">How To Install Puppet To Manage Your Server Infrastructure</a></li>
 </ul>
 
                 

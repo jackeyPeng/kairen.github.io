@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -337,7 +337,7 @@ $ sudo apt-get update
 $ sudo apt-get install -y nvidia-367
 </code></pre>
 <p>完成後，需重新啟動機器。</p>
-<h2 id="CUDA-Toolkit-8-0-安裝"><a href="#CUDA-Toolkit-8-0-安裝" class="headerlink" title="CUDA Toolkit 8.0 安裝"></a>CUDA Toolkit 8.0 安裝</h2><p>由於 TensorFlow 支援 GPU 運算時，會需要使用到 CUDA Toolkit 相關功能，可以到 <a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="external">CUDA Toolkit</a> 頁面下載，這邊會下載 Ubuntu Run file 檔案，來進行安裝：</p>
+<h2 id="CUDA-Toolkit-8-0-安裝"><a href="#CUDA-Toolkit-8-0-安裝" class="headerlink" title="CUDA Toolkit 8.0 安裝"></a>CUDA Toolkit 8.0 安裝</h2><p>由於 TensorFlow 支援 GPU 運算時，會需要使用到 CUDA Toolkit 相關功能，可以到 <a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="noopener">CUDA Toolkit</a> 頁面下載，這邊會下載 Ubuntu Run file 檔案，來進行安裝：</p>
 <pre><code class="sh">$ wget &quot;https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run&quot;
 $ sudo chmod u+x cuda_8.0.61_375.26_linux-run
 $ ./cuda_8.0.61_375.26_linux-run
@@ -385,12 +385,12 @@ $ sudo nvidia-smi
 |    0      1764    G   compiz                                          29MiB |
 +-----------------------------------------------------------------------------+
 </code></pre>
-<h2 id="cuDNN-5-1-安裝"><a href="#cuDNN-5-1-安裝" class="headerlink" title="cuDNN 5.1 安裝"></a>cuDNN 5.1 安裝</h2><p><a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="external">NVIDIA cuDNN</a> 是一個深度神經網路運算的 GPU 加速原函式庫，這邊需要點選前面的連結，下載<code>cuDNN v5.1 Library for Linux</code>檔案：</p>
+<h2 id="cuDNN-5-1-安裝"><a href="#cuDNN-5-1-安裝" class="headerlink" title="cuDNN 5.1 安裝"></a>cuDNN 5.1 安裝</h2><p><a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="noopener">NVIDIA cuDNN</a> 是一個深度神經網路運算的 GPU 加速原函式庫，這邊需要點選前面的連結，下載<code>cuDNN v5.1 Library for Linux</code>檔案：</p>
 <pre><code class="sh">$ tar xvf cudnn-8.0-linux-x64-v5.1.tgz
 $ sudo cp cuda/include/cudnn.h /usr/local/cuda/include/
 $ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/
 </code></pre>
-<h2 id="TensorFlow-GPU-套件建構"><a href="#TensorFlow-GPU-套件建構" class="headerlink" title="TensorFlow GPU 套件建構"></a>TensorFlow GPU 套件建構</h2><p>本次教學將透過 <a href="https://github.com/tensorflow/tensorflow" target="_blank" rel="external">Source code</a> 建構安裝檔，再進行安裝 TensorFlow，首先安裝相依套件：</p>
+<h2 id="TensorFlow-GPU-套件建構"><a href="#TensorFlow-GPU-套件建構" class="headerlink" title="TensorFlow GPU 套件建構"></a>TensorFlow GPU 套件建構</h2><p>本次教學將透過 <a href="https://github.com/tensorflow/tensorflow" target="_blank" rel="noopener">Source code</a> 建構安裝檔，再進行安裝 TensorFlow，首先安裝相依套件：</p>
 <pre><code class="sh">$ sudo add-apt-repository -y ppa:webupd8team/java
 $ sudo apt-get update
 $ sudo apt-get install -y libcupti-dev python-numpy python-dev python-setuptools python-pip python-wheel git oracle-java8-installer
@@ -414,7 +414,7 @@ Please note that each additional compute capability significantly increases your
 Configuration finished
 </code></pre>
 <blockquote>
-<p><code>6.1</code>為 GTX 10-series 系列顯卡，其他可以查看 <a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="external">CUDA GPUS</a>。這邊除了上述特定要輸入外，其餘都是直接鍵盤<code>enter</code>。</p>
+<p><code>6.1</code>為 GTX 10-series 系列顯卡，其他可以查看 <a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">CUDA GPUS</a>。這邊除了上述特定要輸入外，其餘都是直接鍵盤<code>enter</code>。</p>
 </blockquote>
 <p>當完成組態後，即可透過 bazel 進行建構 pip 套件腳本：</p>
 <pre><code class="sh">$ bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package

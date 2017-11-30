@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -324,7 +324,7 @@
 <li>支援叢集</li>
 </ul>
 <a id="more"></a>
-<p>Akka 是基於 <a href="https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F" target="_blank" rel="external">Actor</a> 模型來開發，透過 Actor 能夠簡化死鎖與執行緒管理，可以非常容易開發正確並行化行程與系統，在 Akka 中 Actor 是最基本、最重要的元素，被用來完成工作。Actor 具有以下特性：</p>
+<p>Akka 是基於 <a href="https://zh.wikipedia.org/wiki/%E5%8F%83%E8%88%87%E8%80%85%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener">Actor</a> 模型來開發，透過 Actor 能夠簡化死鎖與執行緒管理，可以非常容易開發正確並行化行程與系統，在 Akka 中 Actor 是最基本、最重要的元素，被用來完成工作。Actor 具有以下特性：</p>
 <ul>
 <li>提供高級別的抽象，能簡化在並行（Concurrency）/平行（Parallelism）應用下的程式開發。</li>
 <li>提供異步（Async）非阻塞、高效能的事件驅動程式模型。</li>
@@ -333,7 +333,7 @@
 <center><img src="/images/spark/single_play.png" alt=""></center>
 
 <p>Actor 是一個運算實體，在開發程式中就是對實體之間所回應接受到的訊息做互動，同時並行的<code>傳送有限數量的訊息給其他 Actor</code>、<code>建立有限數量的 Actor</code> 以及<code>設計指定接收到下一個訊息時的行為</code>。</p>
-<p>Actor 之間是獨立的，多個 Actor 進行互動只能透過自定的訊息（Message）來完成發送與接收處理。如果一個 Actor 在某一個時刻收到多個 Actor 發送的訊息，就會發生並行問題，這時就需要一個訊息佇列來進行訊息的儲存與分散。可參考 <a href="http://www.infoq.com/cn/news/2014/11/intro-actor-model" target="_blank" rel="external">Akka 為範例，介紹 Actor 模型</a>。</p>
+<p>Actor 之間是獨立的，多個 Actor 進行互動只能透過自定的訊息（Message）來完成發送與接收處理。如果一個 Actor 在某一個時刻收到多個 Actor 發送的訊息，就會發生並行問題，這時就需要一個訊息佇列來進行訊息的儲存與分散。可參考 <a href="http://www.infoq.com/cn/news/2014/11/intro-actor-model" target="_blank" rel="noopener">Akka 為範例，介紹 Actor 模型</a>。</p>
 <p>Akka 應用場景有以下幾個項目，當然這不是全部：</p>
 <ul>
 <li>交易處理（Transaction Processing）</li>
@@ -344,8 +344,8 @@
 </ul>
 <h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><p>Akka 一般在 Java 有兩種安裝方式，如以下：</p>
 <ul>
-<li>當作 Library 使用，就是直接 Import JAR 使用。可參考 <a href="http://doc.akka.io/docs/akka/2.4.2/java.html?_ga=1.230769695.1061481694.1456285775" target="_blank" rel="external">Java Documentation</a>。</li>
-<li>將應用放到獨立的微核心（Microkernel）裡使用。可參考 <a href="http://doc.akka.io/docs/akka/2.3.10/scala/microkernel.html" target="_blank" rel="external">Microkernel</a>。</li>
+<li>當作 Library 使用，就是直接 Import JAR 使用。可參考 <a href="http://doc.akka.io/docs/akka/2.4.2/java.html?_ga=1.230769695.1061481694.1456285775" target="_blank" rel="noopener">Java Documentation</a>。</li>
+<li>將應用放到獨立的微核心（Microkernel）裡使用。可參考 <a href="http://doc.akka.io/docs/akka/2.3.10/scala/microkernel.html" target="_blank" rel="noopener">Microkernel</a>。</li>
 </ul>
 
                 

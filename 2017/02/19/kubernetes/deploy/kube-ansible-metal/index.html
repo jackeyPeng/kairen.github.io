@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="external">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
 <p>本安裝各軟體版本如下：</p>
 <ul>
 <li>Kubernetes v1.8.3</li>
@@ -501,7 +501,7 @@ NAME                                    READY     STATUS    RESTARTS   AGE
 kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 </code></pre>
 <blockquote>
-<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
+<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <p>接著透過 Etcd 來查看目前 Leader 狀態：</p>
 <pre><code class="sh">$ export CA=&quot;/etc/etcd/ssl&quot;

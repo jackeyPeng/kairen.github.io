@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -312,9 +312,9 @@
                 <p>Ansible 是最近越來越夯多 DevOps 自動化組態管理軟體，從 2013 年發起的專案，由於該架構為無 agent 程式的架構，以部署靈活與程式碼易讀而受到矚目。Ansible 除了有開源版本之外，還針對企業用戶推出 Ansible Tower 版本，已有許多知名企業採用，如 Apple、Twitter 等。</p>
 <p>Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與私有雲或 CMDB（組態管理資料庫）中的主機，其中 Ansible 編排是由<code>Inventory(主機與群組規則)</code>、<code>API</code>、<code>Modules(模組)</code>與<code>Plugins(插件)</code>組合而成。</p>
 <p><center><img src="/images/devops/ansible-arch.jpg" alt=""></center><br><a id="more"></a></p>
-<p><a href="https://github.com/ansible/ansible" target="_blank" rel="external">Ansible</a> 與其他管理工具最大差異在於不需要任何 Agent，預設使用 SSH 來做遠端操控與配置，並採用 YAML 格式來描述配置資訊。</p>
+<p><a href="https://github.com/ansible/ansible" target="_blank" rel="noopener">Ansible</a> 與其他管理工具最大差異在於不需要任何 Agent，預設使用 SSH 來做遠端操控與配置，並採用 YAML 格式來描述配置資訊。</p>
 <blockquote>
-<p>Ansible 提供了一個 Playbook 分享平台，可以讓管理與開發者上傳自己的功能與角色配置的 Playbook，該網址為 <a href="https://galaxy.ansible.com/intro" target="_blank" rel="external">Ansible Galaxy</a>。</p>
+<p>Ansible 提供了一個 Playbook 分享平台，可以讓管理與開發者上傳自己的功能與角色配置的 Playbook，該網址為 <a href="https://galaxy.ansible.com/intro" target="_blank" rel="noopener">Ansible Galaxy</a>。</p>
 </blockquote>
 <p><strong>優點：</strong></p>
 <ul>
@@ -380,13 +380,13 @@ ansible-slave-1
 ansible-slave-2
 ansible-slave-3
 </code></pre>
-<p>若要參考更多資訊，可看 <a href="http://docs.ansible.com/ansible/intro_inventory.html" target="_blank" rel="external">Invetory File</a>。</p>
+<p>若要參考更多資訊，可看 <a href="http://docs.ansible.com/ansible/intro_inventory.html" target="_blank" rel="noopener">Invetory File</a>。</p>
 </blockquote>
 <h3 id="基本功能操作"><a href="#基本功能操作" class="headerlink" title="基本功能操作"></a>基本功能操作</h3><p>Ansible 基本操作如以下指令：</p>
 <pre><code class="sh">$ ansible &lt;pattern_goes_here&gt; -m &lt;module_name&gt; -a &lt;arguments&gt;
 </code></pre>
 <blockquote>
-<p><code>&lt;pattern_goes_here&gt;</code>部分可以參考 <a href="http://docs.ansible.com/ansible/intro_patterns.html" target="_blank" rel="external">Patterns</a>。</p>
+<p><code>&lt;pattern_goes_here&gt;</code>部分可以參考 <a href="http://docs.ansible.com/ansible/intro_patterns.html" target="_blank" rel="noopener">Patterns</a>。</p>
 </blockquote>
 <p>比如我們可以用 Ping 模組來測試是否連線成功：</p>
 <pre><code class="sh">$ ansible all -m ping
@@ -432,8 +432,8 @@ host_key_checking = False
 
                 
 <p class="green-link-context">
-    <a href="/2016/02/17/devops/ansible/ansible-inventory/" rel="next" title="Ansible Inventory">
-    Prev: Ansible Inventory
+    <a href="/2016/02/17/devops/ansible/ansible-adhoc/" rel="next" title="Ansible Ad-Hoc 指令與 Modules">
+    Prev: Ansible Ad-Hoc 指令與 Modules
   </a>
 </p>
 

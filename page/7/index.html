@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,49 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2015/12/06/container/docker-machine-driver/">Docker Machine Driver 使用</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2015-12-06T09:08:54.000Z"><a href="/2015/12/06/container/docker-machine-driver/">2015-12-06</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Linux-Container/" class="chip pink lighten-1">Linux Container</a>
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Docker machine 是 Docker 早期提供 Windows 與 Mac OS X 建立 Docker 環境的工具，其採用 VirtualBox 來提供一個 Container OS，再利用 Docker client 來進行操作。然而 Docker Machine 除了使用 VirtualBox 外，還可以使用<code>Generic Driver</code>與<code>OpenStack Driver</code>來建立雲端平台上的 Docker 環境。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2015/12/06/container/docker-machine-driver/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -421,7 +464,7 @@
 
             
                 <div class="entry green-link-context">
-                    <p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-deploy" target="_blank" rel="external">ceph-deploy</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台<code>Monitor</code>與三台<code>OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
+                    <p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-deploy" target="_blank" rel="noopener">ceph-deploy</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台<code>Monitor</code>與三台<code>OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
                 </div>
             
         </div>
@@ -607,7 +650,7 @@
 
             
                 <div class="entry green-link-context">
-                    <p><a href="http://www.docker.com/" target="_blank" rel="external">Docker</a> 是一個開源的專案，主要提供容器化應用程式的部署與自動化的管理，透過部署 Docker engine 於 Linux 作業系統上，提供軟體抽象層以及作業系統層虛擬化自動管理機制。Docker 使用一些 Linux Kernel 中的軟體，如 Control Groups（cgroups）、namespaces（核心命名空間）、Another UnionFS 等來達到建置獨立的環境與存取 CPU、Memory 以及網路資源等，最終提供一個輕量級的虛擬化。Docker 的發展非常迅速，從 0.9.0 版本後，採用自己開發的 Libcontainer 函式庫作為直接存取由 Linux Kernel 提供的虛擬化基礎設施。Docker 也支援了多平台，從個人電腦到私有、公有雲都能夠進行使用與部署輕量級虛擬化。</p>
+                    <p><a href="http://www.docker.com/" target="_blank" rel="noopener">Docker</a> 是一個開源的專案，主要提供容器化應用程式的部署與自動化的管理，透過部署 Docker engine 於 Linux 作業系統上，提供軟體抽象層以及作業系統層虛擬化自動管理機制。Docker 使用一些 Linux Kernel 中的軟體，如 Control Groups（cgroups）、namespaces（核心命名空間）、Another UnionFS 等來達到建置獨立的環境與存取 CPU、Memory 以及網路資源等，最終提供一個輕量級的虛擬化。Docker 的發展非常迅速，從 0.9.0 版本後，採用自己開發的 Libcontainer 函式庫作為直接存取由 Linux Kernel 提供的虛擬化基礎設施。Docker 也支援了多平台，從個人電腦到私有、公有雲都能夠進行使用與部署輕量級虛擬化。</p>
 <blockquote>
 <p>Docker 並非一個新興技術，而是過往的 Linux Container 技術的基礎上進行封裝。因此使用者只需要關注應用程式如何被部署與執行就好，而不用管容器是如何被建置出來。</p>
 </blockquote>
@@ -660,57 +703,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2015/11/04/linux/ubuntu/apache2-proxy/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/10/13/data-engineer/kafka-install/">Apache Kafka 叢集</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-10-13T09:08:54.000Z"><a href="/2015/10/13/data-engineer/kafka-install/">2015-10-13</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
-        
-            <a href="/tags/Kafka/" class="chip pink lighten-1">Kafka</a>
-        
-            <a href="/tags/Message-Queue/" class="chip pink lighten-1">Message Queue</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Apache Kafka 是一個分散式的訊息佇列框架，是由 LinkedIn 公司使用 Scala 語言開發的系統，被廣泛用來處理高吞吐量與容易水平擴展，目前許多巨量資料運算框架以都有整合 Kafka，諸如：Spark、Cloudera、Apache Storm等，</p>
-<p>Kafka 是基於<code>Publish/Subscribe</code>的訊息系統，主要設計由以下特點：</p>
-<ul>
-<li>在 TB 級以上資料也能確保常數時間複雜度的存取效能，且時間複雜度為O(1)的訊息持久化。</li>
-<li>高吞吐量，在低階的商業電腦上也能提供單機<code>100k/sec</code>條以上的訊息傳輸。</li>
-<li>支援 Kafka Server 之間的訊息分區(Partition)以及分散式發送，並保證每個分區內的訊息循序傳輸。</li>
-<li>同時支援離線資料處理與即時資料處理</li>
-<li>容易的服務不中斷水平擴展。</li>
-</ul>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/10/13/data-engineer/kafka-install/">READ MORE</a>
         </ div>
         
     </div>

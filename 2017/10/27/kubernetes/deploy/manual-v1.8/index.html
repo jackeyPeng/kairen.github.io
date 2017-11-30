@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+                <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
 <li>Kubernetes v1.8.2</li>
@@ -538,7 +538,7 @@ $ ls front-proxy-client*.pem
 front-proxy-client-key.pem  front-proxy-client.pem
 </code></pre>
 <h4 id="Bootstrap-Token"><a href="#Bootstrap-Token" class="headerlink" title="Bootstrap Token"></a>Bootstrap Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次簽證時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS Bootstrapping 方式進行授權，由 apiserver 自動給符合條件的 Node 發送證書來授權加入叢集。</p>
-<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="external">TLS bootstrapping</a>。</p>
+<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="noopener">TLS bootstrapping</a>。</p>
 <p>首先建立一個變數來產生<code>BOOTSTRAP_TOKEN</code>，並建立 <code>bootstrap.conf</code> 的 kubeconfig 檔：</p>
 <pre><code class="sh">$ export BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d &#39; &#39;)
 $ cat &lt;&lt;EOF &gt; /etc/kubernetes/token.csv
@@ -567,7 +567,7 @@ $ kubectl config set-context default \
 $ kubectl config use-context default --kubeconfig=../bootstrap.conf
 </code></pre>
 <blockquote>
-<p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="external">Kubelet certificate</a>。</p>
+<p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="noopener">Kubelet certificate</a>。</p>
 </blockquote>
 <h4 id="Admin-certificate"><a href="#Admin-certificate" class="headerlink" title="Admin certificate"></a>Admin certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 證書：</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
@@ -752,7 +752,7 @@ $ for FILE in apiserver manager scheduler; do
   done
 </code></pre>
 <blockquote>
-<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>apiserver.yml</code>、<code>manager.yml</code>、<code>scheduler.yml</code>。<br>apiserver 中的 <code>NodeRestriction</code> 請參考 <a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Using Node Authorization</a>。</p>
+<p>若<code>IP</code>與教學設定不同的話，請記得修改<code>apiserver.yml</code>、<code>manager.yml</code>、<code>scheduler.yml</code>。<br>apiserver 中的 <code>NodeRestriction</code> 請參考 <a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="noopener">Using Node Authorization</a>。</p>
 </blockquote>
 <p>產生一個用來加密 Etcd 的 Key：</p>
 <pre><code class="sh">$ head -c 32 /dev/urandom | base64
@@ -774,7 +774,7 @@ resources:
 EOF
 </code></pre>
 <blockquote>
-<p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="external">Encrypting data at rest</a>。</p>
+<p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="noopener">Encrypting data at rest</a>。</p>
 </blockquote>
 <p>在<code>/etc/kubernetes/</code>目錄下，建立<code>audit-policy.yml</code>的進階稽核策略 YAML 檔：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
@@ -785,7 +785,7 @@ rules:
 EOF
 </code></pre>
 <blockquote>
-<p>Audit Policy 請參考這篇 <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/" target="_blank" rel="external">Auditing</a>。</p>
+<p>Audit Policy 請參考這篇 <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/" target="_blank" rel="noopener">Auditing</a>。</p>
 </blockquote>
 <p>下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
 <pre><code class="sh">$ export KUBELET_URL=&quot;https://kairen.github.io/files/manual-v1.8/master&quot;
@@ -843,7 +843,7 @@ $ kubectl -n kube-system logs -f kube-scheduler-master1
 ...
 I1031 03:22:42.527697       1 leaderelection.go:184] successfully acquired lease kube-system/kube-scheduler
 </code></pre>
-<h2 id="Kubernetes-Node"><a href="#Kubernetes-Node" class="headerlink" title="Kubernetes Node"></a>Kubernetes Node</h2><p>Node 是主要執行容器實例的節點，可視為工作節點。在這步驟我們會下載 Kubernetes binary 檔，並建立 node 的 certificate 來提供給節點註冊認證用。Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="external">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。</p>
+<h2 id="Kubernetes-Node"><a href="#Kubernetes-Node" class="headerlink" title="Kubernetes Node"></a>Kubernetes Node</h2><p>Node 是主要執行容器實例的節點，可視為工作節點。在這步驟我們會下載 Kubernetes binary 檔，並建立 node 的 certificate 來提供給節點註冊認證用。Kubernetes 使用<code>Node Authorizer</code>來提供<a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="noopener">Authorization mode</a>，這種授權模式會替 Kubelet 生成 API request。</p>
 <p>在開始前，我們先在<code>master1</code>將需要的 ca 與 cert 複製到 Node 節點上：</p>
 <pre><code class="sh">$ for NODE in node1 node2; do
     ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki/&quot;
@@ -910,7 +910,7 @@ node1     NotReady   &lt;none&gt;    8m        v1.8.2
 node2     NotReady   &lt;none&gt;    6s        v1.8.2
 </code></pre>
 <h2 id="Kubernetes-Core-Addons-部署"><a href="#Kubernetes-Core-Addons-部署" class="headerlink" title="Kubernetes Core Addons 部署"></a>Kubernetes Core Addons 部署</h2><p>當完成上面所有步驟後，接著我們需要安裝一些插件，而這些有部分是非常重要跟好用的，如<code>Kube-dns</code>與<code>Kube-proxy</code>等。</p>
-<h3 id="Kube-proxy-addon"><a href="#Kube-proxy-addon" class="headerlink" title="Kube-proxy addon"></a>Kube-proxy addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="external">Kube-proxy</a> 是實現 Service 的關鍵元件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。這邊我們會需要建議一個 DaemonSet 來執行，並且建立一些需要的 certificate。</p>
+<h3 id="Kube-proxy-addon"><a href="#Kube-proxy-addon" class="headerlink" title="Kube-proxy addon"></a>Kube-proxy addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="noopener">Kube-proxy</a> 是實現 Service 的關鍵元件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。這邊我們會需要建議一個 DaemonSet 來執行，並且建立一些需要的 certificate。</p>
 <p>首先在<code>master1</code>下載<code>kube-proxy-csr.json</code>檔案，並產生 kube-proxy certificate 證書：</p>
 <pre><code class="sh">$ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.8/pki&quot;
 $ cd /etc/kubernetes/pki
@@ -976,7 +976,7 @@ kube-proxy-bpp7q   1/1       Running   0          47s
 kube-proxy-cztvh   1/1       Running   0          47s
 kube-proxy-q7mm4   1/1       Running   0          47s
 </code></pre>
-<h3 id="Kube-dns-addon"><a href="#Kube-dns-addon" class="headerlink" title="Kube-dns addon"></a>Kube-dns addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="external">Kube DNS</a> 是 Kubernetes 叢集內部 Pod 之間互相溝通的重要 Addon，它允許 Pod 可以透過 Domain Name 方式來連接 Service，其主要由 Kube DNS 與 Sky DNS 組合而成，透過 Kube DNS 監聽 Service 與 Endpoint 變化，來提供給 Sky DNS 資訊，已更新解析位址。</p>
+<h3 id="Kube-dns-addon"><a href="#Kube-dns-addon" class="headerlink" title="Kube-dns addon"></a>Kube-dns addon</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="noopener">Kube DNS</a> 是 Kubernetes 叢集內部 Pod 之間互相溝通的重要 Addon，它允許 Pod 可以透過 Domain Name 方式來連接 Service，其主要由 Kube DNS 與 Sky DNS 組合而成，透過 Kube DNS 監聽 Service 與 Endpoint 變化，來提供給 Sky DNS 資訊，已更新解析位址。</p>
 <p>安裝只需要在<code>master1</code>透過 kubectl 來建立 kube-dns deployment 即可：</p>
 <pre><code class="sh">$ export ADDON_URL=&quot;https://kairen.github.io/files/manual-v1.8/addon&quot;
 $ wget &quot;${ADDON_URL}/kube-dns.yml.conf&quot; -O kube-dns.yml
@@ -1043,9 +1043,9 @@ kube-proxy-l72bq                            1/1       Running   0          6m
 kube-proxy-m6rfw                            1/1       Running   0          6m
 kube-scheduler-master1                      1/1       Running   0          20m
 </code></pre>
-<p>最後若想省事，可以直接用 <a href="https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/hosted" target="_blank" rel="external">Standard Hosted</a> 方式安裝。</p>
+<p>最後若想省事，可以直接用 <a href="https://docs.projectcalico.org/v2.6/getting-started/kubernetes/installation/hosted/hosted" target="_blank" rel="noopener">Standard Hosted</a> 方式安裝。</p>
 <h2 id="Kubernetes-Extra-Addons-部署"><a href="#Kubernetes-Extra-Addons-部署" class="headerlink" title="Kubernetes Extra Addons 部署"></a>Kubernetes Extra Addons 部署</h2><p>本節說明如何部署一些官方常用的 Addons，如 Dashboard、Heapster 等。</p>
-<h3 id="Dashboard-addon"><a href="#Dashboard-addon" class="headerlink" title="Dashboard addon"></a>Dashboard addon</h3><p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="external">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
+<h3 id="Dashboard-addon"><a href="#Dashboard-addon" class="headerlink" title="Dashboard addon"></a>Dashboard addon</h3><p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
 <p>首先我們要建立<code>kubernetes-dashboard-certs</code>，來提供給 Dashboard TLS 使用：</p>
 <pre><code class="sh">$ mkdir -p /etc/kubernetes/addons/certs &amp;&amp; cd /etc/kubernetes/addons
 $ openssl genrsa -des3 -passout pass:x -out certs/dashboard.pass.key 2048
@@ -1070,8 +1070,8 @@ svc/kubernetes-dashboard   ClusterIP   10.98.120.209   &lt;none&gt;        443/T
 <blockquote>
 <p>P.S. 這邊會額外建立一個名稱為<code>anonymous-open-door</code> Cluster Role Binding，這僅作為方便測試時使用，在一般情況下不要開啟，不然就會直接被存取所有 API。</p>
 </blockquote>
-<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="external">Dashboard</a>。</p>
-<h3 id="Heapster-addon"><a href="#Heapster-addon" class="headerlink" title="Heapster addon"></a>Heapster addon</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="external">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
+<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
+<h3 id="Heapster-addon"><a href="#Heapster-addon" class="headerlink" title="Heapster addon"></a>Heapster addon</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="noopener">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
 <p>在<code>master1</code>透過 kubectl 來建立 kubernetes monitor  即可：</p>
 <pre><code class="sh">$ export ADDON_URL=&quot;https://kairen.github.io/files/manual-v1.8/addon&quot;
 $ wget ${ADDON_URL}/kube-monitor.yml.conf -O kube-monitor.yml
@@ -1089,7 +1089,7 @@ svc/monitoring-grafana     ClusterIP   10.101.106.180   &lt;none&gt;        80/T
 svc/monitoring-influxdb    ClusterIP   10.109.245.142   &lt;none&gt;        8083/TCP,8086/TCP   7m
 ···
 </code></pre>
-<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana" target="_blank" rel="external">Grafana Dashboard</a>。</p>
+<p>完成後，就可以透過瀏覽器存取 <a href="https://172.16.35.12:6443/api/v1/proxy/namespaces/kube-system/services/monitoring-grafana" target="_blank" rel="noopener">Grafana Dashboard</a>。</p>
 <h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將建立一個簡單的 Nginx 服務：</p>
 <pre><code class="sh">$ kubectl run nginx --image=nginx --port=80
 $ kubectl expose deploy nginx --port=80 --type=LoadBalancer --external-ip=172.16.35.12
@@ -1104,7 +1104,7 @@ po/nginx-7cbc4b4d9c-7796l   1/1       Running   0          28s       192.160.57.
 <blockquote>
 <p>這邊<code>type</code>可以選擇 NodePort 與 LoadBalancer，在本地裸機部署，兩者差異在於<code>NodePort</code>只映射 Host port 到 Container port，而<code>LoadBalancer</code>則繼承<code>NodePort</code>額外多出映射 Host target port 到 Container port。</p>
 </blockquote>
-<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12。" target="_blank" rel="external">http://172.16.35.12。</a></p>
+<p>確認沒問題後即可在瀏覽器存取 <a href="http://172.16.35.12。" target="_blank" rel="noopener">http://172.16.35.12。</a></p>
 <h3 id="擴展服務數量"><a href="#擴展服務數量" class="headerlink" title="擴展服務數量"></a>擴展服務數量</h3><p>若叢集<code>node</code>節點增加了，而想讓 Nginx 服務提供可靠性的話，可以透過以下方式來擴展服務的副本：</p>
 <pre><code class="sh">$ kubectl scale deploy nginx --replicas=2
 
@@ -1115,6 +1115,12 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
 </code></pre>
 
                 
+<p class="green-link-context">
+    <a href="/2017/11/29/openstack/openstack-helm/" rel="next" title="Deploy OpenStack on Kubernetes using OpenStack-helm">
+    Prev: Deploy OpenStack on Kubernetes using OpenStack-helm
+  </a>
+</p>
+
 
 
 <p class="green-link-context">

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -314,9 +314,9 @@
                 <p>Playbooks 是 Ansible 的設定、部署與編配語言等。可以被用來描述一個被遠端的主機要執行的指令方案，或是一組 IT 行程執行的指令集合。</p>
 <p>在基礎層面上，Playbooks 可以被用來管理部署到遠端主機的組態檔案，在更高階層上 Playbooks 可以循序對多層式架構上的伺服器執行線上的 Polling 更新內部的操作，並將操作委派給其他主機，包含過程中發生的監視器服務、負載平衡伺服器等。</p>
 <a id="more"></a>
-<p>Playbooks 被設計成易懂與基於 Text Language 的二次開發，有許多方式可以組合 Playbooks 與其附屬的檔案。建議在閱讀 Playbooks 時，同步閱讀 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="external">Example Playbooks</a>。</p>
-<p>Playbooks 與 ad-hoc 相比是一種完全不同的 Ansible 應用方式，該方式也是 Ansible 強大之處。簡單來說 Playbooks 是一種組態管理系統與多機器部署系統基礎，與現有系統不同之處在於非常適合複雜的部署。若想參考範例，可以參閱 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="external">ansible-examples repository</a>。</p>
-<h3 id="Playbook-Language-Example"><a href="#Playbook-Language-Example" class="headerlink" title="Playbook Language Example"></a>Playbook Language Example</h3><p>Playbook 採用 <a href="http://ansible-tran.readthedocs.org/en/latest/docs/YAMLSyntax.html" target="_blank" rel="external">YAML 語法</a>來表示。playbook 由一或多個<code>plays</code>組成的內容為元素的列表。在<code>play</code>中一組機器會被映射成定義好的角色，在 Ansible 中<code>play</code>內容也被稱為<code>tasks</code>。</p>
+<p>Playbooks 被設計成易懂與基於 Text Language 的二次開發，有許多方式可以組合 Playbooks 與其附屬的檔案。建議在閱讀 Playbooks 時，同步閱讀 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">Example Playbooks</a>。</p>
+<p>Playbooks 與 ad-hoc 相比是一種完全不同的 Ansible 應用方式，該方式也是 Ansible 強大之處。簡單來說 Playbooks 是一種組態管理系統與多機器部署系統基礎，與現有系統不同之處在於非常適合複雜的部署。若想參考範例，可以參閱 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">ansible-examples repository</a>。</p>
+<h3 id="Playbook-Language-Example"><a href="#Playbook-Language-Example" class="headerlink" title="Playbook Language Example"></a>Playbook Language Example</h3><p>Playbook 採用 <a href="http://ansible-tran.readthedocs.org/en/latest/docs/YAMLSyntax.html" target="_blank" rel="noopener">YAML 語法</a>來表示。playbook 由一或多個<code>plays</code>組成的內容為元素的列表。在<code>play</code>中一組機器會被映射成定義好的角色，在 Ansible 中<code>play</code>內容也被稱為<code>tasks</code>。</p>
 <p>以下是一個簡單的範例：</p>
 <pre><code class="txt">---
 - name: Configure cluster with apache

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>Docker Registry 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="external">Docker Hub</a>、<a href="https://quay.io/" target="_blank" rel="external">QUAY</a> 與 <a href="https://console.cloud.google.com/gcr/images/google-containers/GLOBAL" target="_blank" rel="external">GCP registry</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="external">Deploying a registry server</a>。</p>
+                <p>Docker Registry 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>、<a href="https://quay.io/" target="_blank" rel="noopener">QUAY</a> 與 <a href="https://console.cloud.google.com/gcr/images/google-containers/GLOBAL" target="_blank" rel="noopener">GCP registry</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="noopener">Deploying a registry server</a>。</p>
 <a id="more"></a>
 <h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
@@ -349,7 +349,7 @@ registry:2
 -e ENV_DOCKER_REGISTRY_PORT=5000 \
 konradkleine/docker-registry-frontend:v2
 </code></pre>
-<p>完成後就可以透過瀏覽器進入 <a href="172.16.35.13:5001" target="_blank" rel="external">Docker registry UI</a> 查看資訊。也可以透過以下指令檢查是否部署成功：</p>
+<p>完成後就可以透過瀏覽器進入 <a href="172.16.35.13:5001" target="_blank" rel="noopener">Docker registry UI</a> 查看資訊。也可以透過以下指令檢查是否部署成功：</p>
 <pre><code class="sh">$ docker pull ubuntu:14.04
 $ docker tag ubuntu:14.04 localhost:5000/ubuntu:14.04
 $ docker push localhost:5000/ubuntu:14.04
@@ -362,10 +362,10 @@ df9a135a6949: Pushed
 <blockquote>
 <p>其他 Docker registry 列表：</p>
 <ul>
-<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="external">Portus</a></li>
-<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="external">Atomic Registry</a></li>
-<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="external">Private Registries in RancherOS</a></li>
-<li><a href="https://github.com/vmware/harbor" target="_blank" rel="external">VMware Harbor</a></li>
+<li><a href="https://github.com/SUSE/Portus" target="_blank" rel="noopener">Portus</a></li>
+<li><a href="http://www.projectatomic.io/registry/" target="_blank" rel="noopener">Atomic Registry</a></li>
+<li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="noopener">Private Registries in RancherOS</a></li>
+<li><a href="https://github.com/vmware/harbor" target="_blank" rel="noopener">VMware Harbor</a></li>
 </ul>
 </blockquote>
 

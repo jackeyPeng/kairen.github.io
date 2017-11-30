@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">5</span></a>
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -268,6 +268,50 @@
             <div class="article-title">
                 
     
+        <h1 class="indigo-link-context"><a href="/2017/11/29/openstack/openstack-helm/">Deploy OpenStack on Kubernetes using OpenStack-helm</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2017-11-29T08:23:01.000Z"><a href="/2017/11/29/openstack/openstack-helm/">2017-11-29</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Helm/" class="chip pink lighten-1">Helm</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Openstack/" class="chip pink lighten-1">Openstack</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">OpenStack Helm</a> 是一個提供部署建置的專案，其目的是為了推動 OpenStack 生產環境的解決方案，而這種部署方式採用容器化方式，並執行於 Kubernetes 系統上來提供 OpenStack 服務的管理與排程等使用。</p>
+<p><img src="https://i.imgur.com/8sMjowM.png" alt=""></p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2017/11/29/openstack/openstack-helm/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
         <h1 class="indigo-link-context"><a href="/2017/10/27/kubernetes/deploy/manual-v1.8/">Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)</a></h1>
     
 
@@ -291,7 +335,7 @@
 
             
                 <div class="entry green-link-context">
-                    <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="external">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+                    <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
 <p>本次安裝版本為：</p>
 <ul>
 <li>Kubernetes v1.8.2</li>
@@ -341,7 +385,7 @@
 
             
                 <div class="entry green-link-context">
-                    <p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="external">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
+                    <p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="noopener">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
 <p><img src="https://i.imgur.com/2XfP3vb.png" alt=""></p>
                 </div>
             
@@ -385,8 +429,8 @@
 
             
                 <div class="entry green-link-context">
-                    <p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="external">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
-<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="external">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
+                    <p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="noopener">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
+<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="noopener">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
 <p>本環境安裝資訊：</p>
 <ul>
 <li>OpenStack Pike</li>
@@ -528,7 +572,7 @@
             
                 <div class="entry green-link-context">
                     <p>Browser Solidity 是一個 Web-based 的 Solidity 編譯器與 IDE。本節將說明如何安裝於 Linux 與 Docker 中。</p>
-<p>這邊可以連結官方的 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="external">https://ethereum.github.io/browser-solidity</a> 來使用; 該網站會是該專案的最新版本預覽。</p>
+<p>這邊可以連結官方的 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="noopener">https://ethereum.github.io/browser-solidity</a> 來使用; 該網站會是該專案的最新版本預覽。</p>
                 </div>
             
         </div>
@@ -572,7 +616,7 @@
             
                 <div class="entry green-link-context">
                     <p>Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。</p>
-<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="external">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
+<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="noopener">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
                 </div>
             
         </div>
@@ -661,7 +705,7 @@
 
             
                 <div class="entry green-link-context">
-                    <p>Harbor 是一個企業級 Registry 伺服器用於儲存和分散 Docker Image 的，透過新增一些企業常用的功能，例如：安全性、身分驗證和管理等功能擴展了開源的 <a href="https://github.com/docker/distribution" target="_blank" rel="external">Docker Distribution</a>。作為一個企業級的私有 Registry 伺服器，Harbor 提供了更好的效能與安全性。Harbor 支援安裝多個 Registry 並將 Image 在多個 Registry 做 replicated。除此之外，Harbor 亦提供了高級的安全性功能，像是用戶管理(user managment)，存取控制(access control)和活動審核(activity auditing)。</p>
+                    <p>Harbor 是一個企業級 Registry 伺服器用於儲存和分散 Docker Image 的，透過新增一些企業常用的功能，例如：安全性、身分驗證和管理等功能擴展了開源的 <a href="https://github.com/docker/distribution" target="_blank" rel="noopener">Docker Distribution</a>。作為一個企業級的私有 Registry 伺服器，Harbor 提供了更好的效能與安全性。Harbor 支援安裝多個 Registry 並將 Image 在多個 Registry 做 replicated。除此之外，Harbor 亦提供了高級的安全性功能，像是用戶管理(user managment)，存取控制(access control)和活動審核(activity auditing)。</p>
 <p><img src="/images/docker/harbor_logo.png" alt=""><br>
                 </div>
             
@@ -670,52 +714,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2017/05/10/container/harbor-install/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2017/04/23/container/linuxkit/">品嚐 Moby LinuxKit 的 Linux 作業系統</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2017-04-23T09:08:54.000Z"><a href="/2017/04/23/container/linuxkit/">2017-04-23</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
-            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
-        
-            <a href="/tags/Moby/" class="chip pink lighten-1">Moby</a>
-        
-            <a href="/tags/Microkernel/" class="chip pink lighten-1">Microkernel</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://github.com/linuxkit/linuxkit" target="_blank" rel="external">LinuxKit</a> 是 <a href="http://www.nebulaworks.com/blog/2017/04/22/docker-captains-dockercon-2017-review/" target="_blank" rel="external">DockerCon 2017</a> 中推出的工具之一，其主要是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，Docker 公司一直透過 LinuxKit 來建立相關產品，如 Docker for Mac 等。由於要最快的了解功能，因此這邊透過建立簡單的映像檔來學習。</p>
-<center><img src="/images/docker/linux-kit.png" alt=""></center>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2017/04/23/container/linuxkit/">READ MORE</a>
         </ div>
         
     </div>
