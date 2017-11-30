@@ -975,7 +975,10 @@ DEFAULT_ROUTE_DEV=&quot;enp3s0&quot;
 sudo iptables -t nat -A POSTROUTING -o ${DEFAULT_ROUTE_DEV} -s ${OSH_EXT_SUBNET} -j MASQUERADE
 </code></pre>
 <blockquote>
-<p>網卡記得修改<code>DEFAULT_ROUTE_DEV</code>。<br>這邊因為沒有額外提供其他張網卡，所以先用 bridge 處理。</p>
+<ul>
+<li>網卡記得修改<code>DEFAULT_ROUTE_DEV</code>。</li>
+<li>這邊因為沒有額外提供其他張網卡，所以先用 bridge 處理。</li>
+</ul>
 </blockquote>
 <p>然後透過執行該腳本建立一個 bridge 網路：</p>
 <pre><code class="shell">$ chmod u+x setup-gateway.sh
