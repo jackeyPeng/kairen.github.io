@@ -275,9 +275,9 @@ $ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --service
 $ helm init --service-account tiller
 </code></pre>
 <blockquote>
-<p>由於 kube-ansible 本身包含 Helm, 因此只需要進行 init 即可。</p>
+<p>由於 <code>kube-ansible</code> 本身包含 Helm 工具, 因此不需要自己安裝，只需要依據上面指令進行 init 即可。</p>
 </blockquote>
-<p>新增 openrc 來提供環境變數：</p>
+<p>新增一個檔案<code>openrc</code>來提供環境變數：</p>
 <pre><code class="shell">export HELM_HOST=$(kubectl describe svc/tiller-deploy -n kube-system | awk &#39;/Endpoints/{print $2}&#39;)
 export OSD_CLUSTER_NETWORK=172.22.132.0/24
 export OSD_PUBLIC_NETWORK=172.22.132.0/24
@@ -316,7 +316,7 @@ kubectl label nodes kube-master1 openvswitch-
 kubectl label nodes kube-master1 openstack-compute-node-
 </code></pre>
 </blockquote>
-<p>由於使用 RBAC，而目前 openstack-helm 有 bug，不會正確建立 service account 的 ClusterRoleBindings，因此要手動建立(這邊偷懶一下直接使用 Admin roles)：</p>
+<p>由於使用 Kubernetes RBAC，而目前 openstack-helm 有 bug，不會正確建立 Service account 的 ClusterRoleBindings，因此要手動建立(這邊偷懶一下直接使用 Admin roles)：</p>
 <pre><code class="shell">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -348,10 +348,10 @@ subjects:
 EOF
 </code></pre>
 <blockquote>
-<p>若沒有正常建立的話，錯誤資訊如下：</p>
+<p>若沒有建立的話，會有類似以下的錯誤資訊：</p>
 <pre><code>Error from server (Forbidden): error when creating &quot;STDIN&quot;: secrets is forbidden: User &quot;system:serviceaccount:ceph:default&quot; cannot create secrets in the namespace &quot;ceph&quot;
 </code></pre></blockquote>
-<p>下載最新版本 OpenStack-helm 專案：</p>
+<p>下載最新版本 openstack-helm 專案：</p>
 <pre><code class="shell">$ git clone https://github.com/openstack/openstack-helm.git
 $ cd openstack-helm
 </code></pre>
@@ -13781,20 +13781,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
       <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -13807,6 +13801,12 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -13829,14 +13829,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
