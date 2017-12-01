@@ -439,6 +439,9 @@ $ cd kube-ansible
 [kube-cluster:children]
 masters
 nodes
+
+[kube-addon:children]
+masters
 </code></pre><p>接著編輯<code>group_vars/all.yml</code>檔案來添加與修改以下內容：</p>
 <pre><code class="yaml"># Kubenrtes version, only support 1.8.0+.
 kube_version: 1.8.4
