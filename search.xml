@@ -168,6 +168,8 @@ etcd_iface: &quot;&quot;
 
 insecure_registrys:
 - &quot;172.22.132.253:5000&quot; # 有需要的話
+
+ceph_cluster: true
 </code></pre>
 <blockquote>
 <ul>
@@ -267,6 +269,9 @@ Address:    10.96.0.10#53
 Non-authoritative answer:
 Name:    kubernetes.default.svc.cluster.local
 Address: 10.96.0.1
+</code></pre>
+<p>接著安裝 Ceph 套件：</p>
+<pre><code class="sh">$ ansible-playbook storage.yml
 </code></pre>
 <h2 id="OpenStack-helm-叢集"><a href="#OpenStack-helm-叢集" class="headerlink" title="OpenStack-helm 叢集"></a>OpenStack-helm 叢集</h2><p>本節說明如何建立 OpenStack on Kubernetes 使用 Helm，部署是使用 <a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">openstack-helm</a>。過程將透過 OpenStack-helm 來在 Kubernetes 建置 OpenStack 叢集。以下所有操作都在<code>kube-master1</code>上進行。</p>
 <h3 id="Helm-init"><a href="#Helm-init" class="headerlink" title="Helm init"></a>Helm init</h3><p>在開始前需要先將 Helm 進行初始化，以提供後續使用，然而這邊由於使用到 RBAC 的關係，因此需建立一個 Service account 來提供給 Helm 使用：</p>
@@ -543,10 +548,10 @@ horizon-7c54878549-45668   1/1       Running   0          3m
 </code></pre>
 <p>接著安裝 Glance chart 來提供 OpenStack image service。目前 Glance 支援幾個 backend storage:</p>
 <ul>
-<li>pvc: 一個簡單的 Kubernetes PVCs 檔案後端。</li>
-<li>rbd: 使用 Ceph RBD 來儲存 images。</li>
-<li>radosgw: 使用 Ceph RGW 來儲存 images。</li>
-<li>swift: 另用 OpenStack switf 所提供的物件儲存服務來儲存 images.</li>
+<li><strong>pvc</strong>: 一個簡單的 Kubernetes PVCs 檔案後端。</li>
+<li><strong>rbd</strong>: 使用 Ceph RBD 來儲存 images。</li>
+<li><strong>radosgw</strong>: 使用 Ceph RGW 來儲存 images。</li>
+<li><strong>swift</strong>: 另用 OpenStack switf 所提供的物件儲存服務來儲存 images.</li>
 </ul>
 <p>這邊可以利用以下方式來部署不同的儲存後端：</p>
 <pre><code class="shell">$ export GLANCE_BACKEND=radosgw
@@ -716,9 +721,9 @@ $ neutron router-gateway-set router1 ext-net
         
         <tags>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
             <tag> Openstack </tag>
             
@@ -4095,9 +4100,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
@@ -13787,6 +13792,12 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
@@ -13805,8 +13816,8 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -13817,26 +13828,20 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
