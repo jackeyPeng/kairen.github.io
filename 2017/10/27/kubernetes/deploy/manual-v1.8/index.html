@@ -171,16 +171,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -195,16 +195,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">15</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">15</span></a>
                 </a>
             </li>
 
@@ -515,7 +515,7 @@ $ ls apiserver*.pem
 apiserver-key.pem  apiserver.pem
 </code></pre>
 <blockquote>
-<p>若節點 IP 不同，需要修改<code>apiserver-csr.json</code>的<code>hosts</code>。</p>
+<p>若節點 IP 不同，需要修改<code>-hostname</code>。</p>
 </blockquote>
 <h4 id="Front-proxy-certificate"><a href="#Front-proxy-certificate" class="headerlink" title="Front proxy certificate"></a>Front proxy certificate</h4><p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front proxy CA 金鑰，Front proxy 主要是用在 API aggregator 上:</p>
 <pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-ca-csr.json&quot;
@@ -994,6 +994,9 @@ $ kubectl -n kube-system get po -l k8s-app=calico-policy
 NAME                                        READY     STATUS    RESTARTS   AGE
 calico-policy-controller-5ff8b4549d-tctmm   0/1       Pending   0          5s
 </code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>calico-controller.yml</code>的<code>ETCD_ENDPOINTS</code>。</p>
+</blockquote>
 <p>在<code>master1</code>下載 Calico CLI 工具：</p>
 <pre><code class="sh">$ wget https://github.com/projectcalico/calicoctl/releases/download/v1.6.1/calicoctl
 $ chmod +x calicoctl &amp;&amp; mv calicoctl /usr/local/bin/
@@ -1011,7 +1014,12 @@ $ wget &quot;${CALICO_CONF_URL}/10-calico.conf&quot; -O /etc/cni/net.d/10-calico
 $ wget &quot;${CALICO_CONF_URL}/calico-node.service&quot; -O /lib/systemd/system/calico-node.service
 </code></pre>
 <blockquote>
-<p>若部署的機器是使用虛擬機，如 Virtualbox 等的話，請修改<code>calico-node.service</code>檔案，並在<code>IP_AUTODETECTION_METHOD</code>(包含 IP6)部分指定綁定的網卡，以避免預設綁定到 NAT 網路上。</p>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>10-calico.conf</code>的<code>etcd_endpoints</code>。</p>
+<ul>
+<li>若部署的機器是使用虛擬機，如 Virtualbox 等的話，請修改<code>calico-node.service</code>檔案，並在<code>IP_AUTODETECTION_METHOD</code>(包含 IP6)部分指定綁定的網卡，以避免預設綁定到 NAT 網路上。</li>
+</ul>
+</blockquote>
 </blockquote>
 <p>之後在<code>所有</code>節點啟動 Calico-node:</p>
 <pre><code class="sh">$ systemctl enable calico-node.service &amp;&amp; systemctl start calico-node.service

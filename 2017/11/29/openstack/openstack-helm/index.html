@@ -171,16 +171,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">7</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">7</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -195,16 +195,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">15</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">15</span></a>
                 </a>
             </li>
 
@@ -296,9 +296,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
             <a href="/tags/Helm/" class="chip pink lighten-1">Helm</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
         
             <a href="/tags/Openstack/" class="chip pink lighten-1">Openstack</a>
         
@@ -733,7 +733,7 @@ $ kubectl exec -n ceph ${MON_POD} -- ceph -s
                  856 active+clean
 </code></pre>
 <blockquote>
-<p>Warn 這邊忽略，機器太少….。</p>
+<p>Warn 這邊忽略，OSD 機器太少….。</p>
 </blockquote>
 <p>接著為了讓 Ceph 可以在其他 Kubernetes namespace 中存取 PVC，這邊要產生 client secret key 於 openstack namespace 中來提供給 OpenStack 元件使用，這邊執行以下 Chart 來產生：</p>
 <pre><code class="shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=ceph-openstack-config \
