@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2017-12-14T02:08:41.000Z</updated>
+  <updated>2018-01-10T06:38:40.581Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>利用 RBAC + SA 進行 Kubectl 權限控管</title>
+    <link href="https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/"/>
+    <id>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</id>
+    <published>2018-01-08T09:08:54.000Z</published>
+    <updated>2018-01-10T06:38:40.581Z</updated>
+    
+    <content type="html"><![CDATA[<p>這邊說明如何建立不同 Service account user，以及 RBAC 來定義存取規則，並綁定於指定 Service account ，以對指定 Namespace 中資源進行存取權限控制。</p><a id="more"></a><h2 id="Service-account"><a href="#Service-account" class="headerlink" title="Service account"></a>Service account</h2><p>Service account 一般使用情境方便是 Pod 中的行程呼叫 Kubernetes API 或者其他服務設計而成，這可能會跟 Kubernetes user account 有所混肴，但是由於 Service account 有別於 User account 是可以針對 Namespace 進行建立，因此這邊嘗試拿 Service account 來提供資訊給 kubectl 使用，並利用 RBAC 來設定存取規則，以限制該 Account 存取 API 的資源。</p><h2 id="RBAC"><a href="#RBAC" class="headerlink" title="RBAC"></a>RBAC</h2><p>RBAC(Role-Based Access Control)是從 Kubernetes 1.6 開始支援的存取控制機制，叢集管理者能夠對 User 或 Service account 的角色設定指定資源存取權限，在 RBAC 中，權限與角色相互關聯，其透過成為適當的角色成員，以獲取這些角色的存取權限，這比起過去 ABAC 來的方便使用、更簡化等好處。</p><h2 id="簡單範例"><a href="#簡單範例" class="headerlink" title="簡單範例"></a>簡單範例</h2><p>首先建立一個 Namespace 與 Service account：</p><pre><code class="sh">$ kubectl create ns dev$ kubectl -n dev create sa dev# 取得 secret 資訊$ SECRET=$(kubectl -n dev get sa dev -o go-template=&#39;{{range .secrets}}{{.name}}{{end}}&#39;)</code></pre><p>建立一個 dev.conf 設定檔，添加以下內容：</p><pre><code class="sh">$ API_SERVER=&quot;https://172.22.132.51:6443&quot;$ CA_CERT=$(kubectl -n dev get secret ${SECRET} -o yaml | awk &#39;/ca.crt:/{print $2}&#39;)$ cat &lt;&lt;EOF &gt; dev.confapiVersion: v1kind: Configclusters:- cluster:    certificate-authority-data: $CA_CERT    server: $SERVER  name: clusterEOF$ TOKEN=$(kubectl -n dev get secret ${SECRET} -o go-template=&#39;{{.data.token}}&#39;)$ kubectl config set-credentials dev-user \    --token=`echo ${TOKEN} | base64 -d` \    --kubeconfig=dev.conf$ kubectl config set-context default \    --cluster=cluster \    --user=dev-user \    --kubeconfig=dev.conf$ kubectl config use-context default \    --kubeconfig=dev.conf</code></pre><blockquote><ul><li>在不同作業系統中，<code>base64</code> 的 decode 指令不一樣，有些是 -D(OS X)。</li></ul></blockquote><p>新增 RBAC role 來限制 dev-user 存取權限:</p><pre><code class="sh">$ cat &lt;&lt;EOF &gt; dev-user-role.ymlkind: RoleapiVersion: rbac.authorization.k8s.io/v1metadata:  namespace: dev  name: dev-user-podrules:- apiGroups: [&quot;*&quot;]  resources: [&quot;pods&quot;, &quot;pods/log&quot;]  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;, &quot;update&quot;, &quot;create&quot;, &quot;delete&quot;]EOF$ kubectl create rolebinding dev-view-pod \    --role=dev-user-pod \    --serviceaccount=dev:dev \    --namespace=dev</code></pre><blockquote><ul><li>apiGroups 為不同 API 的群組，如 rbac.authorization.k8s.io，[“*”] 為允許存取全部。</li><li>resources 為 API 存取資源，如 pods、pods/log、pod/exec，[“*”] 為允許存取全部。</li><li>verbs 為 API 存取方法，如 get、list、watch、create、update、 delete、proxy，[“*”] 為允許存取全部。</li></ul></blockquote><p>透過 kubectl 確認權限設定沒問題：</p><pre><code class="shell=">$ kubectl --kubeconfig=dev.conf get poError from server (Forbidden): pods is forbidden: User &quot;system:serviceaccount:dev:dev&quot; cannot list pods in the namespace &quot;default&quot;$ kubectl -n dev --kubeconfig=dev.conf run nginx --image nginx --port 80 --restart=Never$ kubectl -n dev --kubeconfig=dev.conf get poNAME      READY     STATUS    RESTARTS   AGEnginx     1/1       Running   0          39s$ kubectl -n dev --kubeconfig=dev.conf logs -f nginx10.244.102.64 - - [04/Jan/2018:06:42:36 +0000] &quot;GET / HTTP/1.1&quot; 200 612 &quot;-&quot; &quot;curl/7.47.0&quot; &quot;-&quot;$ kubectl -n dev --kubeconfig=dev.conf exec -ti nginx shError from server (Forbidden): pods &quot;nginx&quot; is forbidden: User &quot;system:serviceaccount:dev:dev&quot; cannot create pods/exec in the namespace &quot;dev&quot;</code></pre><blockquote><ul><li>也可以用<code>export KUBECONFIG=dev.conf</code>來設定使用的 config。</li></ul></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;這邊說明如何建立不同 Service account user，以及 RBAC 來定義存取規則，並綁定於指定 Service account ，以對指定 Namespace 中資源進行存取權限控制。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
+    
+    
+      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
+    
+      <category term="Kubernetes RBAC" scheme="https://kairen.github.io/tags/Kubernetes-RBAC/"/>
+    
+  </entry>
   
   <entry>
     <title>Deploy OpenStack on Kubernetes using OpenStack-helm</title>
@@ -578,32 +604,6 @@
       <category term="Distribution System" scheme="https://kairen.github.io/tags/Distribution-System/"/>
     
       <category term="SPDK" scheme="https://kairen.github.io/tags/SPDK/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Using bluestore in Kraken</title>
-    <link href="https://kairen.github.io/2016/11/28/ceph/deploy/ceph-deploy-bluestore/"/>
-    <id>https://kairen.github.io/2016/11/28/ceph/deploy/ceph-deploy-bluestore/</id>
-    <published>2016-11-28T09:08:54.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>本篇說明如何安裝 Kraken 版本的 Ceph，並將 objectstore backend 修改成 Bluestore，過程包含建立 RBD 等操作。</p><a id="more"></a><h2 id="硬體規格說明"><a href="#硬體規格說明" class="headerlink" title="硬體規格說明"></a>硬體規格說明</h2><p>本安裝由於實體機器數量受到限制，故只進行一台 MON 與兩台 OSD，而 OSD 數量則總共兩顆，硬體規格如下所示：</p><table><thead><tr><th>Role</th><th>RAM</th><th>CPUs</th><th>Disk</th><th>IP Address</th></tr></thead><tbody><tr><td>mon1(deploy)</td><td>4 GB</td><td>4 core</td><td>500 GB</td><td>172.16.1.200</td></tr><tr><td>osd1</td><td>16 GB</td><td>8 core</td><td>2 TB</td><td>172.16.1.201</td></tr><tr><td>osd2</td><td>16 GB</td><td>8 core</td><td>2 TB</td><td>172.16.1.202</td></tr><tr><td>osd3</td><td>16 GB</td><td>8 core</td><td>2 TB</td><td>172.16.1.203</td></tr></tbody></table><p>作業系統採用<code>Ubuntu 16.04 LTS Server</code>，Kernel 版本為<code>Linux 4.4.0-31-generic</code>。</p><h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有四台節點。</p><p>首先在每一台節點新增以下內容到<code>/etc/hosts</code>：</p><pre><code>127.0.0.1    localhost172.16.1.200 mon1172.16.1.201 osd1172.16.1.202 osd2172.16.1.203 osd3</code></pre><p>然後設定各節點 sudo 指令的權限，使之不用輸入密碼(若使用 root 則忽略)：</p><pre><code class="sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | \sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu</code></pre><p>接著在設定<code>deploy</code>節點能夠以無密碼方式進行 SSH 登入其他節點，請依照以下執行：</p><pre><code class="sh">$ ssh-keygen -t rsa$ ssh-copy-id mon1$ ssh-copy-id osd1...</code></pre><blockquote><p>若不同節點之間使用不同 User 進行 SSH 部署的話，可以設定 ~/.ssh/config</p></blockquote><p>之後在<code>deploy</code>節點安裝部署工具，首先使用 apt-get 來進行安裝基本相依套件，再透過 pypi 進行安裝 ceph-deploy 工具：</p><pre><code class="sh">$ sudo apt-get install -y python-pip$ sudo pip install -U ceph-deploy</code></pre><h2 id="節點部署"><a href="#節點部署" class="headerlink" title="節點部署"></a>節點部署</h2><p>首先建立一個名稱為 local 的目錄，並進到目錄底下：</p><pre><code class="sh">$ sudo mkdir local &amp;&amp; cd local</code></pre><p>接著透過 ceph-deploy 在各節點安裝 ceph：</p><pre><code class="sh">$ ceph-deploy install --release kraken mon1 osd1 osd2 osd3</code></pre><p>完成後建立 Monitor 節點資訊到 ceph.conf 中：</p><pre><code class="sh">$ ceph-deploy new mon1 &lt;other_mons&gt;</code></pre><p>接著編輯目錄底下的 ceph.conf，並加入以下內容：</p><pre><code class="sh">[global]...rbd_default_features = 3osd pool default size = 3osd pool default min size = 1public network = 172.16.1.0/24cluster network = 172.16.1.0/24filestore_xattr_use_omap = trueenable experimental unrecoverable data corrupting features = bluestore rocksdbbluestore fsck on mount = truebluestore block db size = 134217728bluestore block wal size = 268435456bluestore block size = 322122547200osd objectstore = bluestore[osd]bluestore = true</code></pre><p>若確認沒問題，即可透過以下指令初始化 mon：</p><pre><code class="sh">$ ceph-deploy mon create-initial</code></pre><p>上述沒有問題後，就可以開始部署實際作為儲存的 OSD 節點，我們可以透過以下指令進行：</p><pre><code class="sh">$ ceph-deploy osd prepare --bluestore osd1:&lt;device&gt;</code></pre><h2 id="系統驗證"><a href="#系統驗證" class="headerlink" title="系統驗證"></a>系統驗證</h2><h3 id="叢集檢查"><a href="#叢集檢查" class="headerlink" title="叢集檢查"></a>叢集檢查</h3><p>首先要驗證環境是否有部署成功，可以透過 ceph 提供的基本指令做檢查：</p><pre><code class="sh">$ ceph -vceph version v11.0.2 (697fe64f9f106252c49a2c4fe4d79aea29363be7)$ ceph -s    cluster 6da24ae5-755f-4077-bfa0-78681dfc6bde     health HEALTH_OK     monmap e1: 1 mons at {r-mon00=172.16.1.200:6789/0}            election epoch 7, quorum 0 mon1        mgr no daemons active     osdmap e256: 3 osds: 3 up, 3 in            flags sortbitwise,require_jewel_osds      pgmap v920162: 128 pgs, 1 pools, 6091 MB data, 1580 objects            12194 MB used, 588 GB / 600 GB avail                 128 active+clean</code></pre><p>另外也可以用 osd 指令來查看部屬的 osd 資訊：</p><pre><code class="sh">$ ceph osd treeID WEIGHT  TYPE NAME        UP/DOWN REWEIGHT PRIMARY-AFFINITY-1 0.58618 root default-2 0.29309     host osd1 0 0.29309         osd.0         up  1.00000          1.00000-3 0.29309     host osd2 1 0.29309         osd.1         up  1.00000          1.00000-4 0.29309     host osd3 1 0.29309         osd.2         up  1.00000          1.00000</code></pre><h3 id="RBD-建立"><a href="#RBD-建立" class="headerlink" title="RBD 建立"></a>RBD 建立</h3><p>本節說明在 Kraken 版本建立 RBD 來進行使用，在預設部署起來的叢集下會存在一個儲存池 rbd，因此可以省略建立新的儲存池。</p><p>首先透過以下指令建立一個區塊裝置映像檔：</p><pre><code class="sh">$ rbd create rbd/bd -s 50G</code></pre><p>接著透過 info 指令查看區塊裝置映像檔資訊：</p><pre><code class="sh">$ rbd info rbd/bdrbd image &#39;bd&#39;:    size 51200 MB in 12800 objects    order 22 (4096 kB objects)    block_name_prefix: rbd_data.102d474b0dc51    format: 2    features: layering, striping    flags:    stripe unit: 4096 kB    stripe count: 1</code></pre><blockquote><p>P.S. 這邊由於 Kernel 版本問題有些特性無法支援，因此在 conf 檔只設定使用 layering, striping。</p><p>P.S. 若預設未修改 feature 設定的話，可以透過以下指令修改:</p><pre><code class="sh">$ rbd feature disable rbd/bd &lt;feature_name&gt;</code></pre><p>以下為目前支援的特性：</p><table><thead><tr><th>屬性名稱</th><th>說明</th><th>Bit Code</th></tr></thead><tbody><tr><td>layering</td><td>支援分層</td><td>1</td></tr><tr><td>striping</td><td>支援串連(v2)</td><td>2</td></tr><tr><td>exclusive-lock</td><td>支援互斥鎖定</td><td>4</td></tr><tr><td>object-map</td><td>支援物件映射(相依於 exclusive-lock )</td><td>8</td></tr><tr><td>fast-diff</td><td>支援快速計算差異(相依於 object-map )</td><td>16</td></tr><tr><td>deep-flatten</td><td>支援快照扁平化操作</td><td>32</td></tr><tr><td>journaling</td><td>支援紀錄 I/O 操作(相依於 exclusive-lock )</td><td>64</td></tr></tbody></table></blockquote><p>接著就可以透過 Linux mkfs 指令來格式化 rbd：</p><pre><code class="sh">$ sudo mkfs.ext4 /dev/rbd0$ sudo mount /dev/rbd0 /mnt</code></pre><p>最後透過 dd 指令測試 rbd 寫入效能：</p><pre><code class="sh">$ dd if=/dev/zero of=/mnt/test bs=4096 count=40000004000000+0 records in4000000+0 records out16384000000 bytes (16 GB) copied, 119.947 s, 137 MB/s</code></pre><p>另外有些需求為了測試 feature，卻又礙於 Kernel 不支援等問題，而造成無法 Map 時，可以透過 rbd-nbd 來進行 Map，安裝跟使用方式如下：</p><pre><code class="sh">$ sudo apt-get install -y rbd-nbd$ sudo rbd-nbd map rbd/bd/dev/nbd0</code></pre><blockquote><p>P.S. 在新版的 ceph 已經有內建 rbd nbd，參考 <a href="http://docs.ceph.com/docs/jewel/man/8/rbd/#commands" target="_blank" rel="noopener">rbd - manage command</a>。</p></blockquote><p>最後透過 dd 指令測試 nbd 寫入效能：</p><pre><code class="sh">$ dd if=/dev/zero of=./mnt-nbd/test bs=4096 count=40000004000000+0 records in4000000+0 records out16384000000 bytes (16 GB) copied, 168.201 s, 97.4 MB/s</code></pre>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本篇說明如何安裝 Kraken 版本的 Ceph，並將 objectstore backend 修改成 Bluestore，過程包含建立 RBD 等操作。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Ceph" scheme="https://kairen.github.io/categories/Ceph/"/>
-    
-    
-      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
-    
-      <category term="Storage" scheme="https://kairen.github.io/tags/Storage/"/>
-    
-      <category term="BlueStore" scheme="https://kairen.github.io/tags/BlueStore/"/>
     
   </entry>
   
