@@ -195,16 +195,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">16</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">16</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
@@ -402,9 +402,6 @@ EOF
 <h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
 <pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-engine
 </code></pre>
-<p>完成後 Reload daemon：</p>
-<pre><code class="sh">$ systemctl daemon-reload
-</code></pre>
 <p>進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ sudo su -
 $ kubeadm token generate
@@ -459,9 +456,6 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 </code></pre>
 <h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
 <pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-engine
-</code></pre>
-<p>完成後 Reload daemon：</p>
-<pre><code class="sh">$ systemctl daemon-reload
 </code></pre>
 <p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
