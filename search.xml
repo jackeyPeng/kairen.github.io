@@ -13947,14 +13947,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -13977,26 +13977,8 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -14007,8 +13989,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   
