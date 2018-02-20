@@ -124,9 +124,9 @@
     
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="OpenStack" scheme="https://kairen.github.io/tags/OpenStack/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
   </entry>
   
@@ -323,9 +323,9 @@
       <category term="Container" scheme="https://kairen.github.io/categories/Container/"/>
     
     
-      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
-    
       <category term="Linux Container" scheme="https://kairen.github.io/tags/Linux-Container/"/>
+    
+      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
       <category term="Docker registry" scheme="https://kairen.github.io/tags/Docker-registry/"/>
     
@@ -350,9 +350,9 @@
       <category term="Container" scheme="https://kairen.github.io/categories/Container/"/>
     
     
-      <category term="Linux" scheme="https://kairen.github.io/tags/Linux/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Linux" scheme="https://kairen.github.io/tags/Linux/"/>
     
       <category term="Moby" scheme="https://kairen.github.io/tags/Moby/"/>
     
@@ -411,9 +411,9 @@
       <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
     
     
-      <category term="Helm" scheme="https://kairen.github.io/tags/Helm/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Helm" scheme="https://kairen.github.io/tags/Helm/"/>
     
       <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
