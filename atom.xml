@@ -350,9 +350,9 @@
       <category term="Container" scheme="https://kairen.github.io/categories/Container/"/>
     
     
-      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
-    
       <category term="Linux" scheme="https://kairen.github.io/tags/Linux/"/>
+    
+      <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
       <category term="Moby" scheme="https://kairen.github.io/tags/Moby/"/>
     
