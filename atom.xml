@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://kairen.github.io/"/>
-  <updated>2018-01-10T06:38:40.581Z</updated>
+  <updated>2018-02-27T05:53:45.454Z</updated>
   <id>https://kairen.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Ceph Luminous CRUSH map 400000000000000 問題</title>
+    <link href="https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/"/>
+    <id>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</id>
+    <published>2018-02-11T09:08:54.000Z</published>
+    <updated>2018-02-27T05:53:45.454Z</updated>
+    
+    <content type="html"><![CDATA[<p>在 Ceph Luminous(v12) 版本中，預設開啟了一些 Kernel 特性，其中首先遇到的一般是 400000000000000 問題，即<code>CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING</code>特性(可以從對照表得知<a href="http://cephnotes.ksperis.com/blog/2014/01/21/feature-set-mismatch-error-on-ceph-kernel-client/" target="_blank" rel="noopener">CEPH_FEATURE Table and Kernel Version</a>)，剛問題需要在 Kernel 4.5+ 才能夠被支援，但如果不想升級可以依據本篇方式解決。</p><a id="more"></a><p>在 L 版本中，當建立 RBD 並且想要 Map 時，會發生 timeout 問題，這時候可以透過 journalctl 來查看問題，如以下：</p><pre><code class="sh">$ journalctl -xeFeb 12 08:36:57 kube-server2 kernel: libceph: mon0 172.22.132.51:6789 feature set mismatch, my 106b84a842a42 &lt; server&#39;s 40106b84a842a42, missing 400000000000000</code></pre><p>查詢發現是 400000000000000 問題，這時可以選擇兩個解決方式：</p><ul><li>將作業系統更新到 Linux kernel v4.5+ 的版本。</li><li>修改 CRUSH 中的 tunables 參數。</li></ul><p>若想修改 CRUSH tunnables 參數，可以先到任一 Monitor 或者 Admin 節點中，執行以下指令：</p><pre><code class="sh">$ ceph osd crush tunables jewel$ ceph osd crush reweight-all</code></pre><p>只要執行以上指令即可。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在 Ceph Luminous(v12) 版本中，預設開啟了一些 Kernel 特性，其中首先遇到的一般是 400000000000000 問題，即&lt;code&gt;CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING&lt;/code&gt;特性(可以從對照表得知&lt;a href=&quot;http://cephnotes.ksperis.com/blog/2014/01/21/feature-set-mismatch-error-on-ceph-kernel-client/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CEPH_FEATURE Table and Kernel Version&lt;/a&gt;)，剛問題需要在 Kernel 4.5+ 才能夠被支援，但如果不想升級可以依據本篇方式解決。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Ceph" scheme="https://kairen.github.io/categories/Ceph/"/>
+    
+    
+      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
+    
+      <category term="Storage" scheme="https://kairen.github.io/tags/Storage/"/>
+    
+  </entry>
   
   <entry>
     <title>利用 RBAC + SA 進行 Kubectl 權限控管</title>
@@ -350,9 +374,9 @@
       <category term="Container" scheme="https://kairen.github.io/categories/Container/"/>
     
     
-      <category term="Linux" scheme="https://kairen.github.io/tags/Linux/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Linux" scheme="https://kairen.github.io/tags/Linux/"/>
     
       <category term="Moby" scheme="https://kairen.github.io/tags/Moby/"/>
     
@@ -576,34 +600,6 @@
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
       <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Ceph 使用 SPDK 加速 NVMe SSD</title>
-    <link href="https://kairen.github.io/2016/12/03/ceph/ceph-spdk/"/>
-    <id>https://kairen.github.io/2016/12/03/ceph/ceph-spdk/</id>
-    <published>2016-12-03T09:08:54.000Z</published>
-    <updated>2017-08-01T14:23:59.000Z</updated>
-    
-    <content type="html"><![CDATA[<p><a href="https://github.com/spdk/spdk" target="_blank" rel="noopener">SPDK(Storage Performance Development Kit)</a> 是 Intel 釋出的儲存效能開發工具，主要提供一套撰寫高效能、可擴展與 User-mode 的儲存應用程式工具與函式庫，而中國公司 XSKY 藉由該開發套件來加速 Ceph 在 NVMe SSD 的效能。</p><a id="more"></a><p>首先進入 root，並 clone 專案到 local：</p><pre><code class="shell=">$ sudo su -$ git clone http://github.com/ceph/ceph$ cd ceph</code></pre><p>編輯<code>CMakeLists.txt</code>檔案，修改以下內容：</p><pre><code class="shell=">option(WITH_SPDK &quot;Enable SPDK&quot; ON)</code></pre><p>接著安裝一些相依套件與函式庫：</p><pre><code class="shell=">$ ./install-deps.sh$ sudo apt-get install -y libpciaccess-dev</code></pre><p>接著需要在環境安裝 DPDK 開發套件，首先進入 src 底下的 dpdk 目錄，編輯<code>config/common_linuxapp</code>檔案修改以下內容：</p><pre><code class="shell=">CONFIG_RTE_BUILD_SHARED_LIB=</code></pre><p>完成後建置與安裝 DPDK：</p><pre><code class="shell=">$ make config T=x86_64-native-linuxapp-gcc$ make &amp;&amp; make install</code></pre><p>接著回到 ceph root 目錄進行建構 Ceph 準備，透過以下指令進行：</p><pre><code class="shell=">$ ./do_cmake.sh....-- Configuring done-- Generating done-- Build files have been written to: /root/ceph/build+ cat+ echo 40000+ echo done.done.</code></pre><p>確認上面無誤後就可以進行 compile 包含 SPDK 的 Ceph：</p><pre><code class="shell=">$ cd build$ make -j2</code></pre><p>完成後就可以執行 test cluster，首先建構 vstart 程式：</p><pre><code class="shell=">$ make vstart$ ../src/vstart.sh -d -n -x -l$ ./bin/ceph -s</code></pre><blockquote><p>若要關閉則使用以下方式：</p><pre><code class="shell=">$ ../src/stop.sh</code></pre></blockquote>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;a href=&quot;https://github.com/spdk/spdk&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;SPDK(Storage Performance Development Kit)&lt;/a&gt; 是 Intel 釋出的儲存效能開發工具，主要提供一套撰寫高效能、可擴展與 User-mode 的儲存應用程式工具與函式庫，而中國公司 XSKY 藉由該開發套件來加速 Ceph 在 NVMe SSD 的效能。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Ceph" scheme="https://kairen.github.io/categories/Ceph/"/>
-    
-    
-      <category term="Ceph" scheme="https://kairen.github.io/tags/Ceph/"/>
-    
-      <category term="Storage" scheme="https://kairen.github.io/tags/Storage/"/>
-    
-      <category term="Distribution System" scheme="https://kairen.github.io/tags/Distribution-System/"/>
-    
-      <category term="SPDK" scheme="https://kairen.github.io/tags/SPDK/"/>
     
   </entry>
   

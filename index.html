@@ -164,15 +164,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                    Ceph <span class="right">9</span></a>
                 </a>
             </li>
 
@@ -195,16 +187,24 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">16</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/TensorFlow/">
-                    TensorFlow <span class="right">3</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">16</span></a>
                 </a>
             </li>
 
@@ -219,8 +219,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,47 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2018/02/11/ceph/luminous-crush-issue/">Ceph Luminous CRUSH map 400000000000000 問題</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2018-02-11T09:08:54.000Z"><a href="/2018/02/11/ceph/luminous-crush-issue/">2018-02-11</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>在 Ceph Luminous(v12) 版本中，預設開啟了一些 Kernel 特性，其中首先遇到的一般是 400000000000000 問題，即<code>CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING</code>特性(可以從對照表得知<a href="http://cephnotes.ksperis.com/blog/2014/01/21/feature-set-mismatch-error-on-ceph-kernel-client/" target="_blank" rel="noopener">CEPH_FEATURE Table and Kernel Version</a>)，剛問題需要在 Kernel 4.5+ 才能夠被支援，但如果不想升級可以依據本篇方式解決。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2018/02/11/ceph/luminous-crush-issue/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -668,52 +709,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2017/05/26/blockchain/geth-monitoring/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2017/05/25/blockchain/multi-node-geth/">建立 Go Ethereum 私有網路鏈</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2017-05-25T09:08:54.000Z"><a href="/2017/05/25/blockchain/multi-node-geth/">2017-05-25</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Ethereum/" class="chip pink lighten-1">Ethereum</a>
-        
-            <a href="/tags/Blockchain/" class="chip pink lighten-1">Blockchain</a>
-        
-            <a href="/tags/Go-lang/" class="chip pink lighten-1">Go lang</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Ethereum 專案是以區塊鏈原理，並進一步增加容納值、儲存資料，並且能封裝程式碼來建立智能合約(Smart Contracts)，形成區塊鏈應用程式，來執行運算任務。類似於比特幣(Bitcoin)，Ethereum 也具有一種貨幣，它叫做<code>乙太幣(Ether)</code>。乙太幣是開採於儲存在共享一致性的區塊鏈前驗證交易節點。乙太幣可以在賬戶(公有金鑰, Pubilc keys)與智能合約(Smart Contracts)之間進行轉移。</p>
-<center><img src="/images/blockchain/ethereum-logo.png" alt="ethereum-logo"></center>
-
-<p>本節將說明如何透過 Ubuntu 部署 Go Ethereum。並利用簡單的指令來進行 Demo。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2017/05/25/blockchain/multi-node-geth/">READ MORE</a>
         </ div>
         
     </div>
