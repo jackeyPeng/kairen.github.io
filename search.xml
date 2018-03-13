@@ -4,6 +4,110 @@
   
     
     <entry>
+      <title><![CDATA[安裝 Nvidia Docker 2 來讓容器使用 GPU]]></title>
+      <url>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</url>
+      <content type="html"><![CDATA[<p>本篇主要介紹如何使用 <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">Nvidia Docker v2</a> 來讓容器使用 GPU，過去 Nvidia Docker v1 需要使用 nvidia-docker 來取代 docker 執行 GPU image，或是透過手動掛載 Nvidia driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使用 Nvidia Docker v2 的 Runtime 來執行 GPU 應用。</p>
+<a id="more"></a>
+<p>安裝前需要確認滿足以下幾點：</p>
+<ul>
+<li>GNU/Linux x86_64 with kernel version &gt; 3.10</li>
+<li>Docker CE or EE == v17.12</li>
+<li>NVIDIA GPU with Architecture &gt; Fermi (2.1)</li>
+<li>NVIDIA drivers ~= 361.93 (untested on older versions)</li>
+</ul>
+<p>首先透過 APT 安裝 Docker CE or EE v17.12 版本：</p>
+<pre><code class="sh">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ echo &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial edge&quot; | sudo tee /etc/apt/sources.list.d/docker.list
+$ sudo apt-get update
+$ sudo apt-get install -y docker-ce=17.12.1~ce-0~ubuntu
+</code></pre>
+<p>接著透過 APT 安裝 Nvidia Driver(v390.30) 與 CUDA 9.1：</p>
+<pre><code class="sh">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+$ sudo dpkg -i cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+$ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y cuda
+</code></pre>
+<p>測試 Nvidia Dirver 與 CUDA 是否有安裝完成：</p>
+<pre><code class="sh">$ cat /usr/local/cuda/version.txt
+CUDA Version 9.1.85
+
+$ sudo nvidia-smi
+Tue Mar 13 06:10:39 2018
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 390.30                 Driver Version: 390.30                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 106...  Off  | 00000000:01:00.0 Off |                  N/A |
+|  0%   33C    P0    15W / 120W |      0MiB /  3019MiB |      2%      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+</code></pre>
+<p>確認上述無誤後，接著安裝 Nvidia Docker v2，這邊透過 APT 來進行安裝：</p>
+<pre><code class="sh">$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+$ curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-docker2
+$ sudo pkill -SIGHUP dockerd
+</code></pre>
+<p>測試 Nvidia runtime，這邊下載 Nvidia image 來進行測試：</p>
+<pre><code class="sh">$ docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+...
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 390.30                 Driver Version: 390.30                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 106...  Off  | 00000000:01:00.0 Off |                  N/A |
+|  0%   35C    P0    15W / 120W |      0MiB /  3019MiB |      2%      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+</code></pre>
+<p>透過 TensorFlow GPU image 來進行測試，這邊執行後登入 IP:8888 執行簡單範例程式：</p>
+<pre><code class="sh">$ docker run --runtime=nvidia -it -p 8888:8888 tensorflow/tensorflow:latest-gpu
+...
+2018-03-13 06:44:21.719705: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1212] Found device 0 with properties:
+name: GeForce GTX 1060 3GB major: 6 minor: 1 memoryClockRate(GHz): 1.7845
+pciBusID: 0000:01:00.0
+totalMemory: 2.95GiB freeMemory: 2.88GiB
+2018-03-13 06:44:21.719728: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1312] Adding visible gpu devices: 0
+2018-03-13 06:44:21.919097: I tensorflow/core/common_runtime/gpu/gpu_device.cc:993] Creating TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 2598 MB memory) -&gt; physical GPU (device: 0, name: GeForce GTX 1060 3GB, pci bus id: 0000:01:00.0, compute capability: 6.1)
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> Container </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Docker </tag>
+            
+            <tag> Container </tag>
+            
+            <tag> Nvidia GPU </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Ceph Luminous CRUSH map 400000000000000 問題]]></title>
       <url>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</url>
       <content type="html"><![CDATA[<p>在 Ceph Luminous(v12) 版本中，預設開啟了一些 Kernel 特性，其中首先遇到的一般是 400000000000000 問題，即<code>CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING</code>特性(可以從對照表得知<a href="http://cephnotes.ksperis.com/blog/2014/01/21/feature-set-mismatch-error-on-ceph-kernel-client/" target="_blank" rel="noopener">CEPH_FEATURE Table and Kernel Version</a>)，剛問題需要在 Kernel 4.5+ 才能夠被支援，但如果不想升級可以依據本篇方式解決。</p>
@@ -872,9 +976,9 @@ $ neutron router-gateway-set router1 ext-net
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Openstack </tag>
             
@@ -4282,9 +4386,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -6947,9 +7051,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> Mesos </tag>
-            
             <tag> DC/OS </tag>
+            
+            <tag> Mesos </tag>
             
         </tags>
         
@@ -14015,26 +14119,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
