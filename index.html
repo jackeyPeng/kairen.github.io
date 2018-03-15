@@ -163,14 +163,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Ceph/">
                     Ceph <span class="right">9</span></a>
                 </a>
@@ -179,8 +171,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -189,6 +181,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -290,6 +290,7 @@
             
                 <div class="entry green-link-context">
                     <p><a href="https://kubernetes.io/docs/concepts/cluster-administration/device-plugins/" target="_blank" rel="noopener">Device Plugins</a> 是 Kubernetes v1.8 版本開始加入的 Alpha 功能，目標是結合 Extended Resource 來支援 GPU、FPGA、高效能 NIC、InfiniBand 等硬體設備介接的插件，這樣好處在於硬體供應商不需要修改 Kubernetes 核心程式，只需要依據 <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">Device Plugins 介面</a>來實作特定硬體設備插件，就能夠提供給 Kubernetes Pod 使用。而本篇會稍微提及 Device Plugin 原理，並說明如何使用 NVIDIA device plugin。</p>
+<p>P.S. 傳統的<code>alpha.kubernetes.io/nvidia-gpu</code>將於 1.11 版本移除，因此與 GPU 相關的排程與部署原始碼都將從 Kubernetes 核心移除。<br>
                 </div>
             
         </div>
@@ -447,9 +448,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
             <a href="/tags/Helm/" class="chip pink lighten-1">Helm</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
         
             <a href="/tags/Openstack/" class="chip pink lighten-1">Openstack</a>
         
