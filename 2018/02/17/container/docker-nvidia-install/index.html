@@ -7,7 +7,7 @@
 
     
 
-    <title>安裝 Nvidia Docker 2 來讓容器使用 GPU | KaiRen&#39;s Blog</title>
+    <title>安裝 NVIDIA Docker 2 來讓容器使用 GPU | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="安裝 Nvidia Docker 2 來讓容器使用 GPU"/>
+    <meta property="og:title" content="安裝 NVIDIA Docker 2 來讓容器使用 GPU"/>
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -204,7 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">17</span></a>
+                    Kubernetes <span class="right">18</span></a>
                 </a>
             </li>
 
@@ -281,7 +281,7 @@
             <div class="article-title">
                 
     
-        <h1>安裝 Nvidia Docker 2 來讓容器使用 GPU</h1>
+        <h1>安裝 NVIDIA Docker 2 來讓容器使用 GPU</h1>
     
 
 
@@ -300,7 +300,7 @@
         
             <a href="/tags/Container/" class="chip pink lighten-1">Container</a>
         
-            <a href="/tags/Nvidia-GPU/" class="chip pink lighten-1">Nvidia GPU</a>
+            <a href="/tags/NVIDIA-GPU/" class="chip pink lighten-1">NVIDIA GPU</a>
         
     </div>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>本篇主要介紹如何使用 <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">Nvidia Docker v2</a> 來讓容器使用 GPU，過去 Nvidia Docker v1 需要使用 nvidia-docker 來取代 docker 執行 GPU image，或是透過手動掛載 Nvidia driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使用 Nvidia Docker v2 的 Runtime 來執行 GPU 應用。</p>
+                <p>本篇主要介紹如何使用 <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">NVIDIA Docker v2</a> 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使用 NVIDIA Docker v2 的 Runtime 來執行 GPU 應用。</p>
 <a id="more"></a>
 <p>安裝前需要確認滿足以下幾點：</p>
 <ul>
@@ -326,13 +326,13 @@ $ echo &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial ed
 $ sudo apt-get update
 $ sudo apt-get install -y docker-ce=17.12.1~ce-0~ubuntu
 </code></pre>
-<p>接著透過 APT 安裝 Nvidia Driver(v390.30) 與 CUDA 9.1：</p>
+<p>接著透過 APT 安裝 NVIDIA Driver(v390.30) 與 CUDA 9.1：</p>
 <pre><code class="sh">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
 $ sudo dpkg -i cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
 $ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y cuda
 </code></pre>
-<p>測試 Nvidia Dirver 與 CUDA 是否有安裝完成：</p>
+<p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：</p>
 <pre><code class="sh">$ cat /usr/local/cuda/version.txt
 CUDA Version 9.1.85
 
@@ -355,13 +355,13 @@ Tue Mar 13 06:10:39 2018
 |  No running processes found                                                 |
 +-----------------------------------------------------------------------------+
 </code></pre>
-<p>確認上述無誤後，接著安裝 Nvidia Docker v2，這邊透過 APT 來進行安裝：</p>
+<p>確認上述無誤後，接著安裝 NVIDIA Docker v2，這邊透過 APT 來進行安裝：</p>
 <pre><code class="sh">$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 $ curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-docker2
 $ sudo pkill -SIGHUP dockerd
 </code></pre>
-<p>測試 Nvidia runtime，這邊下載 Nvidia image 來進行測試：</p>
+<p>測試 NVIDIA runtime，這邊下載 NVIDIA image 來進行測試：</p>
 <pre><code class="sh">$ docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 ...
 +-----------------------------------------------------------------------------+
