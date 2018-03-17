@@ -1,0 +1,821 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>Apache Cassandra 分散式資料庫 | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="Apache Cassandra 分散式資料庫"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">18</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Spark/">Spark</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>Apache Cassandra 分散式資料庫</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2015-11-17T09:08:54.000Z"><a href="/2015/11/17/data-engineer/apache-cassandra/">2015-11-17</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Spark/" class="chip pink lighten-1">Spark</a>
+        
+            <a href="/tags/Database/" class="chip pink lighten-1">Database</a>
+        
+            <a href="/tags/NoSQL/" class="chip pink lighten-1">NoSQL</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#部署多節點叢集"><span class="section table-of-contents-text">部署多節點叢集</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#驗證系統"><span class="section table-of-contents-text">驗證系統</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#參考資源"><span class="section table-of-contents-text">參考資源</span></a></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>Cassandra 是最初由 Facebook 開發，之後貢獻給 Apache 基金會維護的分散式 NoSQL 資料庫系統，一般被認為 Amazon Dyname 與 Google BigTable 的結合體，主要是分散性像 Dynamo，然而資料模型卻如 BigTable。目前有多家公司採用，可運行上千台節點來提供超過 200 TB 的資料。</p>
+<p>Cassandra 擁有幾個特點，也因為這些特點讓許多人選擇使用該資料庫，以下幾個項目簡單列出其特點：</p>
+<ul>
+<li>完全去中心化，且不是主從架構的備份</li>
+<li>統一類型的節點</li>
+<li>以 P2P 協定串連起網路，清除 SPOF（Single Point Of Failure）問題</li>
+<li>高擴展性，新增與刪除節點容易</li>
+<li>可呼叫的一致性，並支援強一致性與弱一致性</li>
+<li>支援跨區域的叢集架構</li>
+<li>每個區域儲存一份完整資料，來提供存取局部性、容錯與災難復原</li>
+<li><strong>寫入效能理論上比讀取好（但近期有證實現在讀取也很不錯），適合串流資料儲存</strong></li>
+<li>比 HBase 的隨機存取效能要好上許多，但不擅長區間掃描</li>
+<li>可作為 HBase 的即時查詢快取。</li>
+</ul>
+<a id="more"></a>
+<center><img src="/images/spark/cassandra_arch.png" alt=""></center>
+
+<p>若要瞭解更多 Cassandra 可以閱讀 <a href="http://wiki.apache.org/cassandra/GettingStarted" target="_blank" rel="noopener">Cassandra Wiki
+</a>。</p>
+<h2 id="部署多節點叢集"><a href="#部署多節點叢集" class="headerlink" title="部署多節點叢集"></a>部署多節點叢集</h2><p>本節將安裝一個簡單的 Cassandra 叢集，來提供 NoSQL 資料庫以存取資料，以下為節點配置：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>HostName</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.17.0.2</td>
+<td>cassandra-1</td>
+</tr>
+<tr>
+<td>172.17.0.3</td>
+<td>cassandra-2</td>
+</tr>
+<tr>
+<td>172.17.0.4</td>
+<td>cassandra-3</td>
+</tr>
+</tbody>
+</table>
+<p>首先需在每個節點安裝 Java，這邊採用 Oracle 的 Java 來進行安裝：</p>
+<pre><code>$ sudo apt-get install -y software-properties-common
+$ sudo add-apt-repository -y ppa:webupd8team/java
+$ sudo apt-get update
+$ echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+$ echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+$ sudo apt-get -y install oracle-java7-installer
+</code></pre><blockquote>
+<p>若要安裝<code>java8</code>請修改成<code>oracle-java8-installer</code>。</p>
+</blockquote>
+<p>接著在各節點安裝 Cassandra 套件，這邊採用<code>apt-get</code>安裝，首先加入 Repository：</p>
+<pre><code class="sh">$ echo &quot;deb http://www.apache.org/dist/cassandra/debian 22x main&quot; | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+</code></pre>
+<blockquote>
+<p>這邊安裝<code>2.2.x</code>版本，若要其他版本則修改<code>22x</code>，如改為<code>21x</code>。</p>
+</blockquote>
+<p>為了避免軟體套件更新軟體時有簽證警告，需加入 Apache 基金會與套件資源庫相關的三個公有金鑰：</p>
+<pre><code class="sh">$ gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
+$ gpg --export --armor F758CE318D77295D | sudo apt-key add -
+$ gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
+$ gpg --export --armor 2B5C1B00 | sudo apt-key add -
+$ gpg --keyserver pgp.mit.edu --recv-keys 0353B12C
+$ gpg --export --armor 0353B12C | sudo apt-key add -
+</code></pre>
+<p>完成後更新 apt-get Repository：</p>
+<pre><code class="sh">$ sudo apt-get update
+</code></pre>
+<p>安裝 Cassandra NoSQL 於每個節點上：</p>
+<pre><code>$ sudo apt-get install -y cassandra
+</code></pre><p>完成後，我們必須開始配置各節點來組成一個叢集，先把每個節點的 Cassandra 服務關閉：</p>
+<pre><code class="sh">$ sudo service cassandra stop
+</code></pre>
+<p>關閉後，在每個節點編輯<code>/etc/cassandra/cassandra.yaml</code>檔案，並修改一下內容：</p>
+<pre><code class="sh">cluster_name: &#39;examples&#39;  
+num_tokens: 256  
+seed_provider:  
+    - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+      parameters:
+          - seeds: &quot;172.17.0.2, 172.17.0.3, 172.17.0.4&quot;
+
+listen_address: 172.17.0.2  
+broadcast_address: 172.17.0.2
+rpc_address: 0.0.0.0  
+broadcast_rpc_address: 172.17.0.2
+</code></pre>
+<blockquote>
+<p>P.S. 這邊要注意不同節點會有不同，如<code>listen_address</code>與<code>seeds</code>等。</p>
+</blockquote>
+<p>都完成設定檔後，就可以重啟每台的 Cassandra 服務：</p>
+<pre><code class="sh">$ sudo service cassandra restart
+</code></pre>
+<p>當確認所有節點重新啟動後，在<code>其中一個節點</code>建立 keyspaces 來做 replication：</p>
+<pre><code class="sh">$ cqlsh
+cqlsh&gt; create keyspace Spark_smack WITH REPLICATION = { &#39;class&#39; : &#39;SimpleStrategy&#39;, &#39;replication_factor&#39; : &#39;3&#39; };  
+exit
+</code></pre>
+<blockquote>
+<p><code>Spark_smack</code> 該值是可以依個人名稱修改。</p>
+</blockquote>
+<p>建立完成後，可以使用<code>nodetool</code>指令來檢查是否成功：</p>
+<pre><code class="sh">$ nodetool status spark_smack
+
+Datacenter: datacenter1
+=======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load       Tokens       Owns (effective)  Host ID                               Rack
+UN  172.17.0.3  255.68 KB  256          100.0%            9c9eb117-f787-47bd-825f-3daf49eba489  rack1
+UN  172.17.0.2  252.03 KB  256          100.0%            7a4adb77-42d1-402f-b57b-4a40ad013e2c  rack1
+UN  172.17.0.4  127.2 KB   256          100.0%            5823fd78-45f2-4328-9470-f1053bb3fc3b  rack1
+</code></pre>
+<h2 id="驗證系統"><a href="#驗證系統" class="headerlink" title="驗證系統"></a>驗證系統</h2><p>我們透過 Client 程式來連到<code>cassandra-1</code>節點來驗證叢集是否建立成功：</p>
+<pre><code class="sh">$ cqlsh
+cqlsh&gt; use &lt;keyspace name&gt;;
+</code></pre>
+<blockquote>
+<p>這邊<code>&lt;keyspace name&gt;</code>範例為 spark_smack。</p>
+</blockquote>
+<p>然後建立一個資料表：</p>
+<pre><code class="sql">CREATE TABLE emp(  
+   emp_id int PRIMARY KEY,
+   emp_name text,
+   emp_city text,
+   emp_sal varint,
+   emp_phone varint
+   );
+</code></pre>
+<p>接著插入一筆資料到資料表：</p>
+<pre><code class="sql">INSERT INTO emp (emp_id, emp_name, emp_city )  
+  VALUES(1, &#39;Kyle&#39;, &#39;Taichung&#39; );
+</code></pre>
+<p>若都沒有任何錯誤的話，現在連接到其他節點來檢查是否有同步資料：</p>
+<pre><code class="sh">$ cqlsh
+cqlsh&gt; use spark_smack;
+cqlsh&gt; select * from emp;
+
+ emp_id | emp_city | emp_name | emp_phone | emp_sal
+--------+----------+----------+-----------+---------
+      1 | Taichung |     Kyle |      null |    null
+</code></pre>
+<blockquote>
+<p>P.S 若發生如以下錯誤，請依照指示解決：</p>
+<pre><code class="sh">Connection error: (&#39;Unable to connect to any servers&#39;, {&#39;127.0.0.1&#39;: error(111, &quot;Tried connecting to [(&#39;127.0.0.1&#39;, 9042)]. Last error: Connection refused&quot;)})
+</code></pre>
+<p>首先檢查設定檔<code>/etc/cassandra/cassandra.yaml</code>裡面的<code>rpc_address</code>是否為<code>0.0.0.0</code>。</p>
+</blockquote>
+<p>最後，若要復原與備份可以閱讀 <a href="http://blog.powerupcloud.com/2015/09/13/cassandra-backup-and-recovery/" target="_blank" rel="noopener">Cassandra Backup and Recovery</a>。</p>
+<h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
+<li><a href="https://www.byvoid.com/blog/cassandra-intro" target="_blank" rel="noopener">Cassandra简介</a></li>
+<li><a href="http://blog.powerupcloud.com/2016/01/10/install-and-configure-a-3-node-cassandra-cluster-on-ubuntu-14-04/" target="_blank" rel="noopener">Install and Configure a 3 node Cassandra Cluster on Ubuntu 14.04</a></li>
+<li><a href="http://www.infoq.com/cn/articles/cassandra-mythology" target="_blank" rel="noopener">關於 Cassandra 的錯誤觀點</a></li>
+</ul>
+
+                
+<p class="green-link-context">
+    <a href="/2015/11/19/ceph/ceph-intro/" rel="next" title="Ceph 分散式儲存系統介紹">
+    Prev: Ceph 分散式儲存系統介紹
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2015/11/10/kubernetes/k8s-intro/" rel="next" title="Kuberentes 是什麼？">
+    Next: Kuberentes 是什麼？
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

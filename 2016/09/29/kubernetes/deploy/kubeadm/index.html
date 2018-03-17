@@ -1,0 +1,877 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>只要用 kubeadm 小朋友都能部署 Kubernetes | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="只要用 kubeadm 小朋友都能部署 Kubernetes"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">18</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Kubernetes/">Kubernetes</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>只要用 kubeadm 小朋友都能部署 Kubernetes</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2016-09-29T09:08:54.000Z"><a href="/2016/09/29/kubernetes/deploy/kubeadm/">2016-09-29</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Ubuntu/" class="chip pink lighten-1">Ubuntu</a>
+        
+            <a href="/tags/CentOS/" class="chip pink lighten-1">CentOS</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點資訊"><span class="section table-of-contents-text">節點資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Master-建立"><span class="section table-of-contents-text">Kubernetes Master 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Node-建立"><span class="section table-of-contents-text">Kubernetes Node 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Add-ons-建立"><span class="section table-of-contents-text">Add-ons 建立</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#簡單部署一個服務"><span class="section table-of-contents-text">簡單部署一個服務</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#移除節點"><span class="section table-of-contents-text">移除節點</span></a></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+<blockquote>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="noopener">kubeadm-ansible</a>。</p>
+</blockquote>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Kubernetes v1.9.0</li>
+<li>Etcd v3</li>
+<li>Flannel v0.9.1</li>
+<li>Docker v17.05.0-ce</li>
+</ul>
+<a id="more"></a>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Role</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.16.35.12</td>
+<td>master1</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>172.16.35.10</td>
+<td>node1</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>172.16.35.11</td>
+<td>node2</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>目前 kubeadm 只支援在<code>Ubuntu 16.04+</code>、<code>CentOS 7</code>與<code>HypriotOS v1.0.1+</code>作業系統上使用。</p>
+</blockquote>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
+<ul>
+<li>所有節點網路可以溝通。</li>
+<li>所有節點需要設定 APT Docker Repository：</li>
+</ul>
+<pre><code class="sh">$ sudo apt-key adv --keyserver &quot;hkp://p80.pool.sks-keyservers.net:80&quot; --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+$ echo &#39;deb https://apt.dockerproject.org/repo ubuntu-xenial main&#39; | sudo tee /etc/apt/sources.list.d/docker.list
+</code></pre>
+<blockquote>
+<p>CentOS 7 EPEL 有支援 Docker Package:</p>
+<pre><code class="sh">$ sudo yum install -y epel-release
+</code></pre>
+</blockquote>
+<ul>
+<li>所有節點需要設定 APT 與 Yum Kubernetes Repository：</li>
+</ul>
+<pre><code class="sh">$ curl -s &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | sudo apt-key add -
+$ echo &quot;deb http://apt.kubernetes.io/ kubernetes-xenial main&quot; | sudo tee /etc/apt/sources.list.d/kubernetes.list
+</code></pre>
+<blockquote>
+<p>若是 CentOS 7 則執行以下方式：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+</code></pre>
+</blockquote>
+<ul>
+<li>CentOS 7 要額外確認 SELinux 或 Firewall 關閉。</li>
+<li>Kubernetes v1.8 要求關閉系統 Swap，若不關閉則需要修改 kubelet 設定參數，這邊可以利用以下指令關閉：</li>
+</ul>
+<pre><code class="sh">$ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
+</code></pre>
+<blockquote>
+<p>記得<code>/etc/fstab</code>也要註解掉<code>SWAP</code>掛載。</p>
+</blockquote>
+<h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
+<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-engine
+</code></pre>
+<p>進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
+<pre><code class="sh">$ sudo su -
+$ kubeadm token generate
+b0f7b8.8d1767876297d85c
+
+$ kubeadm init --service-cidr 10.96.0.0/12 \
+               --kubernetes-version v1.9.0 \
+               --pod-network-cidr 10.244.0.0/16 \
+               --apiserver-advertise-address 172.16.35.12 \
+               --token b0f7b8.8d1767876297d85c
+# output               
+...
+kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
+</code></pre>
+<p>當出現如上面資訊後，表示 Master 初始化成功，不過這邊還是一樣透過 kubectl 測試一下：</p>
+<pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
+$ kubectl get node
+NAME      STATUS    ROLES     AGE       VERSION
+master1   Ready     master    10m       v1.8.4
+</code></pre>
+<p>當執行正確後要接著部署網路，但要注意<code>一個叢集只能用一種網路</code>，這邊採用 Flannel：</p>
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml
+clusterrole &quot;flannel&quot; created
+clusterrolebinding &quot;flannel&quot; created
+serviceaccount &quot;flannel&quot; configured
+configmap &quot;kube-flannel-cfg&quot; configured
+daemonset &quot;kube-flannel-ds&quot; configured
+</code></pre>
+<blockquote>
+<ul>
+<li>若參數 <code>--pod-network-cidr=10.244.0.0/16</code> 改變時，在<code>kube-flannel.yml</code>檔案也需修改<code>net-conf.json</code>欄位的 CIDR。</li>
+<li>若使用 Virtualbox 的話，請修改<code>kube-flannel.yml</code>中的 command 綁定 iface，如<code>command: [ &quot;/opt/bin/flanneld&quot;, &quot;--ip-masq&quot;, &quot;--kube-subnet-mgr&quot;, &quot;--iface=eth1&quot; ]</code>。</li>
+</ul>
+</blockquote>
+<p>確認 Flannel 部署正確：</p>
+<pre><code class="sh">$ kubectl get po -n kube-system
+NAME                                         READY     STATUS    RESTARTS   AGE
+kube-flannel-ds-3b66l                        1/1       Running   0          9s
+kube-flannel-ds-m6874                        1/1       Running   0          9s
+kube-flannel-ds-vmb38                        1/1       Running   0          9s
+...
+
+$ ip -4 a show flannel.1
+5: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN group default
+    inet 10.244.0.0/32 scope global flannel.1
+       valid_lft forever preferred_lft forever
+
+$ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.244.0.0      0.0.0.0         255.255.0.0     U     0      0        0 flannel.1
+</code></pre>
+<h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
+<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-engine
+</code></pre>
+<p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
+<pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
+# output
+...
+Run &#39;kubectl get nodes&#39; on the master to see this machine join.
+</code></pre>
+<p>回到<code>master1</code>查看節點狀態：</p>
+<pre><code class="sh">$ kubectl get node
+NAME      STATUS    ROLES     AGE       VERSION
+master1   Ready     master    10m       v1.8.4
+node1     Ready     &lt;none&gt;    9m        v1.8.4
+node2     Ready     &lt;none&gt;    9m        v1.8.4
+</code></pre>
+<p>為了多加利用資源這邊透過 taint 來讓 masters 也會被排程執行容器：</p>
+<pre><code class="sh">$ kubectl taint nodes --all node-role.kubernetes.io/master-
+</code></pre>
+<h2 id="Add-ons-建立"><a href="#Add-ons-建立" class="headerlink" title="Add-ons 建立"></a>Add-ons 建立</h2><p>當完成後就可以建立一些 Addons，如 Dashboard。這邊執行以下指令進行建立：</p>
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+</code></pre>
+<blockquote>
+<p>Dashboard 1.7.x 版本有做一些改變，會用到 SSL Cert，可參考這邊 <a href="https://github.com/kubernetes/dashboard/wiki/Installation" target="_blank" rel="noopener">Installation</a>。</p>
+</blockquote>
+<p>確認沒問題後，透過 kubectl 查看：</p>
+<pre><code class="sh">kubectl get svc --namespace=kube-system
+NAME                   CLUSTER-IP       EXTERNAL-IP   PORT(S)         AGE
+kube-dns               10.96.0.10       &lt;none&gt;        53/UDP,53/TCP   36m
+kubernetes-dashboard   10.111.162.184   &lt;nodes&gt;       80:32546/TCP    33s
+</code></pre>
+<p>最後就可以存取 <a href="https://172.16.35.12:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Kube Dashboard</a>。</p>
+<p>在 1.7 版本以後的 Dashboard 將不再提供所有權限，因此需要建立一個 service account 來綁定 cluster-admin role：</p>
+<pre><code class="sh">$ kubectl -n kube-system create sa dashboard
+$ kubectl create clusterrolebinding dashboard --clusterrole cluster-admin --serviceaccount=kube-system:dashboard
+$ kubectl -n kube-system get sa dashboard -o yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: 2017-11-27T17:06:41Z
+  name: dashboard
+  namespace: kube-system
+  resourceVersion: &quot;69076&quot;
+  selfLink: /api/v1/namespaces/kube-system/serviceaccounts/dashboard
+  uid: 56b880bf-d395-11e7-9528-448a5ba4bd34
+secrets:
+- name: dashboard-token-vg52j
+
+$ kubectl -n kube-system describe secrets dashboard-token-vg52j
+...
+token:      eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtdG9rZW4tdmc1MmoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNTZiODgwYmYtZDM5NS0xMWU3LTk1MjgtNDQ4YTViYTRiZDM0Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZCJ9.bVRECfNS4NDmWAFWxGbAi1n9SfQ-TMNafPtF70pbp9Kun9RbC3BNR5NjTEuKjwt8nqZ6k3r09UKJ4dpo2lHtr2RTNAfEsoEGtoMlW8X9lg70ccPB0M1KJiz3c7-gpDUaQRIMNwz42db7Q1dN7HLieD6I4lFsHgk9NPUIVKqJ0p6PNTp99pBwvpvnKX72NIiIvgRwC2cnFr3R6WdUEsuVfuWGdF-jXyc6lS7_kOiXp2yh6Ym_YYIr3SsjYK7XUIPHrBqWjF-KXO_AL3J8J_UebtWSGomYvuXXbbAUefbOK4qopqQ6FzRXQs00KrKa8sfqrKMm_x71Kyqq6RbFECsHPA
+</code></pre>
+<blockquote>
+<p>複製<code>token</code>，然後貼到 Kubernetes dashboard。</p>
+</blockquote>
+<h2 id="簡單部署一個服務"><a href="#簡單部署一個服務" class="headerlink" title="簡單部署一個服務"></a>簡單部署一個服務</h2><p>這邊利用 Weave 公司提供的服務來驗證系統，透過以下方式建立：</p>
+<pre><code class="sh">$ kubectl create namespace sock-shop
+$ kubectl apply -n sock-shop -f &quot;https://github.com/microservices-demo/microservices-demo/blob/master/deploy/kubernetes/complete-demo.yaml?raw=true&quot;
+</code></pre>
+<p>接著透過 kubectl 查看資訊：</p>
+<pre><code class="sh">$ kubectl describe svc front-end -n sock-shop
+$ kubectl get pods -n sock-shop
+</code></pre>
+<p>最後存取 <a href="http://172.16.35.12:30001" target="_blank" rel="noopener">http://172.16.35.12:30001</a> 即可看到服務的 Frontend。</p>
+<h2 id="移除節點"><a href="#移除節點" class="headerlink" title="移除節點"></a>移除節點</h2><p>最後，若要將現有節點移除的話，kubeadm 已經有內建的指令來完成這件事，只要執行以下即可：</p>
+<pre><code class="sh">$ kubeadm reset
+</code></pre>
+
+                
+<p class="green-link-context">
+    <a href="/2016/10/01/tensorflow/tensorflow-docker/" rel="next" title="TensorFlow on Docker">
+    Prev: TensorFlow on Docker
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2016/08/19/golang/go-install/" rel="next" title="Go 語言環境安裝">
+    Next: Go 語言環境安裝
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,912 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>Docker 串接 OpenStack Neutron Kuryr 網路 | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="Docker 串接 OpenStack Neutron Kuryr 網路"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">18</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/OpenStack/">OpenStack</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>Docker 串接 OpenStack Neutron Kuryr 網路</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2016-06-02T08:23:01.000Z"><a href="/2016/06/02/openstack/kuryr-install/">2016-06-02</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點配置"><span class="section table-of-contents-text">節點配置</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#安裝前準備"><span class="section table-of-contents-text">安裝前準備</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#安裝-OpenStack"><span class="section table-of-contents-text">安裝 OpenStack</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#安裝-Kuryr"><span class="section table-of-contents-text">安裝 Kuryr</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#服務驗證"><span class="section table-of-contents-text">服務驗證</span></a></li></ol></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>Kuryr 是 Docker network plugin 之一，主要是使用 Neutron 來提供網路服務給不同主機的 Docker 容器使用，目前也提供了容器化的 Neutron plugin 容器映像檔。</p>
+<p>本篇說明如何透過 CentOS 來部署簡單的 Kuryr 與 Docker 串接。</p>
+<a id="more"></a>
+<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>OpenStack Kuryr 我們使用到三台節點，以下為本次安裝的規格：</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>RAM</th>
+<th>Disk</th>
+<th>CPUs</th>
+<th>IP Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>controller</td>
+<td>4 GB</td>
+<td>50GB</td>
+<td>2vCPU</td>
+<td>172.16.1.115</td>
+</tr>
+<tr>
+<td>network-1</td>
+<td>4 GB</td>
+<td>50GB</td>
+<td>2vCPU</td>
+<td>172.16.1.118</td>
+</tr>
+<tr>
+<td>network-2</td>
+<td>4 GB</td>
+<td>50 GB</td>
+<td>2vCPU</td>
+<td>172.16.1.119</td>
+</tr>
+</tbody>
+</table>
+<p>請以上節點都分別安裝 RHEL 或者 CentOS 作業系統。並且設定 IP 為靜態固定，編輯<code>/etc/sysconfig/network-scripts/ifcfg-&lt;name&gt;</code>檔案，加入以下內容：</p>
+<pre><code class="sh">ONBOOT=&quot;yes&quot;
+IPADDR=&quot;10.0.0.104&quot;
+PREFIX=&quot;24&quot;
+GATEWAY=&quot;10.0.0.1&quot;
+DNS1=&quot;8.8.8.8&quot;
+DNS2=&quot;8.8.8.4&quot;
+</code></pre>
+<blockquote>
+<p><font color="red">P.S.</font> 若是虛擬機則不需要設定。</p>
+</blockquote>
+<h2 id="安裝前準備"><a href="#安裝前準備" class="headerlink" title="安裝前準備"></a>安裝前準備</h2><p>在開始安裝以前，首先需要在每一台節點將基本環境的軟體更新：</p>
+<pre><code class="sh">$ sudo yum update -y
+</code></pre>
+<blockquote>
+<p>完成後檢查是否是最新版本，可以透過以下方式查看 Kernel：</p>
+<pre><code class="sh">$ uname -r
+3.10.0-327.13.1.el7.x86_64
+</code></pre>
+<p>如果不是以上版本，請執行以下指令：</p>
+<pre><code class="sh">$ sudo yum upgrade --assumeyes --tolerant
+$ sudo yum update --assumeyes
+</code></pre>
+</blockquote>
+<p>由於在 CentOS 與 RHEL 預設會開啟防火牆，故要關閉防火牆與開機時自動啟動：</p>
+<pre><code class="sh">$ sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
+</code></pre>
+<p>設定關閉 SELinux 與設定一些資訊，並重新啟動：</p>
+<pre><code class="sh">$ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config &amp;&amp;
+sudo groupadd nogroup &amp;&amp;
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 &amp;&amp;
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 &amp;&amp;
+sudo reboot
+</code></pre>
+<p>完成重新啟動後，在所有<code>Network</code>節點安裝 Docker，首先要取得 repos，設定以下來讓 yum 可以抓取：</p>
+<pre><code class="sh">$ sudo tee /etc/yum.repos.d/docker.repo &lt;&lt;-&#39;EOF&#39;
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+</code></pre>
+<p>在<code>Network</code>節點安裝 Docker engine，並啟動 docker 與設定開機啟動：</p>
+<pre><code class="sh">$ sudo yum install --assumeyes --tolerant docker-engine
+$ sudo systemctl start docker
+$ sudo systemctl enable docker
+</code></pre>
+<p>在<code>所有</code>節點安裝一些基本工具軟體：</p>
+<pre><code class="sh">$ sudo yum install -y tar xz unzip curl ipset vim wget git python-pip
+$ sudo pip install --upgrade pip
+</code></pre>
+<p>在<code>Controller</code>節點，進入<code>root</code>使用者，並建置 ssh keys：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
+$ cat .ssh/id_rsa.pub &gt;&gt; .ssh/authorized_keys
+</code></pre>
+<p>複製<code>Controller</code>節點的<code>.ssh/id_rsa.pub</code>內容，並貼到<code>Network</code>節點的<code>root</code>使用者的<code>.ssh/authorized_keys</code>。並驗證 ssh 是否可以無密碼登入：</p>
+<pre><code class="sh">$ ssh 172.16.1.118
+</code></pre>
+<h3 id="安裝-OpenStack"><a href="#安裝-OpenStack" class="headerlink" title="安裝 OpenStack"></a>安裝 OpenStack</h3><p>這邊使用 RDO 進行安裝。由於只需要 Neutron 與 Keystone 服務，所以可以修改部署的<code>answer-file</code>設定檔。由於這邊使用的是虛擬機，因此 Neutron 網路採用 VXLAN 方式進行安裝。進入到<code>Controller</code>節點，並且進入到<code>root</code>使用者安裝 PackStack：</p>
+<pre><code class="sh">$ yum install -y centos-release-openstack-mitaka.noarch
+$ yum install -y openstack-packstack
+$ wget https://gist.githubusercontent.com/kairen/637c707b960e188d32aba9044e652c0b/raw/6724a5177ca82ced555554635c6b0893e8c398ab/answer-file
+</code></pre>
+<blockquote>
+<p>這邊可以更改安裝版本，如更改成 Liberty 的穩定版<code>centos-release-openstack-liberty.noarch</code></p>
+</blockquote>
+<p>編輯<code>answer-file</code>設定檔，修改以下內容：</p>
+<pre><code>CONFIG_CONTROLLER_HOST=172.16.1.115
+CONFIG_COMPUTE_HOSTS=172.16.1.118,172.16.1.119
+CONFIG_NETWORK_HOSTS=172.16.1.115,172.16.1.118,172.16.1.119
+CONFIG_STORAGE_HOST=172.16.1.115
+CONFIG_AMQP_HOST=172.16.1.115
+CONFIG_MARIADB_HOST=172.16.1.115
+CONFIG_KEYSTONE_LDAP_URL=ldap://172.16.1.115
+</code></pre><p>設定檔都確認無誤後，透過以下指令進行安裝：</p>
+<pre><code class="sh">$ packstack --answer-file=answer-file
+...
+**** Installation completed successfully ******
+* To access the OpenStack Dashboard browse to http://172.16.1.115/dashboard .
+</code></pre>
+<blockquote>
+<p>中途若發生安裝套件失敗問題，請直接重新執行一次。</p>
+</blockquote>
+<p>當成功安裝完成後，透過簡單的 OpenStack 指令來確認：</p>
+<pre><code class="sh">$ . keystonerc_admin
+$ openstack user list
++----------------------------------+---------+
+| ID                               | Name    |
++----------------------------------+---------+
+| 70b80593320543bbb32e15d7f06036f0 | admin   |
+| 9600aaa2447940e789e548b2f5515690 | neutron |
++----------------------------------+---------+
+</code></pre>
+<h3 id="安裝-Kuryr"><a href="#安裝-Kuryr" class="headerlink" title="安裝 Kuryr"></a>安裝 Kuryr</h3><p>進入<code>Network</code>節點，並且進入到<code>root</code>使用者，下載 Kuryr 最新的專案：</p>
+<pre><code class="sh">$ git clone https://github.com/openstack/kuryr.git
+$ pip install -r requirements.txt
+$ python setup.py install
+</code></pre>
+<p>建立 Kuryr 設定檔與 Log 目錄：</p>
+<pre><code class="sh">$ mkdir -p /var/log/kuryr /etc/kuryr
+$ wget https://gist.githubusercontent.com/kairen/637c707b960e188d32aba9044e652c0b/raw/6724a5177ca82ced555554635c6b0893e8c398ab/kuryr.conf -O /etc/kuryr/kuryr.conf
+</code></pre>
+<p>編輯<code>/etc/kuryr/kuryr.conf</code>設定檔，修改一下內容：</p>
+<pre><code>[keystone_client]
+auth_uri = http://172.16.1.115:35357/v2.0
+
+[neutron_client]
+neutron_uri = http://172.16.1.115:9696
+</code></pre><p>接著啟動 Kuryr 服務：</p>
+<pre><code class="sh">$ ./scripts/run_kuryr.sh &amp;
+2016-06-02 03:51:33.578 4758 INFO werkzeug [-]  * Running on http://0.0.0.0:2377/ (Press CTRL+C to quit)
+</code></pre>
+<h3 id="服務驗證"><a href="#服務驗證" class="headerlink" title="服務驗證"></a>服務驗證</h3><p>當所有<code>Network</code>節點都完成 Kuryr 安裝後，就可以透過以下方式來驗證，首先在<code>network-1</code>建立網路：</p>
+<pre><code class="sh">$ docker network create --driver=kuryr \
+--ipam-driver=kuryr \
+--subnet 10.0.0.0/16 \
+--gateway 10.0.0.1 \
+--ip-range 10.0.0.0/24 kuryr
+
+...
+821d6cd53af6c656969c1c96063a60c695a0313c9a119e44d4325ce2a9f2f935
+</code></pre>
+<p>透過 docker 指令來查看網路：</p>
+<pre><code class="sh">$ docker network inspect kuryr
+[
+    {
+        &quot;Name&quot;: &quot;kuryr&quot;,
+        &quot;Id&quot;: &quot;821d6cd53af6c656969c1c96063a60c695a0313c9a119e44d4325ce2a9f2f935&quot;,
+        &quot;Scope&quot;: &quot;local&quot;,
+        &quot;Driver&quot;: &quot;kuryr&quot;,
+        &quot;EnableIPv6&quot;: false,
+        &quot;IPAM&quot;: {
+            &quot;Driver&quot;: &quot;kuryr&quot;,
+            &quot;Options&quot;: {},
+            &quot;Config&quot;: [
+                {
+                    &quot;Subnet&quot;: &quot;10.0.0.0/16&quot;,
+                    &quot;IPRange&quot;: &quot;10.0.0.0/24&quot;,
+                    &quot;Gateway&quot;: &quot;10.0.0.1&quot;
+                }
+            ]
+        },
+        &quot;Internal&quot;: false,
+        &quot;Containers&quot;: {
+            &quot;367763a677ad180c57818631ee3e9151683d0218a15bb002d0995ab5c6e30446&quot;: {
+                &quot;Name&quot;: &quot;awesome_dijkstra&quot;,
+                &quot;EndpointID&quot;: &quot;326aba6247266cfd0ca3771b0283e2142a3e934bb994d1b77fc93bb467c0df48&quot;,
+                &quot;MacAddress&quot;: &quot;fa:16:3e:7c:d8:b6&quot;,
+                &quot;IPv4Address&quot;: &quot;10.0.0.5/24&quot;,
+                &quot;IPv6Address&quot;: &quot;&quot;
+            },
+            &quot;b740abd7976d274de233df0bad052c418516ba036132b92ad022a4b52a2d7d25&quot;: {
+                &quot;Name&quot;: &quot;awesome_engelbart&quot;,
+                &quot;EndpointID&quot;: &quot;fcc642dae6323ce7d86ddda61c9583a19801eae70d8126d35b4b5846cd8598a4&quot;,
+                &quot;MacAddress&quot;: &quot;fa:16:3e:5b:6e:7f&quot;,
+                &quot;IPv4Address&quot;: &quot;10.0.0.3/24&quot;,
+                &quot;IPv6Address&quot;: &quot;&quot;
+            }
+        },
+        &quot;Options&quot;: {},
+        &quot;Labels&quot;: {}
+    }
+]
+</code></pre>
+<p>接著建立一個 container 來取得 IP：</p>
+<pre><code class="sh">$ docker run -it -d --net kuryr --privileged=true ubuntu:14.04
+$ docker exec -ti $(docker ps -lq) bash
+root@367763a677ad$ ip -4 a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+14: eth0@if15: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.0.0.3/24 scope global eth0
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>接著進入到<code>network-2</code>節點，透過 docker 指令建立網路，這邊採用跟上一個同樣的網路：</p>
+<pre><code class="sh">$ docker network create --driver=kuryr \
+--ipam-driver=kuryr \
+--subnet 10.0.0.0/16 \
+--gateway 10.0.0.1 \
+--ip-range 10.0.0.0/24 \
+-o neutron.net.uuid=8c069d2c-772c-47ae-90bb-d22148f37dc8 kuryr
+</code></pre>
+<blockquote>
+<p>這邊<code>neutron.net.uuid</code>可以透過以下在<code>Controller</code>方式取得：</p>
+<pre><code class="sh">$ neutron net-list | awk &#39;/kuryr/ {print $2}&#39;
+8c069d2c-772c-47ae-90bb-d22148f37dc8
+</code></pre>
+</blockquote>
+<p>接著一樣建立一個 container 來取得 IP：</p>
+<pre><code class="sh">$ docker run -it -d --net kuryr --privileged=true ubuntu:14.04
+$ docker exec -ti $(docker ps -lq) bash
+root@f2b48a802e92$ ip -4 a
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+15: eth0@if16: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.0.0.4/24 scope global eth0
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>透過 ping 來驗證網路是否有連接：</p>
+<pre><code class="sh">root@f2b48a802e92$ ping -c 3 10.0.0.3
+PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=1.71 ms
+64 bytes from 10.0.0.3: icmp_seq=2 ttl=64 time=1.37 ms
+64 bytes from 10.0.0.3: icmp_seq=3 ttl=64 time=1.23 ms
+</code></pre>
+
+                
+<p class="green-link-context">
+    <a href="/2016/06/24/data-engineer/build-spark/" rel="next" title="Building Spark Source Code">
+    Prev: Building Spark Source Code
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2016/05/27/linux/ubuntu/flashcache/" rel="next" title="用 Flashcache 建立高容量與高效能儲存">
+    Next: 用 Flashcache 建立高容量與高效能儲存
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

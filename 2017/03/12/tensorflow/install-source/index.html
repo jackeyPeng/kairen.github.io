@@ -1,0 +1,806 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>Ubuntu 16.04 安裝 TensorFlow GPU GTX 1060 | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="Ubuntu 16.04 安裝 TensorFlow GPU GTX 1060"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">18</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/TensorFlow/">TensorFlow</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>Ubuntu 16.04 安裝 TensorFlow GPU GTX 1060</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2017-03-12T08:23:01.000Z"><a href="/2017/03/12/tensorflow/install-source/">2017-03-12</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/TensorFlow/" class="chip pink lighten-1">TensorFlow</a>
+        
+            <a href="/tags/Machine-Learning/" class="chip pink lighten-1">Machine Learning</a>
+        
+            <a href="/tags/Ubuntu/" class="chip pink lighten-1">Ubuntu</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-1"><a class="section table-of-contents-link" href="#環境部署"><span class="section table-of-contents-text">環境部署</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Nvidia-Driver-安裝"><span class="section table-of-contents-text">Nvidia Driver 安裝</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#CUDA-Toolkit-8-0-安裝"><span class="section table-of-contents-text">CUDA Toolkit 8.0 安裝</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#cuDNN-5-1-安裝"><span class="section table-of-contents-text">cuDNN 5.1 安裝</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#TensorFlow-GPU-套件建構"><span class="section table-of-contents-text">TensorFlow GPU 套件建構</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#測試安裝結果"><span class="section table-of-contents-text">測試安裝結果</span></a></li></ol></li></ol>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p>本篇主要因為自己買了一片<code>Nvidia GTX 1060 6G</code>顯卡，但是購買至今只用來玩過一個遊戲，因此才拿來試跑 TensorFlow。</p>
+<a id="more"></a>
+<p>本次安裝硬體與規格如下：</p>
+<ul>
+<li>作業系統: Ubuntu 16.04 Desktop</li>
+<li>GPU: GeForce® GTX 1060 6G</li>
+<li>NVIDIA Driver: nvidia-367</li>
+<li>Python: 2.7+</li>
+<li>TensorFlow: r1.0.1</li>
+<li>CUDA: v8.0</li>
+<li>cuDNN: v5.1</li>
+</ul>
+<h1 id="環境部署"><a href="#環境部署" class="headerlink" title="環境部署"></a>環境部署</h1><p>如果要安裝 TensorFlow with GPU support 的話，需要滿足以下幾點：</p>
+<ul>
+<li>Nvidia Driver.</li>
+<li>已安裝 CUDA® Toolkit 8.0.</li>
+<li>已安裝 cuDNN v5.1.</li>
+<li>GPU card with CUDA Compute Capability 6.1(GTX 10-series).</li>
+<li>libcupti-dev 函式庫.</li>
+</ul>
+<h2 id="Nvidia-Driver-安裝"><a href="#Nvidia-Driver-安裝" class="headerlink" title="Nvidia Driver 安裝"></a>Nvidia Driver 安裝</h2><p>由於預設 Ubuntu 的 Nvidia 版本比較舊，或者並沒有安裝相關驅動，因此這邊需要安裝顯卡對應的版本才能夠正常使用，可以透過以下方式進行：</p>
+<pre><code class="sh">$ sudo add-apt-repository -y ppa:graphics-drivers/ppa
+$ sudo apt-get update
+$ sudo apt-get install -y nvidia-367
+</code></pre>
+<p>完成後，需重新啟動機器。</p>
+<h2 id="CUDA-Toolkit-8-0-安裝"><a href="#CUDA-Toolkit-8-0-安裝" class="headerlink" title="CUDA Toolkit 8.0 安裝"></a>CUDA Toolkit 8.0 安裝</h2><p>由於 TensorFlow 支援 GPU 運算時，會需要使用到 CUDA Toolkit 相關功能，可以到 <a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="noopener">CUDA Toolkit</a> 頁面下載，這邊會下載 Ubuntu Run file 檔案，來進行安裝：</p>
+<pre><code class="sh">$ wget &quot;https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run&quot;
+$ sudo chmod u+x cuda_8.0.61_375.26_linux-run
+$ ./cuda_8.0.61_375.26_linux-run
+
+Do you accept the previously read EULA?
+accept/decline/quit: accept
+Install NVIDIA Accelerated Graphics Driver for Linux-x86_64 361.77?
+(y)es/(n)o/(q)uit: n
+Install the CUDA 8.0 Toolkit?
+(y)es/(n)o/(q)uit: y
+Enter Toolkit Location
+[ default is /usr/local/cuda-8.0]: enter
+Do you want to install a symbolic link at /usr/local/cuda?
+(y)es/(n)o/(q)uit:y
+Install the CUDA 8.0 Samples?
+(y)es/(n)o/(q)uit:y
+Enter CUDA Samples Location
+[ defualt is /home/kylebai ]: enter
+</code></pre>
+<blockquote>
+<p>這邊<code>enter</code>為鍵盤直接按壓，而不是輸入 enter。</p>
+</blockquote>
+<p>安裝完成後，編輯 Home 目錄底下的<code>.bashrc</code>檔案加入以下內容：</p>
+<pre><code class="sh">export PATH=${PATH}:/usr/local/cuda-8.0/bin
+export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64
+</code></pre>
+<p>最後 Source Bash 檔案與測試 CUDA Toolkit：</p>
+<pre><code class="sh">$ source .bashrc
+$ sudo nvidia-smi
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 375.39                 Driver Version: 375.39                    |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 106...  Off  | 0000:01:00.0      On |                  N/A |
+| 28%   29C    P8     6W / 120W |    130MiB /  6069MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID  Type  Process name                               Usage      |
+|=============================================================================|
+|    0      1165    G   /usr/lib/xorg/Xorg                              98MiB |
+|    0      1764    G   compiz                                          29MiB |
++-----------------------------------------------------------------------------+
+</code></pre>
+<h2 id="cuDNN-5-1-安裝"><a href="#cuDNN-5-1-安裝" class="headerlink" title="cuDNN 5.1 安裝"></a>cuDNN 5.1 安裝</h2><p><a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="noopener">NVIDIA cuDNN</a> 是一個深度神經網路運算的 GPU 加速原函式庫，這邊需要點選前面的連結，下載<code>cuDNN v5.1 Library for Linux</code>檔案：</p>
+<pre><code class="sh">$ tar xvf cudnn-8.0-linux-x64-v5.1.tgz
+$ sudo cp cuda/include/cudnn.h /usr/local/cuda/include/
+$ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/
+</code></pre>
+<h2 id="TensorFlow-GPU-套件建構"><a href="#TensorFlow-GPU-套件建構" class="headerlink" title="TensorFlow GPU 套件建構"></a>TensorFlow GPU 套件建構</h2><p>本次教學將透過 <a href="https://github.com/tensorflow/tensorflow" target="_blank" rel="noopener">Source code</a> 建構安裝檔，再進行安裝 TensorFlow，首先安裝相依套件：</p>
+<pre><code class="sh">$ sudo add-apt-repository -y ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt-get install -y libcupti-dev python-numpy python-dev python-setuptools python-pip python-wheel git oracle-java8-installer
+$ echo &quot;deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8&quot; | sudo tee /etc/apt/sources.list.d/bazel.list
+$ curl -s &quot;https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg&quot; | sudo apt-key add -
+$ sudo apt-get update &amp;&amp; sudo apt-get -y install bazel
+$ sudo apt-get upgrade -y bazel
+</code></pre>
+<p>接著取得 TensorFlow 專案原始碼，然後進入到 TensorFlow 專案目錄進行 bazel 設定：</p>
+<pre><code class="sh">$ git clone &quot;https://github.com/tensorflow/tensorflow&quot;
+$ cd tensorflow
+$ ./configure
+
+...
+Do you wish to build TensorFlow with CUDA support? [y/N] y
+Please specify the Cuda SDK version you want to use, e.g. 7.0. [Leave empty to use system default]: 8.0
+Please specify the cuDNN version you want to use. [Leave empty to use system default]: 5
+Please note that each additional compute capability significantly increases your build time and binary size.
+[Default is: &quot;3.5,5.2&quot;]: 6.1
+...
+Configuration finished
+</code></pre>
+<blockquote>
+<p><code>6.1</code>為 GTX 10-series 系列顯卡，其他可以查看 <a href="https://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">CUDA GPUS</a>。這邊除了上述特定要輸入外，其餘都是直接鍵盤<code>enter</code>。</p>
+</blockquote>
+<p>當完成組態後，即可透過 bazel 進行建構 pip 套件腳本：</p>
+<pre><code class="sh">$ bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package
+</code></pre>
+<p>當腳本建構完成後，即可透過以下指令來建構 .whl 檔案：</p>
+<pre><code class="sh">$ bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tf_pkg
+</code></pre>
+<p>完成後，可以在<code>/tmp/tf_pkg</code>目錄底下找到安裝檔<code>tensorflow-1.0.1-py2-none-any.whl</code>，最後就可以透過 pip 來進行安裝了：</p>
+<pre><code class="sh">$ sudo pip install /tmp/tf_pkg/tensorflow-1.0.1-cp27-cp27mu-linux_x86_64.whl
+</code></pre>
+<h2 id="測試安裝結果"><a href="#測試安裝結果" class="headerlink" title="測試安裝結果"></a>測試安裝結果</h2><p>最後透過簡單程式來驗證安裝是否成功：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; simple.py
+import tensorflow as tf
+
+hello = tf.constant(&#39;Hello, TensorFlow!&#39;)
+sess = tf.Session()
+print(sess.run(hello))
+EOF
+
+$ python simple.py
+...
+roperties:
+name: GeForce GTX 1060 6GB
+major: 6 minor: 1 memoryClockRate (GHz) 1.7845
+pciBusID 0000:01:00.0
+Total memory: 5.93GiB
+Free memory: 5.74GiB
+2017-03-12 21:43:56.477084: I tensorflow/core/common_runtime/gpu/gpu_device.cc:908] DMA: 0
+2017-03-12 21:43:56.477092: I tensorflow/core/common_runtime/gpu/gpu_device.cc:918] 0:   Y
+2017-03-12 21:43:56.503464: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977] Creating TensorFlow device (/gpu:0) -&gt; (device: 0, name: GeForce GTX 1060 6GB, pci bus id: 0000:01:00.0)
+Hello, TensorFlow!
+</code></pre>
+<blockquote>
+<p><code>...</code>部分會顯示一些 GPU 使用狀態。</p>
+</blockquote>
+
+                
+<p class="green-link-context">
+    <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/" rel="next" title="Kubespray 部署實體機 Kubernetes v1.6 叢集">
+    Prev: Kubespray 部署實體機 Kubernetes v1.6 叢集
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/" rel="next" title="kube-ansible 快速部署實體機 HA 叢集">
+    Next: kube-ansible 快速部署實體機 HA 叢集
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

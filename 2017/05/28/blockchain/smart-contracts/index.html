@@ -1,0 +1,777 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>智能合約(Smart contracts) | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai">
+    
+    <meta name="description" content="Note my learning.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="智能合約(Smart contracts)"/>
+    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="black">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            Home
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            Archives
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            Categories
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            About
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            Search
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">Kyle Bai</p>
+                        <p class="desc">悲慘研替攻陳屍中....</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    Home
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    Archives
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    Categories
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    About
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    Search
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">18</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">3</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Linux/">
+                    Linux <span class="right">12</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">Search</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">Current page(Categories)</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/Blockchain/">Blockchain</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>智能合約(Smart contracts)</h1>
+    
+
+
+            </div>
+            <time class="green-link-context" datetime="2017-05-28T09:08:54.000Z"><a href="/2017/05/28/blockchain/smart-contracts/">2017-05-28</a></time>
+
+            <span id="busuanzi_container_page_pv" class="read-times-container">
+    <i class="fa fa-eye"></i>
+    <span id="busuanzi_value_page_pv"></span>
+</span>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ethereum/" class="chip pink lighten-1">Ethereum</a>
+        
+            <a href="/tags/Blockchain/" class="chip pink lighten-1">Blockchain</a>
+        
+            <a href="/tags/Solidity/" class="chip pink lighten-1">Solidity</a>
+        
+            <a href="/tags/Smart-Contract/" class="chip pink lighten-1">Smart Contract</a>
+        
+    </div>
+
+
+            <div class="toc green-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Smart-Sponsor"><span class="section table-of-contents-text">Smart Sponsor</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#參考連結"><span class="section table-of-contents-text">參考連結</span></a>
+</div>
+
+
+            <div class="entry green-link-context">
+                <p><code>智能合約(Smart Contracts)</code> 是在 Ethereum 區塊鏈中所屬的物件。它們包含程式碼函式以及能夠與其他合約進行互動、做出決策、儲存資料與傳送乙太幣給其他人。合約是由創建者所定義，但是它們的執行與他們所提供的服務，都是由 Ethereum 網路本身提供。它們將存在且可被執行，只要整個網路存在，並且只會因程式中有撰寫自我銷毀的功能才會消失。</p>
+<p>我可以用合約做什麼呢？只要想像力夠豐富，要做什麼幾乎都沒問題，但以下指南只會是入門，讓我們去實現一些簡單的事情。</p>
+<a id="more"></a>
+<h3 id="Smart-Sponsor"><a href="#Smart-Sponsor" class="headerlink" title="Smart Sponsor"></a>Smart Sponsor</h3><p>本節將說明一智能合約範例，透過建構一個合約來允許以下賬戶持有人進行互動。</p>
+<ul>
+<li>一個慈善機構舉行籌款活動，我們稱之為 <strong>thebenefactor</strong>。</li>
+<li>一個受贊助的 runner 想為慈善機構募款，我們稱之為 <strong>therunner</strong>。</li>
+<li>其他的人想要贊助 runner，我們稱之為 <strong>thesponsor</strong>。</li>
+<li>一個 Ethereum 節點，用來開採區塊鏈以驗證交易，我們稱之為 <strong>theminer</strong>。</li>
+</ul>
+<p>我們的合約(smartSponsor)：</p>
+<ul>
+<li>是由一位 <strong>runner</strong> 透過贊助的執行來為慈善機構募款。</li>
+<li>當建立合約時，<strong>runner</strong> 會任命為募集錢的捐助者。</li>
+<li><strong>runner</strong> 則邀情其他人去進行贊助。用戶透過呼叫一個在智能合約上的函式，將乙太幣從 <strong>贊助商的帳戶</strong> 轉移到 <strong>合約</strong>，並保持乙太幣於合約，直到有進一步的通知。</li>
+<li>在合約的時限期間的所有人都能看到誰是 <strong>捐助者</strong>，有多少的乙太幣被從誰捐(雖然贊助者可以匿名，當然:p)。</li>
+</ul>
+<p><img src="/images/blockchain/smartSponsor-1.png" alt="flow-1"></p>
+<p>那麼有兩件事情可能發生：</p>
+<ul>
+<li>執行都按計劃進行，以及 <strong>runner</strong> 指示合約轉移到所有資金的捐助者。</li>
+</ul>
+<p><img src="/images/blockchain/smartSponsor-2.png" alt="flow-2"></p>
+<ul>
+<li>執行由於謀些原因無法承擔，而 runner 指示合約將退還贊助商的抵押。</li>
+</ul>
+<p><img src="/images/blockchain/smartSponsor-3.png" alt="flow-3"></p>
+<p>Ethereum 允許智能合約由撰寫 Solidity 語言來定義。Solidity 的合約是類似於 Java 的類別定義。成員變數的儲存採用區塊鍊交易與合約的方法，來詢問合約或改變的其狀態。作為區塊鏈的副本會分散到網路中的所有節點，任何人都可以詢問合約，以從中搜尋公開的訊息。</p>
+<p>合約有以下幾種方法：</p>
+<ul>
+<li><strong><code>smartSponsor</code></strong>：合約的建構子。它初始化合約的狀態。合約的建立者傳入賬戶的位址，有利於合約的 drawdown。</li>
+<li><strong><code>pledge</code></strong>：任何人都可以呼叫捐贈乙太幣贊助基金。贊助商提供支援的選擇性訊息</li>
+<li><strong><code>getPot</code></strong>：回傳當前儲存在合約的總乙太幣。</li>
+<li><strong><code>refund</code></strong>：把贊助商的錢退回給贊助商。只有合約的擁有者才能呼叫這個函式。</li>
+<li><strong><code>drawdown</code></strong>：傳送合約的總價值給捐助者賬戶。只有合約的擁有者才能呼叫這個函式。</li>
+</ul>
+<p>這個想法是使一個合約擁有約束力。他們不能拿回任何資金，除非整個合約被退還。在這種情況下，所有資料都是被公開存取的，這意味著任何人都有存取 Ethereum 區塊鏈，來查看誰建立了合約，誰是捐助者，以及誰透過存取合約程式碼本身保證了每一筆資金。</p>
+<p>要注意很重要的一點，任何改變合約的狀態(建立、承若、退還或 drawing down)都需要在區塊鏈上建立交易，這意味著這些交易不會被儲存，要直到這些交易的區塊被開採。操作只能讀取到一個現有合約狀態(getPot 或讀取公有成員變數)都不需要進行挖礦。這是一個很重要且微妙的點：寫入操作是很慢的(因為我們要等到採礦完成)。由於這情況合約可能永遠不會被建立到區塊鍊中，因此呼叫方需要提供一些獎勵，來促進礦工去工作。這是被稱為 gas 的 Ethereum 術語，所有的寫入操作都是需要 gas 的支出來改變區塊鍊的狀態。</p>
+<p>幸運的是我們不需要購買真正的乙太幣，以及參與 Ethereum 網路。我們可以使用相同的軟體，但要配置它運行一個本地測試區塊鏈，以及產生自己的假乙太幣。</p>
+<p>以下為一個 Solidity 語言的智能合約範例：</p>
+<pre><code class="js">contract smartSponsor {
+  address public owner;
+  address public benefactor;
+  bool public refunded;
+  bool public complete;
+  uint public numPledges;
+  struct Pledge {
+    uint amount;
+    address eth_address;
+    bytes32 message;
+  }
+  mapping(uint =&gt; Pledge) public pledges;
+
+  // constructor
+  function smartSponsor(address _benefactor) {
+    owner = msg.sender;
+    numPledges = 0;
+    refunded = false;
+    complete = false;
+    benefactor = _benefactor;
+  }
+
+  // add a new pledge
+  function pledge(bytes32 _message) {
+    if (msg.value == 0 || complete || refunded) throw;
+    pledges[numPledges] = Pledge(msg.value, msg.sender, _message);
+    numPledges++;
+  }
+
+  function getPot() constant returns (uint) {
+    return this.balance;
+  }
+
+  // refund the backers
+  function refund() {
+    if (msg.sender != owner || complete || refunded) throw;
+    for (uint i = 0; i &lt; numPledges; ++i) {
+      pledges[i].eth_address.send(pledges[i].amount);
+    }
+    refunded = true;
+    complete = true;
+  }
+
+  // send funds to the contract benefactor
+  function drawdown() {
+    if (msg.sender != owner || complete || refunded) throw;
+    benefactor.send(this.balance);
+    complete = true;
+  }
+}
+</code></pre>
+<blockquote>
+<ul>
+<li><p>一個<code>Pledge</code>結構模型的捐贈，儲存著贊助商的帳戶 ID、承若押金，以及一些訊息字串。</p>
+</li>
+<li><p>這個<code>pledges</code>陣列儲存了一個承若方的列表。</p>
+</li>
+<li><p>合約中的所有成員變數都是公開的，所以<code>getters</code>將自動被建立。</p>
+</li>
+<li><p><code>throw</code>被稱為某些函式(functions)，用以防止資料被寫入錯誤的資料到該區塊鏈中。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="參考連結"><a href="#參考連結" class="headerlink" title="參考連結"></a>參考連結</h2><ul>
+<li><a href="https://medium.com/@kpcb_edge/our-thoughts-on-ethereum-31520b164e00#.2q1i88278" target="_blank" rel="noopener">Our thoughts on Ethereum</a></li>
+<li><a href="https://www.ethereum.org/greeter" target="_blank" rel="noopener">Building a smart contract using the command line</a></li>
+<li><a href="https://developer.ibm.com/clouddataservices/2016/05/19/block-chain-technology-smart-contracts-and-ethereum/" target="_blank" rel="noopener">Block chain technology, smart contracts and Ethereum</a></li>
+</ul>
+
+                
+<p class="green-link-context">
+    <a href="/2017/07/22/kubernetes/deploy/linuxkit-k8s/" rel="next" title="利用 LinuxKit 建立 Kubernetes 叢集">
+    Prev: 利用 LinuxKit 建立 Kubernetes 叢集
+  </a>
+</p>
+
+
+
+<p class="green-link-context">
+    <a href="/2017/05/27/blockchain/browser-solidity/" rel="next" title="利用 Browser Solidity 部署智能合約">
+    Next: 利用 Browser Solidity 部署智能合約
+  </a>
+</p>
+
+
+            </div>
+			
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+            var url_parts = window.location.href.split("?");
+            var disqus_url = url_parts[0];
+            (function() {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = "//ky1ebai.disqus.com/embed.js";
+                dsq.setAttribute('data-timestamp', + new Date());
+                (document.head || d.body ).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the
+            <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+        </noscript>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer black darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m4 s12">
+                <h5 class="white-text">Social</h5>
+                
+                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
+                        <i class="fa fa-2x fa-facebook-official"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/kairen" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                        <i class="fa fa-2x fa-envelope"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+                <div class="site-visitors-container white-text">
+                    <span>
+                    </span>
+                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            
+
+            
+            <div class="col m8 s12">
+                <h5 class="white-text">Links</h5>
+                
+                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
+                
+                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
+                
+                    <a class="social-link" href="https://www.facebook.com/NUTCimac" target="_blank">NUTC i.m.a.c</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright green-link-context">
+        <div class="container">
+            © 2015 KaiRen, All rights reserved.
+            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+
+            // 目录随屏幕滚动（防止目录过长越过footer）
+            var $toc = $('.toc');
+            var scrollTargetTop = 0;
+            $(window).scroll(function() {
+                var $activeLink = $toc.find('a.active.section');
+                if ($(window).scrollTop() < 100) {
+                    scrollTargetTop = 0;
+                } else {
+                    if ($activeLink[0]) {
+                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
+                    }
+                }
+                $toc.css('top', '-' + scrollTargetTop + 'px');
+            });
+
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-home').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal({
+                // 打开搜索框时自动聚焦
+                ready: function() {
+                    if ($('#search').is(":visible")) {
+                        $('#search-input').focus();
+                    }
+                }
+            });
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>
