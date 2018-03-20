@@ -60,6 +60,18 @@
 <li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker，請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/">安裝 Nvidia Docker 2</a>。</li>
 <li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集，請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
 <li>Kubernetes 叢集需要安裝 NVIDIA Device Plugins，請參考 <a href="https://kairen.github.io/2018/03/01/kubernetes/k8s-device-plugin/">安裝 Kubernetes NVIDIA Device Plugins</a>。</li>
+<li>建立 NFS server 並在 Kubernetes 節點安裝 NFS common，然後利用 Kubernetes 建立 PV 提供給 Kubeflow 使用：</li>
+</ul>
+<pre><code class="sh"># 在 master 執行
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-server
+$ sudo mkdir /nfs-data
+$ echo &quot;/nfs-data *(rw,sync,no_root_squash,no_subtree_check)&quot;
+$ sudo /etc/init.d/nfs-kernel-server restart
+
+# 在 node 執行
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-common
+</code></pre>
+<ul>
 <li>安裝 <code>ksonnet v0.8.0</code>(latest or dev build 有問題)，請參考以下：</li>
 </ul>
 <pre><code class="sh">$ wget https://github.com/ksonnet/ksonnet/releases/download/v0.8.0/ks_0.8.0_linux_amd64.tar.gz
@@ -130,6 +142,22 @@ spec:
   - 172.22.132.41
 ...
 </code></pre>
+<h2 id="測試-Kubeflow"><a href="#測試-Kubeflow" class="headerlink" title="測試 Kubeflow"></a>測試 Kubeflow</h2><p>開始測試前先建立一個 NFS PV 來提供給 Kubeflow Jupyter 使用：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  nfs:
+    server: 172.22.132.41
+    path: /nfs-data
+EOF
+</code></pre>
 <p>完成後連接 <code>http://Master_IP</code>，並輸入<code>任意帳號密碼</code>進行登入。</p>
 <p><img src="/images/kubeflow/1.png" alt=""></p>
 <p>登入後點選<code>Start My Server</code>按鈕來建立 Server 的 Spawner options，這邊注意預設 image 為以下兩種：</p>
@@ -138,6 +166,11 @@ spec:
 <li>GPU：gcr.io/kubeflow-images-staging/tensorflow-notebook-gpu。</li>
 </ul>
 <blockquote>
+<p>P.S. 這邊建議使用以下映像檔做測試使用：</p>
+<ul>
+<li>gcr.io/kubeflow/tensorflow-notebook-cpu:latest</li>
+<li>gcr.io/kubeflow/tensorflow-notebook-gpu:latest</li>
+</ul>
 <p>如果使用 GPU 請執行以下指令確認是否可被分配資源：</p>
 <pre><code class="sh">$ kubectl get nodes &quot;-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu&quot;
 NAME               GPU
@@ -146,8 +179,24 @@ kube-gpu-node1     1
 kube-gpu-node2     1
 </code></pre>
 </blockquote>
+<p>最後點選<code>Spawn</code>來完成建立 Server，如下圖所示：</p>
 <p><img src="/images/kubeflow/2.png" alt=""></p>
-<p>最後點選<code>Spawn</code>來完成建立 Server。</p>
+<p>接著等 Kubernetes 下載映像檔後，就會正常啟動，如下圖所示：</p>
+<p><img src="/images/kubeflow/3.png" alt=""></p>
+<p>當正常啟動後，點選<code>New &gt; Python 3</code>建立一個 Notebook 並貼上以下範例程式：</p>
+<pre><code class="python">from __future__ import print_function
+
+import tensorflow as tf
+
+hello = tf.constant(&#39;Hello TensorFlow!&#39;)
+s = tf.Session()
+print(s.run(hello))
+</code></pre>
+<p>正確執行會如以下圖所示：</p>
+<p><img src="/images/kubeflow/4.png" alt=""></p>
+<blockquote>
+<p>若想關閉叢集的話，可以點選<code>Control Plane</code>。</p>
+</blockquote>
 <p>另外由於 Kubeflow 會安裝 TF Operator 來管理 TFJob，這邊可以透過 Kubernetes 來手動建立 Job：</p>
 <pre><code class="sh">$ kubectl create -f https://raw.githubusercontent.com/kubeflow/tf-operator/master/examples/tf_job.yaml
 $ kubectl get po
@@ -7952,9 +8001,9 @@ clean
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -8420,9 +8469,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -8898,9 +8947,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -9312,9 +9361,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
         </tags>
         
@@ -11377,11 +11426,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
+            <tag> Docker </tag>
+            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
-            
-            <tag> Docker </tag>
             
         </tags>
         
@@ -12523,13 +12572,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> Storage </tag>
-            
-            <tag> File System </tag>
-            
             <tag> OpenStack </tag>
             
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
+            
+            <tag> File System </tag>
             
         </tags>
         
