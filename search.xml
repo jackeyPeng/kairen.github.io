@@ -604,7 +604,7 @@ kind: Config
 clusters:
 - cluster:
     certificate-authority-data: $CA_CERT
-    server: $SERVER
+    server: $API_SERVER
   name: cluster
 EOF
 
@@ -8001,9 +8001,9 @@ clean
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -8469,9 +8469,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -8947,9 +8947,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
             <tag> SSD </tag>
             
@@ -9361,9 +9361,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
@@ -11426,11 +11426,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -12572,13 +12572,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> OpenStack </tag>
-            
-            <tag> Linux </tag>
-            
             <tag> Storage </tag>
             
             <tag> File System </tag>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Linux </tag>
             
         </tags>
         
@@ -14519,14 +14519,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
