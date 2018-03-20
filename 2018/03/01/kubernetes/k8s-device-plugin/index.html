@@ -361,7 +361,7 @@ kubelet_internal_checkpoint  kubelet.sock  nvidia.sock
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝 Device Plugin 前，需要確保以下條件達成：</p>
 <ul>
 <li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker。請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/">安裝 Nvidia Docker 2</a>。</li>
-<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a></li>
+<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
 </ul>
 <h2 id="安裝-NVIDIA-Device-Plugin"><a href="#安裝-NVIDIA-Device-Plugin" class="headerlink" title="安裝 NVIDIA Device Plugin"></a>安裝 NVIDIA Device Plugin</h2><p>若上述要求以符合，再開始前需要在<code>每台 GPU worker 節點</code>修改<code>/lib/systemd/system/docker.service</code>檔案，將 Docker default runtime 改成 nvidia，依照以下內容來修改：</p>
 <pre><code class="sh">...

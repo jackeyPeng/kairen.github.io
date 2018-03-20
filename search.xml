@@ -20,6 +20,145 @@
 <li>部署與管理松耦合的微服務。</li>
 <li>根據需求進行縮放。</li>
 </ul>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體機器：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Role</th>
+<th>vCPU</th>
+<th>RAM</th>
+<th>Extra Device</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.51</td>
+<td>gpu-node1</td>
+<td>8</td>
+<td>16G</td>
+<td>GTX 1060 3G</td>
+</tr>
+<tr>
+<td>172.22.132.52</td>
+<td>gpu-node2</td>
+<td>8</td>
+<td>16G</td>
+<td>GTX 1060 3G</td>
+</tr>
+<tr>
+<td>172.22.132.53</td>
+<td>master1</td>
+<td>8</td>
+<td>16G</td>
+<td>無</td>
+</tr>
+</tbody>
+</table>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>使用 Kubeflow 之前，需要確保以下條件達成：</p>
+<ul>
+<li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker，請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/">安裝 Nvidia Docker 2</a>。</li>
+<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集，請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
+<li>Kubernetes 叢集需要安裝 NVIDIA Device Plugins，請參考 <a href="https://kairen.github.io/2018/03/01/kubernetes/k8s-device-plugin/">安裝 Kubernetes NVIDIA Device Plugins</a>。</li>
+<li>安裝 <code>ksonnet v0.8.0</code>(latest or dev build 有問題)，請參考以下：</li>
+</ul>
+<pre><code class="sh">$ wget https://github.com/ksonnet/ksonnet/releases/download/v0.8.0/ks_0.8.0_linux_amd64.tar.gz
+$ tar xvf ks_0.8.0_linux_amd64.tar.gz
+$ sudo cp ks_0.8.0_linux_amd64/ks /usr/local/bin/
+$ ks version
+ksonnet version: 0.8.0
+jsonnet version: v0.9.5
+client-go version: v1.6.8-beta.0+$Format:%h$
+</code></pre>
+<h2 id="部署-Kubeflow"><a href="#部署-Kubeflow" class="headerlink" title="部署 Kubeflow"></a>部署 Kubeflow</h2><p>本節將說明如何利用 ksonnet 來部署 Kubeflow 到 Kubernetes 叢集中。首先初始化 ksonnet 應用程式目錄：</p>
+<pre><code class="sh">$ ks init my-kubeflow
+</code></pre>
+<blockquote>
+<p>如果遇到以下問題的話，可以自己建立 GitHub Token 來存取 GitHub API，請參考 <a href="https://ksonnet.io/docs/tutorial#troubleshooting-github-rate-limiting-errors" target="_blank" rel="noopener">Github rate limiting errors</a>。</p>
+<pre><code class="sh">ERROR GET https://api.github.com/repos/ksonnet/parts/commits/master: 403 API rate limit exceeded for 122.146.93.152.
+</code></pre>
+</blockquote>
+<p>接著安裝 Kubeflow 套件至應用程式目錄：</p>
+<pre><code class="sh">$ cd my-kubeflow
+$ ks registry add kubeflow github.com/kubeflow/kubeflow/tree/master/kubeflow
+$ ks pkg install kubeflow/core
+$ ks pkg install kubeflow/tf-serving
+$ ks pkg install kubeflow/tf-job
+</code></pre>
+<p>然後建立 Kubeflow 核心元件，該元件包含 JupyterHub 與 TensorFlow job controller：</p>
+<pre><code class="sh">$ kubectl create namespace kubeflow
+$ kubectl create clusterrolebinding tf-admin --clusterrole=cluster-admin --serviceaccount=default:tf-job-operator
+$ ks generate core kubeflow-core --name=kubeflow-core --namespace=kubeflow
+
+# 啟動收集匿名使用者使用量資訊，如果不想開啟則忽略
+$ ks param set kubeflow-core reportUsage true
+$ ks param set kubeflow-core usageId $(uuidgen)
+
+# 部署 Kubeflow
+$ ks param set kubeflow-core jupyterHubServiceType LoadBalancer
+$ ks apply default -c kubeflow-core
+</code></pre>
+<blockquote>
+<p>詳細使用量資訊請參考 <a href="https://github.com/kubeflow/kubeflow/blob/master/user_guide.md#usage-reporting" target="_blank" rel="noopener">Usage Reporting
+</a>。</p>
+</blockquote>
+<p>完成後檢查 Kubeflow 元件部署結果：</p>
+<pre><code class="sh">$ kubectl -n kubeflow get po -o wide
+NAME                                  READY     STATUS    RESTARTS   AGE       IP               NODE
+ambassador-7956cf5c7f-6hngq           2/2       Running   0          34m       10.244.41.132    kube-gpu-node1
+ambassador-7956cf5c7f-jgxnd           2/2       Running   0          34m       10.244.152.134   kube-gpu-node2
+ambassador-7956cf5c7f-jww2d           2/2       Running   0          34m       10.244.41.133    kube-gpu-node1
+spartakus-volunteer-8c659d4f5-bg7kn   1/1       Running   0          34m       10.244.152.135   kube-gpu-node2
+tf-hub-0                              1/1       Running   0          34m       10.244.152.133   kube-gpu-node2
+tf-job-operator-78757955b-2jbdh       1/1       Running   0          34m       10.244.41.131    kube-gpu-node1
+</code></pre>
+<p>這時候就可以登入 Jupyter Notebook，但這邊需要修改 Kubernetes Service，透過以下指令進行：</p>
+<pre><code class="sh">$ kubectl -n kubeflow get svc -o wide
+NAME               TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE       SELECTOR
+ambassador         ClusterIP   10.101.157.91    &lt;none&gt;        80/TCP     45m       service=ambassador
+ambassador-admin   ClusterIP   10.107.24.138    &lt;none&gt;        8877/TCP   45m       service=ambassador
+k8s-dashboard      ClusterIP   10.111.128.104   &lt;none&gt;        443/TCP    45m       k8s-app=kubernetes-dashboard
+tf-hub-0           ClusterIP   None             &lt;none&gt;        8000/TCP   45m       app=tf-hub
+tf-hub-lb          ClusterIP   10.105.47.253    &lt;none&gt;        80/TCP     45m       app=tf-hub
+
+# 修改 svc 將 Type 修改成 LoadBalancer，並且新增 externalIPs 指定為 Master IP。
+$ kubectl -n kubeflow edit svc tf-hub-lb
+...
+spec:
+  type: LoadBalancer
+  externalIPs:
+  - 172.22.132.41
+...
+</code></pre>
+<p>完成後連接 <code>http://Master_IP</code>，並輸入<code>任意帳號密碼</code>進行登入。</p>
+<p><img src="/images/kubeflow/1.png" alt=""></p>
+<p>登入後點選<code>Start My Server</code>按鈕來建立 Server 的 Spawner options，這邊注意預設 image 為以下兩種：</p>
+<ul>
+<li>CPU：gcr.io/kubeflow-images-staging/tensorflow-notebook-cpu。</li>
+<li>GPU：gcr.io/kubeflow-images-staging/tensorflow-notebook-gpu。</li>
+</ul>
+<blockquote>
+<p>如果使用 GPU 請執行以下指令確認是否可被分配資源：</p>
+<pre><code class="sh">$ kubectl get nodes &quot;-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu&quot;
+NAME               GPU
+kube-gpu-master1   &lt;none&gt;
+kube-gpu-node1     1
+kube-gpu-node2     1
+</code></pre>
+</blockquote>
+<p><img src="/images/kubeflow/2.png" alt=""></p>
+<p>最後點選<code>Spawn</code>來完成建立 Server。</p>
+<p>另外由於 Kubeflow 會安裝 TF Operator 來管理 TFJob，這邊可以透過 Kubernetes 來手動建立 Job：</p>
+<pre><code class="sh">$ kubectl create -f https://raw.githubusercontent.com/kubeflow/tf-operator/master/examples/tf_job.yaml
+$ kubectl get po
+NAME                              READY     STATUS    RESTARTS   AGE
+example-job-ps-qq6x-0-pdx7v       1/1       Running   0          5m
+example-job-ps-qq6x-1-2mpfp       1/1       Running   0          5m
+example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
+</code></pre>
+<p>若想從 Kubernetes 叢集刪除 Kubeflow 相關元件的話，可執行下列指令達成：</p>
+<pre><code class="sh">$ ks delete default -c kubeflow-core
+</code></pre>
 ]]></content>
       
         <categories>
@@ -96,7 +235,7 @@ kubelet_internal_checkpoint  kubelet.sock  nvidia.sock
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝 Device Plugin 前，需要確保以下條件達成：</p>
 <ul>
 <li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker。請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/">安裝 Nvidia Docker 2</a>。</li>
-<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a></li>
+<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
 </ul>
 <h2 id="安裝-NVIDIA-Device-Plugin"><a href="#安裝-NVIDIA-Device-Plugin" class="headerlink" title="安裝 NVIDIA Device Plugin"></a>安裝 NVIDIA Device Plugin</h2><p>若上述要求以符合，再開始前需要在<code>每台 GPU worker 節點</code>修改<code>/lib/systemd/system/docker.service</code>檔案，將 Docker default runtime 改成 nvidia，依照以下內容來修改：</p>
 <pre><code class="sh">...
@@ -1222,9 +1361,9 @@ $ neutron router-gateway-set router1 ext-net
         
         <tags>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
             <tag> Openstack </tag>
             
@@ -4632,9 +4771,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
