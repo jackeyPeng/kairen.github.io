@@ -4,7 +4,301 @@
   
     
     <entry>
-      <title><![CDATA[利用 Kubeflow 來管理 TensorFlow 訓練]]></title>
+      <title><![CDATA[使用 kubefed 建立 Kubernetes Federation(On-premises)]]></title>
+      <url>https://kairen.github.io/2018/03/21/kubernetes/k8s-federation/</url>
+      <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/" target="_blank" rel="noopener">Kubernetes Federation(聯邦)</a> 是實現跨地區與跨服務商多個 Kubernetes 叢集的管理機制。Kubernetes Federation 的架構非常類似純 Kubenretes 叢集，Federation 會擁有自己的 API Server 與 Controller Manager 來提供一個標準的 Kubernetes API，以及管理聯邦叢集，並利用 Etcd 來儲存所有狀態，不過差異在於 Kubenretes 只管理多個節點，而 Federation 是管理所有被註冊的 Kubernetes 叢集。</p>
+<a id="more"></a>
+<p>Federation 使管理多個叢集更為簡單，這主要是透過兩個模型來實現：</p>
+<ol>
+<li><strong>跨叢集的資源同步(Sync resources across clusters)</strong>：提供在多個叢集中保持資源同步的功能，如確保一個 Deployment 可以存在於多個叢集中。</li>
+<li><strong>跨叢集的服務發現(Cross cluster discovery:)</strong>：提供自動配置 DNS 服務以及在所有叢集後端上進行負載平衡功能，如提供全域 VIP 或 DNS record，並透過此存取多個叢集後端。</li>
+</ol>
+<p><img src="/images/kube/federation-api.png" alt=""></p>
+<p>Federation 有以下幾個好處：</p>
+<ol>
+<li>跨叢集的資源排程，能讓 Pod 分配至不同叢集的不同節點上執行，如果當前叢集超出負荷，能夠將額外附載分配到空閒叢集上。</li>
+<li>叢集的高可靠，能夠做到 Pod 故障自動遷移。</li>
+<li>可管理多個 Kubernetes 叢集。</li>
+<li>跨叢集的服務發現。</li>
+</ol>
+<blockquote>
+<p>雖然 Federation 能夠降低管理多叢集門檻，但是目前依據不建議放到生產環境。以下幾個原因：</p>
+<ul>
+<li><strong>成熟度問題</strong>，目前還處與 Alpha 階段，故很多功能都還處於實現性質，或者不太穩定。</li>
+<li><strong>提升網路頻寬與成本</strong>，由於 Federation 需要監控所有叢集以確保當前狀態符合預期，因是會增加額外效能開銷。</li>
+<li><strong>跨叢集隔離差</strong>，Federation 的子叢集有可能因為 Bug 的引發而影響其他叢集運行狀況。</li>
+<li>個人用起來不是很穩定，例如建立的 Deployment 刪除很常會 Timeout。</li>
+</ul>
+</blockquote>
+<p>Federation 主要包含三個元件：</p>
+<ul>
+<li><strong>federation-apiserver</strong>：主要提供跨叢集的 REST API 伺服器，類似 kube-apiserver。</li>
+<li><strong>federation-controller-manager</strong>：提供多個叢集之間的狀態同步，類似 kube-controller-manager。</li>
+<li><strong>kubefed</strong>：Federation CLI 工具，用來初始化 Federation 元件與加入子叢集。</li>
+</ul>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體機器，共有三組叢集：</p>
+<p>Federation 控制平面叢集(簡稱 F):</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Host</th>
+<th>vCPU</th>
+<th>RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.31</td>
+<td>k8s-f-m1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.32</td>
+<td>k8s-f-n1</td>
+<td>4</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<p>叢集 A:</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Host</th>
+<th>vCPU</th>
+<th>RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.41</td>
+<td>k8s-a-m1</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.42</td>
+<td>k8s-a-n1</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<p>叢集 B:</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Host</th>
+<th>vCPU</th>
+<th>RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.51</td>
+<td>k8s-b-m1</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.52</td>
+<td>k8s-b-n1</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝與進行 Federation 之前，需要確保以下條件達成：</p>
+<ul>
+<li>所有叢集的節點各自部署成一個 Kubernetes 叢集，請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
+<li>修改 F、A 與 B 叢集的 Kubernetes config，並將 A 與 B 複製到 F 節點，如修改成以下：</li>
+</ul>
+<pre><code class="yaml">...
+...
+  name: k8s-a-cluster
+contexts:
+- context:
+    cluster: k8s-a-cluster
+    user: a-cluster-admin
+  name: a-cluster-context
+current-context: a-cluster-context
+kind: Config
+preferences: {}
+users:
+- name: a-cluster-admin
+  user:
+...
+</code></pre>
+<blockquote>
+<p>這邊需要修改每個叢集 config。</p>
+</blockquote>
+<ul>
+<li>接著在 F 叢集合併 F、A 與 B 三個 config，透過以下方式進行：</li>
+</ul>
+<pre><code class="sh">$ ls
+a-cluster.conf  b-cluster.conf  f-cluster.conf
+
+$ KUBECONFIG=f-cluster.conf:a-cluster.conf:b-cluster.conf kubectl config view --flatten &gt; ~/.kube/config
+$ kubectl config get-contexts
+CURRENT   NAME                CLUSTER         AUTHINFO          NAMESPACE
+          a-cluster-context   k8s-a-cluster   a-cluster-admin
+          b-cluster-context   k8s-b-cluster   b-cluster-admin
+*         f-cluster-context   k8s-f-cluster   f-cluster-admin
+</code></pre>
+<ul>
+<li>在 F 叢集安裝 kubefed 工具：</li>
+</ul>
+<pre><code class="sh">$ wget https://storage.googleapis.com/kubernetes-federation-release/release/v1.9.0-alpha.3/federation-client-linux-amd64.tar.gz
+$ tar xvf federation-client-linux-amd64.tar.gz
+$ cp federation/client/bin/kubefed /usr/local/bin/
+$ kubefed version
+Client Version: version.Info{Major:&quot;1&quot;, Minor:&quot;9+&quot;, GitVersion:&quot;v1.9.0-alpha.3&quot;, GitCommit:&quot;85c06145286da663755b140efa2b65f793cce9ec&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2018-02-14T12:54:40Z&quot;, GoVersion:&quot;go1.9.1&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/amd64&quot;}
+Server Version: version.Info{Major:&quot;1&quot;, Minor:&quot;9&quot;, GitVersion:&quot;v1.9.6&quot;, GitCommit:&quot;9f8ebd171479bec0ada837d7ee641dec2f8c6dd1&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2018-03-21T15:13:31Z&quot;, GoVersion:&quot;go1.9.3&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/amd64&quot;}
+</code></pre>
+<ul>
+<li>在 F 叢集安裝 Helm 工具，並進行初始化：</li>
+</ul>
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.4.1-linux-amd64.tar.gz | tar -zxf
+$ sudo mv linux-amd64/helm /usr/local/bin/
+$ kubectl -n kube-system create sa tiller
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
+
+# wait for a few minutes
+$ helm version
+Client: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
+Server: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
+</code></pre>
+<h2 id="部署-Kubernetes-Federation"><a href="#部署-Kubernetes-Federation" class="headerlink" title="部署 Kubernetes Federation"></a>部署 Kubernetes Federation</h2><p>由於本篇是使用實體機器部署 Kubernetes 叢集，因此無法像是 GCP 可以提供 DNS 服務來給 Federation 使用，故這邊要用 CoreDNS 建立自定義 DNS 服務。</p>
+<h3 id="CoreDNS-安裝"><a href="#CoreDNS-安裝" class="headerlink" title="CoreDNS 安裝"></a>CoreDNS 安裝</h3><p>首先透過 Helm 來安裝 CoreDNS 使用到的 Etcd：</p>
+<pre><code class="sh">$ helm install --namespace federation --name etcd-operator stable/etcd-operator
+$ helm upgrade --namespace federation --set cluster.enabled=true etcd-operator stable/etcd-operator
+$ kubectl -n federation get po
+NAME                                                              READY     STATUS    RESTARTS   AGE
+etcd-operator-etcd-operator-etcd-backup-operator-577d56449zqkj2   1/1       Running   0          1m
+etcd-operator-etcd-operator-etcd-operator-56679fb56-fpgmm         1/1       Running   0          1m
+etcd-operator-etcd-operator-etcd-restore-operator-65b6cbccl7kzr   1/1       Running   0          1m
+</code></pre>
+<p>完成後就可以安裝 CoreDNS 來提供自定義 DNS 服務了：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; Values.yaml
+isClusterService: false
+serviceType: NodePort
+middleware:
+  kubernetes:
+    enabled: false
+  etcd:
+    enabled: true
+    zones:
+    - &quot;kairen.com.&quot;
+    endpoint: &quot;http://etcd-cluster.federation:2379&quot;
+EOF
+
+$ helm install --namespace federation --name coredns -f Values.yaml stable/coredns
+# 測試 CoreDNS 可以查詢 Domain Name
+$ kubectl run -it --rm --restart=Never --image=infoblox/dnstools:latest dnstools
+dnstools# host kubernetes
+kubernetes.default.svc.cluster.local has address 10.96.0.1
+</code></pre>
+<h3 id="安裝與初始化-Federation-控制平面元件"><a href="#安裝與初始化-Federation-控制平面元件" class="headerlink" title="安裝與初始化 Federation 控制平面元件"></a>安裝與初始化 Federation 控制平面元件</h3><p>完成 CoreDNS 後，接著透過 kubefed 安裝控制平面元件，由於使用到 CoreDNS，因此這邊要傳入相關 conf 檔，首先建立<code>coredns-provider.conf</code>檔案，加入以下內容：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; coredns-provider.conf
+[Global]
+etcd-endpoints = http://etcd-cluster.federation:2379
+zones = kairen.com.
+EOF
+</code></pre>
+<blockquote>
+<p>請自行修改<code>etcd-endpoints</code>與<code>zones</code>。</p>
+</blockquote>
+<p>檔案建立並確認沒問題後，透過 kubefed 工具來初始化主叢集：</p>
+<pre><code class="sh">$ kubefed init federation \
+  --host-cluster-context=f-cluster-context \
+  --dns-provider=&quot;coredns&quot; \
+  --dns-zone-name=&quot;kairen.com.&quot; \
+  --apiserver-enable-basic-auth=true \
+  --apiserver-enable-token-auth=true \
+  --dns-provider-config=&quot;coredns-provider.conf&quot; \
+  --apiserver-arg-overrides=&quot;--anonymous-auth=false,--v=4&quot; \
+  --api-server-service-type=&quot;NodePort&quot; \
+  --api-server-advertise-address=&quot;172.22.132.31&quot; \
+  --etcd-persistent-storage=true
+
+$ kubectl -n federation-system get po
+NAME                                  READY     STATUS    RESTARTS   AGE
+apiserver-848d584b5d-cwxdh            2/2       Running   0          1m
+controller-manager-5846c555c6-mw2jz   1/1       Running   1          1m
+</code></pre>
+<blockquote>
+<p>這邊可以改變<code>--etcd-persistent-storage</code>來選擇使用或不使用 PV，若使用請先建立一個 PV 來提供給 Federation Pod 的 PVC 索取使用，可以參考 <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener">Persistent Volumes</a>。</p>
+</blockquote>
+<h3 id="加入-Federation-的-Kubernetes-子叢集"><a href="#加入-Federation-的-Kubernetes-子叢集" class="headerlink" title="加入 Federation 的 Kubernetes 子叢集"></a>加入 Federation 的 Kubernetes 子叢集</h3><pre><code class="sh">$ kubectl config use-context federation
+
+# 加入 k8s-a-cluster
+$ kubefed join f-a-cluster \
+  --cluster-context=a-cluster-context \
+  --host-cluster-context=f-cluster-context
+
+# 加入 k8s-b-cluster
+$ kubefed join f-b-cluster \
+  --cluster-context=b-cluster-context \
+  --host-cluster-context=f-cluster-context
+
+$ kubectl get cluster
+NAME          AGE
+f-a-cluster   57s
+f-b-cluster   53s
+</code></pre>
+<h2 id="測試-Federation-叢集"><a href="#測試-Federation-叢集" class="headerlink" title="測試 Federation 叢集"></a>測試 Federation 叢集</h2><p>這邊利用 Nginx Deployment 來進行測試，先簡單建立一個副本為 4 的 Nginx：</p>
+<pre><code class="sh">$ kubectl config use-context federation
+$ kubectl create ns default
+$ kubectl run nginx --image nginx --port 80 --replicas=4
+</code></pre>
+<p>查看 Cluster A：</p>
+<pre><code class="sh">$ kubectl --context=a-cluster-context get po
+NAME                     READY     STATUS    RESTARTS   AGE
+nginx-7587c6fdb6-dpjv5   1/1       Running   0          25s
+nginx-7587c6fdb6-sjv8v   1/1       Running   0          25s
+</code></pre>
+<p>查看 Cluster B：</p>
+<pre><code class="sh">$ kubectl --context=b-cluster-context get po
+NAME                     READY     STATUS    RESTARTS   AGE
+nginx-7587c6fdb6-dv45v   1/1       Running   0          1m
+nginx-7587c6fdb6-wxsmq   1/1       Running   0          1m
+</code></pre>
+<p>其他可測試功能：</p>
+<ul>
+<li>設定 Replica set preferences，參考 <a href="https://kubernetes.io/docs/tasks/administer-federation/replicaset/#spreading-replicas-in-underlying-clusters" target="_blank" rel="noopener">Spreading Replicas in Underlying Clusters</a>。</li>
+<li>Federation 在 v1.7+ 加入了 <a href="https://kubernetes.io/docs/tasks/administer-federation/cluster/#clusterselector-annotation" target="_blank" rel="noopener">ClusterSelector Annotation</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/federation/set-up-placement-policies-federation/#deploying-federation-and-configuring-an-external-policy-engine" target="_blank" rel="noopener">Scheduling Policy</a>。</li>
+</ul>
+<h2 id="Refers"><a href="#Refers" class="headerlink" title="Refers"></a>Refers</h2><ul>
+<li><a href="https://github.com/emaildanwilson/minikube-federation" target="_blank" rel="noopener">Minikube Federation</a></li>
+<li><a href="http://cgrant.io/tutorials/gcp/compute/gke/global-kubernetes-three-steps/" target="_blank" rel="noopener">Global Kubernetes in 3 Steps</a></li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> Kubernetes </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Kubernetes </tag>
+            
+            <tag> Federation </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[利用 Kubeflow 來管理 TensorFlow 應用程式]]></title>
       <url>https://kairen.github.io/2018/03/15/tensorflow/kubeflow/</url>
       <content type="html"><![CDATA[<p><a href="https://github.com/kubeflow/kubeflow" target="_blank" rel="noopener">Kubeflow</a> 是 Google 開源的機器學習工具，目標是簡化在 Kubernetes 上運行機器學習的過程，使之更簡單、可攜帶與可擴展。Kubeflow 目標不是在於重建其他服務，而是提供一個最佳開發系統來部署到各種基礎設施架構中，另外由於使用 Kubernetes 來做為基礎，因此只要有 Kubernetes 的地方，都能夠執行 Kubeflow。</p>
 <a id="more"></a>
@@ -65,7 +359,7 @@
 <pre><code class="sh"># 在 master 執行
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-server
 $ sudo mkdir /nfs-data
-$ echo &quot;/nfs-data *(rw,sync,no_root_squash,no_subtree_check)&quot;
+$ echo &quot;/nfs-data *(rw,sync,no_root_squash,no_subtree_check)&quot; | sudo tee -a /etc/exports
 $ sudo /etc/init.d/nfs-kernel-server restart
 
 # 在 node 執行
@@ -1412,9 +1706,9 @@ $ neutron router-gateway-set router1 ext-net
         
         <tags>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
             <tag> Openstack </tag>
             
@@ -4572,7 +4866,7 @@ with tf.Session(graph=g1) as sess_cpu:
 <li>操作端可以透過 kubectl 工具管理到 Kubernetes（可用的 kubectl config）。</li>
 </ul>
 <h2 id="安裝-Helm"><a href="#安裝-Helm" class="headerlink" title="安裝 Helm"></a>安裝 Helm</h2><p>Helm 有許多種安裝方式，這邊個人比較喜歡用 binary 檔案來進行安裝：</p>
-<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.4.1-linux-amd64.tar.gz | tar -zxf
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zx
 $ sudo mv linux-amd64/helm /usr/local/bin/
 $ helm version
 </code></pre>
@@ -4580,7 +4874,9 @@ $ helm version
 <p>OS X 為下載 <code>helm-v2.4.1-darwin-amd64.tar.gz</code>。</p>
 </blockquote>
 <h2 id="初始化-Helm"><a href="#初始化-Helm" class="headerlink" title="初始化 Helm"></a>初始化 Helm</h2><p>在開始使用 Helm 之前，我們需要建置 Tiller Server 來對 Kubernetes 的管理，而 Helm CLI 內建也提供了快速初始化指令，如下：</p>
-<pre><code class="sh">$ helm init
+<pre><code class="sh">$ kubectl -n kube-system create sa tiller
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
 $HELM_HOME has been configured at /root/.helm.
 
 Tiller (the helm server side component) has been installed into your Kubernetes Cluster.
@@ -4822,9 +5118,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Helm </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Helm </tag>
             
         </tags>
         
@@ -6920,10 +7216,10 @@ outputs {
 </blockquote>
 <p>本環境安裝資訊：</p>
 <ul>
-<li>Kubernetes v1.9.0</li>
+<li>Kubernetes v1.9.6</li>
 <li>Etcd v3</li>
 <li>Flannel v0.9.1</li>
-<li>Docker v17.05.0-ce</li>
+<li>Docker v18.02.0-ce</li>
 </ul>
 <a id="more"></a>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt：</p>
@@ -6965,8 +7261,11 @@ outputs {
 <li>所有節點網路可以溝通。</li>
 <li>所有節點需要設定 APT Docker Repository：</li>
 </ul>
-<pre><code class="sh">$ sudo apt-key adv --keyserver &quot;hkp://p80.pool.sks-keyservers.net:80&quot; --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-$ echo &#39;deb https://apt.dockerproject.org/repo ubuntu-xenial main&#39; | sudo tee /etc/apt/sources.list.d/docker.list
+<pre><code class="sh">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+$ sudo add-apt-repository \
+   &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable&quot;
 </code></pre>
 <blockquote>
 <p>CentOS 7 EPEL 有支援 Docker Package:</p>
@@ -6974,7 +7273,7 @@ $ echo &#39;deb https://apt.dockerproject.org/repo ubuntu-xenial main&#39; | sud
 </code></pre>
 </blockquote>
 <ul>
-<li>所有節點需要設定 APT 與 Yum Kubernetes Repository：</li>
+<li>所有節點需要設定 APT 與 YUM Kubernetes Repository：</li>
 </ul>
 <pre><code class="sh">$ curl -s &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | sudo apt-key add -
 $ echo &quot;deb http://apt.kubernetes.io/ kubernetes-xenial main&quot; | sudo tee /etc/apt/sources.list.d/kubernetes.list
@@ -7003,7 +7302,7 @@ EOF
 <p>記得<code>/etc/fstab</code>也要註解掉<code>SWAP</code>掛載。</p>
 </blockquote>
 <h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
-<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-engine
+<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-ce
 </code></pre>
 <p>進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ sudo su -
@@ -7011,22 +7310,22 @@ $ kubeadm token generate
 b0f7b8.8d1767876297d85c
 
 $ kubeadm init --service-cidr 10.96.0.0/12 \
-               --kubernetes-version v1.9.0 \
+               --kubernetes-version v1.9.6 \
                --pod-network-cidr 10.244.0.0/16 \
                --apiserver-advertise-address 172.16.35.12 \
                --token b0f7b8.8d1767876297d85c
 # output               
 ...
-kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
+kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443 --discovery-token-ca-cert-hash sha256:739d936954a752d44d2f2282dd645083259826f2c24a651608a6ac2081106cd7
 </code></pre>
 <p>當出現如上面資訊後，表示 Master 初始化成功，不過這邊還是一樣透過 kubectl 測試一下：</p>
-<pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
+<pre><code class="sh">$ mkdir ~/.kube &amp;&amp; cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get node
-NAME      STATUS    ROLES     AGE       VERSION
-master1   Ready     master    10m       v1.8.4
+NAME       STATUS     ROLES     AGE       VERSION
+master1    NotReady   master    4m        v1.9.6
 </code></pre>
 <p>當執行正確後要接著部署網路，但要注意<code>一個叢集只能用一種網路</code>，這邊採用 Flannel：</p>
-<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
 clusterrole &quot;flannel&quot; created
 clusterrolebinding &quot;flannel&quot; created
 serviceaccount &quot;flannel&quot; configured
@@ -7037,6 +7336,7 @@ daemonset &quot;kube-flannel-ds&quot; configured
 <ul>
 <li>若參數 <code>--pod-network-cidr=10.244.0.0/16</code> 改變時，在<code>kube-flannel.yml</code>檔案也需修改<code>net-conf.json</code>欄位的 CIDR。</li>
 <li>若使用 Virtualbox 的話，請修改<code>kube-flannel.yml</code>中的 command 綁定 iface，如<code>command: [ &quot;/opt/bin/flanneld&quot;, &quot;--ip-masq&quot;, &quot;--kube-subnet-mgr&quot;, &quot;--iface=eth1&quot; ]</code>。</li>
+<li>其他 Pod Network 可以參考 <a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network" target="_blank" rel="noopener">Installing a pod network</a>。</li>
 </ul>
 </blockquote>
 <p>確認 Flannel 部署正確：</p>
@@ -7058,10 +7358,10 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.244.0.0      0.0.0.0         255.255.0.0     U     0      0        0 flannel.1
 </code></pre>
 <h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
-<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-engine
+<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-ce
 </code></pre>
 <p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
-<pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443
+<pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443 --discovery-token-ca-cert-hash sha256:739d936954a752d44d2f2282dd645083259826f2c24a651608a6ac2081106cd7
 # output
 ...
 Run &#39;kubectl get nodes&#39; on the master to see this machine join.
@@ -7069,9 +7369,9 @@ Run &#39;kubectl get nodes&#39; on the master to see this machine join.
 <p>回到<code>master1</code>查看節點狀態：</p>
 <pre><code class="sh">$ kubectl get node
 NAME      STATUS    ROLES     AGE       VERSION
-master1   Ready     master    10m       v1.8.4
-node1     Ready     &lt;none&gt;    9m        v1.8.4
-node2     Ready     &lt;none&gt;    9m        v1.8.4
+master1   Ready     master    10m       v1.9.6
+node1     Ready     &lt;none&gt;    9m        v1.9.6
+node2     Ready     &lt;none&gt;    9m        v1.9.6
 </code></pre>
 <p>為了多加利用資源這邊透過 taint 來讓 masters 也會被排程執行容器：</p>
 <pre><code class="sh">$ kubectl taint nodes --all node-role.kubernetes.io/master-
@@ -9219,6 +9519,104 @@ a1.sinks.k1.channel=c1
     </entry>
     
     <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[DRBD 進行跨節點的區塊儲存備份]]></title>
       <url>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</url>
       <content type="html"><![CDATA[<p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
@@ -9364,104 +9762,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -14519,14 +14819,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -14561,14 +14861,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>

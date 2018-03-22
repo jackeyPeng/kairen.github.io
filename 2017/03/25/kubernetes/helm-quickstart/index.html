@@ -204,15 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">17</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">6</span></a>
+                    Kubernetes <span class="right">18</span></a>
                 </a>
             </li>
 
@@ -221,6 +213,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/TensorFlow/">
                     TensorFlow <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -298,9 +298,9 @@
         
             <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
         
-            <a href="/tags/Helm/" class="chip pink lighten-1">Helm</a>
-        
             <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Helm/" class="chip pink lighten-1">Helm</a>
         
     </div>
 
@@ -342,7 +342,7 @@
 <li>操作端可以透過 kubectl 工具管理到 Kubernetes（可用的 kubectl config）。</li>
 </ul>
 <h2 id="安裝-Helm"><a href="#安裝-Helm" class="headerlink" title="安裝 Helm"></a>安裝 Helm</h2><p>Helm 有許多種安裝方式，這邊個人比較喜歡用 binary 檔案來進行安裝：</p>
-<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.4.1-linux-amd64.tar.gz | tar -zxf
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zx
 $ sudo mv linux-amd64/helm /usr/local/bin/
 $ helm version
 </code></pre>
@@ -350,7 +350,9 @@ $ helm version
 <p>OS X 為下載 <code>helm-v2.4.1-darwin-amd64.tar.gz</code>。</p>
 </blockquote>
 <h2 id="初始化-Helm"><a href="#初始化-Helm" class="headerlink" title="初始化 Helm"></a>初始化 Helm</h2><p>在開始使用 Helm 之前，我們需要建置 Tiller Server 來對 Kubernetes 的管理，而 Helm CLI 內建也提供了快速初始化指令，如下：</p>
-<pre><code class="sh">$ helm init
+<pre><code class="sh">$ kubectl -n kube-system create sa tiller
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
 $HELM_HOME has been configured at /root/.helm.
 
 Tiller (the helm server side component) has been installed into your Kubernetes Cluster.
@@ -655,7 +657,7 @@ $ helm repo add example http://repo-url
                         <i class="fa fa-2x fa-github"></i>
                     </a>
                 
-                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                    <a class="social-link" href="mailto:k2r2bai@gmail.com" target="_blank">
                         <i class="fa fa-2x fa-envelope"></i>
                     </a>
                 

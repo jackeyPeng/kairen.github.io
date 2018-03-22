@@ -7,7 +7,7 @@
 
     
 
-    <title>利用 Kubeflow 來管理 TensorFlow 訓練 | KaiRen&#39;s Blog</title>
+    <title>利用 Kubeflow 來管理 TensorFlow 應用程式 | KaiRen&#39;s Blog</title>
     <meta name="author" content="Kyle Bai">
     
     <meta name="description" content="Note my learning.">
@@ -15,7 +15,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <meta property="og:title" content="利用 Kubeflow 來管理 TensorFlow 訓練"/>
+    <meta property="og:title" content="利用 Kubeflow 來管理 TensorFlow 應用程式"/>
     <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
 
     
@@ -204,15 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">17</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">6</span></a>
+                    Kubernetes <span class="right">18</span></a>
                 </a>
             </li>
 
@@ -221,6 +213,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/TensorFlow/">
                     TensorFlow <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">6</span></a>
                 </a>
             </li>
 
@@ -281,7 +281,7 @@
             <div class="article-title">
                 
     
-        <h1>利用 Kubeflow 來管理 TensorFlow 訓練</h1>
+        <h1>利用 Kubeflow 來管理 TensorFlow 應用程式</h1>
     
 
 
@@ -372,7 +372,7 @@
 <pre><code class="sh"># 在 master 執行
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-server
 $ sudo mkdir /nfs-data
-$ echo &quot;/nfs-data *(rw,sync,no_root_squash,no_subtree_check)&quot;
+$ echo &quot;/nfs-data *(rw,sync,no_root_squash,no_subtree_check)&quot; | sudo tee -a /etc/exports
 $ sudo /etc/init.d/nfs-kernel-server restart
 
 # 在 node 執行
@@ -517,6 +517,12 @@ example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
 </code></pre>
 
                 
+<p class="green-link-context">
+    <a href="/2018/03/21/kubernetes/k8s-federation/" rel="next" title="使用 kubefed 建立 Kubernetes Federation(On-premises)">
+    Prev: 使用 kubefed 建立 Kubernetes Federation(On-premises)
+  </a>
+</p>
+
 
 
 <p class="green-link-context">
@@ -585,7 +591,7 @@ example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
                         <i class="fa fa-2x fa-github"></i>
                     </a>
                 
-                    <a class="social-link" href="mailto:kyle.b@inwinstack.com" target="_blank">
+                    <a class="social-link" href="mailto:k2r2bai@gmail.com" target="_blank">
                         <i class="fa fa-2x fa-envelope"></i>
                     </a>
                 
