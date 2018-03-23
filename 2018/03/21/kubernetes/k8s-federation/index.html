@@ -163,14 +163,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Container/">
                     Container <span class="right">8</span></a>
                 </a>
@@ -179,8 +171,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
                 </a>
             </li>
 
@@ -195,8 +187,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">18</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -205,6 +197,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">18</span></a>
                 </a>
             </li>
 
@@ -329,7 +329,7 @@
 <ul>
 <li><strong>成熟度問題</strong>，目前還處與 Alpha 階段，故很多功能都還處於實現性質，或者不太穩定。</li>
 <li><strong>提升網路頻寬與成本</strong>，由於 Federation 需要監控所有叢集以確保當前狀態符合預期，因是會增加額外效能開銷。</li>
-<li><strong>跨叢集隔離差</strong>，Federation 的子叢集有可能因為 Bug 的引發而影響其他叢集運行狀況。</li>
+<li><strong>跨叢集隔離差</strong>，Federation 的子叢集git有可能因為 Bug 的引發而影響其他叢集運行狀況。</li>
 <li>個人用起來不是很穩定，例如建立的 Deployment 刪除很常會 Timeout。</li>
 <li>支援的物件資源有限，如不支援 StatefulSets。可參考 <a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/#api-resources" target="_blank" rel="noopener">API resources</a>。</li>
 </ul>
@@ -466,7 +466,7 @@ Server Version: version.Info{Major:&quot;1&quot;, Minor:&quot;9&quot;, GitVersio
 <ul>
 <li>在 F 叢集安裝 Helm 工具，並進行初始化：</li>
 </ul>
-<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.4.1-linux-amd64.tar.gz | tar -zxf
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zxf
 $ sudo mv linux-amd64/helm /usr/local/bin/
 $ kubectl -n kube-system create sa tiller
 $ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
@@ -501,6 +501,7 @@ middleware:
     endpoint: &quot;http://etcd-cluster.federation:2379&quot;
 EOF
 
+$ kubectl create clusterrolebinding federation-admin --clusterrole=cluster-admin --user=system:serviceaccount:federation:default
 $ helm install --namespace federation --name coredns -f Values.yaml stable/coredns
 # 測試 CoreDNS 可以查詢 Domain Name
 $ kubectl run -it --rm --restart=Never --image=infoblox/dnstools:latest dnstools

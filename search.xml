@@ -26,7 +26,7 @@
 <ul>
 <li><strong>成熟度問題</strong>，目前還處與 Alpha 階段，故很多功能都還處於實現性質，或者不太穩定。</li>
 <li><strong>提升網路頻寬與成本</strong>，由於 Federation 需要監控所有叢集以確保當前狀態符合預期，因是會增加額外效能開銷。</li>
-<li><strong>跨叢集隔離差</strong>，Federation 的子叢集有可能因為 Bug 的引發而影響其他叢集運行狀況。</li>
+<li><strong>跨叢集隔離差</strong>，Federation 的子叢集git有可能因為 Bug 的引發而影響其他叢集運行狀況。</li>
 <li>個人用起來不是很穩定，例如建立的 Deployment 刪除很常會 Timeout。</li>
 <li>支援的物件資源有限，如不支援 StatefulSets。可參考 <a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/#api-resources" target="_blank" rel="noopener">API resources</a>。</li>
 </ul>
@@ -163,7 +163,7 @@ Server Version: version.Info{Major:&quot;1&quot;, Minor:&quot;9&quot;, GitVersio
 <ul>
 <li>在 F 叢集安裝 Helm 工具，並進行初始化：</li>
 </ul>
-<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.4.1-linux-amd64.tar.gz | tar -zxf
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zxf
 $ sudo mv linux-amd64/helm /usr/local/bin/
 $ kubectl -n kube-system create sa tiller
 $ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
@@ -198,6 +198,7 @@ middleware:
     endpoint: &quot;http://etcd-cluster.federation:2379&quot;
 EOF
 
+$ kubectl create clusterrolebinding federation-admin --clusterrole=cluster-admin --user=system:serviceaccount:federation:default
 $ helm install --namespace federation --name coredns -f Values.yaml stable/coredns
 # 測試 CoreDNS 可以查詢 Domain Name
 $ kubectl run -it --rm --restart=Never --image=infoblox/dnstools:latest dnstools
@@ -1707,9 +1708,9 @@ $ neutron router-gateway-set router1 ext-net
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Openstack </tag>
             
@@ -5119,9 +5120,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -8302,9 +8303,9 @@ clean
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -8770,9 +8771,9 @@ $ sudo dmsetup remove cachedev
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -9248,9 +9249,9 @@ $ sudo mount /dev/mapper/home-cached /mnt/cache
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
             
             <tag> SSD </tag>
             
@@ -9511,9 +9512,107 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
+            <tag> Spark </tag>
+            
             <tag> Logging </tag>
             
-            <tag> Spark </tag>
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
             
         </tags>
         
@@ -9662,107 +9761,9 @@ $ drbd-overview
         
         <tags>
             
-            <tag> Storage </tag>
-            
             <tag> Linux </tag>
             
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
+            <tag> Storage </tag>
             
         </tags>
         
@@ -11727,11 +11728,11 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         
         <tags>
             
+            <tag> Docker </tag>
+            
             <tag> Ceph </tag>
             
             <tag> Storage </tag>
-            
-            <tag> Docker </tag>
             
         </tags>
         
@@ -12549,13 +12550,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
+            <tag> Logging </tag>
+            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
-            
-            <tag> Logging </tag>
             
         </tags>
         
@@ -12873,13 +12874,13 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         
         <tags>
             
-            <tag> Storage </tag>
-            
-            <tag> File System </tag>
-            
             <tag> OpenStack </tag>
             
             <tag> Linux </tag>
+            
+            <tag> Storage </tag>
+            
+            <tag> File System </tag>
             
         </tags>
         
@@ -14798,18 +14799,18 @@ lib/spark-examples*.jar \
   
     
     <entry>
-      <title><![CDATA[categories]]></title>
-      <url>https://kairen.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[關於我]]></title>
       <url>https://kairen.github.io/about/index.html</url>
       <content type="html"><![CDATA[<p>大家好!我是 Kyle，目前任職於 inwinSTACK 擔任軟體工程師，主要開發與研究虛擬化、分散式儲存與容器化應用，無聊時就嘗試一些技術性東西，並將筆記整理至這邊，有任何問題也歡迎聯絡。</p>
 <p>自己在⼤學期間主要撰寫於 java 與 objc 程式語⾔，並專注開發 iOS Mobile 應用程式，期間共開發 20 項相關專案，而次要研讀 Hadoop 與 Spark 巨量資料運算框架，以及 Linux 相關技術，在大學期間從 Backend、Frontend 至 Mobile 都有參與開發及設計。自己本身喜歡接觸有挑戰性的事情，在學期間利用產學合作，與業界進行 Co-work 開發該企業軟體，合作企業橫跨不同領域，諸如：旅遊產業、雲端產業、健⾝器材產業等等，幫助許多企業降低⽣產成本與提升產品附加價值，在開發專案與不同領域的夥伴相互合作，來⾃不同領域科系互補與意⾒，體會產品與作品需深思熟慮很多層⾯。</p>
 <p>由於雲端的普及，虛擬化技術⽇漸成熟，因應其需求，在研究所主要專研於雲端相關知識與技術，並以雲端開源軟體 OpenStack、Ceph 分散式檔案儲存系統與 Docker 輕量虛擬化做深⼊研究，進⼀步了解其架構與運作⽅式，並將其建置與應⽤於實務上，也透過參與相關活動及貢獻來與國際接軌，學習不同領域知識與技術，希望未來能把所學發揮出來。</p>
 ]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>https://kairen.github.io/categories/index.html</url>
+      <content type="html"></content>
     </entry>
     
     <entry>
@@ -14844,20 +14845,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -14874,14 +14869,20 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
