@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">6</span></a>
+                    OpenStack <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,62 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/">Kubespray 部署實體機 Kubernetes v1.6 叢集</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2017-03-17T09:08:54.000Z"><a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/">2017-03-17</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Ansible/" class="chip pink lighten-1">Ansible</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="noopener">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
+<ul>
+<li>可以部署在 AWS, GCE, Azure, OpenStack 或者 Baremetal.</li>
+<li>部署 High Available Kubernetes 叢集.</li>
+<li>可組合性(Composable)，可自行選擇 Network Plugin (flannel, calico, canal, weave) 來部署.</li>
+<li>支援多種 Linux distributions(CoreOS, Debian Jessie, Ubuntu 16.04, CentOS/RHEL7).</li>
+</ul>
+<p>本篇將說明如何透過 Kubespray 部署 Kubernetes 至實體機器節點，安裝版本如下所示：</p>
+<ul>
+<li>Kubernetes v1.6.4</li>
+<li>Etcd v3.1.6</li>
+<li>Flannel v0.7.1</li>
+<li>Docker v17.04.0-ce</li>
+</ul>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -675,59 +731,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2016/10/01/tensorflow/tensorflow-docker/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2016/09/29/kubernetes/deploy/kubeadm/">只要用 kubeadm 小朋友都能部署 Kubernetes</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-09-29T09:08:54.000Z"><a href="/2016/09/29/kubernetes/deploy/kubeadm/">2016-09-29</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/Ubuntu/" class="chip pink lighten-1">Ubuntu</a>
-        
-            <a href="/tags/CentOS/" class="chip pink lighten-1">CentOS</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
-<blockquote>
-<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="noopener">kubeadm-ansible</a>。</p>
-</blockquote>
-<p>本環境安裝資訊：</p>
-<ul>
-<li>Kubernetes v1.9.6</li>
-<li>Etcd v3</li>
-<li>Flannel v0.9.1</li>
-<li>Docker v18.02.0-ce</li>
-</ul>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/09/29/kubernetes/deploy/kubeadm/">READ MORE</a>
         </ div>
         
     </div>

@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">6</span></a>
+                    OpenStack <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -372,9 +372,11 @@ svc/tiller-deploy   192.162.204.144   &lt;none&gt;        44134/TCP   3m
 <p>接著透過 helm ctl 來查看資訊：</p>
 <pre><code class="sh">$ export KUBECONFIG=/etc/kubernetes/admin.conf
 $ export HELM_HOST=$(kubectl describe svc/tiller-deploy -n kube-system | awk &#39;/Endpoints/{print $2}&#39;)
+
+# wait for a few minutes
 $ helm version
-Client: &amp;version.Version{SemVer:&quot;v2.4.2&quot;, GitCommit:&quot;82d8e9498d96535cc6787a6a9194a76161d29b4c&quot;, GitTreeState:&quot;clean&quot;}
-Server: &amp;version.Version{SemVer:&quot;v2.4.2&quot;, GitCommit:&quot;82d8e9498d96535cc6787a6a9194a76161d29b4c&quot;, GitTreeState:&quot;clean&quot;}
+Client: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
+Server: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
 </code></pre>
 <h2 id="部署-Chart-Release-實例"><a href="#部署-Chart-Release-實例" class="headerlink" title="部署 Chart Release 實例"></a>部署 Chart Release 實例</h2><p>當完成初始化後，就可以透過 helm ctl 來管理與部署 Chart Release，我們可以到 <a href="https://kubeapps.com/" target="_blank" rel="noopener">KubeApps</a> 查找想要部署的 Chart，如以下快速部屬 Jenkins　範例，首先先透過搜尋來查看目前應用程式版本：</p>
 <pre><code class="sh">$ helm search jenkins

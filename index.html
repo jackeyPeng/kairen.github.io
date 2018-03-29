@@ -212,7 +212,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">6</span></a>
+                    OpenStack <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -523,6 +523,47 @@
             <div class="article-title">
                 
     
+        <h1 class="indigo-link-context"><a href="/2017/12/20/openstack/stackube/">多租戶 Kubernetes 部署方案 Stackube</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2017-12-20T08:23:01.000Z"><a href="/2017/12/20/openstack/stackube/">2017-12-20</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Openstack/" class="chip pink lighten-1">Openstack</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://github.com/openstack/stackube" target="_blank" rel="noopener">Stackube</a>是一個 Kubernetes-centric 的 OpenStack 發行版本(架構如下圖所示)，該專案結合 Kubernetes 與 OpenStack 的技術來達到真正的 Kubernetes 租戶隔離，如租戶實例採用 Frakti 來進行隔離、網路採用 Neutron OVS 達到每個 Namespace 擁有獨立的網路資源等。本篇會簡單介紹如何用 DevStack 建立測試用 Stackube。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2017/12/20/openstack/stackube/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
         <h1 class="indigo-link-context"><a href="/2017/11/29/openstack/openstack-helm/">Deploy OpenStack on Kubernetes using OpenStack-helm</a></h1>
     
 
@@ -650,56 +691,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2017/08/29/openstack/kuryr-kubernetes/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2017/08/16/openstack/ironic-dev/">利用 OpenStack Ironic 提供裸機部署服務</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2017-08-16T08:23:01.000Z"><a href="/2017/08/16/openstack/ironic-dev/">2017-08-16</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
-        
-            <a href="/tags/DevStack/" class="chip pink lighten-1">DevStack</a>
-        
-            <a href="/tags/Bare-metal/" class="chip pink lighten-1">Bare-metal</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://docs.openstack.org/ironic/latest/user/index.html" target="_blank" rel="noopener">Ironic</a> 是 OpenStack 專案之一，主要目的是提供裸機機器部署服務(Bare-metal service)。它能夠單獨或整合 OpenStack 其他服務被使用，而可整合服務包含 Keystone、Nova、Neutron、Glance 與 Swift 等核心服務。當使用 Compute 與 Network 服務對 Bare-metal 進行適當的配置時，OpenStack 可以透過 Compute API 同時部署虛擬機(Virtual machines)與裸機(Bare machines)。</p>
-<p>本篇為了精簡安裝過程，故這邊不採用手動安裝教學(會在 Gitbook 書上更新)，因此採用 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="noopener">DevStack</a> 來部署服務，再手動設定一些步驟。</p>
-<p>本環境安裝資訊：</p>
-<ul>
-<li>OpenStack Pike</li>
-<li>DevStack Pike</li>
-<li>Pike Pike Pike ….</li>
-</ul>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2017/08/16/openstack/ironic-dev/">READ MORE</a>
         </ div>
         
     </div>
