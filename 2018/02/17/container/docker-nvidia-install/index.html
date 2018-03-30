@@ -323,8 +323,7 @@
 <p>首先透過 APT 安裝 Docker CE or EE v17.12 版本：</p>
 <pre><code class="sh">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 $ echo &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial edge&quot; | sudo tee /etc/apt/sources.list.d/docker.list
-$ sudo apt-get update
-$ sudo apt-get install -y docker-ce=17.12.1~ce-0~ubuntu
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y docker-ce=17.12.1~ce-0~ubuntu
 </code></pre>
 <p>接著透過 APT 安裝 NVIDIA Driver(v390.30) 與 CUDA 9.1：</p>
 <pre><code class="sh">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
@@ -394,7 +393,7 @@ totalMemory: 2.95GiB freeMemory: 2.88GiB
 
                 
 <p class="green-link-context">
-    <a href="/2018/03/01/kubernetes/k8s-device-plugin/" rel="next" title="Kubernetes NVIDIA Device Plugins">
+    <a href="/2018/03/01/kubernetes/nvidia-device-plugin/" rel="next" title="Kubernetes NVIDIA Device Plugins">
     Prev: Kubernetes NVIDIA Device Plugins
   </a>
 </p>

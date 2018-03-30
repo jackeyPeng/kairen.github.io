@@ -365,6 +365,13 @@
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>使用 Kubeflow 之前，需要確保以下條件達成：</p>
 <ul>
 <li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker，請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/">安裝 Nvidia Docker 2</a>。</li>
+<li>(option)所有 GPU 節點安裝 cuDNN v7.1.2 for CUDA 9.1，請至 <a href="https://developer.nvidia.com/cudnn" target="_blank" rel="noopener">NVIDIA cuDNN</a> 下載。</li>
+</ul>
+<pre><code class="sh">$ tar xvf cudnn-9.1-linux-x64-v7.1.tgz
+$ sudo cp cuda/include/cudnn.h /usr/local/cuda/include/
+$ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/
+</code></pre>
+<ul>
 <li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集，請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
 <li>Kubernetes 叢集需要安裝 NVIDIA Device Plugins，請參考 <a href="https://kairen.github.io/2018/03/01/kubernetes/k8s-device-plugin/">安裝 Kubernetes NVIDIA Device Plugins</a>。</li>
 <li>建立 NFS server 並在 Kubernetes 節點安裝 NFS common，然後利用 Kubernetes 建立 PV 提供給 Kubeflow 使用：</li>
@@ -381,15 +388,15 @@ $ sudo apt-get update &amp;&amp; sudo apt-get install -y nfs-common
 <ul>
 <li>安裝 <code>ksonnet v0.8.0</code>(latest or dev build 有問題)，請參考以下：</li>
 </ul>
-<pre><code class="sh">$ wget https://github.com/ksonnet/ksonnet/releases/download/v0.8.0/ks_0.8.0_linux_amd64.tar.gz
-$ tar xvf ks_0.8.0_linux_amd64.tar.gz
-$ sudo cp ks_0.8.0_linux_amd64/ks /usr/local/bin/
+<pre><code class="sh">$ wget https://github.com/ksonnet/ksonnet/releases/download/v0.9.2/ks_0.9.2_linux_amd64.tar.gz
+$ tar xvf ks_0.9.2_linux_amd64.tar.gz
+$ sudo cp ks_0.9.2_linux_amd64/ks /usr/local/bin/
 $ ks version
-ksonnet version: 0.8.0
+ksonnet version: 0.9.2
 jsonnet version: v0.9.5
-client-go version: v1.6.8-beta.0+$Format:%h$
+client-go version: 1.8
 </code></pre>
-<h2 id="部署-Kubeflow"><a href="#部署-Kubeflow" class="headerlink" title="部署 Kubeflow"></a>部署 Kubeflow</h2><p>本節將說明如何利用 ksonnet 來部署 Kubeflow 到 Kubernetes 叢集中。首先初始化 ksonnet 應用程式目錄：</p>
+<h2 id="部署-Kubeflow"><a href="#部署-Kubeflow" class="headerlink" title="部署 Kubeflow"></a>部署 Kubeflow</h2><p>本節將說明如何利用 ksonnet 來部署 Kubeflow 到 Kubernetes 叢集中。首先在<code>master</code>節點初始化 ksonnet 應用程式目錄：</p>
 <pre><code class="sh">$ ks init my-kubeflow
 </code></pre>
 <blockquote>
@@ -467,17 +474,18 @@ EOF
 </code></pre>
 <p>完成後連接 <code>http://Master_IP</code>，並輸入<code>任意帳號密碼</code>進行登入。</p>
 <p><img src="/images/kubeflow/1.png" alt=""></p>
-<p>登入後點選<code>Start My Server</code>按鈕來建立 Server 的 Spawner options，這邊注意預設 image 為以下兩種：</p>
+<p>登入後點選<code>Start My Server</code>按鈕來建立 Server 的 Spawner options，預設會有多種映像檔可以使用：</p>
 <ul>
 <li>CPU：gcr.io/kubeflow-images-staging/tensorflow-notebook-cpu。</li>
 <li>GPU：gcr.io/kubeflow-images-staging/tensorflow-notebook-gpu。</li>
 </ul>
 <blockquote>
-<p>P.S. 這邊建議使用以下映像檔做測試使用：</p>
+<p>這邊也使用以下 GCP 建構的映像檔做測試使用(GPU 當前為 CUDA 8)：</p>
 <ul>
 <li>gcr.io/kubeflow/tensorflow-notebook-cpu:latest</li>
 <li>gcr.io/kubeflow/tensorflow-notebook-gpu:latest</li>
 </ul>
+<p>若 CUDA 版本不同，請自行修改 <a href="https://github.com/GoogleCloudPlatform/container-engine-accelerators/blob/master/example/tensorflow-notebook-image" target="_blank" rel="noopener">GCP Tensorflow Notebook image</a> 或是 <a href="https://github.com/kubeflow/kubeflow/tree/master/components/k8s-model-server/images" target="_blank" rel="noopener">Kubeflow Tensorflow Notebook image </a>重新建構。</p>
 <p>如果使用 GPU 請執行以下指令確認是否可被分配資源：</p>
 <pre><code class="sh">$ kubectl get nodes &quot;-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu&quot;
 NAME               GPU
@@ -488,6 +496,9 @@ kube-gpu-node2     1
 </blockquote>
 <p>最後點選<code>Spawn</code>來完成建立 Server，如下圖所示：</p>
 <p><img src="/images/kubeflow/2.png" alt=""></p>
+<blockquote>
+<p>這邊先用 CPU 進行測試，由於本篇是安裝 CUDA 9.1 + cuDNN 7，因此要自己建構映像檔。</p>
+</blockquote>
 <p>接著等 Kubernetes 下載映像檔後，就會正常啟動，如下圖所示：</p>
 <p><img src="/images/kubeflow/3.png" alt=""></p>
 <p>當正常啟動後，點選<code>New &gt; Python 3</code>建立一個 Notebook 並貼上以下範例程式：</p>
@@ -526,7 +537,7 @@ example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
 
 
 <p class="green-link-context">
-    <a href="/2018/03/01/kubernetes/k8s-device-plugin/" rel="next" title="Kubernetes NVIDIA Device Plugins">
+    <a href="/2018/03/01/kubernetes/nvidia-device-plugin/" rel="next" title="Kubernetes NVIDIA Device Plugins">
     Next: Kubernetes NVIDIA Device Plugins
   </a>
 </p>

@@ -403,7 +403,8 @@ EOF
 <p>記得<code>/etc/fstab</code>也要註解掉<code>SWAP</code>掛載。</p>
 </blockquote>
 <h2 id="Kubernetes-Master-建立"><a href="#Kubernetes-Master-建立" class="headerlink" title="Kubernetes Master 建立"></a>Kubernetes Master 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
-<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubectl kubernetes-cni docker-ce
+<pre><code class="sh">$ export KUBE_VERSION=&quot;1.9.6&quot;
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet=${KUBE_VERSION}-00 kubeadm=${KUBE_VERSION}-00 kubectl=${KUBE_VERSION}-00 docker-ce
 </code></pre>
 <p>進行初始化 Master，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ sudo su -
@@ -411,10 +412,10 @@ $ kubeadm token generate
 b0f7b8.8d1767876297d85c
 
 $ kubeadm init --service-cidr 10.96.0.0/12 \
-               --kubernetes-version v1.9.6 \
+               --kubernetes-version v${KUBE_VERSION} \
                --pod-network-cidr 10.244.0.0/16 \
-               --apiserver-advertise-address 172.16.35.12 \
-               --token b0f7b8.8d1767876297d85c
+               --token b0f7b8.8d1767876297d85c \
+               --apiserver-advertise-address 172.16.35.12
 # output               
 ...
 kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443 --discovery-token-ca-cert-hash sha256:739d936954a752d44d2f2282dd645083259826f2c24a651608a6ac2081106cd7
@@ -459,7 +460,8 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 10.244.0.0      0.0.0.0         255.255.0.0     U     0      0        0 flannel.1
 </code></pre>
 <h2 id="Kubernetes-Node-建立"><a href="#Kubernetes-Node-建立" class="headerlink" title="Kubernetes Node 建立"></a>Kubernetes Node 建立</h2><p>首先更新 APT 來源，並且安裝 Kubernetes 元件與工具：</p>
-<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet kubeadm kubernetes-cni docker-ce
+<pre><code class="sh">$ export KUBE_VERSION=&quot;1.9.6&quot;
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y kubelet=${KUBE_VERSION}-00 kubeadm=${KUBE_VERSION}-00 docker-ce
 </code></pre>
 <p>完成後就可以開始加入 Node，這邊需要進入<code>root</code>使用者執行以下指令：</p>
 <pre><code class="sh">$ kubeadm join --token b0f7b8.8d1767876297d85c 172.16.35.12:6443 --discovery-token-ca-cert-hash sha256:739d936954a752d44d2f2282dd645083259826f2c24a651608a6ac2081106cd7
