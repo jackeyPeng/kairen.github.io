@@ -4,6 +4,643 @@
   
     
     <entry>
+      <title><![CDATA[Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)]]></title>
+      <url>https://kairen.github.io/2018/03/28/kubernetes/deploy/manual-v1.10/</url>
+      <content type="html"><![CDATA[<p>本篇延續過往<code>手動安裝方式</code>來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+<p>本次安裝的軟體版本：</p>
+<ul>
+<li>Kubernetes v1.10.0</li>
+<li>CNI v0.6.0</li>
+<li>Etcd v3.1.13</li>
+<li>Calico v3.0.1</li>
+<li>Docker CE latest version</li>
+</ul>
+<a id="more"></a>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Hostname</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>192.16.35.11</td>
+<td>k8s-m1</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>192.16.35.12</td>
+<td>k8s-m2</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>192.16.35.13</td>
+<td>k8s-m3</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>192.16.35.14</td>
+<td>k8s-n1</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>192.16.35.15</td>
+<td>k8s-n2</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+<tr>
+<td>192.16.35.16</td>
+<td>k8s-n2</td>
+<td>1</td>
+<td>2G</td>
+</tr>
+</tbody>
+</table>
+<p>另外由所有 master 節點提供一組 VIP <code>192.16.35.10</code>。</p>
+<blockquote>
+<ul>
+<li>這邊<code>m</code>為主要控制節點，<code>n</code>為應用程式工作節點。</li>
+<li>所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。</li>
+<li>可以下載 <a href="https://kairen.github.io/files/manual-v1.10/Vagrantfile">Vagrantfile</a> 來建立 Virtualbox 虛擬機叢集。不過需要注意機器資源是否足夠。</li>
+</ul>
+</blockquote>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始安裝前需要確保以下條件已達成：</p>
+<ul>
+<li><code>所有節點</code>彼此網路互通，並且<code>k8s-m1</code> SSH 登入其他節點為 passwdless。</li>
+<li>所有防火牆與 SELinux 已關閉。如 CentOS：</li>
+</ul>
+<pre><code class="sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
+$ setenforce 0
+$ vim /etc/selinux/config
+SELINUX=disabled
+</code></pre>
+<ul>
+<li><code>所有節點</code>需要設定<code>/etc/hosts</code>解析到所有叢集主機。</li>
+</ul>
+<pre><code>...
+192.16.35.11 k8s-m1
+192.16.35.12 k8s-m2
+192.16.35.13 k8s-m3
+192.16.35.14 k8s-n1
+192.16.35.15 k8s-n2
+192.16.35.16 k8s-n3
+</code></pre><ul>
+<li><code>所有節點</code>需要安裝 Docker CE 版本的容器引擎：</li>
+</ul>
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+</code></pre>
+<blockquote>
+<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>CentOS 安裝完成後，需要再執行以下指令：</p>
+<pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
+</code></pre>
+</blockquote>
+<ul>
+<li><code>所有節點</code>需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數。</li>
+</ul>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/sysctl.d/k8s.conf
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+$ sysctl -p /etc/sysctl.d/k8s.conf
+</code></pre>
+<ul>
+<li>Kubernetes v1.8+ 要求關閉系統 Swap，若不關閉則需要修改 kubelet 設定參數，在<code>所有節點</code>利用以下指令關閉：</li>
+</ul>
+<pre><code class="sh">$ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
+</code></pre>
+<blockquote>
+<p>記得<code>/etc/fstab</code>也要註解掉<code>SWAP</code>掛載。</p>
+</blockquote>
+<ul>
+<li>在<code>所有節點</code>下載 Kubernetes 二進制執行檔：</li>
+</ul>
+<pre><code class="sh">$ export KUBE_URL=&quot;https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64&quot;
+$ wget &quot;${KUBE_URL}/kubelet&quot; -O /usr/local/bin/kubelet
+$ chmod +x /usr/local/bin/kubelet
+
+# node 可以忽略安裝 kubectl
+$ wget &quot;${KUBE_URL}/kubectl&quot; -O /usr/local/bin/kubectl
+$ chmod +x /usr/local/bin/kubectl
+</code></pre>
+<ul>
+<li>在<code>所有節點</code>下載 Kubernetes CNI 二進制檔案：</li>
+</ul>
+<pre><code class="sh">$ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
+$ export CNI_URL=&quot;https://github.com/containernetworking/plugins/releases/download&quot;
+$ wget -qO- --show-progress &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
+</code></pre>
+<ul>
+<li>在<code>k8s-m1</code>需要安裝<code>CFSSL</code>工具，這將會用來建立 TLS certificates。</li>
+</ul>
+<pre><code class="sh">$ export CFSSL_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
+$ wget &quot;${CFSSL_URL}/cfssl_linux-amd64&quot; -O /usr/local/bin/cfssl
+$ wget &quot;${CFSSL_URL}/cfssljson_linux-amd64&quot; -O /usr/local/bin/cfssljson
+$ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
+</code></pre>
+<h2 id="建立叢集-CA-keys-與-Certificates"><a href="#建立叢集-CA-keys-與-Certificates" class="headerlink" title="建立叢集 CA keys 與 Certificates"></a>建立叢集 CA keys 與 Certificates</h2><p>在這個部分，將需要產生多個元件的 Certificates，這包含 Etcd、Kubernetes 元件等，並且每個叢集都會有一個根數位憑證認證機構(Root Certificate Authority)被用在認證 API Server 與 Kubelet 端的憑證。</p>
+<blockquote>
+<p>P.S. 這邊要注意 CA JSON 檔的<code>CN(Common Name)</code>與<code>O(Organization)</code>等內容是會影響 Kubernetes 元件認證的。</p>
+</blockquote>
+<h3 id="Etcd"><a href="#Etcd" class="headerlink" title="Etcd"></a>Etcd</h3><p>首先在<code>k8s-m1</code>建立<code>/etc/etcd/ssl</code>資料夾，然後進入目錄完成以下操作。</p>
+<pre><code class="sh">$ mkdir -p /etc/etcd/ssl &amp;&amp; cd /etc/etcd/ssl
+$ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.10/pki&quot;
+</code></pre>
+<p>下載<code>ca-config.json</code>與<code>etcd-ca-csr.json</code>檔案，並從 CSR json 產生 CA keys 與 Certificate：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/etcd-ca-csr.json&quot;
+$ cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
+</code></pre>
+<p>下載<code>etcd-csr.json</code>檔案，並產生 Etcd 證書：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/etcd-csr.json&quot;
+$ cfssl gencert \
+  -ca=etcd-ca.pem \
+  -ca-key=etcd-ca-key.pem \
+  -config=ca-config.json \
+  -hostname=127.0.0.1,192.16.35.11,192.16.35.12,192.16.35.13 \
+  -profile=kubernetes \
+  etcd-csr.json | cfssljson -bare etcd
+</code></pre>
+<blockquote>
+<p><code>-hostname</code>需修改成所有 masters 節點。</p>
+</blockquote>
+<p>完成後刪除不必要檔案：</p>
+<pre><code class="sh">$ rm -rf *.json *.csr
+</code></pre>
+<p>確認<code>/etc/etcd/ssl</code>有以下檔案：</p>
+<pre><code class="sh">$ ls /etc/etcd/ssl
+etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pem
+</code></pre>
+<p>分散檔案至其他 Etcd 節點，這邊為所有<code>master</code>節點：</p>
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
+    echo &quot;--- $NODE ---&quot;
+    ssh ${NODE} &quot;mkdir -p /etc/etcd/ssl&quot;
+    for FILE in etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pem; do
+      scp /etc/etcd/ssl/${FILE} ${NODE}:/etc/etcd/ssl/${FILE}
+    done
+  done
+</code></pre>
+<h3 id="Kubernetes"><a href="#Kubernetes" class="headerlink" title="Kubernetes"></a>Kubernetes</h3><p>在<code>k8s-m1</code>建立<code>pki</code>資料夾，然後進入目錄完成以下操作。</p>
+<pre><code class="sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
+$ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.10/pki&quot;
+$ export KUBE_APISERVER=&quot;https://192.16.35.10:6443&quot;
+</code></pre>
+<p>下載<code>ca-config.json</code>與<code>ca-csr.json</code>檔案，並產生 CA 金鑰：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/ca-csr.json&quot;
+$ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+$ ls ca*.pem
+ca-key.pem  ca.pem
+</code></pre>
+<h4 id="API-Server-Certificate"><a href="#API-Server-Certificate" class="headerlink" title="API Server Certificate"></a>API Server Certificate</h4><p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/apiserver-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -hostname=10.96.0.1,192.16.35.10,127.0.0.1,kubernetes.default \
+  -profile=kubernetes \
+  apiserver-csr.json | cfssljson -bare apiserver
+
+$ ls apiserver*.pem
+apiserver-key.pem  apiserver.pem
+</code></pre>
+<blockquote>
+<ul>
+<li>這邊<code>-hostname</code>的<code>10.96.0.1</code>是 Cluster IP 的 Kubernetes 端點;</li>
+<li><code>192.16.35.10</code>為虛擬 IP 位址(VIP);</li>
+<li><code>kubernetes.default</code>為 Kubernetes DN。</li>
+</ul>
+</blockquote>
+<h4 id="Front-Proxy-Certificate"><a href="#Front-Proxy-Certificate" class="headerlink" title="Front Proxy Certificate"></a>Front Proxy Certificate</h4><p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front Proxy CA 金鑰，Front Proxy 主要是用在 API aggregator 上:</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-ca-csr.json&quot;
+$ cfssl gencert \
+  -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
+
+$ ls front-proxy-ca*.pem
+front-proxy-ca-key.pem  front-proxy-ca.pem
+</code></pre>
+<p>下載<code>front-proxy-client-csr.json</code>檔案，並產生 front-proxy-client 證書：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-client-csr.json&quot;
+$ cfssl gencert \
+  -ca=front-proxy-ca.pem \
+  -ca-key=front-proxy-ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  front-proxy-client-csr.json | cfssljson -bare front-proxy-client
+
+$ ls front-proxy-client*.pem
+front-proxy-client-key.pem  front-proxy-client.pem
+</code></pre>
+<h4 id="Admin-Certificate"><a href="#Admin-Certificate" class="headerlink" title="Admin Certificate"></a>Admin Certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  admin-csr.json | cfssljson -bare admin
+
+$ ls admin*.pem
+admin-key.pem  admin.pem
+</code></pre>
+<p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># admin set cluster
+$ kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=${KUBE_APISERVER} \
+    --kubeconfig=../admin.conf
+
+# admin set credentials
+$ kubectl config set-credentials kubernetes-admin \
+    --client-certificate=admin.pem \
+    --client-key=admin-key.pem \
+    --embed-certs=true \
+    --kubeconfig=../admin.conf
+
+# admin set context
+$ kubectl config set-context kubernetes-admin@kubernetes \
+    --cluster=kubernetes \
+    --user=kubernetes-admin \
+    --kubeconfig=../admin.conf
+
+# admin set default context
+$ kubectl config use-context kubernetes-admin@kubernetes \
+    --kubeconfig=../admin.conf
+</code></pre>
+<h4 id="Controller-Manager-Certificate"><a href="#Controller-Manager-Certificate" class="headerlink" title="Controller Manager Certificate"></a>Controller Manager Certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/manager-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  manager-csr.json | cfssljson -bare controller-manager
+
+$ ls controller-manager*.pem
+controller-manager-key.pem  controller-manager.pem
+</code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>manager-csr.json</code>的<code>hosts</code>。</p>
+</blockquote>
+<p>接著透過以下指令產生名稱為<code>controller-manager.conf</code>的 kubeconfig 檔：</p>
+<pre><code class="sh"># controller-manager set cluster
+$ kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=${KUBE_APISERVER} \
+    --kubeconfig=../controller-manager.conf
+
+# controller-manager set credentials
+$ kubectl config set-credentials system:kube-controller-manager \
+    --client-certificate=controller-manager.pem \
+    --client-key=controller-manager-key.pem \
+    --embed-certs=true \
+    --kubeconfig=../controller-manager.conf
+
+# controller-manager set context
+$ kubectl config set-context system:kube-controller-manager@kubernetes \
+    --cluster=kubernetes \
+    --user=system:kube-controller-manager \
+    --kubeconfig=../controller-manager.conf
+
+# controller-manager set default context
+$ kubectl config use-context system:kube-controller-manager@kubernetes \
+    --kubeconfig=../controller-manager.conf
+</code></pre>
+<h4 id="Scheduler-Certificate"><a href="#Scheduler-Certificate" class="headerlink" title="Scheduler Certificate"></a>Scheduler Certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/scheduler-csr.json&quot;
+$ cfssl gencert \
+  -ca=ca.pem \
+  -ca-key=ca-key.pem \
+  -config=ca-config.json \
+  -profile=kubernetes \
+  scheduler-csr.json | cfssljson -bare scheduler
+
+$ ls scheduler*.pem
+scheduler-key.pem  scheduler.pem
+</code></pre>
+<blockquote>
+<p>若節點 IP 不同，需要修改<code>scheduler-csr.json</code>的<code>hosts</code>。</p>
+</blockquote>
+<p>接著透過以下指令產生名稱為 <code>scheduler.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh"># scheduler set cluster
+$ kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=${KUBE_APISERVER} \
+    --kubeconfig=../scheduler.conf
+
+# scheduler set credentials
+$ kubectl config set-credentials system:kube-scheduler \
+    --client-certificate=scheduler.pem \
+    --client-key=scheduler-key.pem \
+    --embed-certs=true \
+    --kubeconfig=../scheduler.conf
+
+# scheduler set context
+$ kubectl config set-context system:kube-scheduler@kubernetes \
+    --cluster=kubernetes \
+    --user=system:kube-scheduler \
+    --kubeconfig=../scheduler.conf
+
+# scheduler use default context
+$ kubectl config use-context system:kube-scheduler@kubernetes \
+    --kubeconfig=../scheduler.conf
+</code></pre>
+<h4 id="Master-Kubelet-Certificate"><a href="#Master-Kubelet-Certificate" class="headerlink" title="Master Kubelet Certificate"></a>Master Kubelet Certificate</h4><p>接著在所有<code>k8s-m1</code>節點下載<code>kubelet-csr.json</code>檔案，並產生憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/kubelet-csr.json&quot;
+$ for NODE in k8s-m1 k8s-m2 k8s-m3; do
+    echo &quot;--- $NODE ---&quot;
+    cp kubelet-csr.json kubelet-$NODE-csr.json;
+    sed -i &quot;s/\$NODE/$NODE/g&quot; kubelet-$NODE-csr.json;
+    cfssl gencert \
+      -ca=ca.pem \
+      -ca-key=ca-key.pem \
+      -config=ca-config.json \
+      -hostname=$NODE \
+      -profile=kubernetes \
+      kubelet-$NODE-csr.json | cfssljson -bare kubelet-$NODE
+  done
+
+$ ls kubelet*.pem
+kubelet-k8s-m1-key.pem  kubelet-k8s-m1.pem  kubelet-k8s-m2-key.pem  kubelet-k8s-m2.pem  kubelet-k8s-m3-key.pem  kubelet-k8s-m3.pem
+</code></pre>
+<blockquote>
+<p>這邊需要依據節點修改<code>-hostname</code>與<code>$NODE</code>。</p>
+</blockquote>
+<p>完成後分散 kubelet 憑證至其他<code>master</code>節點：</p>
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
+    echo &quot;--- $NODE ---&quot;
+    ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki&quot;
+    for FILE in kubelet-$NODE-key.pem kubelet-$NODE.pem ca.pem; do
+      scp /etc/kubernetes/pki/${FILE} ${NODE}:/etc/kubernetes/pki/${FILE}
+    done
+  done
+</code></pre>
+<p>接著執行以下指令產生名稱為<code>kubelet.conf</code>的 kubeconfig 檔：</p>
+<pre><code class="sh">$ for NODE in k8s-m1 k8s-m2 k8s-m3; do
+    echo &quot;--- $NODE ---&quot;
+    ssh ${NODE} &quot;cd /etc/kubernetes/pki &amp;&amp; \
+      kubectl config set-cluster kubernetes \
+        --certificate-authority=ca.pem \
+        --embed-certs=true \
+        --server=${KUBE_APISERVER} \
+        --kubeconfig=../kubelet.conf &amp;&amp; \
+      kubectl config set-cluster kubernetes \
+        --certificate-authority=ca.pem \
+        --embed-certs=true \
+        --server=${KUBE_APISERVER} \
+        --kubeconfig=../kubelet.conf &amp;&amp; \
+      kubectl config set-credentials system:node:${NODE} \
+        --client-certificate=kubelet-${NODE}.pem \
+        --client-key=kubelet-${NODE}-key.pem \
+        --embed-certs=true \
+        --kubeconfig=../kubelet.conf &amp;&amp; \
+      kubectl config set-context system:node:${NODE}@kubernetes \
+        --cluster=kubernetes \
+        --user=system:node:${NODE} \
+        --kubeconfig=../kubelet.conf &amp;&amp; \
+      kubectl config use-context system:node:${NODE}@kubernetes \
+        --kubeconfig=../kubelet.conf &amp;&amp; \
+      rm kubelet-${NODE}.pem kubelet-${NODE}-key.pem&quot;
+  done
+</code></pre>
+<h4 id="Service-Account-Key"><a href="#Service-Account-Key" class="headerlink" title="Service Account Key"></a>Service Account Key</h4><p>Service account 不是透過 CA 進行認證，因此不要透過 CA 來做 Service account key 的檢查，這邊建立一組 Private 與 Public 金鑰提供給 Service account key 使用：</p>
+<pre><code class="sh">$ openssl genrsa -out sa.key 2048
+$ openssl rsa -in sa.key -pubout -out sa.pub
+$ ls sa.*
+sa.key  sa.pub
+</code></pre>
+<h4 id="刪除不必要檔案"><a href="#刪除不必要檔案" class="headerlink" title="刪除不必要檔案"></a>刪除不必要檔案</h4><p>所有資訊準備完成後，就可以將一些不必要檔案刪除：</p>
+<pre><code class="sh">$ rm -rf *.json *.csr scheduler*.pem controller-manager*.pem admin*.pem kubelet*.pem
+</code></pre>
+<h4 id="複製檔案至其他節點"><a href="#複製檔案至其他節點" class="headerlink" title="複製檔案至其他節點"></a>複製檔案至其他節點</h4><p>分散憑證檔案至其他<code>master</code>節點：</p>
+<pre><code class="sh">$ FILES=$(ls /etc/kubernetes/pki/)
+$ for NODE in k8s-m2 k8s-m3; do
+    echo &quot;--- $NODE ---&quot;
+    for FILE in $FILES; do
+      scp /etc/kubernetes/pki/${FILE} ${NODE}:/etc/kubernetes/pki/${FILE}
+    done
+  done
+</code></pre>
+<p>分散 Kubernetes config 檔案至其他<code>master</code>節點：</p>
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
+    echo &quot;--- $NODE ---&quot;
+    for FILE in admin.conf controller-manager.conf scheduler.conf; do
+      scp /etc/kubernetes/${FILE} ${NODE}:/etc/kubernetes/${FILE}
+    done
+  done
+</code></pre>
+<h2 id="建立-Kubernetes-Masters"><a href="#建立-Kubernetes-Masters" class="headerlink" title="建立 Kubernetes Masters"></a>建立 Kubernetes Masters</h2><p>本部分將說明如何建立與設定 Kubernetes Master 角色，過程中會部署以下元件：</p>
+<ul>
+<li><strong>kube-apiserver</strong>：提供 REST APIs，包含授權、認證與狀態儲存等。</li>
+<li><strong>kube-controller-manager</strong>：負責維護叢集的狀態，如自動擴展，滾動更新等。</li>
+<li><strong>kube-scheduler</strong>：負責資源排程，依據預定的排程策略將 Pod 分配到對應節點上。</li>
+<li><strong>Etcd</strong>：儲存叢集所有狀態的 Key/Value 儲存系統。</li>
+<li><strong>HAProxy</strong>：提供負載平衡器。</li>
+<li><strong>Keepalived</strong>：提供虛擬網路位址(VIP)。</li>
+</ul>
+<p>首先在<code>所有 master 節點</code>下載部署元件的 YAML 檔案，這邊不採用二進制執行檔與 Systemd 來管理這些元件，全部採用 <a href="https://kubernetes.io/docs/tasks/administer-cluster/static-pod/" target="_blank" rel="noopener">Static Pod</a> 來達成。這邊將檔案下載至<code>/etc/kubernetes/manifests</code>目錄：</p>
+<pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.10/master&quot;
+$ mkdir -p /etc/kubernetes/manifests &amp;&amp; cd /etc/kubernetes/manifests
+$ for FILE in kube-apiserver kube-controller-manager kube-scheduler haproxy keepalived etcd; do
+    wget &quot;${CORE_URL}/${FILE}.yml.conf&quot; -O ${FILE}.yml
+    if [ ${FILE} == &quot;etcd&quot; ]; then
+      sed -i &quot;s/\${HOSTNAME}/${HOSTNAME}/g&quot; etcd.yml
+      sed -i &quot;s/\${PUBLIC_IP}/$(hostname -i)/g&quot; etcd.yml
+    fi
+  done
+
+$ ls /etc/kubernetes/manifests
+etcd.yml  haproxy.yml  keepalived.yml  kube-apiserver.yml  kube-controller-manager.yml  kube-scheduler.yml
+</code></pre>
+<blockquote>
+<ul>
+<li>若<code>IP</code>與教學設定不同的話，請記得修改 YAML 檔案。</li>
+<li>kube-apiserver 中的 <code>NodeRestriction</code> 請參考 <a href="https://kubernetes.io/docs/admin/authorization/node/" target="_blank" rel="noopener">Using Node Authorization</a>。</li>
+</ul>
+</blockquote>
+<p>產生一個用來加密 Etcd 的 Key：</p>
+<pre><code class="sh">$ head -c 32 /dev/urandom | base64
+SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
+</code></pre>
+<blockquote>
+<p>注意每台<code>master</code>節點需要用一樣的 Key。</p>
+</blockquote>
+<p>在<code>/etc/kubernetes/</code>目錄下，建立<code>encryption.yml</code>的加密 YAML 檔案：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/encryption.yml
+kind: EncryptionConfig
+apiVersion: v1
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: key1
+              secret: SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
+      - identity: {}
+EOF
+</code></pre>
+<blockquote>
+<p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="noopener">Encrypting data at rest</a>。</p>
+</blockquote>
+<p>在<code>/etc/kubernetes/</code>目錄下，建立<code>audit-policy.yml</code>的進階稽核策略 YAML 檔：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
+apiVersion: audit.k8s.io/v1beta1
+kind: Policy
+rules:
+- level: Metadata
+EOF
+</code></pre>
+<blockquote>
+<p>Audit Policy 請參考這篇 <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/" target="_blank" rel="noopener">Auditing</a>。</p>
+</blockquote>
+<p>下載<code>haproxy.cfg</code>檔案來提供給 HAProxy 容器使用：</p>
+<pre><code class="sh">$ mkdir -p /etc/haproxy/
+$ wget &quot;${CORE_URL}/haproxy.cfg&quot; -O /etc/haproxy/haproxy.cfg
+</code></pre>
+<blockquote>
+<p>若與本教學 IP 不同的話，請記得修改設定檔。</p>
+</blockquote>
+<p>下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
+<pre><code class="sh">$ mkdir -p /etc/systemd/system/kubelet.service.d
+$ wget &quot;${CORE_URL}/kubelet.service&quot; -O /lib/systemd/system/kubelet.service
+$ wget &quot;${CORE_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet.service.d/10-kubelet.conf
+</code></pre>
+<blockquote>
+<p>若 cluster <code>dns</code>或<code>domain</code>有改變的話，需要修改<code>10-kubelet.conf</code>。</p>
+</blockquote>
+<p>最後建立 var 存放資訊，然後啟動 kubelet 服務:</p>
+<pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes /var/lib/etcd
+$ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
+</code></pre>
+<p>完成後會需要一段時間來下載映像檔與啟動元件，可以利用該指令來監看：</p>
+<pre><code class="sh">$ watch netstat -ntlp
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:10248         0.0.0.0:*               LISTEN      10344/kubelet
+tcp        0      0 127.0.0.1:10251         0.0.0.0:*               LISTEN      11324/kube-schedule
+tcp        0      0 0.0.0.0:6443            0.0.0.0:*               LISTEN      11416/haproxy
+tcp        0      0 127.0.0.1:10252         0.0.0.0:*               LISTEN      11235/kube-controll
+tcp        0      0 0.0.0.0:9090            0.0.0.0:*               LISTEN      11416/haproxy
+tcp6       0      0 :::2379                 :::*                    LISTEN      10479/etcd
+tcp6       0      0 :::2380                 :::*                    LISTEN      10479/etcd
+tcp6       0      0 :::10255                :::*                    LISTEN      10344/kubelet
+tcp6       0      0 :::5443                 :::*                    LISTEN      11295/kube-apiserve
+</code></pre>
+<blockquote>
+<p>若看到以上資訊表示服務正常啟動，若發生問題可以用<code>docker</code>指令來查看。</p>
+</blockquote>
+<p>完成後，在任意一台<code>master</code>節點複製 admin kubeconfig 檔案，並透過簡單指令驗證：</p>
+<pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
+$ kubectl get cs
+NAME                 STATUS    MESSAGE              ERROR
+controller-manager   Healthy   ok
+scheduler            Healthy   ok
+etcd-2               Healthy   {&quot;health&quot;: &quot;true&quot;}
+etcd-1               Healthy   {&quot;health&quot;: &quot;true&quot;}
+etcd-0               Healthy   {&quot;health&quot;: &quot;true&quot;}
+
+$ kubectl get node
+NAME      STATUS     ROLES     AGE       VERSION
+k8s-m1    NotReady   master    11m       v1.10.0
+k8s-m2    NotReady   master    11m       v1.10.0
+k8s-m3    NotReady   master    11m       v1.10.0
+
+$ kubectl -n kube-system get po
+NAME                             READY     STATUS    RESTARTS   AGE
+etcd-k8s-m1                      1/1       Running   0          10m
+haproxy-k8s-m1                   1/1       Running   0          10m
+keepalived-k8s-m1                1/1       Running   0          10m
+...
+</code></pre>
+<p>接著確認服務能夠執行 logs 等指令：</p>
+<pre><code class="sh">$ kubectl -n kube-system logs -f kube-scheduler-k8s-m2
+Error from server (Forbidden): Forbidden (user=kube-apiserver, verb=get, resource=nodes, subresource=proxy) ( pods/log kube-scheduler-k8s-m2)
+</code></pre>
+<blockquote>
+<p>這邊會發現出現 403 Forbidden 問題，這是因為 <code>kube-apiserver</code> user 並沒有 nodes 的資源存取權限，屬於正常。</p>
+</blockquote>
+<p>由於上述權限問題，必需建立一個<code>apiserver-to-kubelet-rbac.yml</code>來定義權限，以供對 Nodes 容器執行 logs、exec 等指令。在任意一台<code>master</code>節點執行以下指令：</p>
+<pre><code class="sh">$ kubectl apply -f &quot;${CORE_URL}/apiserver-to-kubelet-rbac.yml.conf&quot;
+clusterrole.rbac.authorization.k8s.io &quot;system:kube-apiserver-to-kubelet&quot; configured
+clusterrolebinding.rbac.authorization.k8s.io &quot;system:kube-apiserver&quot; configured
+
+# 測試 logs
+$ kubectl -n kube-system logs -f kube-scheduler-k8s-m2
+...
+I0403 02:30:36.375935       1 server.go:555] Version: v1.10.0
+I0403 02:30:36.378208       1 server.go:574] starting healthz server on 127.0.0.1:10251
+</code></pre>
+<h4 id="Bootstrapping-Token"><a href="#Bootstrapping-Token" class="headerlink" title="Bootstrapping Token"></a>Bootstrapping Token</h4><p>由於透過手動建立 CA 方式太過繁雜，只適合少量機器，因為每次簽證時都需要綁定 Node IP，隨機器增加會帶來很多困擾，因此這邊使用 TLS Bootstrapping 方式進行授權，由 API Server 自動給符合條件的 Node 發送證書來授權加入叢集。</p>
+<p>主要做法是 kubelet 啟動時，向 kube-apiserver 傳送 TLS Bootstrapping 請求，而 kube-apiserver 驗證 kubelet 請求的 token 是否與設定的一樣，若一樣就自動產生 kubelet 證書與金鑰。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="noopener">TLS Bootstrapping</a> 與 <a href="https://kubernetes.io/docs/admin/bootstrap-tokens/" target="_blank" rel="noopener">Authenticating with Bootstrap Tokens</a>。</p>
+<p>首先建立一個變數來產生<code>BOOTSTRAP_TOKEN</code>，並建立 <code>bootstrap-kubelet.conf</code> 的 kubeconfig 檔：</p>
+<pre><code class="sh">$ export TOKEN_ID=$(openssl rand 3 -hex)
+$ export TOKEN_SECRET=$(openssl rand 8 -hex)
+$ export BOOTSTRAP_TOKEN=${TOKEN_ID}.${TOKEN_SECRET}
+
+# bootstrap set cluster
+$ kubectl config set-cluster kubernetes \
+    --certificate-authority=ca.pem \
+    --embed-certs=true \
+    --server=${KUBE_APISERVER} \
+    --kubeconfig=../bootstrap-kubelet.conf
+
+# bootstrap set credentials
+$ kubectl config set-credentials tls-bootstrap-token-user \
+    --token=${BOOTSTRAP_TOKEN} \
+    --kubeconfig=../bootstrap-kubelet.conf
+
+# bootstrap set context
+$ kubectl config set-context tls-bootstrap-token-user@kubernetes \
+    --cluster=kubernetes \
+    --user=tls-bootstrap-token-user \
+   --kubeconfig=../bootstrap-kubelet.conf
+
+# bootstrap use default context
+$ kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=../bootstrap-kubelet.conf
+</code></pre>
+<blockquote>
+<p>若想要用 CA 方式來認證，可以參考 <a href="https://gist.github.com/kairen/60ad8545b79e8e7aa9bdc8a2893df7a0" target="_blank" rel="noopener">Kubelet certificate</a>。</p>
+</blockquote>
+<h4 id="TLS-Bootstrapping-RBAC"><a href="#TLS-Bootstrapping-RBAC" class="headerlink" title="TLS Bootstrapping RBAC"></a>TLS Bootstrapping RBAC</h4><p>當所有節點都完成後，在任意一台<code>master</code>節點建立一個 ClusterRoleBinding：</p>
+<pre><code class="sh">$ kubectl create clusterrolebinding kubelet-bootstrap \
+    --clusterrole=system:node-bootstrapper \
+    --user=kubelet-bootstrap
+</code></pre>
+<h3 id="Kubernetes-Nodes"><a href="#Kubernetes-Nodes" class="headerlink" title="Kubernetes Nodes"></a>Kubernetes Nodes</h3>]]></content>
+      
+        <categories>
+            
+            <category> Kubernetes </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
+            
+            <tag> Calico </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[使用 kubefed 建立 Kubernetes Federation(On-premises)]]></title>
       <url>https://kairen.github.io/2018/03/21/kubernetes/k8s-federation/</url>
       <content type="html"><![CDATA[<p><a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/" target="_blank" rel="noopener">Kubernetes Federation(聯邦)</a> 是實現跨地區與跨服務商多個 Kubernetes 叢集的管理機制。Kubernetes Federation 的架構非常類似純 Kubenretes 叢集，Federation 會擁有自己的 API Server 與 Controller Manager 來提供一個標準的 Kubernetes API，以及管理聯邦叢集，並利用 Etcd 來儲存所有狀態，不過差異在於 Kubenretes 只管理多個節點，而 Federation 是管理所有被註冊的 Kubernetes 叢集。</p>
@@ -1889,7 +2526,7 @@ $ neutron router-gateway-set router1 ext-net
 <li>可以下載 <a href="https://kairen.github.io/files/manual-v1.8/Vagrantfile">Vagrantfile</a> 來建立 Virtual box 虛擬機叢集。</li>
 </ul>
 </blockquote>
-<p>首先安裝前要確認以下幾項都已將準備完成：</p>
+<p>首先安裝前要確認以下幾項都已經準備完成：</p>
 <ul>
 <li>所有節點彼此網路互通，並且<code>master1</code> SSH 登入其他節點為 passwdless。</li>
 <li>所有防火牆與 SELinux 已關閉。如 CentOS：</li>
@@ -10548,6 +11185,136 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
     </entry>
     
     <entry>
+      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
+      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
+      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
+<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
+<a id="more"></a>
+<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
+<pre><code class="sh">[cluster]
+ansible-slave-1 ansible_host=172.16.1.206
+ansible-slave-2 ansible_host=172.16.1.207
+ansible-slave-3 ansible_host=172.16.1.208
+</code></pre>
+<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
+<pre><code class="sh">$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+</code></pre>
+<blockquote>
+<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
+</blockquote>
+<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
+</code></pre>
+<blockquote>
+<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
+</code></pre>
+<p>會發現 bash 是平行執行的。</p>
+</blockquote>
+<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
+</code></pre>
+<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
+</code></pre>
+<blockquote>
+<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
+</blockquote>
+<p>也可以透過<code>--become-user</code>來切換使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
+</code></pre>
+<blockquote>
+<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
+</blockquote>
+<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
+<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
+</code></pre>
+<blockquote>
+<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
+</blockquote>
+<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
+<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
+</code></pre>
+<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
+$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
+</code></pre>
+<p><code>file</code>模組也能夠建立目錄：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
+</code></pre>
+<p>若要刪除可以使用以下方式：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
+</code></pre>
+<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
+</code></pre>
+<blockquote>
+<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
+</blockquote>
+<p>若要確認是否為最新版本，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
+</code></pre>
+<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
+</code></pre>
+<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
+<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
+</code></pre>
+<p>刪除則如以下：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
+</code></pre>
+<blockquote>
+<p><code>--become</code>與<code>-b</code>是等效的。</p>
+</blockquote>
+<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
+<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
+</code></pre>
+<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
+<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
+</code></pre>
+<blockquote>
+<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
+</blockquote>
+<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
+<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
+</code></pre>
+<p>獲取狀態指令如下：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<blockquote>
+<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
+</blockquote>
+<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster[0] -m setup
+</code></pre>
+<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Automation Engine </tag>
+            
+            <tag> Ansible </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Ansible Inventory]]></title>
       <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</url>
       <content type="html"><![CDATA[<p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
@@ -10729,136 +11496,6 @@ aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
 freebsd_host      ansible_python_interpreter=/usr/local/bin/python
 ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>]]></content>
-      
-        <categories>
-            
-            <category> DevOps </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> DevOps </tag>
-            
-            <tag> Automation Engine </tag>
-            
-            <tag> Ansible </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
-      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
-      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
-<a id="more"></a>
-<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
-<pre><code class="sh">[cluster]
-ansible-slave-1 ansible_host=172.16.1.206
-ansible-slave-2 ansible_host=172.16.1.207
-ansible-slave-3 ansible_host=172.16.1.208
-</code></pre>
-<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
-<pre><code class="sh">$ ssh-agent bash
-$ ssh-add ~/.ssh/id_rsa
-</code></pre>
-<blockquote>
-<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
-</blockquote>
-<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
-</code></pre>
-<blockquote>
-<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
-</code></pre>
-<p>會發現 bash 是平行執行的。</p>
-</blockquote>
-<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
-</code></pre>
-<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
-</code></pre>
-<blockquote>
-<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
-</blockquote>
-<p>也可以透過<code>--become-user</code>來切換使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
-</code></pre>
-<blockquote>
-<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
-</blockquote>
-<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
-<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
-</code></pre>
-<blockquote>
-<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
-</blockquote>
-<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
-<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
-</code></pre>
-<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
-$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
-</code></pre>
-<p><code>file</code>模組也能夠建立目錄：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
-</code></pre>
-<p>若要刪除可以使用以下方式：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
-</code></pre>
-<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
-</code></pre>
-<blockquote>
-<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
-</blockquote>
-<p>若要確認是否為最新版本，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
-</code></pre>
-<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
-</code></pre>
-<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
-<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
-</code></pre>
-<p>刪除則如以下：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
-</code></pre>
-<blockquote>
-<p><code>--become</code>與<code>-b</code>是等效的。</p>
-</blockquote>
-<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
-<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
-</code></pre>
-<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
-<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
-</code></pre>
-<blockquote>
-<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
-</blockquote>
-<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
-<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
-</code></pre>
-<p>獲取狀態指令如下：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<blockquote>
-<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
-</blockquote>
-<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster[0] -m setup
-</code></pre>
-<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
-]]></content>
       
         <categories>
             
@@ -14946,6 +15583,78 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
       <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
@@ -14970,14 +15679,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -14990,18 +15711,6 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
       <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
