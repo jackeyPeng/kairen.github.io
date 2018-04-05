@@ -23,15 +23,6 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 EOF
 
-# Setup system vars
-cat <<EOF > /etc/sysctl.d/k8s.conf
-net.ipv4.ip_forward = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
-sysctl -p /etc/sysctl.d/k8s.conf
-swapoff -a && sysctl -w vm.swappiness=0
-
 # Install docker
 curl -fsSL "https://get.docker.com/" | sh
 
@@ -57,3 +48,12 @@ if [[ ${HOSTNAME} =~ k8s-m1 ]]; then
   wget "${CFSSL_URL}/cfssljson_linux-amd64" -O /usr/local/bin/cfssljson
   chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 fi
+
+# Setup system vars
+cat <<EOF > /etc/sysctl.d/k8s.conf
+net.ipv4.ip_forward = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+sysctl -p /etc/sysctl.d/k8s.conf
+swapoff -a && sysctl -w vm.swappiness=0
