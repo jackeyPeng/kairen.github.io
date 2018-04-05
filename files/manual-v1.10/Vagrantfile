@@ -25,4 +25,5 @@ Vagrant.configure("2") do |config|
       private_count += 1
     end
   end
+  config.vm.provision "shell", path: "https://kairen.github.io/files/manual-v1.10/setup.sh"
 end
