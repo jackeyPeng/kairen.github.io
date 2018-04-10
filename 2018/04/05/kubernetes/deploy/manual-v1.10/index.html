@@ -757,11 +757,12 @@ sa.key  sa.pub
 <h3 id="部署與設定"><a href="#部署與設定" class="headerlink" title="部署與設定"></a>部署與設定</h3><p>首先在<code>所有 master 節點</code>下載部署元件的 YAML 檔案，這邊不採用二進制執行檔與 Systemd 來管理這些元件，全部採用 <a href="https://kubernetes.io/docs/tasks/administer-cluster/static-pod/" target="_blank" rel="noopener">Static Pod</a> 來達成。這邊將檔案下載至<code>/etc/kubernetes/manifests</code>目錄：</p>
 <pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.10/master&quot;
 $ mkdir -p /etc/kubernetes/manifests &amp;&amp; cd /etc/kubernetes/manifests
-$ for FILE in kube-apiserver kube-controller-manager kube-scheduler haproxy keepalived etcd; do
+$ for FILE in kube-apiserver kube-controller-manager kube-scheduler haproxy keepalived etcd etcd.config; do
     wget &quot;${CORE_URL}/${FILE}.yml.conf&quot; -O ${FILE}.yml
-    if [ ${FILE} == &quot;etcd&quot; ]; then
-      sed -i &quot;s/\${HOSTNAME}/${HOSTNAME}/g&quot; etcd.yml
-      sed -i &quot;s/\${PUBLIC_IP}/$(hostname -i)/g&quot; etcd.yml
+    if [ ${FILE} == &quot;etcd.config&quot; ]; then
+      mv etcd.config.yml /etc/etcd/etcd.config.yml
+      sed -i &quot;s/\${HOSTNAME}/${HOSTNAME}/g&quot; /etc/etcd/etcd.config.yml
+      sed -i &quot;s/\${PUBLIC_IP}/$(hostname -i)/g&quot; /etc/etcd/etcd.config.yml
     fi
   done
 
