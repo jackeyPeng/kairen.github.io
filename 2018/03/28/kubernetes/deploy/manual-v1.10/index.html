@@ -195,14 +195,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">19</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Golang/">
                     Golang <span class="right">1</span></a>
                 </a>
@@ -211,8 +203,8 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/TensorFlow/">
-                    TensorFlow <span class="right">4</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">19</span></a>
                 </a>
             </li>
 
@@ -221,6 +213,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/OpenStack/">
                     OpenStack <span class="right">7</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/TensorFlow/">
+                    TensorFlow <span class="right">4</span></a>
                 </a>
             </li>
 
@@ -306,7 +306,7 @@
 
 
             <div class="toc green-link-context hide-on-med-and-down">
-    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點資訊"><span class="section table-of-contents-text">節點資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#建立叢集-CA-keys-與-Certificates"><span class="section table-of-contents-text">建立叢集 CA keys 與 Certificates</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Etcd"><span class="section table-of-contents-text">Etcd</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Kubernetes"><span class="section table-of-contents-text">Kubernetes</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#API-Server-Certificate"><span class="section table-of-contents-text">API Server Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Front-Proxy-Certificate"><span class="section table-of-contents-text">Front Proxy Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Admin-Certificate"><span class="section table-of-contents-text">Admin Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Controller-Manager-Certificate"><span class="section table-of-contents-text">Controller Manager Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Scheduler-Certificate"><span class="section table-of-contents-text">Scheduler Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Master-Kubelet-Certificate"><span class="section table-of-contents-text">Master Kubelet Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Service-Account-Key"><span class="section table-of-contents-text">Service Account Key</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#刪除不必要檔案"><span class="section table-of-contents-text">刪除不必要檔案</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#複製檔案至其他節點"><span class="section table-of-contents-text">複製檔案至其他節點</span></a></li></ol></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Masters"><span class="section table-of-contents-text">Kubernetes Masters</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#部署與設定"><span class="section table-of-contents-text">部署與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#驗證叢集"><span class="section table-of-contents-text">驗證叢集</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#建立-TLS-Bootstrapping-RBAC-與-Secret"><span class="section table-of-contents-text">建立 TLS Bootstrapping RBAC 與 Secret</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Nodes"><span class="section table-of-contents-text">Kubernetes Nodes</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#部署與設定-1"><span class="section table-of-contents-text">部署與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#驗證叢集-1"><span class="section table-of-contents-text">驗證叢集</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Core-Addons-部署"><span class="section table-of-contents-text">Kubernetes Core Addons 部署</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Kubernetes-Proxy"><span class="section table-of-contents-text">Kubernetes Proxy</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Kubernetes-DNS"><span class="section table-of-contents-text">Kubernetes DNS</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Calico-Network-安裝與設定"><span class="section table-of-contents-text">Calico Network 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Extra-Addons-部署"><span class="section table-of-contents-text">Kubernetes Extra Addons 部署</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Dashboard"><span class="section table-of-contents-text">Dashboard</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Heapster"><span class="section table-of-contents-text">Heapster</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Ingress-Controller"><span class="section table-of-contents-text">Ingress Controller</span></a></li></ol></li></ol>
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#節點資訊"><span class="section table-of-contents-text">節點資訊</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#事前準備"><span class="section table-of-contents-text">事前準備</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#建立叢集-CA-keys-與-Certificates"><span class="section table-of-contents-text">建立叢集 CA keys 與 Certificates</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Etcd"><span class="section table-of-contents-text">Etcd</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Kubernetes"><span class="section table-of-contents-text">Kubernetes</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#API-Server-Certificate"><span class="section table-of-contents-text">API Server Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Front-Proxy-Certificate"><span class="section table-of-contents-text">Front Proxy Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Admin-Certificate"><span class="section table-of-contents-text">Admin Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Controller-Manager-Certificate"><span class="section table-of-contents-text">Controller Manager Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Scheduler-Certificate"><span class="section table-of-contents-text">Scheduler Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Master-Kubelet-Certificate"><span class="section table-of-contents-text">Master Kubelet Certificate</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#Service-Account-Key"><span class="section table-of-contents-text">Service Account Key</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#刪除不必要檔案"><span class="section table-of-contents-text">刪除不必要檔案</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#複製檔案至其他節點"><span class="section table-of-contents-text">複製檔案至其他節點</span></a></li></ol></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Masters"><span class="section table-of-contents-text">Kubernetes Masters</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#部署與設定"><span class="section table-of-contents-text">部署與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#驗證叢集"><span class="section table-of-contents-text">驗證叢集</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#建立-TLS-Bootstrapping-RBAC-與-Secret"><span class="section table-of-contents-text">建立 TLS Bootstrapping RBAC 與 Secret</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Nodes"><span class="section table-of-contents-text">Kubernetes Nodes</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#部署與設定-1"><span class="section table-of-contents-text">部署與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#驗證叢集-1"><span class="section table-of-contents-text">驗證叢集</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Core-Addons-部署"><span class="section table-of-contents-text">Kubernetes Core Addons 部署</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Kubernetes-Proxy"><span class="section table-of-contents-text">Kubernetes Proxy</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Kubernetes-DNS"><span class="section table-of-contents-text">Kubernetes DNS</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Calico-Network-安裝與設定"><span class="section table-of-contents-text">Calico Network 安裝與設定</span></a></li><li class="section table-of-contents-item section table-of-contents-level-2"><a class="section table-of-contents-link" href="#Kubernetes-Extra-Addons-部署"><span class="section table-of-contents-text">Kubernetes Extra Addons 部署</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Dashboard"><span class="section table-of-contents-text">Dashboard</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Heapster"><span class="section table-of-contents-text">Heapster</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Ingress-Controller"><span class="section table-of-contents-text">Ingress Controller</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#測試-Ingress-功能"><span class="section table-of-contents-text">測試 Ingress 功能</span></a></li></ol></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#Helm-Tiller-Server"><span class="section table-of-contents-text">Helm Tiller Server</span></a><ol class="section table-of-contents-child"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#測試-Helm-功能"><span class="section table-of-contents-text">測試 Helm 功能</span></a></li></ol></li></ol></li></ol>
 </div>
 
 
@@ -955,7 +955,8 @@ clusterrolebinding.rbac.authorization.k8s.io &quot;node-autoapprove-certificate-
 </code></pre>
 <h2 id="Kubernetes-Nodes"><a href="#Kubernetes-Nodes" class="headerlink" title="Kubernetes Nodes"></a>Kubernetes Nodes</h2><p>本部分將說明如何建立與設定 Kubernetes Node 角色，Node 是主要執行容器實例(Pod)的工作節點。</p>
 <p>在開始部署前，先在<code>k8-m1</code>將需要用到的檔案複製到所有<code>node</code>節點上：</p>
-<pre><code class="sh">$ for NODE in k8s-n1 k8s-n2 k8s-n3; do
+<pre><code class="sh">$ cd /etc/kubernetes/pki
+$ for NODE in k8s-n1 k8s-n2 k8s-n3; do
     echo &quot;--- $NODE ---&quot;
     ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki/&quot;
     ssh ${NODE} &quot;mkdir -p /etc/etcd/ssl&quot;
@@ -1036,8 +1037,6 @@ kube-dns-654684d656-zq5t8   0/3       Pending   0          1m
 <p>在<code>k8s-m1</code>下載<code>calico.yaml</code>來建立 Calico Network：</p>
 <pre><code class="sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/network/calico.yml.conf&quot;
 configmap &quot;calico-config&quot; created
-daemonset &quot;calico-etcd&quot; created
-service &quot;calico-etcd&quot; created
 daemonset &quot;calico-node&quot; created
 deployment &quot;calico-kube-controllers&quot; created
 clusterrolebinding &quot;calico-cni-plugin&quot; created
@@ -1056,18 +1055,198 @@ calico-node-hghp4   2/2       Running   0          1m        192.16.35.14   k8s-
 calico-node-qp6gf   2/2       Running   0          1m        192.16.35.15   k8s-n2
 calico-node-zfx4n   2/2       Running   0          1m        192.16.35.16   k8s-n3
 </code></pre>
+<blockquote>
+<p>這邊若節點 IP 與網卡不同的話，請修改<code>calico.yml</code>檔案。</p>
+</blockquote>
+<p>在<code>k8s-m1</code>下載 Calico CLI 來查看 Calico nodes:</p>
+<pre><code class="sh">$ wget https://github.com/projectcalico/calicoctl/releases/download/v3.1.0/calicoctl -O /usr/local/bin/calicoctl
+$ chmod u+x /usr/local/bin/calicoctl
+$ cat &lt;&lt;EOF &gt; ~/calico-rc
+export ETCD_ENDPOINTS=&quot;https://192.16.35.11:2379,https://192.16.35.12:2379,https://192.16.35.13:2379&quot;
+export ETCD_CA_CERT_FILE=&quot;/etc/etcd/ssl/etcd-ca.pem&quot;
+export ETCD_CERT_FILE=&quot;/etc/etcd/ssl/etcd.pem&quot;
+export ETCD_KEY_FILE=&quot;/etc/etcd/ssl/etcd-key.pem&quot;
+EOF
+
+$ . ~/calico-rc
+$ calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 192.16.35.12 | node-to-node mesh | up    | 04:42:37 | Established |
+| 192.16.35.13 | node-to-node mesh | up    | 04:42:42 | Established |
+| 192.16.35.14 | node-to-node mesh | up    | 04:42:37 | Established |
+| 192.16.35.15 | node-to-node mesh | up    | 04:42:41 | Established |
+| 192.16.35.16 | node-to-node mesh | up    | 04:42:36 | Established |
++--------------+-------------------+-------+----------+-------------+
+...
+</code></pre>
+<p>查看 pending 的 pod 是否已執行：</p>
+<pre><code class="sh">$ kubectl -n kube-system get po -l k8s-app=kube-dns
+kubectl -n kube-system get po -l k8s-app=kube-dns
+NAME                        READY     STATUS    RESTARTS   AGE
+kube-dns-654684d656-j8xzx   3/3       Running   0          10m
+</code></pre>
 <h2 id="Kubernetes-Extra-Addons-部署"><a href="#Kubernetes-Extra-Addons-部署" class="headerlink" title="Kubernetes Extra Addons 部署"></a>Kubernetes Extra Addons 部署</h2><p>本節說明如何部署一些官方常用的 Addons，如 Dashboard、Heapster 等。</p>
 <h3 id="Dashboard"><a href="#Dashboard" class="headerlink" title="Dashboard"></a>Dashboard</h3><p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
 <p>在<code>k8s-m1</code>透過 kubectl 來建立 kubernetes dashboard 即可：</p>
 <pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 $ kubectl -n kube-system get po,svc -l k8s-app=kubernetes-dashboard
-NAME                                      READY     STATUS    RESTARTS   AGE
-po/kubernetes-dashboard-747c4f7cf-md5m8   1/1       Running   0          56s
+NAME                                    READY     STATUS    RESTARTS   AGE
+kubernetes-dashboard-7d5dcdb6d9-j492l   1/1       Running   0          12s
 
-NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
-svc/kubernetes-dashboard   ClusterIP   10.98.120.209   &lt;none&gt;        443/TCP   56s
+NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+kubernetes-dashboard   ClusterIP   10.111.22.111   &lt;none&gt;        443/TCP   12s
 </code></pre>
-<h3 id="Heapster"><a href="#Heapster" class="headerlink" title="Heapster"></a>Heapster</h3><h3 id="Ingress-Controller"><a href="#Ingress-Controller" class="headerlink" title="Ingress Controller"></a>Ingress Controller</h3>
+<p>這邊會額外建立一個名稱為<code>open-api</code> Cluster Role Binding，這僅作為方便測試時使用，在一般情況下不要開啟，不然就會直接被存取所有 API:</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: open-api
+  namespace: &quot;&quot;
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: system:anonymous
+EOF
+</code></pre>
+<blockquote>
+<p>注意!管理者可以針對特定使用者來開放 API 存取權限，但這邊方便使用直接綁在 cluster-admin cluster role。</p>
+</blockquote>
+<p>完成後，就可以透過瀏覽器存取 <a href="https://192.16.35.10:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
+<p>在 1.7 版本以後的 Dashboard 將不再提供所有權限，因此需要建立一個 service account 來綁定 cluster-admin role：</p>
+<pre><code class="sh">$ kubectl -n kube-system create sa dashboard
+$ kubectl create clusterrolebinding dashboard --clusterrole cluster-admin --serviceaccount=kube-system:dashboard
+$ SECRET=$(kubectl -n kube-system get sa dashboard -o yaml | awk &#39;/dashboard-token/ {print $3}&#39;)
+$ kubectl -n kube-system describe secrets ${SECRET} | awk &#39;/token:/{print $2}&#39;
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtdG9rZW4tdzVocmgiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYWJmMTFjYzMtZjRlYi0xMWU3LTgzYWUtMDgwMDI3NjdkOWI5Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZCJ9.Xuyq34ci7Mk8bI97o4IldDyKySOOqRXRsxVWIJkPNiVUxKT4wpQZtikNJe2mfUBBD-JvoXTzwqyeSSTsAy2CiKQhekW8QgPLYelkBPBibySjBhJpiCD38J1u7yru4P0Pww2ZQJDjIxY4vqT46ywBklReGVqY3ogtUQg-eXueBmz-o7lJYMjw8L14692OJuhBjzTRSaKW8U2MPluBVnD7M2SOekDff7KpSxgOwXHsLVQoMrVNbspUCvtIiEI1EiXkyCNRGwfnd2my3uzUABIHFhm0_RZSmGwExPbxflr8Fc6bxmuz-_jSdOtUidYkFIzvEWw2vRovPgs3MXTv59RwUw
+</code></pre>
+<blockquote>
+<p>複製<code>token</code>，然後貼到 Kubernetes dashboard。注意這邊一般來說要針對不同 User 開啟特定存取權限。</p>
+</blockquote>
+<p><img src="/images/kube/kubernetes-dashboard.png" alt=""></p>
+<h3 id="Heapster"><a href="#Heapster" class="headerlink" title="Heapster"></a>Heapster</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="noopener">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
+<p>在<code>k8s-m1</code>透過 kubectl 來建立 kubernetes monitor  即可：</p>
+<pre><code class="sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-monitor.yml.conf&quot;
+$ kubectl -n kube-system get po,svc
+NAME                                           READY     STATUS    RESTARTS   AGE
+...
+po/heapster-74fb5c8cdc-62xzc                   4/4       Running   0          7m
+po/influxdb-grafana-55bd7df44-nw4nc            2/2       Running   0          7m
+
+NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+...
+svc/heapster               ClusterIP   10.100.242.225   &lt;none&gt;        80/TCP              7m
+svc/monitoring-grafana     ClusterIP   10.101.106.180   &lt;none&gt;        80/TCP              7m
+svc/monitoring-influxdb    ClusterIP   10.109.245.142   &lt;none&gt;        8083/TCP,8086/TCP   7m
+···
+</code></pre>
+<p>完成後，就可以透過瀏覽器存取 <a href="https://192.16.35.10:6443/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy/" target="_blank" rel="noopener">Grafana Dashboard</a>。</p>
+<p><img src="/images/kube/monitoring-grafana.png" alt=""></p>
+<h3 id="Ingress-Controller"><a href="#Ingress-Controller" class="headerlink" title="Ingress Controller"></a>Ingress Controller</h3><p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>是利用 Nginx 或 HAProxy 等負載平衡器來曝露叢集內服務的元件，Ingress 主要透過設定 Ingress 規格來定義 Domain Name 映射 Kubernetes 內部 Service，這種方式可以避免掉使用過多的 NodePort 問題。</p>
+<p>在<code>k8s-m1</code>透過 kubectl 來建立 Ingress Controller 即可：</p>
+<pre><code class="sh">$ kubectl create ns ingress-nginx
+$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/ingress-controller.yml.conf&quot;
+$ kubectl -n ingress-nginx get po
+NAME                                       READY     STATUS    RESTARTS   AGE
+default-http-backend-5c6d95c48-rzxfb       1/1       Running   0          7m
+nginx-ingress-controller-699cdf846-982n4   1/1       Running   0          7m
+</code></pre>
+<blockquote>
+<p>這裡也可以選擇 <a href="https://github.com/containous/traefik" target="_blank" rel="noopener">Traefik</a> 的 Ingress Controller。</p>
+</blockquote>
+<h4 id="測試-Ingress-功能"><a href="#測試-Ingress-功能" class="headerlink" title="測試 Ingress 功能"></a>測試 Ingress 功能</h4><p>這邊先建立一個 Nginx HTTP server Deployment 與 Service：</p>
+<pre><code class="sh">$ kubectl run nginx-dp --image nginx --port 80
+$ kubectl expose deploy nginx-dp --port 80
+$ kubectl get po,svc
+$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-nginx-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: test.nginx.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: nginx-dp
+          servicePort: 80
+EOF
+</code></pre>
+<p>透過 curl 來進行測試：</p>
+<pre><code class="sh">$ curl 192.16.35.10 -H &#39;Host: test.nginx.com&#39;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+
+# 測試其他 domain name 是否會回傳 404
+$ curl 192.16.35.10 -H &#39;Host: test.nginx.com1&#39;
+default backend - 404
+</code></pre>
+<h3 id="Helm-Tiller-Server"><a href="#Helm-Tiller-Server" class="headerlink" title="Helm Tiller Server"></a>Helm Tiller Server</h3><p><a href="https://github.com/kubernetes/helm" target="_blank" rel="noopener">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。其中<code>Tiller Server</code>主要負責接收來至 Client 的指令，並透過 kube-apiserver 與 Kubernetes 叢集做溝通，根據 Chart 定義的內容，來產生與管理各種對應 API 物件的 Kubernetes 部署檔案(又稱為 <code>Release</code>)。</p>
+<p>首先在<code>k8s-m1</code>安裝 Helm tool：</p>
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zx
+$ sudo mv linux-amd64/helm /usr/local/bin/
+</code></pre>
+<p>另外在所有<code>node</code>節點安裝 socat：</p>
+<pre><code class="sh">$ sudo apt-get install -y socat
+</code></pre>
+<p>接著初始化 Helm(這邊會安裝 Tiller Server)：</p>
+<pre><code class="sh">$ kubectl -n kube-system create sa tiller
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
+...
+Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+Happy Helming!
+
+$ kubectl -n kube-system get po -l app=helm
+NAME                             READY     STATUS    RESTARTS   AGE
+tiller-deploy-5f789bd9f7-tzss6   1/1       Running   0          29s
+
+$ helm version
+Client: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
+Server: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
+</code></pre>
+<h4 id="測試-Helm-功能"><a href="#測試-Helm-功能" class="headerlink" title="測試 Helm 功能"></a>測試 Helm 功能</h4><p>這邊部署簡單 Jenkins 來進行功能測試：</p>
+<pre><code class="sh">$ helm install --name demo --set Persistence.Enabled=false stable/jenkins
+$ kubectl get po,svc  -l app=demo-jenkins
+NAME                           READY     STATUS    RESTARTS   AGE
+demo-jenkins-7bf4bfcff-q74nt   1/1       Running   0          2m
+
+NAME                 TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+demo-jenkins         LoadBalancer   10.103.15.129    &lt;pending&gt;     8080:31161/TCP   2m
+demo-jenkins-agent   ClusterIP      10.103.160.126   &lt;none&gt;        50000/TCP        2m
+
+# 取得 admin 帳號的密碼
+$ printf $(kubectl get secret --namespace default demo-jenkins -o jsonpath=&quot;{.data.jenkins-admin-password}&quot; | base64 --decode);echo
+r6y9FMuF2u
+</code></pre>
+<p>完成後，就可以透過瀏覽器存取 <a href="http://192.16.35.10:31161" target="_blank" rel="noopener">Jenkins Web</a>。</p>
+<p><img src="/images/kube/helm-jenkins-v1.10.png" alt=""></p>
+<p>測試完成後，即可刪除：</p>
+<pre><code class="sh">$ helm ls
+NAME    REVISION    UPDATED                     STATUS      CHART             NAMESPACE
+demo    1           Tue Apr 10 07:29:51 2018    DEPLOYED    jenkins-0.14.4    default
+
+$ helm delete demo --purge
+release &quot;demo&quot; deleted
+</code></pre>
+<p>更多 Helm Apps 可以到 <a href="https://hub.kubeapps.com/" target="_blank" rel="noopener">Kubeapps Hub</a> 尋找。</p>
+
                 
 
 
