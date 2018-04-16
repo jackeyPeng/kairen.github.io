@@ -204,7 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">19</span></a>
+                    Kubernetes <span class="right">20</span></a>
                 </a>
             </li>
 
@@ -311,7 +311,7 @@
 
 
             <div class="entry green-link-context">
-                <p>本篇延續過往<code>手動安裝方式</code>來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+                <p>本篇延續過往<code>手動安裝方式</code>來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a> 來選擇自己最喜歡的方式。</p>
 <p>本次安裝的軟體版本：</p>
 <ul>
 <li>Kubernetes v1.10.0</li>
@@ -321,6 +321,7 @@
 <li>Docker CE latest version</li>
 </ul>
 <a id="more"></a>
+<p><img src="/images/kube/kubernetes-aa-ha.png" alt=""></p>
 <h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
 <thead>
@@ -1268,6 +1269,12 @@ nginx     1/1       Running   0          22s
 </code></pre>
 
                 
+<p class="green-link-context">
+    <a href="/2018/04/15/kubernetes/k8s-integration-ldap/" rel="next" title="整合 OpenLDAP 進行 Kubernetes 身份認證">
+    Prev: 整合 OpenLDAP 進行 Kubernetes 身份認證
+  </a>
+</p>
+
 
 
 <p class="green-link-context">
