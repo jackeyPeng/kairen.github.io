@@ -195,16 +195,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Kubernetes/">
+                    Kubernetes <span class="right">20</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">20</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
@@ -550,6 +550,9 @@ modifying entry &quot;uid=user2,ou=Users,dc=k8s,dc=com&quot;
 <pre><code class="sh">$ git clone https://github.com/kairen/kube-ldap-authn.git
 $ cd kube-ldap-authn
 </code></pre>
+<blockquote>
+<p>若想使用 Go 語言實作的版本，可以參考 <a href="https://github.com/kairen/kube-ldap-webhook" target="_blank" rel="noopener">kube-ldap-webhook</a>.</p>
+</blockquote>
 <p>新增一個<code>config.py</code>檔案來提供相關設定內容：</p>
 <pre><code class="sh">LDAP_URL=&#39;ldap://192.16.35.20/ ldap://192.16.35.20&#39;
 LDAP_START_TLS = False
