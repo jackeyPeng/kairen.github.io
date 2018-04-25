@@ -4,6 +4,238 @@
   
     
     <entry>
+      <title><![CDATA[使用 Kops 部署 Kubernetes 至公有雲(AWS)]]></title>
+      <url>https://kairen.github.io/2018/04/18/kubernetes/deploy/kops-aws/</url>
+      <content type="html"><![CDATA[<p><a href="https://github.com/kubernetes/kops" target="_blank" rel="noopener">Kops</a> 是 Kubernetes 官方維護的專案，是一套 Production ready 的 Kubernetes 部署、升級與管理工具，早期用於 AWS 公有雲上建置 Kubernetes 叢集使用，但隨著社群的推進已支援 GCP、vSphere(Alpha)，未來也會有更多公有雲平台慢慢被支援(Maybe)。本篇簡單撰寫使用 Kops 部署一個叢集，過去自己因為公司都是屬於建置 On-premises 的 Kubernetes，因此很少使用 Kops，剛好最近社群分享又再一次接觸的關析，所以就來寫個文章。</p>
+<p>本次安裝的軟體版本：</p>
+<ul>
+<li>Kubernetes v1.9.3</li>
+<li>Kops v1.9.0</li>
+</ul>
+<a id="more"></a>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始使用 Kops 前，需要先安裝下列工具到操作機器上來提供使用：</p>
+<ul>
+<li><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank" rel="noopener">kubectl</a>：用來操作部署完成的 Kubernetes 叢集。</li>
+<li><a href="https://github.com/kubernetes/kops" target="_blank" rel="noopener">kops</a>：本次使用工具，用來部署與管理公有雲上的 Kubernetes 叢集。</li>
+</ul>
+<p>Mac OS X：</p>
+<pre><code class="sh">$ brew update &amp;&amp; brew install kops
+</code></pre>
+<p>Linux distro：</p>
+<pre><code class="sh">$ curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d &#39;&quot;&#39; -f 4)/kops-linux-amd64
+$ chmod +x kops-linux-amd64 &amp;&amp; sudo mv kops-linux-amd64 /usr/local/bin/kops
+</code></pre>
+<ul>
+<li><a href="https://aws.amazon.com/cli/?nc1=h_ls" target="_blank" rel="noopener">AWS CLI</a>：用來操作 AWS 服務的工具。</li>
+</ul>
+<pre><code class="sh">$ sudo pip install awscli
+$ aws --version
+aws-cli/1.15.4
+</code></pre>
+<p>上述工具完成後，我們還要準備一下資訊：</p>
+<ul>
+<li>申請 AWS 帳號，並在 IAM 服務新增一個 User 設定存取所有服務(AdministratorAccess)。另外這邊要記住 AccessKey 與 SecretKey。<blockquote>
+<p>一般來說只需開啟 S3、Route53、EC2、EBS 與 ELB 就好，但由於偷懶就全開。</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="/images/kops/iam-user2.png" alt=""></p>
+<ul>
+<li>擁有自己的 Domain Name，這邊可以在 AWS Route53 註冊，或者是到 GoDaddy 購買。</li>
+</ul>
+<h2 id="建立-S3-Bucket-與-Route53-Hosted-Zone"><a href="#建立-S3-Bucket-與-Route53-Hosted-Zone" class="headerlink" title="建立 S3 Bucket 與 Route53 Hosted Zone"></a>建立 S3 Bucket 與 Route53 Hosted Zone</h2><p>首先透過 aws 工具進行設定使用指定 AccessKey 與 SecretKey：</p>
+<pre><code class="sh">$ aws configure
+AWS Access Key ID [****************QGEA]:
+AWS Secret Access Key [****************zJ+w]:
+Default region name [None]:
+Default output format [None]:
+</code></pre>
+<blockquote>
+<p>設定的 Keys 可以在<code>~/.aws/credentials</code>找到。</p>
+</blockquote>
+<p>完成後建立一個 S3 bucket 用來儲存 Kops 狀態：</p>
+<pre><code class="sh">$ aws s3 mb s3://kops-k8s-1 --region us-west-2
+make_bucket: kops-k8s-1
+</code></pre>
+<blockquote>
+<p>這邊 region 可自行選擇，這邊選用 Oregon。</p>
+</blockquote>
+<p>接著建立一個 Route53 Hosted Zone：</p>
+<pre><code class="sh">$ aws route53 create-hosted-zone \
+    --name k8s.example.com \
+    --caller-reference $(date &#39;+%Y-%m-%d-%H:%M&#39;)
+
+# output
+{
+    &quot;HostedZone&quot;: {
+        &quot;ResourceRecordSetCount&quot;: 2,
+        &quot;CallerReference&quot;: &quot;2018-04-25-16:16&quot;,
+        &quot;Config&quot;: {
+            &quot;PrivateZone&quot;: false
+        },
+        &quot;Id&quot;: &quot;/hostedzone/Z2JR49ADZ0P3WC&quot;,
+        &quot;Name&quot;: &quot;k8s.example.com.&quot;
+    },
+    &quot;DelegationSet&quot;: {
+        &quot;NameServers&quot;: [
+            &quot;ns-1547.awsdns-01.co.uk&quot;,
+            &quot;ns-1052.awsdns-03.org&quot;,
+            &quot;ns-886.awsdns-46.net&quot;,
+            &quot;ns-164.awsdns-20.com&quot;
+        ]
+    },
+    &quot;Location&quot;: &quot;https://route53.amazonaws.com/2013-04-01/hostedzone/Z2JR49ADZ0P3WC&quot;,
+    &quot;ChangeInfo&quot;: {
+        &quot;Status&quot;: &quot;PENDING&quot;,
+        &quot;SubmittedAt&quot;: &quot;2018-04-25T08:16:57.462Z&quot;,
+        &quot;Id&quot;: &quot;/change/C3802PE0C1JVW2&quot;
+    }
+}
+</code></pre>
+<blockquote>
+<p>請修改<code>--name</code>為自己所擁有的 domain name。</p>
+</blockquote>
+<p>之後將上述<code>NameServers</code>新增至自己的 Domain name 的 record 中，如 Godaddy：</p>
+<p><img src="/images/kops/route53-hostedzone.png" alt=""></p>
+<h2 id="部署-Kubernetes-叢集"><a href="#部署-Kubernetes-叢集" class="headerlink" title="部署 Kubernetes 叢集"></a>部署 Kubernetes 叢集</h2><p>當上述階段完成後，在自己機器建立 SSH key，就可以使用 Kops 來建立 Kubernetes 叢集：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
+$ kops create cluster \
+    --name=k8s.example.com \
+    --state=s3://kops-k8s-1 \
+    --zones=us-west-2a \
+    --master-size=t2.micro \
+    --node-size=t2.micro \
+    --node-count=2 \
+    --dns-zone=k8s.example.com
+
+# output
+...
+Finally configure your cluster with: kops update cluster k8s.example.com --yes
+</code></pre>
+<p>若過程沒有發生錯誤的話，最後會提示再執行 update 來正式進行部署：</p>
+<pre><code class="sh">$ kops update cluster k8s.example.com --state=s3://kops-k8s-1 --yes
+# output
+...
+Cluster is starting.  It should be ready in a few minutes.
+</code></pre>
+<p>當看到上述資訊時，表示叢集已建立，這時候等待環境初始化完成後就可以使用 kubectl 來操作：</p>
+<pre><code class="sh">$ kubectl get node
+NAME                                          STATUS    ROLES     AGE       VERSION
+ip-172-20-32-194.us-west-2.compute.internal   Ready     master    1m        v1.9.3
+ip-172-20-32-21.us-west-2.compute.internal    Ready     node      22s       v1.9.3
+ip-172-20-54-100.us-west-2.compute.internal   Ready     node      28s       v1.9.3
+</code></pre>
+<h2 id="測試"><a href="#測試" class="headerlink" title="測試"></a>測試</h2><p>完成後就可以進行功能測試，這邊簡單建立 Nginx app：</p>
+<pre><code class="sh">$ kubectl run nginx --image nginx --port 80
+$ kubectl expose deploy nginx --type=LoadBalancer --port 80
+$ kubectl get po,svc
+NAME                        READY     STATUS    RESTARTS   AGE
+po/nginx-7587c6fdb6-7qtlr   1/1       Running   0          50s
+
+NAME             TYPE           CLUSTER-IP    EXTERNAL-IP        PORT(S)        AGE
+svc/kubernetes   ClusterIP      100.64.0.1    &lt;none&gt;             443/TCP        8m
+svc/nginx        LoadBalancer   100.68.96.3   ad99f206f486e...   80:30174/TCP   28s
+</code></pre>
+<p>這邊會看到<code>EXTERNAL-IP</code>會直接透過 AWS ELB 建立一個 Load Balancer，這時只要更新 Route53 的 record set 就可以存取到服務：</p>
+<pre><code class="sh">$ export DOMAIN_NAME=k8s.example.com
+$ export NGINX_LB=$(kubectl get svc/nginx \
+  --template=&quot;{{range .status.loadBalancer.ingress}} {{.hostname}} {{end}}&quot;)
+
+$ cat &lt;&lt;EOF &gt; dns-record.json
+{
+  &quot;Comment&quot;: &quot;Create/Update a latency-based CNAME record for a federated Deployment&quot;,
+  &quot;Changes&quot;: [
+    {
+      &quot;Action&quot;: &quot;UPSERT&quot;,
+      &quot;ResourceRecordSet&quot;: {
+        &quot;Name&quot;: &quot;nginx.${DOMAIN_NAME}&quot;,
+        &quot;Type&quot;: &quot;CNAME&quot;,
+        &quot;Region&quot;: &quot;us-west-2&quot;,
+        &quot;TTL&quot;: 300,
+        &quot;SetIdentifier&quot;: &quot;us-west-2&quot;,
+        &quot;ResourceRecords&quot;: [
+          {
+            &quot;Value&quot;: &quot;${NGINX_LB}&quot;
+          }
+        ]
+      }
+    }
+  ]
+}
+EOF
+
+$ export HOSTED_ZONE_ID=$(aws route53 list-hosted-zones \
+       | jq -r &#39;.HostedZones[] | select(.Name==&quot;&#39;${DOMAIN_NAME}&#39;.&quot;) | .Id&#39; \
+       | sed &#39;s/\/hostedzone\///&#39;)
+
+$ aws route53 change-resource-record-sets \
+    --hosted-zone-id ${HOSTED_ZONE_ID} \
+    --change-batch file://dns-record.json
+
+# output
+{
+    &quot;ChangeInfo&quot;: {
+        &quot;Status&quot;: &quot;PENDING&quot;,
+        &quot;Comment&quot;: &quot;Create/Update a latency-based CNAME record for a federated Deployment&quot;,
+        &quot;SubmittedAt&quot;: &quot;2018-04-25T10:06:02.545Z&quot;,
+        &quot;Id&quot;: &quot;/change/C79MFJRHCF05R&quot;
+    }
+}
+</code></pre>
+<p>完成後透過 cURL 工作來測試：</p>
+<pre><code class="sh">$ curl nginx.k8s.example.com
+...
+&lt;title&gt;Welcome to nginx!&lt;/title&gt;
+...
+</code></pre>
+<h2 id="刪除節點"><a href="#刪除節點" class="headerlink" title="刪除節點"></a>刪除節點</h2><p>當叢集測完後，可以利用以下指令來刪除：</p>
+<pre><code class="sh">$ kops delete cluster \
+ --name=k8s.example.com \
+ --state=s3://kops-k8s-1 --yes
+
+Deleted cluster: &quot;k8s.k2r2bai.com&quot;
+
+$ aws s3 rb s3://kops-k8s-1 --force
+remove_bucket: kops-k8s-1
+</code></pre>
+<p>接著清除 Route53 所有 record 並刪除 hosted zone：</p>
+<pre><code class="sh">$ aws route53 list-resource-record-sets \
+  --hosted-zone-id ${HOSTED_ZONE_ID} |
+jq -c &#39;.ResourceRecordSets[]&#39; |
+while read -r resourcerecordset; do
+  read -r name type &lt;&lt;&lt;$(echo $(jq -r &#39;.Name,.Type&#39; &lt;&lt;&lt;&quot;$resourcerecordset&quot;))
+  if [ $type != &quot;NS&quot; -a $type != &quot;SOA&quot; ]; then
+    aws route53 change-resource-record-sets \
+      --hosted-zone-id ${HOSTED_ZONE_ID} \
+      --change-batch &#39;{&quot;Changes&quot;:[{&quot;Action&quot;:&quot;DELETE&quot;,&quot;ResourceRecordSet&quot;:
+          &#39;&quot;$resourcerecordset&quot;&#39;
+        }]}&#39; \
+      --output text --query &#39;ChangeInfo.Id&#39;
+  fi
+done
+
+$ aws route53 delete-hosted-zone --id ${HOSTED_ZONE_ID}
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> Kubernetes </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Kubernetes </tag>
+            
+            <tag> AWS </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[整合 OpenLDAP 進行 Kubernetes 身份認證]]></title>
       <url>https://kairen.github.io/2018/04/15/kubernetes/k8s-integration-ldap/</url>
       <content type="html"><![CDATA[<p>本文將說明如何整合 OpenLDAP 來提供給 Kubernetes 進行使用者認證。Kubernetes 官方並沒有提供針對 LDAP 與 AD 的整合，但是可以藉由 <a href="https://kubernetes.io/docs/admin/authentication/#webhook-token-authentication" target="_blank" rel="noopener">Webhook Token Authentication</a> 以及 <a href="https://kubernetes.io/docs/admin/authentication/#authenticating-proxy" target="_blank" rel="noopener">Authenticating Proxy</a> 來達到整合功能。概念是開發一個 HTTP Server 提供 POST Method 來塞入 Bearer Token，而該 HTTP Server 利用 LDAP library 檢索對應 Token 的 User 進行認證，成功後回傳該 User 的所有 Group 等資訊，而這時可以利用 Kubernetes 針對該 User 的 Group 設定對應的 RBAC role 進行權限控管。</p>
@@ -3220,9 +3452,9 @@ $ neutron router-gateway-set router1 ext-net
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Openstack </tag>
             
@@ -6635,9 +6867,9 @@ $ helm repo add example http://repo-url
             
             <tag> Docker </tag>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Helm </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -11940,136 +12172,6 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
     </entry>
     
     <entry>
-      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
-      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
-      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
-<a id="more"></a>
-<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
-<pre><code class="sh">[cluster]
-ansible-slave-1 ansible_host=172.16.1.206
-ansible-slave-2 ansible_host=172.16.1.207
-ansible-slave-3 ansible_host=172.16.1.208
-</code></pre>
-<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
-<pre><code class="sh">$ ssh-agent bash
-$ ssh-add ~/.ssh/id_rsa
-</code></pre>
-<blockquote>
-<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
-</blockquote>
-<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
-</code></pre>
-<blockquote>
-<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
-</code></pre>
-<p>會發現 bash 是平行執行的。</p>
-</blockquote>
-<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
-</code></pre>
-<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
-</code></pre>
-<blockquote>
-<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
-</blockquote>
-<p>也可以透過<code>--become-user</code>來切換使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
-</code></pre>
-<blockquote>
-<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
-</blockquote>
-<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
-<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
-</code></pre>
-<blockquote>
-<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
-</blockquote>
-<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
-<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
-</code></pre>
-<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
-$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
-</code></pre>
-<p><code>file</code>模組也能夠建立目錄：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
-</code></pre>
-<p>若要刪除可以使用以下方式：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
-</code></pre>
-<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
-</code></pre>
-<blockquote>
-<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
-</blockquote>
-<p>若要確認是否為最新版本，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
-</code></pre>
-<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
-</code></pre>
-<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
-<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
-</code></pre>
-<p>刪除則如以下：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
-</code></pre>
-<blockquote>
-<p><code>--become</code>與<code>-b</code>是等效的。</p>
-</blockquote>
-<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
-<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
-</code></pre>
-<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
-<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
-</code></pre>
-<blockquote>
-<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
-</blockquote>
-<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
-<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
-</code></pre>
-<p>獲取狀態指令如下：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<blockquote>
-<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
-</blockquote>
-<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster[0] -m setup
-</code></pre>
-<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
-]]></content>
-      
-        <categories>
-            
-            <category> DevOps </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> DevOps </tag>
-            
-            <tag> Automation Engine </tag>
-            
-            <tag> Ansible </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
       <title><![CDATA[Ansible Inventory]]></title>
       <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</url>
       <content type="html"><![CDATA[<p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
@@ -12251,6 +12353,136 @@ aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
 freebsd_host      ansible_python_interpreter=/usr/local/bin/python
 ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Automation Engine </tag>
+            
+            <tag> Ansible </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
+      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
+      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
+<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
+<a id="more"></a>
+<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
+<pre><code class="sh">[cluster]
+ansible-slave-1 ansible_host=172.16.1.206
+ansible-slave-2 ansible_host=172.16.1.207
+ansible-slave-3 ansible_host=172.16.1.208
+</code></pre>
+<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
+<pre><code class="sh">$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+</code></pre>
+<blockquote>
+<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
+</blockquote>
+<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
+</code></pre>
+<blockquote>
+<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
+</code></pre>
+<p>會發現 bash 是平行執行的。</p>
+</blockquote>
+<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
+</code></pre>
+<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
+</code></pre>
+<blockquote>
+<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
+</blockquote>
+<p>也可以透過<code>--become-user</code>來切換使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
+</code></pre>
+<blockquote>
+<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
+</blockquote>
+<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
+<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
+</code></pre>
+<blockquote>
+<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
+</blockquote>
+<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
+<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
+</code></pre>
+<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
+$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
+</code></pre>
+<p><code>file</code>模組也能夠建立目錄：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
+</code></pre>
+<p>若要刪除可以使用以下方式：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
+</code></pre>
+<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
+</code></pre>
+<blockquote>
+<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
+</blockquote>
+<p>若要確認是否為最新版本，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
+</code></pre>
+<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
+</code></pre>
+<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
+<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
+</code></pre>
+<p>刪除則如以下：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
+</code></pre>
+<blockquote>
+<p><code>--become</code>與<code>-b</code>是等效的。</p>
+</blockquote>
+<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
+<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
+</code></pre>
+<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
+<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
+</code></pre>
+<blockquote>
+<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
+</blockquote>
+<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
+<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
+</code></pre>
+<p>獲取狀態指令如下：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<blockquote>
+<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
+</blockquote>
+<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster[0] -m setup
+</code></pre>
+<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
+]]></content>
       
         <categories>
             
@@ -15650,7 +15882,7 @@ lib/spark-examples*.jar \
       <title><![CDATA[Ubuntu PXE 安裝與設定]]></title>
       <url>https://kairen.github.io/2015/10/11/linux/ubuntu/ubuntu-pxe/</url>
       <content type="html"><![CDATA[<p>預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。</p>
-<p><img src="/images/pxe.png" alt="PXE"></p>
+<p><img src="/images/linux/pxe.png" alt="PXE"></p>
 <a id="more"></a>
 <p>PXE 伺服器必須要提供至少含有 DHCP 以及 TFTP :</p>
 <ul>
@@ -16316,18 +16548,18 @@ lib/spark-examples*.jar \
   
     
     <entry>
-      <title><![CDATA[categories]]></title>
-      <url>https://kairen.github.io/categories/index.html</url>
-      <content type="html"></content>
-    </entry>
-    
-    <entry>
       <title><![CDATA[關於我]]></title>
       <url>https://kairen.github.io/about/index.html</url>
       <content type="html"><![CDATA[<p>大家好!我是 Kyle，目前任職於 inwinSTACK 擔任軟體工程師，主要開發與研究虛擬化、分散式儲存與容器化應用，無聊時就嘗試一些技術性東西，並將筆記整理至這邊，有任何問題也歡迎聯絡。</p>
 <p>自己在⼤學期間主要撰寫於 java 與 objc 程式語⾔，並專注開發 iOS Mobile 應用程式，期間共開發 20 項相關專案，而次要研讀 Hadoop 與 Spark 巨量資料運算框架，以及 Linux 相關技術，在大學期間從 Backend、Frontend 至 Mobile 都有參與開發及設計。自己本身喜歡接觸有挑戰性的事情，在學期間利用產學合作，與業界進行 Co-work 開發該企業軟體，合作企業橫跨不同領域，諸如：旅遊產業、雲端產業、健⾝器材產業等等，幫助許多企業降低⽣產成本與提升產品附加價值，在開發專案與不同領域的夥伴相互合作，來⾃不同領域科系互補與意⾒，體會產品與作品需深思熟慮很多層⾯。</p>
 <p>由於雲端的普及，虛擬化技術⽇漸成熟，因應其需求，在研究所主要專研於雲端相關知識與技術，並以雲端開源軟體 OpenStack、Ceph 分散式檔案儲存系統與 Docker 輕量虛擬化做深⼊研究，進⼀步了解其架構與運作⽅式，並將其建置與應⽤於實務上，也透過參與相關活動及貢獻來與國際接軌，學習不同領域知識與技術，希望未來能把所學發揮出來。</p>
 ]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[categories]]></title>
+      <url>https://kairen.github.io/categories/index.html</url>
+      <content type="html"></content>
     </entry>
     
     <entry>
@@ -16374,6 +16606,12 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
@@ -16382,12 +16620,6 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -16410,14 +16642,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -16440,12 +16672,6 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
@@ -16454,6 +16680,12 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -16470,14 +16702,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
   
