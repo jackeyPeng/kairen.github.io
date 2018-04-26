@@ -155,16 +155,16 @@
             
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
                 </a>
             </li>
 
@@ -204,7 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">21</span></a>
+                    Kubernetes <span class="right">22</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,48 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/06/02/openstack/kuryr-install/">Docker 串接 OpenStack Neutron Kuryr 網路</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-06-02T08:23:01.000Z"><a href="/2016/06/02/openstack/kuryr-install/">2016-06-02</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Kuryr 是 Docker network plugin 之一，主要是使用 Neutron 來提供網路服務給不同主機的 Docker 容器使用，目前也提供了容器化的 Neutron plugin 容器映像檔。</p>
+<p>本篇說明如何透過 CentOS 來部署簡單的 Kuryr 與 Docker 串接。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/06/02/openstack/kuryr-install/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -580,49 +622,6 @@
             <div class="article-title">
                 
     
-        <h1 class="indigo-link-context"><a href="/2016/04/01/openstack/how-to-contribute/">OpenStack 貢獻基本流程</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-04-01T08:23:01.000Z"><a href="/2016/04/01/openstack/how-to-contribute/">2016-04-01</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
-        
-            <a href="/tags/Git/" class="chip pink lighten-1">Git</a>
-        
-            <a href="/tags/Python/" class="chip pink lighten-1">Python</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/04/01/openstack/how-to-contribute/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
         <h1 class="indigo-link-context"><a href="/2016/04/01/linux/ubuntu/drbd/">DRBD 進行跨節點的區塊儲存備份</a></h1>
     
 
@@ -664,20 +663,22 @@
             <div class="article-title">
                 
     
-        <h1 class="indigo-link-context"><a href="/2016/03/29/linux/ubuntu/keepalived/">利用 Keepalived 提供 VIP</a></h1>
+        <h1 class="indigo-link-context"><a href="/2016/04/01/openstack/how-to-contribute/">OpenStack 貢獻基本流程</a></h1>
     
 
 
             </div>
 
-            <time class="green-link-context" datetime="2016-03-29T04:23:01.000Z"><a href="/2016/03/29/linux/ubuntu/keepalived/">2016-03-29</a></time>
+            <time class="green-link-context" datetime="2016-04-01T08:23:01.000Z"><a href="/2016/04/01/openstack/how-to-contribute/">2016-04-01</a></time>
 
             
     <div class="tags-row">
         
-            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
+            <a href="/tags/OpenStack/" class="chip pink lighten-1">OpenStack</a>
         
-            <a href="/tags/High-Availability/" class="chip pink lighten-1">High Availability</a>
+            <a href="/tags/Git/" class="chip pink lighten-1">Git</a>
+        
+            <a href="/tags/Python/" class="chip pink lighten-1">Python</a>
         
     </div>
 
@@ -685,14 +686,14 @@
 
             
                 <div class="entry green-link-context">
-                    <p>Keepalived 是一種基於 VRRP 協定實現的高可靠 Web 服務方案，用於防止單點故障問題。因此一個 Web 服務運作至少會擁有兩台伺服器執行 Keepalived，一台作為 master，一台作為 backup，並提供一個虛擬 IP（VIP），master 會定期發送特定訊息給 backup 伺服器，當 backup 沒收到 master 訊息時，表示 master 已故障，這時候 backup 會接管 VIP，繼續提供服務，來確保服務的高可靠性。</p>
+                    <p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
                 </div>
             
         </div>
 
         
         <div class="card-action green-link-context">
-            <a href="/2016/03/29/linux/ubuntu/keepalived/">READ MORE</a>
+            <a href="/2016/04/01/openstack/how-to-contribute/">READ MORE</a>
         </ div>
         
     </div>
