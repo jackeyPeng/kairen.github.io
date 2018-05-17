@@ -395,7 +395,7 @@ EOF
 </blockquote>
 <ul>
 <li>CentOS 7 要額外確認 SELinux 或 Firewall 關閉。</li>
-<li>Kubernetes v1.8 要求關閉系統 Swap，若不關閉則需要修改 kubelet 設定參數，這邊可以利用以下指令關閉：</li>
+<li>Kubernetes v1.8+ 要求關閉系統 Swap，若不關閉則需要修改 kubelet 設定參數，這邊可以利用以下指令關閉：</li>
 </ul>
 <pre><code class="sh">$ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
 </code></pre>
