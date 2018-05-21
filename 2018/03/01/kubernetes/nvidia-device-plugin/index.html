@@ -187,16 +187,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
@@ -392,7 +392,14 @@ NAME                                       READY     STATUS    RESTARTS   AGE   
 nvidia-device-plugin-daemonset-bncw2       1/1       Running   0          2m        10.244.41.135    kube-gpu-node1
 nvidia-device-plugin-daemonset-ddnhd       1/1       Running   0          2m        10.244.152.132   kube-gpu-node2
 </code></pre>
-<h2 id="測試-GPU"><a href="#測試-GPU" class="headerlink" title="測試 GPU"></a>測試 GPU</h2><p>當 NVIDIA Device Plugins 部署完成後，即可建立一個簡單範例來進行測試：</p>
+<h2 id="測試-GPU"><a href="#測試-GPU" class="headerlink" title="測試 GPU"></a>測試 GPU</h2><p>首先執行以下指令確認是否可被分配資源：</p>
+<pre><code class="sh">$ kubectl get nodes &quot;-o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu&quot;
+NAME               GPU
+master1           &lt;none&gt;
+gpu-node1          1
+gpu-node2          1
+</code></pre>
+<p>當 NVIDIA Device Plugins 部署完成後，即可建立一個簡單範例來進行測試：</p>
 <pre><code class="sh">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: v1
 kind: Pod
