@@ -398,6 +398,9 @@ EOF
 <li>Kubernetes v1.8+ 要求關閉系統 Swap，若不關閉則需要修改 kubelet 設定參數，這邊可以利用以下指令關閉：</li>
 </ul>
 <pre><code class="sh">$ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
+
+# 不同機器有差異
+$ sed &#39;/swap.img/d&#39; -i  /etc/fstab
 </code></pre>
 <blockquote>
 <p>記得<code>/etc/fstab</code>也要註解掉<code>SWAP</code>掛載。</p>
