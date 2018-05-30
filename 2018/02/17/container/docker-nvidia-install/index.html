@@ -316,14 +316,14 @@
 <p>安裝前需要確認滿足以下幾點：</p>
 <ul>
 <li>GNU/Linux x86_64 with kernel version &gt; 3.10</li>
-<li>Docker CE or EE == v17.12</li>
+<li>Docker CE or EE == v18.03.1</li>
 <li>NVIDIA GPU with Architecture &gt; Fermi (2.1)</li>
 <li>NVIDIA drivers ~= 361.93 (untested on older versions)</li>
 </ul>
 <p>首先透過 APT 安裝 Docker CE or EE v17.12 版本：</p>
 <pre><code class="sh">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 $ echo &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial edge&quot; | sudo tee /etc/apt/sources.list.d/docker.list
-$ sudo apt-get update &amp;&amp; sudo apt-get install -y docker-ce=17.12.1~ce-0~ubuntu
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y docker-ce=18.03.1~ce-0~ubuntu
 </code></pre>
 <p>接著透過 APT 安裝 NVIDIA Driver(v390.30) 與 CUDA 9.1：</p>
 <pre><code class="sh">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
@@ -357,7 +357,7 @@ Tue Mar 13 06:10:39 2018
 <p>確認上述無誤後，接著安裝 NVIDIA Docker v2，這邊透過 APT 來進行安裝：</p>
 <pre><code class="sh">$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 $ curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-$ sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-docker2
+$ sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-docker2=2.0.3+docker18.03.1-1
 $ sudo pkill -SIGHUP dockerd
 </code></pre>
 <p>測試 NVIDIA runtime，這邊下載 NVIDIA image 來進行測試：</p>
