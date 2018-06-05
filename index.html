@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -204,7 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">22</span></a>
+                    Kubernetes <span class="right">23</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,47 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2018/05/30/kubernetes/k8s-integration-keystone/">以 Keystone 作為 Kubernetes 使用者認證</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2018-05-30T09:08:54.000Z"><a href="/2018/05/30/kubernetes/k8s-integration-keystone/">2018-05-30</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Keystone/" class="chip pink lighten-1">Keystone</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>本文章將說明如何整合 Keystone 來提供給 Kubernetes 進行使用者認證。但由於 Keystone 整合 Kubernetes 認證在 1.10.x 版本已從原生移除(<code>--experimental-keystone-url</code>, <code>--experimental-keystone-ca-file</code>)，並轉而使用 <a href="https://github.com/kubernetes/cloud-provider-openstack" target="_blank" rel="noopener">cloud-provider-openstack</a> 中的 Webhook 來達成，而篇將說明如何建置與設定以整合該 Webhook。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -653,49 +694,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2018/02/11/ceph/luminous-crush-issue/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/01/08/kubernetes/rbac-sa-kubectl/">利用 RBAC + SA 進行 Kubectl 權限控管</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-01-08T09:08:54.000Z"><a href="/2018/01/08/kubernetes/rbac-sa-kubectl/">2018-01-08</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/Kubernetes-RBAC/" class="chip pink lighten-1">Kubernetes RBAC</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>這邊說明如何建立不同 Service account user，以及 RBAC 來定義存取規則，並綁定於指定 Service account ，以對指定 Namespace 中資源進行存取權限控制。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2018/01/08/kubernetes/rbac-sa-kubectl/">READ MORE</a>
         </ div>
         
     </div>

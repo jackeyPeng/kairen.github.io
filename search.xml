@@ -4,6 +4,262 @@
   
     
     <entry>
+      <title><![CDATA[以 Keystone 作為 Kubernetes 使用者認證]]></title>
+      <url>https://kairen.github.io/2018/05/30/kubernetes/k8s-integration-keystone/</url>
+      <content type="html"><![CDATA[<p>本文章將說明如何整合 Keystone 來提供給 Kubernetes 進行使用者認證。但由於 Keystone 整合 Kubernetes 認證在 1.10.x 版本已從原生移除(<code>--experimental-keystone-url</code>, <code>--experimental-keystone-ca-file</code>)，並轉而使用 <a href="https://github.com/kubernetes/cloud-provider-openstack" target="_blank" rel="noopener">cloud-provider-openstack</a> 中的 Webhook 來達成，而篇將說明如何建置與設定以整合該 Webhook。</p>
+<a id="more"></a>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統以<code>Ubuntu 16.x</code>進行測試：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Hostname</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.20</td>
+<td>k8s</td>
+<td>4</td>
+<td>8G</td>
+</tr>
+<tr>
+<td>172.22.132.21</td>
+<td>keystone</td>
+<td>4</td>
+<td>8G</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<ul>
+<li><code>k8s</code>為 all-in-one Kubernetes 節點(就只是個執行 kubeadm init 的節點)。</li>
+<li><code>keystone</code>利用 DevStack 部署一台 all-in-one OpenStack。</li>
+</ul>
+</blockquote>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始安裝前需要確保以下條件已達成：</p>
+<ul>
+<li><p><code>k8s</code>節點以 kubeadm 部署成 Kubernetes v1.9+ all-in-one 環境。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</p>
+</li>
+<li><p>在<code>k8s</code>節點安裝 openstack-client：</p>
+</li>
+</ul>
+<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo  apt-get install -y python-pip
+$ export LC_ALL=C; sudo pip install python-openstackclient
+</code></pre>
+<ul>
+<li><code>keystone</code>節點部署成 OpenStack all-in-one 環境。請參考 <a href="https://docs.openstack.org/devstack/latest/" target="_blank" rel="noopener">DevStack</a>。</li>
+</ul>
+<h2 id="Kubernetes-與-Keystone-整合"><a href="#Kubernetes-與-Keystone-整合" class="headerlink" title="Kubernetes 與 Keystone 整合"></a>Kubernetes 與 Keystone 整合</h2><p>本節將逐節說明如何設定以整合 Keystone。</p>
+<h3 id="建立-Keystone-User-與-Roles"><a href="#建立-Keystone-User-與-Roles" class="headerlink" title="建立 Keystone User 與 Roles"></a>建立 Keystone User 與 Roles</h3><p>當<code>keystone</code>節點的 OpenStack 部署完成後，進入到節點建立測試用 User 與 Roles：</p>
+<pre><code class="sh">$ sudo su - stack
+$ cd devstack
+$ source openrc admin admin
+
+# 建立 Roles
+$ for role in &quot;k8s-admin&quot; &quot;k8s-viewer&quot; &quot;k8s-editor&quot;; do
+    openstack role create $role;
+  done
+
+# 建立 User
+$ openstack user create demo_editor --project demo --password secret
+$ openstack user create demo_admin --project demo --password secret
+
+# 加入 User 至 Roles
+$ openstack role add --user demo --project demo k8s-viewer
+$ openstack role add --user demo_editor --project demo k8s-editor
+$ openstack role add --user demo_admin --project demo k8s-admin
+</code></pre>
+<h3 id="在-Kubernetes-安裝-Keystone-Webhook"><a href="#在-Kubernetes-安裝-Keystone-Webhook" class="headerlink" title="在 Kubernetes 安裝 Keystone Webhook"></a>在 Kubernetes 安裝 Keystone Webhook</h3><p>進入<code>k8s</code>節點，首先導入下載的檔案來源：</p>
+<pre><code class="sh">$ export URL=&quot;https://kairen.github.io/files/openstack/keystone&quot;
+</code></pre>
+<p>新增一些腳本，來提供導入不同使用者環境變數給 OpenStack Client 使用：</p>
+<pre><code class="sh">$ export KEYSTONE_HOST=&quot;172.22.132.21&quot;
+$ export USER_PASSWORD=&quot;secret&quot;
+$ for n in &quot;admin&quot; &quot;demo&quot; &quot;demoadmin&quot; &quot;demoeditor&quot; &quot;altdemo&quot;; do
+    wget ${URL}/openrc-${n} -O ~/openrc-${n}
+    sed -i &quot;s/KEYSTONE_HOST/${KEYSTONE_HOST}/g&quot; ~/openrc-${n}
+    sed -i &quot;s/USER_PASSWORD/${USER_PASSWORD}/g&quot; ~/openrc-${n}
+  done
+</code></pre>
+<p>下載 Keystone Webhook Policy 檔案，然後執行指令修改內容：</p>
+<pre><code class="sh">$ sudo wget ${URL}/webhook-policy.json -O /etc/kubernetes/webhook-policy.json
+$ source ~/openrc-demo
+$ PROJECT_ID=$(openstack project list | awk &#39;/demo/ {print$2}&#39;)
+$ sudo sed -i &quot;s/PROJECT_ID/${PROJECT_ID}/g&quot; /etc/kubernetes/webhook-policy.json
+</code></pre>
+<p>然後下載與部署 Keystone Webhook YAML 檔：</p>
+<pre><code class="sh">$ wget ${URL}/keystone-webhook-ds.conf -O keystone-webhook-ds.yml
+$ KEYSTONE_HOST=&quot;172.22.132.21&quot;
+$ sed -i &quot;s/KEYSTONE_HOST/${KEYSTONE_HOST}/g&quot; keystone-webhook-ds.yml
+$ kubectl create -f keystone-webhook-ds.yml
+configmap &quot;keystone-webhook-kubeconfig&quot; created
+daemonset.apps &quot;keystone-auth-webhook&quot; created
+</code></pre>
+<p>透過 kubectl 確認 Keystone Webhook 是否部署成功：</p>
+<pre><code class="sh">$ kubectl -n kube-system get po -l component=k8s-keystone
+NAME                          READY     STATUS    RESTARTS   AGE
+keystone-auth-webhook-5qqwn   1/1       Running   0          1m
+</code></pre>
+<p>透過 cURL 確認是否能夠正確存取：</p>
+<pre><code class="sh">$ source ~/openrc-demo
+$ TOKEN=$(openstack token issue -f yaml -c id | awk &#39;{print $2}&#39;)
+$ cat &lt;&lt; EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
+{
+  &quot;apiVersion&quot;: &quot;authentication.k8s.io/v1beta1&quot;,
+  &quot;kind&quot;: &quot;TokenReview&quot;,
+  &quot;metadata&quot;: {
+    &quot;creationTimestamp&quot;: null
+  },
+  &quot;spec&quot;: {
+    &quot;token&quot;: &quot;$TOKEN&quot;
+  }
+}
+EOF
+
+# output
+{
+    &quot;apiVersion&quot;: &quot;authentication.k8s.io/v1beta1&quot;,
+    &quot;kind&quot;: &quot;TokenReview&quot;,
+    &quot;metadata&quot;: {
+        &quot;creationTimestamp&quot;: null
+    },
+    &quot;spec&quot;: {
+        &quot;token&quot;: &quot;gAAAAABbFi1SacEPNstSuSuiBXiBG0Y_DikfbiR75j3P-CJ8CeaSKXa5kDQvun4LZUq8U6ehuW_RrQwi-N7j8t086uN6a4hLnPPGmvc6K_Iw0BZHZps7G1R5WniHZ8-WTUxtkMJROSz9eG7m33Bp18mvgx-P179QiwNYxLivf_rjnxePmvujNow&quot;
+    },
+    &quot;status&quot;: {
+        &quot;authenticated&quot;: true,
+        &quot;user&quot;: {
+            &quot;extra&quot;: {
+                &quot;alpha.kubernetes.io/identity/project/id&quot;: [
+                    &quot;3ebcb1da142d427db04b8df43f6cb76a&quot;
+                ],
+                &quot;alpha.kubernetes.io/identity/project/name&quot;: [
+                    &quot;demo&quot;
+                ],
+                &quot;alpha.kubernetes.io/identity/roles&quot;: [
+                    &quot;k8s-viewer&quot;,
+                    &quot;Member&quot;,
+                    &quot;anotherrole&quot;
+                ]
+            },
+            &quot;groups&quot;: [
+                &quot;3ebcb1da142d427db04b8df43f6cb76a&quot;
+            ],
+            &quot;uid&quot;: &quot;19748c0131504b87a4117e49c67383c6&quot;,
+            &quot;username&quot;: &quot;demo&quot;
+        }
+    }
+}
+</code></pre>
+<h3 id="設定-kube-apiserver-使用-Webhook"><a href="#設定-kube-apiserver-使用-Webhook" class="headerlink" title="設定 kube-apiserver 使用 Webhook"></a>設定 kube-apiserver 使用 Webhook</h3><p>進入<code>k8s</code>節點，然後修改<code>/etc/kubernetes/manifests/kube-apiserver.yaml</code>檔案，加入以下內容：</p>
+<pre><code class="yml">...
+spec:
+  containers:
+  - command:
+    ...
+    # authorization-mode 加入 Webhook
+    - --authorization-mode=Node,RBAC,Webhook
+    - --runtime-config=authentication.k8s.io/v1beta1=true
+    - --authentication-token-webhook-config-file=/srv/kubernetes/webhook-auth
+    - --authorization-webhook-config-file=/srv/kubernetes/webhook-auth
+    - --authentication-token-webhook-cache-ttl=5m
+    volumeMounts:
+    ...
+    - mountPath: /srv/kubernetes/webhook-auth
+      name: webhook-auth-file
+      readOnly: true
+  volumes:
+  ...
+  - hostPath:
+      path: /srv/kubernetes/webhook-auth
+      type: File
+    name: webhook-auth-file
+</code></pre>
+<p>完成後重新啟動 kubelet(或者等待 static pod 自己更新)：</p>
+<pre><code class="sh">$ sudo systemctl restart kubelet
+</code></pre>
+<h2 id="驗證部署結果"><a href="#驗證部署結果" class="headerlink" title="驗證部署結果"></a>驗證部署結果</h2><p>進入<code>k8s</code>節點，然後設定 kubectl context 並使用 openstack provider：</p>
+<pre><code class="sh">$ kubectl config set-credentials openstack --auth-provider=openstack
+$ kubectl config \
+    set-context --cluster=kubernetes \
+    --user=openstack \
+    openstack@kubernetes \
+    --namespace=default
+
+$ kubectl config use-context openstack@kubernetes
+</code></pre>
+<p>測試 demo 使用者的存取權限是否有被限制：</p>
+<pre><code class="sh">$ source ~/openrc-demo
+$ kubectl get pods
+No resources found.
+
+$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  restartPolicy: Never
+  containers:
+  - image: nginx
+    name: nginx-app
+EOF
+# output
+Error from server (Forbidden): error when creating &quot;STDIN&quot;: pods is forbidden: User &quot;demo&quot; cannot create pods in the namespace &quot;default&quot;
+</code></pre>
+<blockquote>
+<p>由於 demo 只擁有 k8s-viewer role，因此只能進行 get, list 與 watch API。</p>
+</blockquote>
+<p>測試 demo_editor 使用者是否能夠建立 Pod：</p>
+<pre><code class="sh">$ source ~/openrc-demoeditor
+$ cat &lt;&lt;EOF | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  restartPolicy: Never
+  containers:
+  - image: nginx
+    name: nginx-app
+EOF
+# output
+pod &quot;nginx-pod&quot; created
+</code></pre>
+<blockquote>
+<p>這邊可以看到 demo_editor 因為擁有 k8s-editor role，因此能夠執行 create API。</p>
+</blockquote>
+<p>測試 alt_demo 是否被禁止存取任何 API：</p>
+<pre><code class="sh">$ source ~/openrc-altdemo
+$ kubectl get po
+Error from server (Forbidden): pods is forbidden: User &quot;alt_demo&quot; cannot list pods in the namespace &quot;default&quot;
+</code></pre>
+<blockquote>
+<p>由於 alt_demo 不具備任何 roles，因此無法存取任何 API。</p>
+</blockquote>
+]]></content>
+      
+        <categories>
+            
+            <category> Kubernetes </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Kubernetes </tag>
+            
+            <tag> Keystone </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[在 AWS 上建立跨地區的 Kubernetes Federation 叢集]]></title>
       <url>https://kairen.github.io/2018/04/21/kubernetes/aws-k8s-federation/</url>
       <content type="html"><![CDATA[<p>本篇延續先前 On-premises Federation 與 Kops 經驗來嘗試在 AWS 上建立 Federaion 叢集，這邊架構如下圖所示：</p>
@@ -10004,9 +10260,9 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
             
             <tag> Spark </tag>
             
-            <tag> Mesos </tag>
-            
             <tag> DC/OS </tag>
+            
+            <tag> Mesos </tag>
             
         </tags>
         
@@ -11727,9 +11983,107 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
+            <tag> Spark </tag>
+            
             <tag> Logging </tag>
             
-            <tag> Spark </tag>
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
             
         </tags>
         
@@ -11881,104 +12235,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -14765,13 +15021,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
+            <tag> Logging </tag>
+            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
-            
-            <tag> Logging </tag>
             
         </tags>
         
@@ -17048,14 +17304,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -17078,20 +17334,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-client-csr.json</url>
       <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -17102,20 +17352,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -17144,14 +17400,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -17176,6 +17432,12 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
+      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
     </entry>
     
   
