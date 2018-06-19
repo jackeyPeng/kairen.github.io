@@ -188,7 +188,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                    DevOps <span class="right">11</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,49 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/07/05/linux/ubuntu/bcache/">用 Bcache 來加速硬碟效能</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-07-05T08:23:01.000Z"><a href="/2016/07/05/linux/ubuntu/bcache/">2016-07-05</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
+        
+            <a href="/tags/SSD/" class="chip pink lighten-1">SSD</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Bcache 是按照固態硬碟特性來設計的技術，只按擦除 Bucket 的大小進行分配，並使用 btree 和 journal 混合方法來追蹤快取資料，快取資料可以是 Bucket 上的任意一個 Sector。Bcache 最大程度上減少了隨機寫入的代價，它按循序的方式填充一個 Bucket，重新使用時只需將 Bucket 設置為無效即可。Bcache 也支援了類似 Flashcache 的快取策略，如write-back、write-through 與 write-around。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/07/05/linux/ubuntu/bcache/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -651,47 +694,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2016/04/04/data-engineer/apache-flume/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2016/04/01/linux/ubuntu/drbd/">DRBD 進行跨節點的區塊儲存備份</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2016-04-01T08:23:01.000Z"><a href="/2016/04/01/linux/ubuntu/drbd/">2016-04-01</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
-        
-            <a href="/tags/Linux/" class="chip pink lighten-1">Linux</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>DRBD（Distributed Replicated Block<br>Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2016/04/01/linux/ubuntu/drbd/">READ MORE</a>
         </ div>
         
     </div>

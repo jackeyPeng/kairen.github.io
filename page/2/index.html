@@ -188,7 +188,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">10</span></a>
+                    DevOps <span class="right">11</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,47 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2018/02/11/ceph/luminous-crush-issue/">Ceph Luminous CRUSH map 400000000000000 問題</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2018-02-11T09:08:54.000Z"><a href="/2018/02/11/ceph/luminous-crush-issue/">2018-02-11</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
+        
+            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>在 Ceph Luminous(v12) 版本中，預設開啟了一些 Kernel 特性，其中首先遇到的一般是 400000000000000 問題，即<code>CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING</code>特性(可以從對照表得知<a href="http://cephnotes.ksperis.com/blog/2014/01/21/feature-set-mismatch-error-on-ceph-kernel-client/" target="_blank" rel="noopener">CEPH_FEATURE Table and Kernel Version</a>)，剛問題需要在 Kernel 4.5+ 才能夠被支援，但如果不想升級可以依據本篇方式解決。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2018/02/11/ceph/luminous-crush-issue/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -665,50 +706,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2017/05/27/blockchain/browser-solidity/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2017/05/26/blockchain/geth-monitoring/">監控 Go Ethereum 的區塊鏈狀況</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2017-05-26T09:08:54.000Z"><a href="/2017/05/26/blockchain/geth-monitoring/">2017-05-26</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Ethereum/" class="chip pink lighten-1">Ethereum</a>
-        
-            <a href="/tags/Blockchain/" class="chip pink lighten-1">Blockchain</a>
-        
-            <a href="/tags/Go-lang/" class="chip pink lighten-1">Go lang</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。</p>
-<p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="noopener">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2017/05/26/blockchain/geth-monitoring/">READ MORE</a>
         </ div>
         
     </div>

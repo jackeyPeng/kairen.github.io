@@ -4,6 +4,204 @@
   
     
     <entry>
+      <title><![CDATA[Prometheus 介紹與基礎入門]]></title>
+      <url>https://kairen.github.io/2018/06/10/devops/prometheus-1/</url>
+      <content type="html"><![CDATA[<p>Prometheus 是一套開放式原始碼的<code>系統監控警報框架</code>與<code>TSDB(Time Series Database)</code>，該專案是由 SoundCloud 的工程師(前 Google 工程師)建立，Prometheus 啟發於 Google 的 Borgmon 監控系統。目前 Prometheus 已貢獻到 CNCF 成為孵化專案(2016-)，其受歡迎程度僅次於 Kubernetes。</p>
+<a id="more"></a>
+<p>Prometheus 具備了以下特性：</p>
+<ul>
+<li>多維度資料模型<ul>
+<li>時間序列資料透過 Metric 名稱與鍵值(Key-value)來區分。</li>
+<li>所有 Metrics 可以設定任意的多維標籤。</li>
+<li>資料模型彈性度高，不需要刻意設定為以特定符號(ex: ,)分割。</li>
+<li>可對資料模型進行聚合、切割與切片操作。</li>
+<li>支援雙精度浮點數類型，標籤可以設定成 Unicode。</li>
+</ul>
+</li>
+<li>靈活的查詢語言(PromQL)，如可進行加減乘除等。</li>
+<li>不依賴分散式儲存，因為 Prometheus Server 是一個二進制檔，可在單個服務節點自主運行。</li>
+<li>基於 HTTP 的 Pull 方式收集時序資料。</li>
+<li>可以透過 Push Gateway 進行資料推送。</li>
+<li>支援多種視覺化儀表板呈現，如 Grafana。</li>
+<li>能透過服務發現(Service discovery)或靜態組態去獲取監控的 Targets。</li>
+</ul>
+<h2 id="Prometheus-架構"><a href="#Prometheus-架構" class="headerlink" title="Prometheus 架構"></a>Prometheus 架構</h2><p><img src="https://i.imgur.com/iJKoxdD.png" alt=""></p>
+<p>Prometheus 生態圈中是由多個元件組成，其中有些是選擇性的元件：</p>
+<ul>
+<li><strong>Prometheus Server</strong>：收集與儲存時間序列資料，並提供 PromQL 查詢語言支援。</li>
+<li><strong>Client Library</strong>：客戶端函式庫，提供語言開發來開發產生 Metrics 並曝露 Prometheus Server。當 Prometheus Server 來 Pull 時，直接返回即時狀態的 Metrics。</li>
+<li><strong>Pushgateway</strong>：主要用於臨時性 Job 推送。這類 Job 存在期間較短，有可能 Prometheus 來 Pull 時就消失，因此透過一個閘道來推送。適合用於服務層面的 Metrics。</li>
+<li><strong>Exporter</strong>：用來曝露已有第三方服務的 Metrics 給 Prometheus Server，即以 Client Library 開發的 HTTP server。</li>
+<li><strong>AlertManager</strong>：接收來至 Prometheus Server 的 Alert event，並依據定義的 Notification 組態發送警報，ex: E-mail、Pagerduty、OpenGenie 與 Webhook 等等。</li>
+</ul>
+<h2 id="Prometheus-運作流程"><a href="#Prometheus-運作流程" class="headerlink" title="Prometheus 運作流程"></a>Prometheus 運作流程</h2><ol>
+<li>Prometheus Server 定期從組態好的 Jobs 或者 Exporters 中拉取 Metrics，或者接收來自 Pushgateway 發送的 Metrics，又或者從其他的 Prometheus Server 中拉取 Metrics。</li>
+<li>Prometheus Server 在 Local 儲存收集到的 Metrics，並運行已定義好的 alert.rules，然後紀錄新時間序列或者像 AlertManager 發送警報。</li>
+<li>AlertManager 根據組態檔案來對接受到的 Alert event 進行處理，然後發送警報。</li>
+<li>在視覺化介面呈現採集資料。</li>
+</ol>
+<p>Prometheus Server 拉取 Exporter 資料，然後透過 PromQL 語法進行查詢，再將資料給 Web UI or Dashboard。<br><img src="https://i.imgur.com/QkwEVge.png" alt=""></p>
+<p>Prometheus Server 觸發 Alert Definition 定義的事件，並發送給 AelertManager。<br><img src="https://i.imgur.com/6V3RJOh.png" alt=""></p>
+<p>AlertManager 依據設定發送警報給 E-mail、Slack 等等。<br><img src="https://i.imgur.com/mB789G2.png" alt=""></p>
+<h2 id="Prometheus-資料模型與-Metric-類型"><a href="#Prometheus-資料模型與-Metric-類型" class="headerlink" title="Prometheus 資料模型與 Metric 類型"></a>Prometheus 資料模型與 Metric 類型</h2><p>本節將介紹 Prometheus 的資料模型與 Metrics 類型。</p>
+<h3 id="資料模型"><a href="#資料模型" class="headerlink" title="資料模型"></a>資料模型</h3><p>Prometheus 儲存的資料為時間序列，主要以 Metrics name 以及一系列的唯一標籤(key-value)組成，不同標籤表示不同時間序列。模型資訊如下：</p>
+<ul>
+<li><strong>Metrics Name</strong>：該名稱通常用來表示 Metric 功能，例如 <code>http_requests_total</code>，即表示 HTTP 請求的總數。而 Metrics Name 是以 ASCII 字元、數字、英文、底線與冒號組成，並且要滿足<code>[a-zA-Z_:][a-zA-Z0-9_:]*</code> 正規表示法。</li>
+<li><strong>標籤</strong>：用來識別同一個時間序列不同維度。如 <code>http_request_total{method=&quot;Get&quot;}</code>表示所有 HTTP 的 Get Request 數量，因此當 <code>method=&quot;Post&quot;</code> 時又是另一個新的 Metric。標籤也需要滿足<code>[a-zA-Z_:][a-zA-Z0-9_:]*</code> 正規表示法。</li>
+<li><strong>樣本</strong>：實際的時間序列，每個序列包含一個 float64 值與一個毫秒的時間戳。</li>
+<li><strong>格式</strong>：一般為<code>&lt;metric name&gt;{&lt;label name&gt;=&lt;label value&gt;,...}</code>，例如：<code>http_requests_total{method=&quot;POST&quot;,endpoint=&quot;/api/tracks&quot;}</code>。</li>
+</ul>
+<h3 id="Metrics-類型"><a href="#Metrics-類型" class="headerlink" title="Metrics 類型"></a>Metrics 類型</h3><p>Prometheus Client 函式庫支援了四種主要 Metric 類型：</p>
+<ul>
+<li><strong>Counter</strong>: 可被累加的 Metric，比如一個 HTTP Get 錯誤的出現次數。</li>
+<li><strong>Gauge</strong>: 屬於瞬時、與時間無關的任意更動 Metric，如記憶體使用率。</li>
+<li><strong>Histogram</strong>: 主要使用在表示一段時間範圍內的資料採樣。</li>
+<li><strong>Summary</strong>： 類似 Histogram，用來表示一端時間範圍內的資料採樣總結。</li>
+</ul>
+<h2 id="Job-與-Instance"><a href="#Job-與-Instance" class="headerlink" title="Job 與 Instance"></a>Job 與 Instance</h2><p>Prometheus 中會將任意獨立資料來源(Target)稱為 Instance。而包含多個相同 Instance 的集合稱為 Job。如以下範例：</p>
+<pre><code class="yml">- job: api-server
+    - instance 1: 1.2.3.4:5670
+    - instance 2: 1.2.3.4:5671
+    - instance 3: 5.6.7.8:5670
+    - instance 4: 5.6.7.8:5671
+</code></pre>
+<ul>
+<li><strong>Instance</strong>: 被抓取目標 URL 的<code>&lt;host&gt;:&lt;port&gt;</code>部分。</li>
+<li><strong>Job</strong>: 一個同類型的 Instances 集合。(主要確保可靠性與擴展性)</li>
+</ul>
+<h2 id="Prometheus-簡單部署與使用"><a href="#Prometheus-簡單部署與使用" class="headerlink" title="Prometheus 簡單部署與使用"></a>Prometheus 簡單部署與使用</h2><p>Prometheus 官方提供了已建構完成的二進制執行檔可以下載，只需要至 <a href="https://prometheus.io/download/" target="_blank" rel="noopener">Download</a> 頁面下載即可。首先下載符合作業系統的檔案，這邊以 Linux 為例：</p>
+<pre><code class="sh">$ wget https://github.com/prometheus/prometheus/releases/download/v2.3.0/prometheus-2.3.0.linux-amd64.tar.gz
+$ tar xvfz prometheus-*.tar.gz
+$ tree prometheus-2.3.0.linux-amd64
+├── console_libraries # Web console templates
+│   ├── menu.lib
+│   └── prom.lib
+├── consoles # Web console templates
+│   ├── index.html.example
+│   ├── node-cpu.html
+│   ├── node-disk.html
+│   ├── node.html
+│   ├── node-overview.html
+│   ├── prometheus.html
+│   └── prometheus-overview.html
+├── LICENSE
+├── NOTICE
+├── prometheus     # Prometheus 執行檔
+├── prometheus.yml # Prometheus 設定檔
+└── promtool       # 2.x+ 版本用來將一些 rules 格式轉成 YAML 用。
+</code></pre>
+<p>解壓縮完成後，編輯<code>prometheus.yml</code>檔案來調整設定：</p>
+<pre><code class="yml">global:
+  scrape_interval: 15s # 設定預設 scrape 的拉取間隔時間
+  external_labels: # 外通溝通時標示在 time series 或 Alert 的 Labels。
+    monitor: &#39;codelab-monitor&#39;
+
+scrape_configs: # 設定 scrape jobs
+  - job_name: &#39;prometheus&#39;
+    scrape_interval: 5s # 若設定間隔時間，將會覆蓋 global 的預設時間。
+    static_configs:
+      - targets: [&#39;localhost:9090&#39;]
+</code></pre>
+<p>完成後，直接執行 prometheus 檔案來啟動伺服器：</p>
+<pre><code class="sh">$ ./prometheus --config.file=prometheus.yml --storage.tsdb.path /tmp/data
+...
+level=info ts=2018-06-19T08:46:37.42756438Z caller=main.go:500 msg=&quot;Server is ready to receive web requests.&quot;
+</code></pre>
+<blockquote>
+<p><code>--storage.tsdb.path</code> 預設會直接存放在<code>./data</code>底下。</p>
+</blockquote>
+<p>啟動後就可以瀏覽 <code>:9090</code> 來查看 Web-based console。</p>
+<p><img src="https://i.imgur.com/qgi39CC.png" alt=""></p>
+<p>另外也可以進入 <code>:9090/metrics</code> 查看 Export metrics 資訊，並且可以在 console 來查詢指定 Metrics，並以圖表呈現。</p>
+<p><img src="https://i.imgur.com/Rv6XW6f.png" alt=""></p>
+<p>Prometheus 提供了 <a href="https://prometheus.io/docs/prometheus/latest/querying/basics/" target="_blank" rel="noopener">Functional Expression Language</a> 進行查詢與聚合時間序列資料，比如用<code>sum(http_requests_total{method=&quot;GET&quot;} offset 5m)</code>來查看指定時間的資訊總和。</p>
+<p>Prometheus 提供拉取第三方或者自己開發的 Exporter metrics 作為監測資料，這邊可以透過簡單的 <a href="https://github.com/prometheus/client_golang.git" target="_blank" rel="noopener">Go Client</a> 範例來簡單部署 Exporter：</p>
+<pre><code class="sh">$ git clone https://github.com/prometheus/client_golang.git
+$ cd client_golang/examples/random
+$ go get -d
+$ go build
+</code></pre>
+<p>完成後，開啟三個 Terminals 分別啟動以下 Exporter：</p>
+<pre><code class="sh"># terminal 1
+$ ./random -listen-address=:8081
+
+# terminal 2
+$ ./random -listen-address=:8082
+
+# terminal 3
+$ ./random -listen-address=:8083
+</code></pre>
+<blockquote>
+<p>啟動後可以在<code>:8081</code>等 Ports 中查看 Metrics 資訊。</p>
+</blockquote>
+<p>確定沒問題後，修改<code>prometheus.yml</code>來新增 target，並重新啟動 Prometheus Server：</p>
+<pre><code class="yaml">global:
+  scrape_interval: 15s # 設定預設 scrape 的拉取間隔時間
+  external_labels: # 外通溝通時標示在 time series 或 Alert 的 Labels。
+    monitor: &#39;codelab-monitor&#39;
+
+scrape_configs: # 設定 scrape jobs
+  - job_name: &#39;prometheus&#39;
+    scrape_interval: 5s # 若設定間隔時間，將會覆蓋 global 的預設時間。
+    static_configs:
+      - targets: [&#39;localhost:9090&#39;]
+  - job_name: &#39;example-random&#39;
+    scrape_interval: 5s
+    static_configs:
+      - targets: [&#39;localhost:8080&#39;, &#39;localhost:8081&#39;]
+        labels:
+          group: &#39;production&#39;
+      - targets: [&#39;localhost:8082&#39;]
+        labels:
+          group: &#39;canary&#39;
+</code></pre>
+<p>啟動完成後，就可以 Web-console 的 Execute 執行以下來查詢：</p>
+<pre><code class="sh">avg(rate(rpc_durations_seconds_count[5m])) by (job, service)
+</code></pre>
+<p><img src="https://i.imgur.com/Bo7YGo5.png" alt=""></p>
+<p>另外 Prometheus 也提供自定義 Group rules 來將指定的 Expression query 當作一個 Metric，這邊建立一個檔案<code>prometheus.rules.yml</code>，並新增以下內容：</p>
+<pre><code class="yaml">groups:
+- name: example
+  rules:
+  - record: job_service:rpc_durations_seconds_count:avg_rate5m
+    expr: avg(rate(rpc_durations_seconds_count[5m])) by (job, service)
+</code></pre>
+<p>接著修改<code>prometheus.yml</code>加入以下內容，並重新啟動 Prometheus Server：</p>
+<pre><code class="yaml">global:
+  ...
+scrape_configs:
+  ...
+rule_files:
+  - &#39;prometheus.rules.yml&#39;
+</code></pre>
+<blockquote>
+<p><code>global</code> 與 <code>scrape_configs</code> 不做任何修改，只需加入<code>rule_files</code>即可，另外注意檔案路徑位置。</p>
+</blockquote>
+<p>正常啟動後，就可以看到新的 Metric 被加入。<br><img src="https://i.imgur.com/LhKcGVK.png" alt=""></p>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Monitoring </tag>
+            
+            <tag> CNCF </tag>
+            
+            <tag> Kubernetes </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[以 Keystone 作為 Kubernetes 使用者認證]]></title>
       <url>https://kairen.github.io/2018/05/30/kubernetes/k8s-integration-keystone/</url>
       <content type="html"><![CDATA[<p>本文章將說明如何整合 Keystone 來提供給 Kubernetes 進行使用者認證。但由於 Keystone 整合 Kubernetes 認證在 1.10.x 版本已從原生移除(<code>--experimental-keystone-url</code>, <code>--experimental-keystone-ca-file</code>)，並轉而使用 <a href="https://github.com/kubernetes/cloud-provider-openstack" target="_blank" rel="noopener">cloud-provider-openstack</a> 中的 Webhook 來達成，而篇將說明如何建置與設定以整合該 Webhook。</p>
@@ -17316,20 +17514,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -17340,26 +17532,32 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-client-csr.json</url>
       <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -17376,14 +17574,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -17400,6 +17598,18 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
@@ -17412,32 +17622,20 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
-      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
+      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
     </entry>
     
   
