@@ -155,16 +155,16 @@
             
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
                 </a>
             </li>
 
@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">12</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">11</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
@@ -268,13 +268,59 @@
             <div class="article-title">
                 
     
-        <h1 class="indigo-link-context"><a href="/2018/06/10/devops/prometheus-1/">Prometheus 介紹與基礎入門</a></h1>
+        <h1 class="indigo-link-context"><a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a></h1>
     
 
 
             </div>
 
-            <time class="green-link-context" datetime="2018-06-10T04:23:01.000Z"><a href="/2018/06/10/devops/prometheus-1/">2018-06-10</a></time>
+            <time class="green-link-context" datetime="2018-06-23T04:23:01.000Z"><a href="/2018/06/23/devops/prometheus-operator/">2018-06-23</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
+        
+            <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
+        
+            <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：</p>
+<p><img src="https://coreos.com/sites/default/files/inline-images/p1.png" alt=""></p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2018/06/23/devops/prometheus-operator/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2018-06-10T04:23:01.000Z"><a href="/2018/06/10/devops/prometheus-intro/">2018-06-10</a></time>
 
             
     <div class="tags-row">
@@ -300,7 +346,7 @@
 
         
         <div class="card-action green-link-context">
-            <a href="/2018/06/10/devops/prometheus-1/">READ MORE</a>
+            <a href="/2018/06/10/devops/prometheus-intro/">READ MORE</a>
         </ div>
         
     </div>
@@ -655,49 +701,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2018/03/01/kubernetes/nvidia-device-plugin/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/02/17/container/docker-nvidia-install/">安裝 NVIDIA Docker 2 來讓容器使用 GPU</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-02-17T09:08:54.000Z"><a href="/2018/02/17/container/docker-nvidia-install/">2018-02-17</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
-            <a href="/tags/Container/" class="chip pink lighten-1">Container</a>
-        
-            <a href="/tags/NVIDIA-GPU/" class="chip pink lighten-1">NVIDIA GPU</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>本篇主要介紹如何使用 <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">NVIDIA Docker v2</a> 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使用 NVIDIA Docker v2 的 Runtime 來執行 GPU 應用。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2018/02/17/container/docker-nvidia-install/">READ MORE</a>
         </ div>
         
     </div>

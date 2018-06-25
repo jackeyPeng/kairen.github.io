@@ -4,8 +4,355 @@
   
     
     <entry>
+      <title><![CDATA[Prometheus Operator 介紹與安裝]]></title>
+      <url>https://kairen.github.io/2018/06/23/devops/prometheus-operator/</url>
+      <content type="html"><![CDATA[<p><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：</p>
+<p><img src="https://coreos.com/sites/default/files/inline-images/p1.png" alt=""></p>
+<a id="more"></a>
+<p>架構中的每一個部分都執行於 Kubernetes 的資源，這些資源分別負責不同作用與意義：</p>
+<ul>
+<li><strong><a href="https://coreos.com/operators/" target="_blank" rel="noopener">Operator</a></strong>：Operator 是整個系統的主要控制器，會以 Deployment 方式執行於 Kubernetes 叢集上，並根據自定義的資源(Custom Resource Definition，CRDs)來負責管理與部署 Prometheus Server。而 Operator 會透過監聽這些自定義資源的事件變化來做對應處理。</li>
+<li><strong>Prometheus Server</strong>：由 Operator 依據一個自定義資源 Prometheus 類型中，所描述的內容而部署的 Prometheus Server 叢集，可以將這個自定義資源看作是一種特別用來管理 Prometheus Server 的 StatefulSets 資源。</li>
+</ul>
+<pre><code class="yaml=">apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: k8s
+  labels:
+    prometheus: k8s
+spec:
+  version: v2.3.0
+  replicas: 2
+  serviceMonitors:
+  - selector:
+      matchLabels:
+        k8s-app: kubelet
+...
+</code></pre>
+<ul>
+<li><strong>ServiceMonitor</strong>：一個 Kubernetes 自定義資源，該資源描述了 Prometheus Server 的 Target 列表，Operator 會監聽這個資源的變化來動態的更新 Prometheus Server 的 Scrape targets。而該資源主要透過 Selector 來依據 Labels 選取對應的 Service Endpoint，並讓 Prometheus Server 透過 Service 進行拉取(Pull) Metrics 資料。</li>
+</ul>
+<pre><code class="yaml=">apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubelet
+  labels:
+    k8s-app: kubelet
+spec:
+  jobLabel: k8s-app
+  endpoints:
+  - port: cadvisor
+    interval: 30s # scrape the endpoint every 10 seconds
+    honorLabels: true
+  selector:
+    matchLabels:
+      k8s-app: kubelet
+  namespaceSelector:
+    matchNames:
+    - kube-system
+</code></pre>
+<blockquote>
+<p>這是一個抓取 Cadvisor metrics 的範例。</p>
+</blockquote>
+<ul>
+<li><p><strong>Service</strong>：Kubernetes 中的 Service 資源，這邊主要用來對應 Kubernetes 中 Metrics Server Pod，然後提供給 ServiceMonitor 選取讓 Prometheus Server 拉取資料。在 Prometheus 術語中，可以稱為 Target，即被 Prometheus 監測的對象，如一個部署在 Kubernetes 上的 Node Exporter Service。</p>
+</li>
+<li><p><strong>Alertmanager</strong>：Prometheus Operator 不只提供 Prometheus Server 管理與部署，也包含了 AlertManager，並且一樣透過一個 Alertmanager 自定義資源來描述資訊，再由 Operator 依據描述內容部署 Alertmanager 叢集。</p>
+</li>
+</ul>
+<pre><code class="yaml=">apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: main
+  labels:
+    alertmanager: main
+spec:
+  replicas: 3
+...
+</code></pre>
+<h2 id="部署-Prometheus-Operator"><a href="#部署-Prometheus-Operator" class="headerlink" title="部署 Prometheus Operator"></a>部署 Prometheus Operator</h2><p>本節將說明如何部署 Prometheus Operator 來管理 Kubernetes 上的 Prometheus 資源。</p>
+<h3 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h3><p>測試環境將需要一套 Kubernetes 叢集，作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體機器：</p>
+<table>
+<thead>
+<tr>
+<th>IP Address</th>
+<th>Role</th>
+<th>vCPU</th>
+<th>RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>172.22.132.10</td>
+<td>k8s-m1</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.11</td>
+<td>k8s-n1</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+<tr>
+<td>172.22.132.12</td>
+<td>k8s-n2</td>
+<td>8</td>
+<td>16G</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>這邊<code>m</code> 為 K8s master，<code>n</code>為 K8s node。</p>
+</blockquote>
+<h3 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h3><p>開始安裝前需要確保以下條件已達成：</p>
+<ul>
+<li><p>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</p>
+</li>
+<li><p>在 Kubernetes 叢集部署 Helm 與 Tiller server。</p>
+</li>
+</ul>
+<pre><code class="shell=">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zx
+$ sudo mv linux-amd64/helm /usr/local/bin/
+$ kubectl -n kube-system create sa tiller
+$ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+$ helm init --service-account tiller
+</code></pre>
+<ul>
+<li>在<code>k8s-m1</code>透過 kubectl 來建立 Ingress Controller 即可：</li>
+</ul>
+<pre><code class="shell=">$ kubectl create ns ingress-nginx
+$ wget https://kairen.github.io/files/manual-v1.10/addon/ingress-controller.yml.conf -O ingress-controller.yml
+$ sed -i ingress-controller.yml &#39;s/192.16.35.10/172.22.132.10/g&#39;
+$ kubectl apply -f ingress-controller.yml.conf
+</code></pre>
+<h3 id="部署-Prometheus-Operator-1"><a href="#部署-Prometheus-Operator-1" class="headerlink" title="部署 Prometheus Operator"></a>部署 Prometheus Operator</h3><p>Prometheus Operator 提供了多種方式部署至 Kubernetes 上，一般會使用手動(or 腳本)與 Helm 來進行部署。</p>
+<h4 id="手動-腳本-部署"><a href="#手動-腳本-部署" class="headerlink" title="手動(腳本)部署"></a>手動(腳本)部署</h4><p>透過 Git 取得最新版本腳本：</p>
+<pre><code class="shell=">$ git clone https://github.com/camilb/prometheus-kubernetes.git
+$ cd prometheus-kubernetes
+</code></pre>
+<p>接著執行<code>deploy</code>腳本來部署到 Kubernetes：</p>
+<pre><code class="shell=">$ ./deploy
+Check for uncommitted changes
+
+OK! No uncommitted changes detected
+
+Creating &#39;monitoring&#39; namespace.
+Error from server (AlreadyExists): namespaces &quot;monitoring&quot; already exists
+
+1) AWS
+2) GCP
+3) Azure
+4) Custom
+Please select your cloud provider:4
+Deploying on custom providers without persistence
+Setting components version
+Enter Prometheus Operator version [v0.19.0]:
+
+Enter Prometheus version [v2.2.1]:
+
+Enter Prometheus storage retention period in hours [168h]:
+
+Enter Prometheus storage volume size [40Gi]:
+
+Enter Prometheus memory request in Gi or Mi [1Gi]:
+
+Enter Grafana version [5.1.1]:
+
+Enter Alert Manager version [v0.15.0-rc.1]:
+
+Enter Node Exporter version [v0.16.0-rc.3]:
+
+Enter Kube State Metrics version [v1.3.1]:
+
+Enter Prometheus external Url [http://127.0.0.1:9090]:
+
+Enter Alertmanager external Url [http://127.0.0.1:9093]:
+
+Do you want to use NodeSelector  to assign monitoring components on dedicated nodes?
+Y/N [N]:
+
+Do you want to set up an SMTP relay?
+Y/N [N]:
+
+Do you want to set up slack alerts?
+Y/N [N]:
+
+# 這邊會跑一下部署階段，完成後要接著輸入一些資訊，如 Grafana username and passwd
+
+Enter Grafana administrator username [admin]:
+Enter Grafana administrator password: ******
+
+...
+Done
+</code></pre>
+<blockquote>
+<p>沒有輸入部分請直接按<code>Enter</code>。</p>
+</blockquote>
+<p>當確認看到 Done 後就可以查看 <code>monitoring</code> namespace：</p>
+<pre><code class="shell=">$ kubectl -n monitoring get po
+NAME                                  READY     STATUS    RESTARTS   AGE
+alertmanager-main-0                   2/2       Running   0          4m
+alertmanager-main-1                   2/2       Running   0          3m
+alertmanager-main-2                   2/2       Running   0          3m
+grafana-568b569696-nltbh              2/2       Running   0          14s
+kube-state-metrics-86467959c6-kxtl4   2/2       Running   0          3m
+node-exporter-526nw                   1/1       Running   0          4m
+node-exporter-c828w                   1/1       Running   0          4m
+node-exporter-r2qq2                   1/1       Running   0          4m
+node-exporter-s25x6                   1/1       Running   0          4m
+node-exporter-xpgh7                   1/1       Running   0          4m
+prometheus-k8s-0                      1/2       Running   0          10s
+prometheus-k8s-1                      2/2       Running   0          10s
+prometheus-operator-f596c68cf-wrpqc   1/1       Running   0          4m
+</code></pre>
+<p>查看 Kubernetes CRDs 與 SM：</p>
+<pre><code class="shell=">$ kubectl -n monitoring get crd
+NAME                                          AGE
+alertmanagers.monitoring.coreos.com           4m
+prometheuses.monitoring.coreos.com            4m
+servicemonitors.monitoring.coreos.com         4m
+
+$ kubectl -n monitoring get servicemonitors
+NAME                      AGE
+alertmanager              1m
+kube-apiserver            1m
+kube-controller-manager   1m
+kube-dns                  1m
+kube-scheduler            1m
+kube-state-metrics        1m
+kubelet                   1m
+node-exporter             1m
+prometheus                1m
+prometheus-operator       1m
+</code></pre>
+<p>接著修改 Service 的 Grafana 的 Type：</p>
+<pre><code class="shell=">$ kubectl -n monitoring edit svc grafana
+# 修改成 NodePort
+</code></pre>
+<blockquote>
+<p>也可以建立 Ingress 來存取 Grafana。</p>
+<pre><code class="yaml=">apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: monitoring
+  name: grfana-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: grafana.k8s-local.k2r2bai.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana
+          servicePort: 3000
+</code></pre>
+</blockquote>
+<p>:::info<br>這邊也可以建立 Prometheus Ingress 來使用 Web-based console。</p>
+<pre><code class="yaml=">apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: monitoring
+  name: prometheus-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: prometheus.k8s-local.k2r2bai.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-k8s
+          servicePort: 9090
+</code></pre>
+<p>:::</p>
+<p>最後就可以存取 Grafana 來查看 Metric 視覺化資訊了。</p>
+<p><img src="https://i.imgur.com/39G6Zsm.png" alt=""></p>
+<h4 id="Helm"><a href="#Helm" class="headerlink" title="Helm"></a>Helm</h4><p>首先透過 Helm 加入 coreos 的 repo：</p>
+<pre><code class="shell=">$ helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/
+</code></pre>
+<p>然後透過 kubectl 建立一個 Namespace 來管理 Prometheus，並用 Helm 部署 Prometheus Operator：</p>
+<pre><code class="shell=">$ kubectl create namespace monitoring
+$ helm install coreos/prometheus-operator \
+    --name prometheus-operator \
+    --set rbacEnable=true \
+    --namespace=monitoring
+</code></pre>
+<p>接著部署 Prometheus、AlertManager 與 Grafana：</p>
+<pre><code class="shell="># Prometheus
+$ helm install coreos/prometheus --name prometheus \
+    --set serviceMonitorsSelector.app=prometheus \
+    --set ruleSelector.app=prometheus \
+    --namespace=monitoring
+
+# Alert Manager
+$ helm install coreos/alertmanager --name alertmanager --namespace=monitoring
+
+# Grafana
+$ helm install coreos/grafana --name grafana --namespace=monitoring
+</code></pre>
+<p>部署 kube-prometheus 來提供 Kubernetes 監測的 Exporter 與 ServiceMonitor：</p>
+<pre><code class="shell=">$ helm install coreos/kube-prometheus --name kube-prometheus --namespace=monitoring
+</code></pre>
+<p>完成後檢查安裝結果：</p>
+<pre><code class="shell=">$ kubectl -n monitoring get po,svc
+NAME                                                       READY     STATUS    RESTARTS   AGE
+pod/alertmanager-alertmanager-0                            2/2       Running   0          1m
+pod/alertmanager-kube-prometheus-0                         2/2       Running   0          31s
+pod/grafana-grafana-77cfcdff66-jwxfp                       2/2       Running   0          1m
+pod/kube-prometheus-exporter-kube-state-56857b596f-knt8q   1/2       Running   0          21s
+pod/kube-prometheus-exporter-kube-state-844bb6f589-n7xfg   1/2       Running   0          31s
+pod/kube-prometheus-exporter-node-665kc                    1/1       Running   0          31s
+pod/kube-prometheus-exporter-node-bjvbx                    1/1       Running   0          31s
+pod/kube-prometheus-exporter-node-j8jf8                    1/1       Running   0          31s
+pod/kube-prometheus-exporter-node-pxn8p                    1/1       Running   0          31s
+pod/kube-prometheus-exporter-node-vft8b                    1/1       Running   0          31s
+pod/kube-prometheus-grafana-57d5b4d79f-lq5cr               1/2       Running   0          31s
+pod/prometheus-kube-prometheus-0                           3/3       Running   1          29s
+pod/prometheus-operator-d75587d6-qhz4h                     1/1       Running   0          2m
+pod/prometheus-prometheus-0                                3/3       Running   1          1m
+
+NAME                                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE
+service/alertmanager                          ClusterIP   10.99.170.79     &lt;none&gt;        9093/TCP            1m
+service/alertmanager-operated                 ClusterIP   None             &lt;none&gt;        9093/TCP,6783/TCP   1m
+service/grafana-grafana                       ClusterIP   10.100.217.27    &lt;none&gt;        80/TCP              1m
+service/kube-prometheus                       ClusterIP   10.102.165.173   &lt;none&gt;        9090/TCP            31s
+service/kube-prometheus-alertmanager          ClusterIP   10.99.221.122    &lt;none&gt;        9093/TCP            32s
+service/kube-prometheus-exporter-kube-state   ClusterIP   10.100.233.129   &lt;none&gt;        80/TCP              32s
+service/kube-prometheus-exporter-node         ClusterIP   10.97.183.222    &lt;none&gt;        9100/TCP            32s
+service/kube-prometheus-grafana               ClusterIP   10.110.134.52    &lt;none&gt;        80/TCP              32s
+service/prometheus                            ClusterIP   10.105.229.141   &lt;none&gt;        9090/TCP            1m
+service/prometheus-operated                   ClusterIP   None             &lt;none&gt;        9090/TCP            1m
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Monitoring </tag>
+            
+            <tag> CNCF </tag>
+            
+            <tag> Kubernetes </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Prometheus 介紹與基礎入門]]></title>
-      <url>https://kairen.github.io/2018/06/10/devops/prometheus-1/</url>
+      <url>https://kairen.github.io/2018/06/10/devops/prometheus-intro/</url>
       <content type="html"><![CDATA[<p>Prometheus 是一套開放式原始碼的<code>系統監控警報框架</code>與<code>TSDB(Time Series Database)</code>，該專案是由 SoundCloud 的工程師(前 Google 工程師)建立，Prometheus 啟發於 Google 的 Borgmon 監控系統。目前 Prometheus 已貢獻到 CNCF 成為孵化專案(2016-)，其受歡迎程度僅次於 Kubernetes。</p>
 <a id="more"></a>
 <p>Prometheus 具備了以下特性：</p>
@@ -12181,9 +12528,107 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
+            <tag> Logging </tag>
+            
             <tag> Spark </tag>
             
-            <tag> Logging </tag>
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
             
         </tags>
         
@@ -12335,104 +12780,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -13092,136 +13439,6 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
     </entry>
     
     <entry>
-      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
-      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
-      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
-<a id="more"></a>
-<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
-<pre><code class="sh">[cluster]
-ansible-slave-1 ansible_host=172.16.1.206
-ansible-slave-2 ansible_host=172.16.1.207
-ansible-slave-3 ansible_host=172.16.1.208
-</code></pre>
-<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
-<pre><code class="sh">$ ssh-agent bash
-$ ssh-add ~/.ssh/id_rsa
-</code></pre>
-<blockquote>
-<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
-</blockquote>
-<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
-</code></pre>
-<blockquote>
-<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
-</code></pre>
-<p>會發現 bash 是平行執行的。</p>
-</blockquote>
-<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
-</code></pre>
-<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
-</code></pre>
-<blockquote>
-<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
-</blockquote>
-<p>也可以透過<code>--become-user</code>來切換使用者：</p>
-<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
-</code></pre>
-<blockquote>
-<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
-</blockquote>
-<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
-<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
-</code></pre>
-<blockquote>
-<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
-</blockquote>
-<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
-<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
-</code></pre>
-<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
-$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
-</code></pre>
-<p><code>file</code>模組也能夠建立目錄：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
-</code></pre>
-<p>若要刪除可以使用以下方式：</p>
-<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
-</code></pre>
-<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
-</code></pre>
-<blockquote>
-<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
-</blockquote>
-<p>若要確認是否為最新版本，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
-</code></pre>
-<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
-</code></pre>
-<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
-<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
-</code></pre>
-<p>刪除則如以下：</p>
-<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
-</code></pre>
-<blockquote>
-<p><code>--become</code>與<code>-b</code>是等效的。</p>
-</blockquote>
-<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
-<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
-</code></pre>
-<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
-<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
-</code></pre>
-<blockquote>
-<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
-</blockquote>
-<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
-<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
-</code></pre>
-<p>獲取狀態指令如下：</p>
-<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
-</code></pre>
-<blockquote>
-<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
-</blockquote>
-<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
-<pre><code class="sh">$ ansible cluster[0] -m setup
-</code></pre>
-<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
-]]></content>
-      
-        <categories>
-            
-            <category> DevOps </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> DevOps </tag>
-            
-            <tag> Automation Engine </tag>
-            
-            <tag> Ansible </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
       <title><![CDATA[Ansible Inventory]]></title>
       <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</url>
       <content type="html"><![CDATA[<p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
@@ -13403,6 +13620,136 @@ aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
 freebsd_host      ansible_python_interpreter=/usr/local/bin/python
 ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Automation Engine </tag>
+            
+            <tag> Ansible </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Ansible Ad-Hoc 指令與 Modules]]></title>
+      <url>https://kairen.github.io/2016/02/17/devops/ansible/ansible-adhoc/</url>
+      <content type="html"><![CDATA[<p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
+<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
+<a id="more"></a>
+<p>首先我們先編輯<code>/etc/ansible/hosts</code>，加入以下內容：</p>
+<pre><code class="sh">[cluster]
+ansible-slave-1 ansible_host=172.16.1.206
+ansible-slave-2 ansible_host=172.16.1.207
+ansible-slave-3 ansible_host=172.16.1.208
+</code></pre>
+<h3 id="Parallelism-and-Shell-Commands"><a href="#Parallelism-and-Shell-Commands" class="headerlink" title="Parallelism and Shell Commands"></a>Parallelism and Shell Commands</h3><p>接下來我們將透過範例來說明 Ansible 的平行性與 Shell 指令，一開始我們需要將 ssh-agent 加入私有金鑰管理：</p>
+<pre><code class="sh">$ ssh-agent bash
+$ ssh-add ~/.ssh/id_rsa
+</code></pre>
+<blockquote>
+<p>如果不想要透過 ssh-agent 的金鑰登入，可以在 ansible 指令使用<code>--ask-pass（-k）</code>參數，但是建議使用 ssh-agent。</p>
+</blockquote>
+<p>剛剛我們在 Inventroy 檔案建立了一個群組（Cluster），裡面擁有三台主機，接下來我們透過執行一個簡單的指令與參數來實現並行執行：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 1
+</code></pre>
+<blockquote>
+<p>上面的指令會隨機執行一台主機，完成後接下執行下一台，然而<code>-f</code>參數可以改變一次執行的 bash，好比改成：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;sleep 2&quot; -f 3
+</code></pre>
+<p>會發現 bash 是平行執行的。</p>
+</blockquote>
+<p>我們除了使用預設的 user 登入以外，也可以指定要登入的使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu
+</code></pre>
+<p>如果想透過特權（sudo）執行指令，可以透過以下方式：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;apt-get update&quot; -u ubuntu --become
+</code></pre>
+<blockquote>
+<p>若該使用者沒有設定 sudo 不需要密碼的話，可以加入<code>--ask-sudo-pass（-k）</code>來驗證密碼。也可以使用<code>--become-method</code>來改變權限使用方法（預設為 sudo）。</p>
+</blockquote>
+<p>也可以透過<code>--become-user</code>來切換使用者：</p>
+<pre><code class="sh">$ ansible cluster -a &quot;echo $USER&quot; -u ubuntu --become-user root
+</code></pre>
+<blockquote>
+<p>若有密碼，可以使用<code>--ask-sudo-pass</code>。</p>
+</blockquote>
+<p>以上是基本的幾個指令，但當使用 ansible ad-hoc 指令時，會發現無法使用<code>shell 變數</code>以及<code>pipeline 等相關</code>，這是因為預設的 ansible ad-hoc 指令不支援，<br>故要改用 shell 模組來執行：</p>
+<pre><code class="sh">$ ansible cluster -m shell -a &#39;echo $(hostname) | grep -o &quot;[0-9]&quot;&#39;
+</code></pre>
+<blockquote>
+<p>以上指令的<code>-m</code>表示要使用的模組。但要注意！使用 ansible 指令時要留意<code>&quot;cmd&quot;</code>與<code>&#39;comd&#39;</code>的差別，比如使用<code>&quot;cmd&quot;</code>會是抓取當前系統的資訊。</p>
+</blockquote>
+<h3 id="File-Transfer"><a href="#File-Transfer" class="headerlink" title="File Transfer"></a>File Transfer</h3><p>Ansible 能夠以平行的方式同時<code>scp</code>大量的檔案到多台主機上，如以下範例：</p>
+<pre><code class="sh">$ ansible cluster -m copy -a &quot;src=/etc/hosts dest=~/hosts&quot;
+</code></pre>
+<p>也可以使用<code>file</code>模組做到修改檔案的權限與屬性（這邊可以將<code>copy</code>替換成<code>file</code>）：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/hosts mode=600&quot;
+$ ansible cluster -m file -a &quot;dest=~/hosts mode=600 owner=ubuntu group=ubuntu&quot;
+</code></pre>
+<p><code>file</code>模組也能夠建立目錄：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data mode=755 owner=ubuntu group=ubuntu state=directory&quot;
+</code></pre>
+<p>若要刪除可以使用以下方式：</p>
+<pre><code class="sh">$ ansible cluster -m file -a &quot;dest=~/data state=absent&quot;
+</code></pre>
+<h3 id="Managing-Packages"><a href="#Managing-Packages" class="headerlink" title="Managing Packages"></a>Managing Packages</h3><p>目前 Ansible 已經支援了<code>yum</code>與<code>apt</code>的模組，以下是一個<code>apt</code> 確認指定軟體名稱是否已安裝，並且不升級：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=present&quot;
+</code></pre>
+<blockquote>
+<p>也可以在<code>name=ntp</code>後面加版本號，如<code>name=ntp-{version}</code>。</p>
+</blockquote>
+<p>若要確認是否為最新版本，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=latest&quot;
+</code></pre>
+<p>若要確認一個軟體套件沒有安裝，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster -m apt -a &quot;name=ntp state=absent&quot; --become
+</code></pre>
+<p>更多的指令資訊可以查看 <a href="http://docs.ansible.com/ansible/modules.html" target="_blank" rel="noopener">About Modules</a>。</p>
+<h3 id="Users-and-Groups"><a href="#Users-and-Groups" class="headerlink" title="Users and Groups"></a>Users and Groups</h3><p>若想要建立系統使用者與群組，可以使用<code>user</code>模組，如以下範例：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food password=food&quot; --become
+</code></pre>
+<p>刪除則如以下：</p>
+<pre><code class="sh">$ ansible all -m user -a &quot;name=food state=absent&quot; -b
+</code></pre>
+<blockquote>
+<p><code>--become</code>與<code>-b</code>是等效的。</p>
+</blockquote>
+<h3 id="Deploying-From-Source-Control"><a href="#Deploying-From-Source-Control" class="headerlink" title="Deploying From Source Control"></a>Deploying From Source Control</h3><p>Ansible 不只可以透過<code>apt</code>與<code>ad-hoc 指令</code>來安裝與部署應用程式，也能用<code>git</code>模組來安裝：</p>
+<pre><code class="sh">$ ansible cluster -m git -a &quot;repo=https://github.com/imac-cloud/Spark-tutorial.git dest=~/spark-tutorial&quot; -f 3
+</code></pre>
+<h3 id="Managing-Services"><a href="#Managing-Services" class="headerlink" title="Managing Services"></a>Managing Services</h3><p>Ansible 也可以透過<code>service</code>模組來確認指定主機是否已啟動服務：</p>
+<pre><code class="sh">$ ansible cluster -m service -a &quot;name=ssh state=started&quot;
+</code></pre>
+<blockquote>
+<p>也可以改變<code>state</code>來執行對應動作，如<code>state=restarted</code>就會重新啟動服務。</p>
+</blockquote>
+<h3 id="Time-Limited-Background-Operations"><a href="#Time-Limited-Background-Operations" class="headerlink" title="Time Limited Background Operations"></a>Time Limited Background Operations</h3><p>有些操作需要長時間執行於後台，在指令開始執行後，可以持續檢查執行狀態，但是若不想要獲取該資訊可以使用以下指令：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 3600 -P 0 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<p>若要檢查執行狀態的話，可以使用<code>async_status</code>來傳入一個<code>jid</code>查看：</p>
+<pre><code class="sh">$ ansible cluster -m async_status -a &quot;jid=488359678239.2844&quot;
+</code></pre>
+<p>獲取狀態指令如下：</p>
+<pre><code class="sh">$ ansible ansible-slave-1 -B 1800 -P 60 -a &quot;/usr/bin/long_running_operation --do-stuff&quot;
+</code></pre>
+<blockquote>
+<p><code>-B</code>表示最常執行時間，<code>-P</code>表示每隔60秒回傳狀態。</p>
+</blockquote>
+<h3 id="Gathering-Facts"><a href="#Gathering-Facts" class="headerlink" title="Gathering Facts"></a>Gathering Facts</h3><p>在 Playboooks 中有對 Facts 做一些描述，他表示的是一些系統<code>已知的變數</code>，若要查看所有 Facts，可以使用以下指令：</p>
+<pre><code class="sh">$ ansible cluster[0] -m setup
+</code></pre>
+<p>接下來可以針對 <a href="http://docs.ansible.com/ansible/playbooks.html" target="_blank" rel="noopener">Playbooks</a> 與 <a href="http://docs.ansible.com/ansible/playbooks_variables.html" target="_blank" rel="noopener">Variables</a> 進行研究。</p>
+]]></content>
       
         <categories>
             
@@ -15219,13 +15566,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
-            <tag> Logging </tag>
-            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
+            
+            <tag> Logging </tag>
             
         </tags>
         
@@ -17514,13 +17861,13 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-csr.json</url>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
