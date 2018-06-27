@@ -155,16 +155,16 @@
             
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
                 </a>
             </li>
 
@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">12</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">12</span></a>
                 </a>
             </li>
 
@@ -204,15 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">23</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">7</span></a>
+                    Kubernetes <span class="right">24</span></a>
                 </a>
             </li>
 
@@ -221,6 +213,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/TensorFlow/">
                     TensorFlow <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,53 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2016/01/14/kubernetes/deploy/docker-multi/">hyperkube 建立多節點 Kubernetes(Unrecommended)</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-01-14T09:08:54.000Z"><a href="/2016/01/14/kubernetes/deploy/docker-multi/">2016-01-14</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>本篇將說明如何透過 Docker 來部署一個多節點的 kubernetes 叢集。其架構圖如下所示：</p>
+<p><img src="/images/kube/multinode-docker.png" alt=""></p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Kubernetes v1.5.5</li>
+<li>Docker v17.03.0-ce</li>
+</ul>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/01/14/kubernetes/deploy/docker-multi/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -368,13 +415,13 @@
             
     <div class="tags-row">
         
+            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
+        
             <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
         
             <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
         
             <a href="/tags/Visualization/" class="chip pink lighten-1">Visualization</a>
-        
-            <a href="/tags/Logging/" class="chip pink lighten-1">Logging</a>
         
     </div>
 
@@ -647,50 +694,6 @@
 </article>
 
     
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/11/19/ceph/ceph-intro/">Ceph 分散式儲存系統介紹</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-11-19T09:08:54.000Z"><a href="/2015/11/19/ceph/ceph-intro/">2015-11-19</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
-        
-            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
-        
-            <a href="/tags/Distribution-System/" class="chip pink lighten-1">Distribution System</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>Ceph 提供了<code>Ceph 物件儲存</code>以及<code>Ceph 區塊儲存</code>，除此之外 Ceph 也提供了自身的<code>Ceph 檔案系統</code>，所有的 Ceph 儲存叢集的部署都開始於 Ceph 各節點，透過網路與 Ceph 的叢集溝通。最簡單的 Ceph 儲存叢集至少要建立一個 Monitor 與兩個 OSD（Object storage daemon），但是當需要運行 Ceph 檔案系統時，就需要再加入Metadata伺服器。</p>
-<center><img src="/images/ceph/ceph.jpeg" alt="Ceph"></center>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/11/19/ceph/ceph-intro/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
 
     <ul class="pagination center-align">
     <li class="">
@@ -715,6 +718,8 @@
         <li class="active pink"><a href="/page/8">8</a></li>
     
         <li class="waves-effect"><a href="/page/9">9</a></li>
+    
+        <li class="waves-effect"><a href="/page/10">10</a></li>
     
     
     <li class="">

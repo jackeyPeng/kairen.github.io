@@ -155,16 +155,16 @@
             
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
+                <a class="no-padding" href="/categories/Blockchain/">
+                    Blockchain <span class="right">4</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+                <a class="no-padding" href="/categories/Ceph/">
+                    Ceph <span class="right">9</span></a>
                 </a>
             </li>
 
@@ -179,16 +179,16 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">12</span></a>
+                <a class="no-padding" href="/categories/Spark/">
+                    Spark <span class="right">10</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
+                <a class="no-padding" href="/categories/DevOps/">
+                    DevOps <span class="right">12</span></a>
                 </a>
             </li>
 
@@ -204,15 +204,7 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">23</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">7</span></a>
+                    Kubernetes <span class="right">24</span></a>
                 </a>
             </li>
 
@@ -221,6 +213,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/TensorFlow/">
                     TensorFlow <span class="right">4</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/OpenStack/">
+                    OpenStack <span class="right">7</span></a>
                 </a>
             </li>
 
@@ -261,6 +261,48 @@
 
 
 <div id="article-list" class="container main-container">
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
+        <h1 class="indigo-link-context"><a href="/2018/03/01/kubernetes/nvidia-device-plugin/">Kubernetes NVIDIA Device Plugins</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2018-03-01T09:08:54.000Z"><a href="/2018/03/01/kubernetes/nvidia-device-plugin/">2018-03-01</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/NVIDIA-GPU/" class="chip pink lighten-1">NVIDIA GPU</a>
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p><a href="https://kubernetes.io/docs/concepts/cluster-administration/device-plugins/" target="_blank" rel="noopener">Device Plugins</a> 是 Kubernetes v1.8 版本開始加入的 Alpha 功能，目標是結合 Extended Resource 來支援 GPU、FPGA、高效能 NIC、InfiniBand 等硬體設備介接的插件，這樣好處在於硬體供應商不需要修改 Kubernetes 核心程式，只需要依據 <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">Device Plugins 介面</a>來實作特定硬體設備插件，就能夠提供給 Kubernetes Pod 使用。而本篇會稍微提及 Device Plugin 原理，並說明如何使用 NVIDIA device plugin。</p>
+<p>P.S. 傳統的<code>alpha.kubernetes.io/nvidia-gpu</code>將於 1.11 版本移除，因此與 GPU 相關的排程與部署原始碼都將從 Kubernetes 核心移除。<br>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2018/03/01/kubernetes/nvidia-device-plugin/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
     
         <article class="simple-article">
     <div class="card">
@@ -663,52 +705,6 @@
 </article>
 
     
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2017/05/28/blockchain/smart-contracts/">智能合約(Smart contracts)</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2017-05-28T09:08:54.000Z"><a href="/2017/05/28/blockchain/smart-contracts/">2017-05-28</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Ethereum/" class="chip pink lighten-1">Ethereum</a>
-        
-            <a href="/tags/Blockchain/" class="chip pink lighten-1">Blockchain</a>
-        
-            <a href="/tags/Solidity/" class="chip pink lighten-1">Solidity</a>
-        
-            <a href="/tags/Smart-Contract/" class="chip pink lighten-1">Smart Contract</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><code>智能合約(Smart Contracts)</code> 是在 Ethereum 區塊鏈中所屬的物件。它們包含程式碼函式以及能夠與其他合約進行互動、做出決策、儲存資料與傳送乙太幣給其他人。合約是由創建者所定義，但是它們的執行與他們所提供的服務，都是由 Ethereum 網路本身提供。它們將存在且可被執行，只要整個網路存在，並且只會因程式中有撰寫自我銷毀的功能才會消失。</p>
-<p>我可以用合約做什麼呢？只要想像力夠豐富，要做什麼幾乎都沒問題，但以下指南只會是入門，讓我們去實現一些簡單的事情。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2017/05/28/blockchain/smart-contracts/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
 
     <ul class="pagination center-align">
     <li class="">
@@ -733,6 +729,8 @@
         <li class="waves-effect"><a href="/page/8">8</a></li>
     
         <li class="waves-effect"><a href="/page/9">9</a></li>
+    
+        <li class="waves-effect"><a href="/page/10">10</a></li>
     
     
     <li class="">
