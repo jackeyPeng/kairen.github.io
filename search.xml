@@ -12619,9 +12619,107 @@ a1.sinks.k1.channel=c1
         
         <tags>
             
+            <tag> Spark </tag>
+            
             <tag> Logging </tag>
             
-            <tag> Spark </tag>
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
+      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
+      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
+<a id="more"></a>
+<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
+<ol>
+<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
+<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
+<li>確認自己出現在 inwinSTACK Menber List</li>
+</ol>
+<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
+<ol>
+<li>填寫使用者資訊。</li>
+<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
+<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
+</ol>
+<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
+<ul>
+<li>簽署 ICLA，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
+<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
+</ul>
+</li>
+<li>上傳 SSH 公有金鑰，<ul>
+<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
+<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
+</ul>
+</li>
+</ul>
+<p>完成後，設定 Git 資訊：</p>
+<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
+git config --global user.email &quot;your_email@youremail.com&quot;
+
+git config --global gitreview.username &quot;yourgerritusername&quot;
+</code></pre>
+<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
+<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
+<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
+
+<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
+<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
+cd openstack-manuals
+git review -s
+</code></pre>
+<blockquote>
+<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
+</blockquote>
+<p>並透過 git 來切換到最新版本：</p>
+<pre><code class="sh">git checkout master
+git pull
+</code></pre>
+<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
+<ul>
+<li>blueprint BP-NAME</li>
+<li>bug BUG-NUMBER</li>
+</ul>
+<p>一個簡單範例：</p>
+<pre><code>Adds some summary less than  50  characters   
+
+...Long multiline description of the change...   
+
+Implements: blueprint authentication   
+Fixes: bug # 123456
+</code></pre><blockquote>
+<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
+</blockquote>
+<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
+<pre><code class="sh">git commit -a
+git review
+</code></pre>
+<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
+<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
+<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
+<pre><code class="sh">git commit -a --amend
+git review
+</code></pre>
+]]></content>
+      
+        <categories>
+            
+            <category> OpenStack </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> OpenStack </tag>
+            
+            <tag> Git </tag>
+            
+            <tag> Python </tag>
             
         </tags>
         
@@ -12773,104 +12871,6 @@ $ drbd-overview
             <tag> Storage </tag>
             
             <tag> Linux </tag>
-            
-        </tags>
-        
-    </entry>
-    
-    <entry>
-      <title><![CDATA[OpenStack 貢獻基本流程]]></title>
-      <url>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</url>
-      <content type="html"><![CDATA[<p>本部分將說明如何貢獻程式碼到 OpenStack 社群上。</p>
-<a id="more"></a>
-<h3 id="申請-OpenStack-帳號流程"><a href="#申請-OpenStack-帳號流程" class="headerlink" title="申請 OpenStack 帳號流程"></a>申請 OpenStack 帳號流程</h3><p>首先註冊 Launchpad.net 帳號：</p>
-<ol>
-<li>到 <a href="https://login.launchpad.net/" target="_blank" rel="noopener">Launchpad</a> 註冊一個帳號，使用 inwinStack 信箱</li>
-<li>完成申請後，進入 <a href="https://launchpad.net/~inwinstack" target="_blank" rel="noopener">inwinSTACK Org</a> 點選<code>加入請求</code></li>
-<li>確認自己出現在 inwinSTACK Menber List</li>
-</ol>
-<p>之後註冊 OpenStack Foundation 的 Foundation Member，到 <a href="https://www.openstack.org/join/register" target="_blank" rel="noopener">Register</a> 申請 <code>Foundation Member</code>。並完成以下步驟：</p>
-<ol>
-<li>填寫使用者資訊。</li>
-<li>在 Affiliations 部分，點選 <code>Add New Affiliations</code>的組織輸入<code>inwinSTACK</code>，選擇開始時間，勾選 <code>Is Current?</code></li>
-<li>最後填寫住址與密碼資訊，住址翻譯網站 : <a href="http://goo.gl/qez9tt" target="_blank" rel="noopener">http://goo.gl/qez9tt</a></li>
-</ol>
-<p>然後使用 Launchpad.net  登入 OpenStack的 Gerrit 平台，到 <a href="https://review.openstack.org/" target="_blank" rel="noopener">Gerrit</a> 點選 <code>sign in</code>，登入 Launchpad 帳號。當第一次登入成功後，會需要你設定唯一的 username（注意設定後就不能更改）。並完成以下步驟：</p>
-<ul>
-<li>簽署 ICLA，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/new-agreement" target="_blank" rel="noopener">New Agreement</a></li>
-<li>選擇ICLA（OpenStack Individual Contributor License Agreement）</li>
-</ul>
-</li>
-<li>上傳 SSH 公有金鑰，<ul>
-<li>到 <a href="https://review.openstack.org/#/settings/ssh-keys" target="_blank" rel="noopener">Git Review SSH Keys</a> 上傳 Key。</li>
-<li>用<code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot;</code> 指令產生金鑰，複製 <code>~/.ssh/id_rsa.pub</code>到 review.openstack.org 上。產生 key 參考 <a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">generating-ssh-keys</a></li>
-</ul>
-</li>
-</ul>
-<p>完成後，設定 Git 資訊：</p>
-<pre><code class="sh">git config --global user.name &quot;Firstname Lastname&quot;
-git config --global user.email &quot;your_email@youremail.com&quot;
-
-git config --global gitreview.username &quot;yourgerritusername&quot;
-</code></pre>
-<p>之後安裝 git-review，參考 <a href="http://www.mediawiki.org/wiki/Gerrit/git-review" target="_blank" rel="noopener">Git Review install</a> 進行安裝。</p>
-<h3 id="貢獻程式碼（已-openstack-manuals-為例）"><a href="#貢獻程式碼（已-openstack-manuals-為例）" class="headerlink" title="貢獻程式碼（已 openstack-manuals 為例）"></a>貢獻程式碼（已 openstack-manuals 為例）</h3><p>一個基本的貢獻流程如下圖所示：</p>
-<center><img src="/images/openstack/contribute_flow.jpg" alt=""></center>
-
-<p>首先透過 git clone 來下載程式專案，並設定 review：</p>
-<pre><code class="sh">git clone https://github.com/openstack/openstack-manuals
-cd openstack-manuals
-git review -s
-</code></pre>
-<blockquote>
-<p>成功的話，會在目錄底下產生檔案<code>.gitreview</code>。若 auth 有問題請檢查 ssh key 是否正確。</p>
-</blockquote>
-<p>並透過 git 來切換到最新版本：</p>
-<pre><code class="sh">git checkout master
-git pull
-</code></pre>
-<p>新建一個 branch，在單獨的一行中撰寫 summary（小於50個字），然後第二段進行詳細的描述。如果是實現 bp 或修改 bug，需要註明：</p>
-<ul>
-<li>blueprint BP-NAME</li>
-<li>bug BUG-NUMBER</li>
-</ul>
-<p>一個簡單範例：</p>
-<pre><code>Adds some summary less than  50  characters   
-
-...Long multiline description of the change...   
-
-Implements: blueprint authentication   
-Fixes: bug # 123456
-</code></pre><blockquote>
-<p>詳細的程式碼提交資訊，參考 <a href="https://wiki.openstack.org/wiki/GitCommitMessages" target="_blank" rel="noopener">GitCommitMessages</a>。</p>
-</blockquote>
-<p>修改完程式碼後，記得跑過UT的測試。然後提交程式碼，並申請 review：</p>
-<pre><code class="sh">git commit -a
-git review
-</code></pre>
-<p>提交 review 之後，會出現在 <a href="https://review.openstack.org" target="_blank" rel="noopener">Git review</a>，可以查看狀態和資訊，並自動執行 CI，然後程式碼會由 review 人員進行程式碼的 review。</p>
-<p>如果 jenkins 回報了 failure，可以查看 Logs 除錯。如果確認不是自己的 patch 導致，可以在 comment 上留言 <code>recheck no bug</code>，重新再跑 Test。</p>
-<p>如果 review 過程中，發現程式碼需要修改，再次提交時直接使用已存在的 Change-Id：</p>
-<pre><code class="sh">git commit -a --amend
-git review
-</code></pre>
-]]></content>
-      
-        <categories>
-            
-            <category> OpenStack </category>
-            
-        </categories>
-        
-        
-        <tags>
-            
-            <tag> OpenStack </tag>
-            
-            <tag> Git </tag>
-            
-            <tag> Python </tag>
             
         </tags>
         
@@ -15657,13 +15657,13 @@ sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
         
         <tags>
             
+            <tag> Logging </tag>
+            
             <tag> DevOps </tag>
             
             <tag> Monitoring </tag>
             
             <tag> Visualization </tag>
-            
-            <tag> Logging </tag>
             
         </tags>
         
@@ -17902,6 +17902,406 @@ lib/spark-examples*.jar \
         
     </entry>
     
+    <entry>
+      <title><![CDATA[基本物件導向概念]]></title>
+      <url>https://kairen.github.io/2014/06/03/msic/oop/</url>
+      <content type="html"><![CDATA[<p><strong>物件導向程式設計</strong>（英語：Object-oriented programming，縮寫：OOP）</p>
+<p>物件導向程式設計推廣了程式的<strong>靈活性</strong>和<strong>可維護性</strong>，在大型的專案被廣泛的應用。此外，支持者聲稱<strong>物件導向程式設計</strong>要比以往的做法更加便於學習，因為它能夠讓人們更簡單地設計並維護程式，使得程式更加便於分析、設計、理解。學習物件導向須了解幾點與幾個特性：</p>
+<ul>
+<li>Object 是 Class 的 Instance。</li>
+<li>Class 是 Object 的定義。描述 Object 的組成與功能。</li>
+<li>Object 使用前必須建立 Class 的 Object(Instance) (使用New)。</li>
+<li>真正被用來處理問題的是 Object，而 Class 決定了 Object 的行為。</li>
+</ul>
+<a id="more"></a>
+<h2 id="類別"><a href="#類別" class="headerlink" title="類別"></a>類別</h2><p>類別（Class）定義了一件事物的<strong>抽象</strong>特點。類別定義了事物的屬性與可做到的行為。Ex:「人」包含了一切的基本特徵與行為，頭髮、樣貌等等，類別可以為程式提供模版和結構。一個類別的方法和屬性被稱為「<strong>成員</strong>」。如以下：</p>
+<pre><code>類別 人 : {
+ 公有成員：
+    走();
+    講話();
+    吃飯()
+ 私有成員：
+    頭髮顏色;
+    身體膚色;
+}
+</code></pre><p>這邊解釋了一個人的類別，其中公有(public)與私有(private)會在<strong>封裝性</strong>提到。</p>
+<h2 id="物件"><a href="#物件" class="headerlink" title="物件"></a>物件</h2><p>物件 (Object)是類別的例項(instance)。Ex:「人」類別列舉出人的特點，這個類別定義了世界上所有的人。而<strong>台灣人</strong>這個物件則是一種具體的人種，他的屬性也是具體的。人有皮膚顏色，而台灣人的皮膚顏色是白-黃之間。因此，台灣人就是人這個類別的一個例項(或稱<strong>實例</strong>)。</p>
+<ul>
+<li>系統給物件分配記憶體空間，而不會給類別分配記憶體空間。這很好理解，類別是抽象的系統不可能給抽象的東西分配空間，而物件則是具體的。</li>
+<li>我們無法讓人這個類別去走動，但是我們可以讓物件「台灣人」去走動，正如人可以走動一樣，但沒有具體的人就無法動作。</li>
+</ul>
+<pre><code>宣告或定義：台灣人是一種人
+台灣人.走();
+台灣人.身體顏色() = 白;
+</code></pre><h2 id="訊息傳遞"><a href="#訊息傳遞" class="headerlink" title="訊息傳遞"></a>訊息傳遞</h2><p>物件通過<strong>接受訊息</strong>、<strong>處理訊息</strong>、<strong>傳出訊息</strong>或<strong>使用其他類別的方法來實作一定功能</strong>，就叫訊息傳遞機制(Message Passing)。</p>
+<p>如：台灣人可以通過”講話”與其他人的溝通，從而導致一系列的事發生。</p>
+<h2 id="繼承"><a href="#繼承" class="headerlink" title="繼承"></a>繼承</h2><p>繼承性(Inheritance)是指，在某種情況下，一個類別會有「子類別」。子類別會比原本的類別(稱為父類別)要更加具體化。Ex:人有分台灣人、日本人等。在這種情況柯p可能就是<strong>台灣人的例項</strong>，並包含柯p自己的特性與行為。繼承的好處在於可以將相同事情做一次歸類，便可讓子類別擁有該屬性與行為。如下：</p>
+<pre><code>類別 台灣人:繼承於人 {
+    公有成員：
+        早餐專吃牛排();
+}
+
+定義阿文是台灣人
+阿文.講話();
+阿文.早餐專吃牛排();
+</code></pre><p>當一個類別從多個父類別繼承時，我們稱之為「<strong>多重繼承</strong>」。好比混血兒從分別兩個人種繼承而來。但多重繼承有時矛盾，讓人無法理解，且有些程式也不支援。</p>
+<h2 id="封裝性"><a href="#封裝性" class="headerlink" title="封裝性"></a>封裝性</h2><p>具備封裝性（Encapsulation）的物件導向程式設計隱藏了某一方法的具體執行步驟，取而代之的是通過<strong>訊息傳遞機制</strong>傳送訊息給它。好比一個人”吃飯”，吃飯的這個人才知道具體吃下了什麼，而其他人並不知道，例如。</p>
+<p>一個程序導向如下：</p>
+<pre><code>定義柯p
+柯p.拆除違建();
+柯p.講話()
+</code></pre><p>一個物件導向如下：</p>
+<pre><code>定義小文是人
+小文.吃飯()
+小文.吃飯()
+小文.吃飯()
+</code></pre><p>封裝是通過限制只有特定類別的物件可以存取這一特定類別的成員，而它們通常利用介面實作訊息的傳入傳出。通常來說，成員會依它們的存取許可權被分為3種：<strong>公有成員</strong>、<strong>私有成員</strong>以及<strong>保護成員</strong></p>
+<ul>
+<li>公有成員(public)：任何例項成員都可以被其他人使用。</li>
+<li>私有成員(private)：只有類別本身可以使用。</li>
+<li>保護成員(protected)：只有繼承的子類別與類別本身可以使用。</li>
+</ul>
+<h2 id="多型"><a href="#多型" class="headerlink" title="多型"></a>多型</h2><p>多型（Polymorphism）是指由繼承而產生的相關的不同的類別，其物件對同一訊息會做出不同的響應。好比『台灣人』與『美國人』都有”講話”的行為，但實際卻用不同語言講話。如下：</p>
+<pre><code>類別 台灣人 : {
+    公有成員：
+        講話();
+}
+
+類別 美國人 : {
+    公有成員：
+        講話();
+}
+
+定義 歐罵馬 是美國人
+定義 馬陰酒 是台灣人
+歐罵馬.講話(); // 講美語
+馬陰酒.講話(); // 講國語
+</code></pre><p>多型性的概念也可以用在<strong>運算子過載(overload)</strong>上。<br>多型是建立在繼承的基礎之上的，沒有繼承，就不會有多型。繼承的目的有兩種：</p>
+<ul>
+<li>繼承程式碼：達到程式碼再用性（reuse）</li>
+<li>繼承介面（interface）。達到介面再用性（reuse），為多型預作準備</li>
+</ul>
+<h2 id="抽象性"><a href="#抽象性" class="headerlink" title="抽象性"></a>抽象性</h2><p>抽象(Abstraction)是<strong>簡化複雜</strong>的現實問題的途徑，它可以為具體問題找到最恰當的類別定義，並且可以在最恰當的繼承級別解釋問題。Ex:柯p在一般時候都被當作一個人，但是如果想要讓他做柯p做的事，你可以呼叫柯p的方法。如果台灣人類別還有人的父類別，那麼你完全可以視柯p為一個人。</p>
+<h2 id="參考"><a href="#參考" class="headerlink" title="參考"></a>參考</h2><ul>
+<li><a href="http://en.wikipedia.org/wiki/Object-oriented_programming" target="_blank" rel="noopener">Wiki OOP</a></li>
+<li><a href="http://www.oreilly.com.tw/column_sleepless.php?id=j022" target="_blank" rel="noopener">Oreilly</a></li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> Programming </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> Programming </tag>
+            
+            <tag> OOP </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
+      <title><![CDATA[NYTime Objective-C 程式規範]]></title>
+      <url>https://kairen.github.io/2013/11/03/msic/ios-code-style/</url>
+      <content type="html"><![CDATA[<p>Objective-C 程式規範，參考於紐約時報所規範之程式風格。</p>
+<p><img src="/images/msic/objc.png" alt=""></p>
+<a id="more"></a>
+<h2 id="點語法"><a href="#點語法" class="headerlink" title="點語法"></a>點語法</h2><p> 始终使用點語法來存取<strong>屬性</strong>，存取其他實例時應用<strong>中括號[]</strong>。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">view.backgroundColor = [UIColor orangeColor];
+[UIApplication sharedApplication].delegate;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">[view setBackgroundColor:[UIColor orangeColor]];
+UIApplication.sharedApplication.delegate;
+</code></pre>
+<h2 id="間距"><a href="#間距" class="headerlink" title="間距"></a>間距</h2><ul>
+<li>永遠不要使用制表符號（tab）間隔。確保在Xcode 中設定了此偏好。</li>
+<li>方法的大括號和其他的大括號（<code>if</code>/<code>else</code>/<code>switch</code>/<code>while</code> 等等）始終和宣告在同一行開始，在新的一行結束。</li>
+</ul>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">if (user.isHappy) {
+// Do something
+}
+else {
+// Do something else
+}
+</code></pre>
+<ul>
+<li>方法之間空格一行，這樣有助於視覺的清晰度和程式碼組織性。在方法中的功能區塊之間應該使用空白分開，但往往可能建立一個新的方法。</li>
+<li><code>@synthesize</code> 和 <code>@dynamic</code> 在實現中都須佔一個新行。</li>
+</ul>
+<h2 id="條件判斷"><a href="#條件判斷" class="headerlink" title="條件判斷"></a>條件判斷</h2><p>條件判斷主要部分不需使用大括號來防止<a href="https://github.com/NYTimes/objective-c-style-guide/issues/26#issuecomment-22074256" target="_blank" rel="noopener">出錯</a>。這些錯誤包含添加第二行(程式碼)，並希望它是if 語法的一部分時。還有另外一種<a href="http://programmers.stackexchange.com/a/16530" target="_blank" rel="noopener">更危險的</a>，當 if 語法裡面的一行被註解掉，下一行就會在不經意間成為了這個 if 語法的一部分。此外，這種風格也更符合所有其他的條件判斷，因此也更容易檢查。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">if (!error) {
+    return success;
+}
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">if (!error)
+    return success;
+</code></pre>
+<p>或</p>
+<pre><code class="objc">if (!error) return success;
+</code></pre>
+<h3 id="三元運算式"><a href="#三元運算式" class="headerlink" title="三元運算式"></a>三元運算式</h3><p>三元運算式以 (<strong>條件</strong>) ? <strong>成立</strong> : <strong>不成立</strong>;</p>
+<p>只有當它可以增加程式碼清晰度或整潔時才使用。單一的條件都應該優先考虑使用。多條件時通常使用 if 會更好懂，或者重構成實體變數。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">result = (a &gt; b) ? x : y;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">result = a &gt; b ? x = c &gt; d ? c : d : y;
+</code></pre>
+<h2 id="Switch-case"><a href="#Switch-case" class="headerlink" title="Switch case"></a>Switch case</h2><p>由於使用Switch case會針對所有條件是進行處理，需針對所有條件實現，以及用區塊對case做工作區別，確保區塊的正確需給予一項約束：</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">MyEnum types = MyEnumValueA;
+
+switch (types) {
+    case MyEnumValueA:{
+        break;
+    }
+    case MyEnumValueB: {
+        break;
+    }
+    case MyEnumValueC: {
+        break;
+    }
+    default: {
+
+    }
+}
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">int types = 0;
+
+switch (types) {
+    case 0:
+        break;
+    case 1:
+        break;
+    case 2:
+        break;
+    default:
+}
+</code></pre>
+<h2 id="錯誤處理"><a href="#錯誤處理" class="headerlink" title="錯誤處理"></a>錯誤處理</h2><p>當引用一個回傳錯誤參數（error parameter）的方法時，應該針對回傳值，而非錯誤變數。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">NSError *error;
+if (![self trySomethingWithError:&amp;error]) {
+    // 錯誤處理
+}
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">NSError *error;
+[self trySomethingWithError:&amp;error];
+if (error) {
+    // 錯誤處理
+}
+</code></pre>
+<p>一些Apple的API在成功的情况下會寫一些垃圾值给錯誤參數(如果非空)，所以針對錯誤變數可能會造成虛假结果 (或者崩溃)。</p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>方法宣告中，在 -/+ 符號後應該有一個空格。方法片段之間也應該有一個空格。</p>
+<p><strong>建議：</strong></p>
+<pre><code>- (void)setExampleText:(NSString *)text image:(UIImage *)image;
+</code></pre><h2 id="變數"><a href="#變數" class="headerlink" title="變數"></a>變數</h2><p>變數名稱應該盡可能命名具有描述性。除了 <code>for()</code> 迴圈外，其他情况都應該避免使用單字母的變數名。<br>星號表示指標變數，例如：<code>NSString *text</code> 不要寫成 <code>NSString* text</code> 或者 <code>NSString * text</code> ，常數除外。<br>盡量定義屬性來取代直接使用實體變數。除了初始化方法（<code>init</code>， <code>initWithCoder:</code>等）， <code>dealloc</code> 方法和自定義的setters和 getters内部，應避免直接存取實體變數。更多有關在初始化方法和 dealloc方法中使用存取器方法的資訊，可參考<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmPractical.html#//apple_ref/doc/uid/TP40004447-SW6" target="_blank" rel="noopener">這邊</a>。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">@interface NYTSection: NSObject
+
+@property (nonatomic) NSString *headline;
+
+@end
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">@interface NYTSection : NSObject {
+    NSString *headline;
+}
+
+@property (nonatomic) NSString* string;
+</code></pre>
+<h4 id="變數屬性限制"><a href="#變數屬性限制" class="headerlink" title="變數屬性限制"></a>變數屬性限制</h4><p>當涉及到<a href="(https://developer.apple.com/library/ios/releasenotes/objectivec/rn-transitioningtoarc/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011226-CH1-SW4)">ARC</a>變數屬性限制時，<br>限制保留字 (<code>__strong</code>, <code>__weak</code>, <code>__unsafe_unretained</code>, <code>__autoreleasing</code>) 應該位於Class與變數名稱之間，如：<code>NSString * __weak text</code>。</p>
+<h3 id="命名"><a href="#命名" class="headerlink" title="命名"></a>命名</h3><p>盡可能遵照Apple的命名法則，尤其那些涉及到<a href="https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html" target="_blank" rel="noopener">記憶體管理規範</a>，（<a href="http://stackoverflow.com/a/2865194/340508" target="_blank" rel="noopener">NonARC</a>）的。</p>
+<p><strong>長一點</strong>和<strong>描述性</strong>的方法名稱和變數名稱都不错。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">UIButton *settingsButton;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">UIButton *setBut;
+</code></pre>
+<p>類別名稱和常數名稱應該使用三個字母當開頭（例如 <code>KRT</code>），但 Core Data 實體名稱可以省略。為了程式碼的乾淨，常數應該使用相關類別的名字作為開頭，並使用駝峰式命名法。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">static const NSTimeInterval NYTArticleViewControllerNavigationFadeAnimationDuration = 0.3;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">static const NSTimeInterval fadetime = 1.7;
+</code></pre>
+<p><strong>屬性</strong>和<strong>區域變數</strong>應該使用<strong>駝峰式命名法</strong>，並且首字母小寫。</p>
+<p>為了保持一致，實體變數應該使用駝峰式命名，且首字母小寫，以下底線為開頭。這是<strong>LLVM</strong>的自動合成的實體變數一致。<br><strong>如果LLVM可以自動合成變數，那就讓它自動合成吧。</strong></p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">@synthesize descriptiveVariableName = _descriptiveVariableName;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">id varnm;
+</code></pre>
+<h3 id="註解"><a href="#註解" class="headerlink" title="註解"></a>註解</h3><p>當需要的时候，註解應該被用來解释 <strong>為什麼</strong> 特定程式做了某些事情。所使用之任何註解必須保持最新，否則就刪掉。</p>
+<p>通常應避免一大塊註解，程式碼應該盡量作為自身的檔案，只需要隔幾行寫幾句說明。這並不適用於那些用來生成檔案的註解。</p>
+<h3 id="init-和-dealloc"><a href="#init-和-dealloc" class="headerlink" title="init 和 dealloc"></a>init 和 dealloc</h3><p><code>dealloc</code> 方法應該放在<strong>實作檔</strong>最上面，並且剛好在 <code>@synthesize</code> 和 <code>@dynamic</code> 保留字的後面。在任何類別中，<code>init</code> 都應該直接放在 <code>dealloc</code> 方法的下方。</p>
+<p><code>init</code> 方法的結構應該像這樣：</p>
+<pre><code class="objc">- (instancetype)init {
+    self = [super init]; // 呼叫指定的初始化方法
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+</code></pre>
+<h3 id="字面變數"><a href="#字面變數" class="headerlink" title="字面變數"></a>字面變數</h3><p>當創建 <code>NSString</code>， <code>NSDictionary</code>， <code>NSArray</code>，和 <code>NSNumber</code> 物件的不可變實體時，都應該使用字面量。要注意 <code>nil</code> 值不能傳給 <code>NSArray</code> 和 <code>NSDictionary</code> 字面變數，這樣做會導致崩潰。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">NSArray *names = @[@&quot;Brian&quot;, @&quot;Matt&quot;, @&quot;Chris&quot;, @&quot;Alex&quot;, @&quot;Steve&quot;, @&quot;Paul&quot;];
+NSDictionary *productManagers = @{@&quot;iPhone&quot; : @&quot;Kate&quot;, @&quot;iPad&quot; : @&quot;Kamal&quot;, @&quot;Mobile Web&quot; : @&quot;Bill&quot;};
+NSNumber *shouldUseLiterals = @YES;
+NSNumber *buildingZIPCode = @10018;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">NSArray *names = [NSArray arrayWithObjects:@&quot;Brian&quot;, @&quot;Matt&quot;, @&quot;Chris&quot;, @&quot;Alex&quot;, @&quot;Steve&quot;, @&quot;Paul&quot;, nil];
+NSDictionary *productManagers = [NSDictionary dictionaryWithObjectsAndKeys: @&quot;Kate&quot;, @&quot;iPhone&quot;, @&quot;Kamal&quot;, @&quot;iPad&quot;, @&quot;Bill&quot;, @&quot;Mobile Web&quot;, nil];
+NSNumber *shouldUseLiterals = [NSNumber numberWithBool:YES];
+NSNumber *buildingZIPCode = [NSNumber numberWithInteger:10018];
+</code></pre>
+<h3 id="CGRect函式"><a href="#CGRect函式" class="headerlink" title="CGRect函式"></a>CGRect函式</h3><p>當存取一個 <code>CGRect</code> 的 <code>x</code>， <code>y</code>， <code>width</code>， <code>height</code> 时，應該使用<a href="http://developer.apple.com/library/ios/#documentation/graphicsimaging/reference/CGGeometry/Reference/reference.html" target="_blank" rel="noopener"><code>CGGeometry</code> 函式</a>取代直接存取結構體成員。Apple的 <code>CGGeometry</code> 参考中說到：</p>
+<blockquote>
+<p>All functions described in this reference that take CGRect data structures as inputs implicitly standardize those rectangles before calculating their results. For this reason, your applications should avoid directly reading and writing the data stored in the CGRect data structure. Instead, use the functions described here to manipulate rectangles and to retrieve their characteristics.</p>
+</blockquote>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">CGRect frame = self.view.frame;
+
+CGFloat x = CGRectGetMinX(frame);
+CGFloat y = CGRectGetMinY(frame);
+CGFloat width = CGRectGetWidth(frame);
+CGFloat height = CGRectGetHeight(frame);
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">CGRect frame = self.view.frame;
+
+CGFloat x = frame.origin.x;
+CGFloat y = frame.origin.y;
+CGFloat width = frame.size.width;
+CGFloat height = frame.size.height;
+</code></pre>
+<h3 id="常數"><a href="#常數" class="headerlink" title="常數"></a>常數</h3><p>常數使用字元、字串 字面變數或數值變數，因為常數可以輕易重用，且可以快速改變而不需要查找和替換。常數應該宣告為 <code>static</code> 常數而不是 <code>#define</code> ，除非很明確的要當做marco來使用。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">static NSString * const NYTAboutViewControllerCompanyName = @&quot;The New York Times Company&quot;;
+
+static const CGFloat NYTImageThumbnailHeight = 50.0;
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">#define CompanyName @&quot;The New York Times Company&quot;
+
+#define thumbnailHeight 2
+</code></pre>
+<h3 id="枚舉類型"><a href="#枚舉類型" class="headerlink" title="枚舉類型"></a>枚舉類型</h3><p>當使用 <code>enum</code> 時，建議使用新的基礎類型規範，因為它具有更强的類型檢查和程式碼補全功能。現在的SDK 包含了一個marco來建議使用者利用新的基礎類型 - <code>NS_ENUM()</code></p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">typedef NS_ENUM(NSInteger, NYTAdRequestState) {
+    NYTAdRequestStateInactive,
+    NYTAdRequestStateLoading
+};
+</code></pre>
+<h3 id="位元碼"><a href="#位元碼" class="headerlink" title="位元碼"></a>位元碼</h3><p>當用到位元碼時，使用 <code>NS_OPTIONS</code> marco。</p>
+<p><strong>舉例：</strong></p>
+<pre><code class="objc">typedef NS_OPTIONS(NSUInteger, NYTAdCategory) {
+    NYTAdCategoryAutos      = 1 &lt;&lt; 0,
+    NYTAdCategoryJobs       = 1 &lt;&lt; 1,
+    NYTAdCategoryRealState  = 1 &lt;&lt; 2,
+    NYTAdCategoryTechnology = 1 &lt;&lt; 3
+};
+</code></pre>
+<h3 id="私有屬性"><a href="#私有屬性" class="headerlink" title="私有屬性"></a>私有屬性</h3><p>私有屬性應該宣告在類別實作檔的延展(匿名的類目)中。有名字的類目(例如 <code>NYTPrivate</code> 或 <code>private</code>) 永遠都不應該使用，除非要擴展其他類別。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">@interface NYTAdvertisement ()
+
+@property (nonatomic, strong) GADBannerView *googleAdView;
+@property (nonatomic, strong) ADBannerView *iAdView;
+@property (nonatomic, strong) UIWebView *adXWebView;
+
+@end
+</code></pre>
+<h3 id="圖片命名"><a href="#圖片命名" class="headerlink" title="圖片命名"></a>圖片命名</h3><p>圖片名稱應該被統一命名，以保持組織的完整。它們應該被命名為一個說明它們<strong>用途的駝峰式字串</strong>，其次是自定義類別或屬性的無前綴名字（如果有的話），然後進一步說明<strong>顏色</strong>與<strong>對應的解析度識別(ex:iPhone 6 and iPhone 5為@2x)</strong>或 <strong>圖片展示位置</strong>，最後是它們的<strong>狀態</strong>。</p>
+<p><strong>建議：</strong></p>
+<ul>
+<li><code>RefreshBarButtonItem</code> / <code>RefreshBarButtonItem@2x</code> 和 <code>RefreshBarButtonItemSelected</code> / <code>RefreshBarButtonItemSelected@2x</code></li>
+<li><code>ArticleNavigationBarWhite</code> / <code>ArticleNavigationBarWhite@2x</code> 和 <code>ArticleNavigationBarBlackSelected</code> / <code>ArticleNavigationBarBlackSelected@2x</code>.</li>
+</ul>
+<p><a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/MobileHIG/IconMatrix.html" target="_blank" rel="noopener">對應的解析度識別</a></p>
+<p>圖片目錄中被用於類似目地的圖片應歸入各自組中。<br>最後確保圖片存放於<strong>Images.xcassets</strong>。</p>
+<h3 id="布林"><a href="#布林" class="headerlink" title="布林"></a>布林</h3><p>因為 <code>nil</code> 解析為 <code>NO</code>，所以没有必要在條件中與它進行比較。永遠不要直接和 <code>YES</code> 進行比較，因為 <code>YES</code> 被定義為 1，而 <code>BOOL</code> 可以多達八位元。</p>
+<p>這使得整個檔案有更多的一致性和更大的視覺清晰度。</p>
+<p><strong>建議：</strong></p>
+<pre><code class="objc">if (!someObject) {
+}
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">if (someObject == nil) {
+}
+</code></pre>
+<p><strong>對於 <code>BOOL</code> 來說, 這有兩種用法:</strong></p>
+<pre><code class="objc">if (isAwesome)
+if (![someObject boolValue])
+</code></pre>
+<p><strong>反對：</strong></p>
+<pre><code class="objc">if ([someObject boolValue] == NO)
+if (isAwesome == YES) // 絕對不要這麼做
+</code></pre>
+<p>如果一個 <code>BOOL</code> 屬性名稱是一個形容詞，屬性可以省略 “is” 前缀，但為 get 存取器指定一個慣用的名稱，例如：</p>
+<pre><code class="objc">@property (assign, getter=isEditable) BOOL editable;
+</code></pre>
+<p>內容和範例來自 <a href="https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CodingGuidelines/Articles/NamingIvarsAndTypes.html#//apple_ref/doc/uid/20001284-BAJGIIJE" target="_blank" rel="noopener">Cocoa 命名指南</a> 。</p>
+<h3 id="單一實例"><a href="#單一實例" class="headerlink" title="單一實例"></a>單一實例</h3><p>單例對象應該使用執行緒安全的模式創建共享的實例。</p>
+<pre><code class="objc">+ (instancetype)sharedInstance {
+   static id sharedInstance = nil;
+
+   static dispatch_once_t onceToken;
+   dispatch_once(&amp;onceToken, ^{
+      sharedInstance = [[self alloc] init];
+   });
+
+   return sharedInstance;
+}
+</code></pre>
+<p>這將會預防<a href="http://cocoasamurai.blogspot.com/2011/04/singletons-your-doing-them-wrong.html" target="_blank" rel="noopener">有時可能產生的許多崩潰</a>。</p>
+<h3 id="Xcode"><a href="#Xcode" class="headerlink" title="Xcode"></a>Xcode</h3><p>为了避免檔案複雜，實體檔案與目錄應該保持與Xcode同步。Xcode 建立的任何群組（group）都必须在檔案系统有相應的映射。為了更清晰，程式碼不僅應該按照<strong>類型</strong>進行分组，也可以根據<strong>功能</strong>進行分组。</p>
+<p><img src="/images/msic/code_group.png" alt=""></p>
+<p>如果可以的話，盡可能一直打開 target Build Settings 中 “Treat Warnings as Errors” 以及一些<a href="http://boredzo.org/blog/archives/2009-11-07/warnings" target="_blank" rel="noopener">額外的警告</a>。如果你需要忽略指定的警告,使用 <a href="http://clang.llvm.org/docs/UsersManual.html#controlling-diagnostics-via-pragmas" target="_blank" rel="noopener">Clang 的編譯特性</a> 。</p>
+<h3 id="其他Objective-C風格指南"><a href="#其他Objective-C風格指南" class="headerlink" title="其他Objective-C風格指南"></a>其他Objective-C風格指南</h3><ul>
+<li><a href="http://google-styleguide.googlecode.com/svn/trunk/objcguide.xml" target="_blank" rel="noopener">Google</a></li>
+<li><a href="https://github.com/github/objective-c-conventions" target="_blank" rel="noopener">GitHub</a></li>
+<li><a href="https://trac.adium.im/wiki/CodingStyle" target="_blank" rel="noopener">Adium</a></li>
+<li><a href="https://gist.github.com/soffes/812796" target="_blank" rel="noopener">Sam Soffes</a></li>
+<li><a href="http://cocoadevcentral.com/articles/000082.php" target="_blank" rel="noopener">CocoaDevCentral</a></li>
+<li><a href="http://lukeredpath.co.uk/blog/my-objective-c-style-guide.html" target="_blank" rel="noopener">Luke Redpath</a></li>
+<li><a href="http://www.cimgf.com/zds-code-style-guide/" target="_blank" rel="noopener">Marcus Zarra</a></li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> iOS </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> iOS </tag>
+            
+            <tag> Programming </tag>
+            
+        </tags>
+        
+    </entry>
+    
   
   
     
@@ -17946,14 +18346,14 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/etcd-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -17964,14 +18364,20 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-client-csr.json</url>
       <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/front-proxy-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -17988,26 +18394,26 @@ lib/spark-examples*.jar \
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
+      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
     </entry>
     
     <entry>
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -18068,12 +18474,6 @@ lib/spark-examples*.jar \
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
-      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
     </entry>
     
   
