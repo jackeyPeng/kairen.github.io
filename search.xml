@@ -4,6 +4,210 @@
   
     
     <entry>
+      <title><![CDATA[了解 Prometheus Federation 功能]]></title>
+      <url>https://kairen.github.io/2018/06/29/devops/prometheus-federation/</url>
+      <content type="html"><![CDATA[<p>Prometheus 在效能上是能夠以單個 Server 支撐百萬個時間序列，當然根據不同規模的改變，Promethes 是能夠進行擴展的，這邊將介紹 Prometheus Federation 來達到此效果。</p>
+<p>Prometheus Federation 允許一台 Prometheus Server 從另一台 Prometheus Server 刮取選定的時間序列資料。Federation 提供 Prometheus 擴展能力，這能夠讓 Prometheus 節點擴展至多個，並且能夠實現高可靠性(High Availability)與切片(Sharding)。對於 Prometheus 的 Federation 有不同的使用方式，一般分為<code>Cross-service federation</code>與<code>Hierarchical federation</code>。</p>
+<a id="more"></a>
+<h2 id="Cross-service-federation"><a href="#Cross-service-federation" class="headerlink" title="Cross-service federation"></a>Cross-service federation</h2><p>這種方式的 Federation 會將一個 Prometheus Server 設定成從另一個 Prometheus Server 中獲取選中的時間序列資料，使得這個 Prometheus 能夠對兩個資料來源進行查詢(Query)與警告(Alert)，比如說有一個 Prometheus A 收集了多個服務叢集排程器曝露的資訊使用資訊(CPU、Memory 等)，而另一個在叢集上的 Promethues B 則只收集應用程式指定的服務 Metrics，這時想讓 Prometheus B 收集 Prometheus A 的資源使用量的話，就可以利用 Federation 來取得。</p>
+<p>又或者假設想要監控 mysqld 與 node 的資訊，但是這兩個在不同叢集中，這時可以採用一個 Master Prometheus + 兩個 Sharding Prometheus，其中 Sharding Prometheus 一個收集 node_exporter 的 Metrics，另一個則收集 mysql_exporter，最後 Master Prometheus 透過 Federation 來匯總兩個 Sharding 的時間序列資料。</p>
+<p><img src="https://i.imgur.com/ism3t0M.png" alt=""></p>
+<h2 id="Hierarchical-federation"><a href="#Hierarchical-federation" class="headerlink" title="Hierarchical federation"></a>Hierarchical federation</h2><p>這種方式能夠讓 Prometheus 擴展到多個資料中心，或者多個節點數量，當建立一個 Federation 叢集時，其拓樸結構會類似一個樹狀結構，並且每一層級會有所對應的級別，比如說較高層級的 Prometheus Server 會從大量低層級的 Prometheus Server 中檢索或聚合時間序列資料。</p>
+<p><img src="https://i.imgur.com/dOinJCq.png" alt=""></p>
+<p>這種方式適合當單一的 Prometheus 收集 Metrics 的任務(Job)量過大而無法負荷時，可將任務的實例(Instance)進行水平擴展，讓任務的目標實例拆分到不同 Prometheus 中，再由當前資料中心的主 Prometheus 來收集聚合。</p>
+<h2 id="Federation-部署"><a href="#Federation-部署" class="headerlink" title="Federation 部署"></a>Federation 部署</h2><h3 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h3><p>測試環境將利用當一節點執行多個 Prometheus 來模擬，作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體機器：</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Role</th>
+<th>Port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prometheus-global</td>
+<td>Master</td>
+<td>9090</td>
+</tr>
+<tr>
+<td>Prometheus-node</td>
+<td>Collector</td>
+<td>9091</td>
+</tr>
+<tr>
+<td>Prometheus-docker</td>
+<td>Collector</td>
+<td>9092</td>
+</tr>
+</tbody>
+</table>
+<h3 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h3><p>開始安裝前需要確保以下條件已達成：</p>
+<ul>
+<li>安裝與設定 Dockerd 提供 Metrics：</li>
+</ul>
+<pre><code class="shell=">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+
+# 編輯 /etc/docker/daemon.json 加入下面內容
+$ sudo vim /etc/docker/daemon.json
+{
+ &quot;metrics-addr&quot; : &quot;127.0.0.1:9323&quot;,
+ &quot;experimental&quot; : true
+}
+
+# 完成後重新啟動
+$ sudo systemctl restart docker
+$ curl 127.0.0.1:9323/metrics
+</code></pre>
+<ul>
+<li>透過 Docker 部署 Node Exporter：</li>
+</ul>
+<pre><code class="shell=">$ docker run -d \
+  --net=&quot;host&quot; \
+  --pid=&quot;host&quot; \
+  --name node-exporter \
+  quay.io/prometheus/node-exporter
+
+$ curl 127.0.0.1:9100/metrics
+</code></pre>
+<ul>
+<li>在模擬節點下載 Prometheus 伺服器執行檔：</li>
+</ul>
+<pre><code class="shell=">$ wget https://github.com/prometheus/prometheus/releases/download/v2.3.0/prometheus-2.3.0.linux-amd64.tar.gz
+$ tar xvfz prometheus-*.tar.gz
+$ mv prometheus-2.3.0.linux-amd64 prometheus-2.3.0
+$ cd prometheus-2.3.0
+</code></pre>
+<h3 id="部署-Prometheus-Federation"><a href="#部署-Prometheus-Federation" class="headerlink" title="部署 Prometheus Federation"></a>部署 Prometheus Federation</h3><p>首先新增三個設定檔案，分別給 Global、Docker 與 Node 使用。</p>
+<p>新增一個檔案<code>prometheus-docker.yml</code>，並加入以下內容:</p>
+<pre><code class="yaml=">global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+      server: &#39;docker-monitor&#39;
+scrape_configs:
+  - job_name: &#39;docker&#39;
+    scrape_interval: 5s
+    static_configs:
+      - targets: [&#39;localhost:9323&#39;]
+</code></pre>
+<p>新增一個檔案<code>prometheus-node.yml</code>，並加入以下內容:</p>
+<pre><code class="yaml=">global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+      server: &#39;node-monitor&#39;
+scrape_configs:
+  - job_name: &#39;node&#39;
+    scrape_interval: 5s
+    static_configs:
+      - targets: [&#39;localhost:9100&#39;]
+</code></pre>
+<p>新增一個檔案<code>prometheus-global.yml</code>，並加入以下內容:</p>
+<pre><code class="yaml=">global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+  external_labels:
+      server: &#39;global-monitor&#39;
+scrape_configs:
+  - job_name: &#39;federate&#39;
+    scrape_interval: 15s
+    honor_labels: true
+    metrics_path: &#39;/federate&#39;
+    params:
+      &#39;match[]&#39;:
+        - &#39;{job=~&quot;prometheus.*&quot;}&#39;
+        - &#39;{job=&quot;docker&quot;}&#39;
+        - &#39;{job=&quot;node&quot;}&#39;
+    static_configs:
+      - targets:
+        - &#39;localhost:9091&#39;
+        - &#39;localhost:9092&#39;
+</code></pre>
+<blockquote>
+<ul>
+<li>當設定 Federation 時，將透過 URL 中的 macth[] 參數指定需要獲取的時間序列資料，match[] 必須是一個向量選擇器資訊，如 up 或者 <code>{job=&quot;api-server&quot;}</code> 等。</li>
+<li>設定<code>honor_labels</code>是避免資料衝突。</li>
+</ul>
+</blockquote>
+<p>完成後，開啟三個 Terminal 來啟動 Prometheus Server：</p>
+<pre><code class="shell="># 啟動收集 Docker metrics 的 Prometheus server
+$ ./prometheus --config.file=prometheus-docker.yml \
+     --storage.tsdb.path=./data-docker \
+     --web.listen-address=&quot;0.0.0.0:9092&quot;
+
+# 啟動收集 Node metrics 的 Prometheus server
+$ ./prometheus --config.file=prometheus-node.yml \
+     --storage.tsdb.path=./data-node \
+     --web.listen-address=&quot;0.0.0.0:9091&quot;
+
+# 啟動收集 Global 的 Prometheus server
+$ ./prometheus --config.file=prometheus-global.yml \
+     --storage.tsdb.path=./data-global \
+     --web.listen-address=&quot;0.0.0.0:9090&quot;
+</code></pre>
+<p>正常啟動後分別透過瀏覽器觀察<code>:9090</code>、<code>:9091</code>與<code>:9092</code>會發現 Master 會擁有 Node 與 Docker 的 Metrics，而其他兩者只會有自己所屬 Metrics。</p>
+<blockquote>
+<p>注意，在 Alert 部分還是建議在各自 Sharding 的 Prometheus Server 處理，因為放到 Global 有可能會有接延遲。</p>
+</blockquote>
+<h3 id="部署-Grafana"><a href="#部署-Grafana" class="headerlink" title="部署 Grafana"></a>部署 Grafana</h3><p>在測試節點透過 Docker 部署 Grafana 來提供資料視覺化用：</p>
+<pre><code class="shell=">$ docker run \
+  -d \
+  -p 3000:3000 \
+  --name=grafana \
+  -e &quot;GF_SECURITY_ADMIN_PASSWORD=secret&quot; \
+  grafana/grafana
+</code></pre>
+<p>完成後透過瀏覽器查看<code>:3000</code>，並設定 Grafana 將 Prometheus Global 資料做呈現，請至<code>Configuration</code>的<code>Data Sources</code>進行設定。</p>
+<p><img src="https://i.imgur.com/vqGFTXA.png" alt=""></p>
+<p>接著分別下載以下 Dashbaord JSON 檔案：</p>
+<ul>
+<li><a href="https://grafana.com/api/dashboards/1860/revisions/12/download" target="_blank" rel="noopener">Node Exporter Server Metrics</a></li>
+<li><a href="https://grafana.com/api/dashboards/1229/revisions/3/download" target="_blank" rel="noopener">Docker Metrics</a></li>
+</ul>
+<p>並在 Grafana 點選 Import 選擇上面兩個下載的 JSON 檔案。</p>
+<p><img src="https://i.imgur.com/RdwP0vl.png" alt=""></p>
+<p>Import 後選擇 Prometheus data source：</p>
+<p><img src="https://i.imgur.com/0NprMK4.png" alt=""></p>
+<p>確認沒問題後點選<code>Import</code>，這時候就可以在 Dashboard 看到視覺化的 Metrics 了。</p>
+<p><img src="https://i.imgur.com/AgSahRP.png" alt=""></p>
+<p>Docker Metrics 資訊：</p>
+<p><img src="https://i.imgur.com/Tjpc4Fs.png" alt=""></p>
+<p>更多的 Dashboard 可以至官方 <a href="https://grafana.com/dashboards" target="_blank" rel="noopener">Dashboards</a> 尋找。</p>
+<h2 id="Prometheus-Federation-不適用地方"><a href="#Prometheus-Federation-不適用地方" class="headerlink" title="Prometheus Federation 不適用地方"></a>Prometheus Federation 不適用地方</h2><p>經上述兩者說明，可以知道 Prometheus Federation 大多被用來從另一個 Prometheus 拉取受限或聚合的時間序列資料集，但是不只上述功能，該 Prometheus 本身還是要肩負警報(Alert)與圖形(Graph)資料查詢工作。而什麼狀況是 Prometheus Federation 不適用的？那就是使用在從另一個 Prometheus 拉取大量時間序列(甚至所有時間序列資料)，並且只從該 Prometheus 做警報(Alert)與圖形(Graph)處理。</p>
+<p>這邊列出三個原因：</p>
+<ul>
+<li><p><strong>效能(Performance)與縮放(Scaling)問題</strong>：Prometheus 的限制因素主要是一台機器所能處理的時間序列資料量，然而讓所有資料路由到一個 Global 的 Prometheus Server 將限制這台 Server 所能處理的監控。取而代之，若只拉取聚合的時間序列資料，只限於一個資料中心的 Prometheus 能夠處理，因此請允許新增資料中心來避免擴大 Global Prometheus。而 Federation 請求本身也能夠大量地服務於接收 Prometheus。</p>
+</li>
+<li><p><strong>可靠性(Reliability)</strong>：如果需要進行警報(Alert)的資料從一個 Prometheus 移動到另一個時，那麼這樣就會多出一個額外的故障點。當牽扯到諸如互聯網之類的廣域網路連接時，是特別危險的。在可能的情況下，應該盡量將警報(Alert)推送到 Federation 層級較深的 Prometheus上。</p>
+</li>
+<li><p><strong>正確性(Correctness)</strong>：由於工作原理關析，Federation 會在被刮取(scraped)後的某一段時間拉取資料，並且可能因 Race 問題而遺失一些資料。雖然這問題在 Global Promethesu 能夠被容忍，但是用於處理警報(Alert)與圖表查詢的資料中心 Prometheus 就可能造成問題。</p>
+</li>
+</ul>
+]]></content>
+      
+        <categories>
+            
+            <category> DevOps </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> DevOps </tag>
+            
+            <tag> Monitoring </tag>
+            
+            <tag> CNCF </tag>
+            
+            <tag> Prometheus </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[Kubernetes exec API 串接分析]]></title>
       <url>https://kairen.github.io/2018/06/25/kubernetes/k8x-exec-api/</url>
       <content type="html"><![CDATA[<p>本篇將說明 Kubernetes exec API 的運作方式，並以簡單範例進行開發在前後端上。雖然 Kubernetes 提供了不同資源的 RESTful API 來進行 CRUD 操作，但是部分 API 並非單純的回傳一個資料，有些是需要透過 SPDY 或 WebSocket 建立長連線串流，這種 API 以 exec、attach 為主，目標是對一個 Pod 執行指定指令，或者進入該 Pod 進行互動等等。</p>
@@ -435,6 +639,8 @@ service/prometheus-operated                   ClusterIP   None             &lt;n
             
             <tag> CNCF </tag>
             
+            <tag> Prometheus </tag>
+            
             <tag> Kubernetes </tag>
             
         </tags>
@@ -633,7 +839,7 @@ rule_files:
             
             <tag> CNCF </tag>
             
-            <tag> Kubernetes </tag>
+            <tag> Prometheus </tag>
             
         </tags>
         
@@ -2963,9 +3169,9 @@ nginx     1/1       Running   0          22s
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Calico </tag>
             
@@ -3717,9 +3923,9 @@ tf-gpu-6f9464f94b-pq8t9   1/1       Running   0          5m        10.244.152.13
         
         <tags>
             
-            <tag> NVIDIA GPU </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> NVIDIA GPU </tag>
             
         </tags>
         
@@ -3967,9 +4173,9 @@ Error from server (Forbidden): pods &quot;nginx&quot; is forbidden: User &quot;s
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Kubernetes RBAC </tag>
             
@@ -5664,9 +5870,9 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Calico </tag>
             
@@ -5935,11 +6141,11 @@ $ sudo pip install &#39;oslo.privsep&gt;=1.20.0&#39; &#39;os-vif&gt;=1.5.0&#39;
         
         <tags>
             
+            <tag> Kubernetes </tag>
+            
             <tag> Docker </tag>
             
             <tag> OpenStack </tag>
-            
-            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -6458,9 +6664,9 @@ nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> LinuxKit </tag>
             
@@ -8220,9 +8426,9 @@ $ helm repo add example http://repo-url
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Helm </tag>
             
@@ -8388,9 +8594,9 @@ nginx-proxy-node3                     1/1       Running   1          14m
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Ansible </tag>
             
@@ -8785,9 +8991,9 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Ansible </tag>
             
@@ -8922,9 +9128,9 @@ nginx-service   192.173.165.220   &lt;nodes&gt;       80:30000/TCP   11s
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Ansible </tag>
             
@@ -9431,9 +9637,9 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -10096,9 +10302,9 @@ real path=/
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -13288,9 +13494,9 @@ kube-system   monitoring-influxdb     10.254.135.115   &lt;none&gt;        8083/
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Ansible </tag>
             
@@ -13393,9 +13599,9 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> CoreOS </tag>
             
@@ -15181,9 +15387,9 @@ $ kubectl delete -f nginx-svc.yaml
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
             <tag> Ubuntu </tag>
             
@@ -15329,9 +15535,9 @@ $ curl ${IP}
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -15441,9 +15647,9 @@ $ curl ${IP}
         
         <tags>
             
-            <tag> Docker </tag>
-            
             <tag> Kubernetes </tag>
+            
+            <tag> Docker </tag>
             
         </tags>
         
@@ -16653,11 +16859,11 @@ cqlsh&gt; select * from emp;
         
         <tags>
             
+            <tag> Kubernetes </tag>
+            
             <tag> Linux Container </tag>
             
             <tag> Docker </tag>
-            
-            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -18340,14 +18546,14 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
@@ -18376,12 +18582,6 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
@@ -18390,6 +18590,12 @@ if (isAwesome == YES) // 絕對不要這麼做
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.10/pki/kubelet-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -18406,14 +18612,14 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/apiserver-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kube-apiserver","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -18430,6 +18636,12 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
@@ -18438,12 +18650,6 @@ if (isAwesome == YES) // 絕對不要這麼做
       <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-ca-csr.json</url>
       <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -18460,14 +18666,14 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/kubelet-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:node:$NODE","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","L":"Taipei","ST":"Taipei","O":"system:nodes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>

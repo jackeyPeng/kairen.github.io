@@ -171,14 +171,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -188,15 +180,15 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">12</span></a>
+                    DevOps <span class="right">13</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -205,6 +197,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
                     Kubernetes <span class="right">24</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
@@ -284,6 +284,56 @@
             <div class="article-title">
                 
     
+        <h1 class="indigo-link-context"><a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/">kube-up 腳本部署 Kubernetes 叢集(Deprecated)</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2016-01-16T09:08:54.000Z"><a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/">2016-01-16</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
+        
+            <a href="/tags/Ubuntu/" class="chip pink lighten-1">Ubuntu</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方腳本<code>kube-up.sh</code>來部署 Kubernetes 到 Ubuntu 14.04 系統上。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Kubernetes v1.5.4</li>
+<li>Etcd v2.3.0</li>
+<li>Flannel v0.5.5</li>
+<li>Docker v1.13.1</li>
+</ul>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
         <h1 class="indigo-link-context"><a href="/2016/01/14/kubernetes/deploy/docker-multi/">hyperkube 建立多節點 Kubernetes(Unrecommended)</a></h1>
     
 
@@ -295,9 +345,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
             <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
         
     </div>
 
@@ -342,9 +392,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
             <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
         
     </div>
 
@@ -663,47 +713,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2015/11/21/ceph/cephfs/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2015/11/20/ceph/deploy/ceph-deploy/">使用 ceph-deploy 工具部署 Ceph 叢集</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2015-11-20T09:08:54.000Z"><a href="/2015/11/20/ceph/deploy/ceph-deploy/">2015-11-20</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Ceph/" class="chip pink lighten-1">Ceph</a>
-        
-            <a href="/tags/Storage/" class="chip pink lighten-1">Storage</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-deploy" target="_blank" rel="noopener">ceph-deploy</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台<code>Monitor</code>與三台<code>OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2015/11/20/ceph/deploy/ceph-deploy/">READ MORE</a>
         </ div>
         
     </div>

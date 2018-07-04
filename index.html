@@ -171,14 +171,6 @@
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Spark/">
                     Spark <span class="right">10</span></a>
                 </a>
@@ -188,15 +180,15 @@
 
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">12</span></a>
+                    DevOps <span class="right">13</span></a>
                 </a>
             </li>
 
         
 
             <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
+                <a class="no-padding" href="/categories/Container/">
+                    Container <span class="right">8</span></a>
                 </a>
             </li>
 
@@ -205,6 +197,14 @@
             <li class="collapse-level-0" collapse-level="0">
                 <a class="no-padding" href="/categories/Kubernetes/">
                     Kubernetes <span class="right">24</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/Golang/">
+                    Golang <span class="right">1</span></a>
                 </a>
             </li>
 
@@ -284,6 +284,52 @@
             <div class="article-title">
                 
     
+        <h1 class="indigo-link-context"><a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a></h1>
+    
+
+
+            </div>
+
+            <time class="green-link-context" datetime="2018-06-29T04:23:01.000Z"><a href="/2018/06/29/devops/prometheus-federation/">2018-06-29</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
+        
+            <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
+        
+            <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
+        
+            <a href="/tags/Prometheus/" class="chip pink lighten-1">Prometheus</a>
+        
+    </div>
+
+
+
+            
+                <div class="entry green-link-context">
+                    <p>Prometheus 在效能上是能夠以單個 Server 支撐百萬個時間序列，當然根據不同規模的改變，Promethes 是能夠進行擴展的，這邊將介紹 Prometheus Federation 來達到此效果。</p>
+<p>Prometheus Federation 允許一台 Prometheus Server 從另一台 Prometheus Server 刮取選定的時間序列資料。Federation 提供 Prometheus 擴展能力，這能夠讓 Prometheus 節點擴展至多個，並且能夠實現高可靠性(High Availability)與切片(Sharding)。對於 Prometheus 的 Federation 有不同的使用方式，一般分為<code>Cross-service federation</code>與<code>Hierarchical federation</code>。</p>
+                </div>
+            
+        </div>
+
+        
+        <div class="card-action green-link-context">
+            <a href="/2018/06/29/devops/prometheus-federation/">READ MORE</a>
+        </ div>
+        
+    </div>
+</article>
+
+    
+        <article class="simple-article">
+    <div class="card">
+        <div class="card-content">
+            <div class="article-title">
+                
+    
         <h1 class="indigo-link-context"><a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a></h1>
     
 
@@ -340,6 +386,8 @@
         
             <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
         
+            <a href="/tags/Prometheus/" class="chip pink lighten-1">Prometheus</a>
+        
             <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
         
     </div>
@@ -386,7 +434,7 @@
         
             <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
         
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+            <a href="/tags/Prometheus/" class="chip pink lighten-1">Prometheus</a>
         
     </div>
 
@@ -599,9 +647,9 @@
             
     <div class="tags-row">
         
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
             <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        
+            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
         
             <a href="/tags/Calico/" class="chip pink lighten-1">Calico</a>
         
@@ -668,52 +716,6 @@
         
         <div class="card-action green-link-context">
             <a href="/2018/03/21/kubernetes/k8s-federation/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/03/15/tensorflow/kubeflow/">利用 Kubeflow 來管理 TensorFlow 應用程式</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-03-15T09:08:54.000Z"><a href="/2018/03/15/tensorflow/kubeflow/">2018-03-15</a></time>
-
-            
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/TensorFlow/" class="chip pink lighten-1">TensorFlow</a>
-        
-            <a href="/tags/GPU/" class="chip pink lighten-1">GPU</a>
-        
-            <a href="/tags/DL-ML/" class="chip pink lighten-1">DL/ML</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://github.com/kubeflow/kubeflow" target="_blank" rel="noopener">Kubeflow</a> 是 Google 開源的機器學習工具，目標是簡化在 Kubernetes 上運行機器學習的過程，使之更簡單、可攜帶與可擴展。Kubeflow 目標不是在於重建其他服務，而是提供一個最佳開發系統來部署到各種基礎設施架構中，另外由於使用 Kubernetes 來做為基礎，因此只要有 Kubernetes 的地方，都能夠執行 Kubeflow。</p>
-<center><img src="/images/kubeflow/logo.png" alt=""></center>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2018/03/15/tensorflow/kubeflow/">READ MORE</a>
         </ div>
         
     </div>
