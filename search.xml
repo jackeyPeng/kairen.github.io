@@ -3169,9 +3169,9 @@ nginx     1/1       Running   0          22s
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Calico </tag>
             
@@ -3923,9 +3923,9 @@ tf-gpu-6f9464f94b-pq8t9   1/1       Running   0          5m        10.244.152.13
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> NVIDIA GPU </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -4173,9 +4173,9 @@ Error from server (Forbidden): pods &quot;nginx&quot; is forbidden: User &quot;s
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Kubernetes RBAC </tag>
             
@@ -5870,9 +5870,9 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Calico </tag>
             
@@ -6141,11 +6141,11 @@ $ sudo pip install &#39;oslo.privsep&gt;=1.20.0&#39; &#39;os-vif&gt;=1.5.0&#39;
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
             
             <tag> OpenStack </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -6664,9 +6664,9 @@ nginx        10.108.41.230   &lt;nodes&gt;       80:31773/TCP   5s
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> LinuxKit </tag>
             
@@ -8426,9 +8426,9 @@ $ helm repo add example http://repo-url
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Helm </tag>
             
@@ -8594,9 +8594,9 @@ nginx-proxy-node3                     1/1       Running   1          14m
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Ansible </tag>
             
@@ -8991,9 +8991,9 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Ansible </tag>
             
@@ -9128,9 +9128,9 @@ nginx-service   192.173.165.220   &lt;nodes&gt;       80:30000/TCP   11s
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Ansible </tag>
             
@@ -9637,9 +9637,9 @@ nginx-158599303-k7cbt   1/1       Running   0          1m        10.244.24.3    
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -10302,9 +10302,9 @@ real path=/
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -13494,9 +13494,9 @@ kube-system   monitoring-influxdb     10.254.135.115   &lt;none&gt;        8083/
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Ansible </tag>
             
@@ -13599,9 +13599,9 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> CoreOS </tag>
             
@@ -15387,9 +15387,9 @@ $ kubectl delete -f nginx-svc.yaml
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
             <tag> Ubuntu </tag>
             
@@ -15535,9 +15535,9 @@ $ curl ${IP}
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -15647,9 +15647,9 @@ $ curl ${IP}
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -16859,11 +16859,11 @@ cqlsh&gt; select * from emp;
         
         <tags>
             
-            <tag> Kubernetes </tag>
-            
             <tag> Linux Container </tag>
             
             <tag> Docker </tag>
+            
+            <tag> Kubernetes </tag>
             
         </tags>
         
@@ -18546,14 +18546,14 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
+      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-config.json</url>
-      <content type="html"><![CDATA[{"signing":{"default":{"expiry":"87600h"},"profiles":{"kubernetes":{"usages":["signing","key encipherment","server auth","client auth"],"expiry":"87600h"}}}}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.10/pki/ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"kubernetes","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"Kubernetes","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
@@ -18606,12 +18606,6 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
-      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/admin-csr.json</url>
       <content type="html"><![CDATA[{"CN":"admin","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:masters","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
@@ -18636,14 +18630,14 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-ca-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"etcd","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/etcd-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"etcd","hosts":["127.0.0.1","172.16.35.12"],"key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"etcd","OU":"Etcd Security"}]}]]></content>
     </entry>
     
     <entry>
@@ -18654,20 +18648,14 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
-    </entry>
-    
-    <entry>
-      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/kube-proxy-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-proxy","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-proxy","OU":"Kubernetes-manual"}]}]]></content>
     </entry>
     
     <entry>
       <title></title>
-      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
-      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/front-proxy-client-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"front-proxy-client","key":{"algo":"rsa","size":2048}}]]></content>
     </entry>
     
     <entry>
@@ -18678,8 +18666,20 @@ if (isAwesome == YES) // 絕對不要這麼做
     
     <entry>
       <title></title>
+      <url>https://kairen.github.io/files/manual-v1.8/pki/manager-csr.json</url>
+      <content type="html"><![CDATA[{"CN":"system:kube-controller-manager","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-controller-manager","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
       <url>https://kairen.github.io/files/manual-v1.8/pki/scheduler-csr.json</url>
       <content type="html"><![CDATA[{"CN":"system:kube-scheduler","key":{"algo":"rsa","size":2048},"names":[{"C":"TW","ST":"Taipei","L":"Taipei","O":"system:kube-scheduler","OU":"Kubernetes-manual"}]}]]></content>
+    </entry>
+    
+    <entry>
+      <title></title>
+      <url>https://kairen.github.io/files/openstack/keystone/webhook-policy.json</url>
+      <content type="html"><![CDATA[[{"resource":{"verbs":["get","list","watch"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-viewer","k8s-editor"]}]},{"resource":{"verbs":["create","update","delete"],"resources":["pods"],"version":"*","namespace":"default"},"match":[{"type":"role","values":["k8s-admin","k8s-editor"]},{"type":"project","values":["PROJECT_ID"]}]}]]]></content>
     </entry>
     
   

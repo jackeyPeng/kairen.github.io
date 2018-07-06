@@ -258,9 +258,9 @@
       <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
     
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
       <category term="Calico" scheme="https://kairen.github.io/tags/Calico/"/>
     
@@ -338,9 +338,9 @@
       <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
     
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="NVIDIA GPU" scheme="https://kairen.github.io/tags/NVIDIA-GPU/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
   </entry>
   
@@ -412,9 +412,9 @@
       <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
     
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
       <category term="Kubernetes RBAC" scheme="https://kairen.github.io/tags/Kubernetes-RBAC/"/>
     
@@ -497,9 +497,9 @@
       <category term="Kubernetes" scheme="https://kairen.github.io/categories/Kubernetes/"/>
     
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
       <category term="Calico" scheme="https://kairen.github.io/tags/Calico/"/>
     
@@ -524,11 +524,11 @@
       <category term="OpenStack" scheme="https://kairen.github.io/categories/OpenStack/"/>
     
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="Docker" scheme="https://kairen.github.io/tags/Docker/"/>
     
       <category term="OpenStack" scheme="https://kairen.github.io/tags/OpenStack/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
   </entry>
   
