@@ -125,3 +125,12 @@
 .icon-vote:before {
   content: "\e950";
 }
+.icon-email:before {
+  content: "\ea86";
+}
+.icon-facebook:before {
+  content: "\ea91";
+}
+.icon-linkedin:before {
+  content: "\eac9";
+}
