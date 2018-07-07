@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>KaiRen&#39;s Blog</title>
-  <icon>https://www.gravatar.com/avatar/9156bf89edf2ea0f74c01bae4a478fff</icon>
+  <icon>https://www.gravatar.com/avatar/5a84ea9a0afaca03be45b87dde58e51c</icon>
   <subtitle>KaiRen&#39;s Blog</subtitle>
   <link href="/atom.xml" rel="self"/>
   
@@ -11,7 +11,7 @@
   
   <author>
     <name>Kyle Bai</name>
-    <email>kyle.b@inwinstack.com</email>
+    <email>k2r2.bai@gmail.com</email>
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
