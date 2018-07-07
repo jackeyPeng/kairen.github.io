@@ -1,774 +1,1506 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8" />
 
     
 
-    <title>Kubernetes | KaiRen&#39;s Blog</title>
-    <meta name="author" content="Kyle Bai">
-    
-    <meta name="description" content="Note my learning.">
-    
-    
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-    
-    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
-
-    
-    <meta property="og:image" content="undefined"/>
     
 
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
-    <link rel="stylesheet" href="/css/lib/materialize.min.css">
-    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+    <title>Tag: Kubernetes | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai" />
+    <meta name="version" content="1.0.0" />
+    <meta name="keywords" content="undefined" />
+    <meta name="description" content="Note my learning." />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta name="baidu-site-verification" content="F0CXvmUgA9" />
 
     
-        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
     
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="icon" href="/images/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
-
 <body>
-    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
 
-    <nav class="black">
-    <div class="nav-wrapper">
-        <a href="#" data-activates="main-menu" class="button-collapse">
-            <i class="fa fa-navicon"></i>
-        </a>
-        <div class="">
-            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
-            <ul class="right hide-on-med-and-down">
-                
-                    <li>
-                        <a class="menu-home " href="/" >
-                            <i class="fa fa-home "></i>
-                            
-                            Home
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-archive " href="/archives" >
-                            <i class="fa fa-archive "></i>
-                            
-                            Archives
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
-                            <i class="fa fa-bookmark "></i>
-                            
-                            Categories
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-about " href="/about" >
-                            <i class="fa fa-user "></i>
-                            
-                            About
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-search modal-trigger " href="#search" >
-                            <i class="fa fa-search "></i>
-                            
-                            Search
-                        </a>
-                    </li>
-                
-            </ul>
-            <div>
-    <ul class="side-nav indigo darken-1" id="main-menu">
+    <div class="app">
+        <header class="header clearfix">
+    <div id="nav" class="nav">
+    <button id="open-panel" class="open-panel"><i class="icon-library"></i></button>
+
+    <nav class="nav-inner">
+
         
-        <li class="side-user">
-            <div class="row">
-                <div class="col s4 no-padding">
-                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
-                </div>
-                <div class="info col s8 valign-wrapper no-padding">
-                    <div class="valign">
-                        <p class="name">Kyle Bai</p>
-                        <p class="desc">悲慘研替攻陳屍中....</p>
-                    </div>
-                </div>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/categories">Category</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/archives">Archive</a>
+        </li>
+        
+        
+        
+        <li class="nav-item nav-item-tag">
+            <a id="nav-tag" class="nav-link" href="#">Tag</a>
+            <div id="nav-tags" class="nav-tag-wrap">
+                <i class="nav-tag-arrow"></i>
+                
+  <div class="widget-wrap">
+    <h3 class="widget-title">
+        <i class="icon-tag vm"></i>
+        <span class="vm">Tags</span>
+    </h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWS/">AWS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/">Ansible</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Automation-Engine/">Automation Engine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-Metal/">Bare Metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-metal/">Bare-metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blockchain/">Blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlueStore/">BlueStore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNCF/">CNCF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calico/">Calico</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ceph/">Ceph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Concurrent/">Concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Container/">Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoreOS/">CoreOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DC-OS/">DC/OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL-ML/">DL/ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Collect/">Data Collect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevOps/">DevOps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevStack/">DevStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Distribution-System/">Distribution System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-Swarm/">Docker Swarm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-registry/">Docker registry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ethereum/">Ethereum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Federation/">Federation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/File-System/">File System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go-lang/">Go lang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP-Server/">HTTP Server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Helm/">Helm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Availability/">High Availability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Keystone/">Keystone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kops/">Kops</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/">Kubernetes</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes-RBAC/">Kubernetes RBAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDAP/">LDAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux-Container/">Linux Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinuxKit/">LinuxKit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Load-Balancer/">Load Balancer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logging/">Logging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mesos/">Mesos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Message-Queue/">Message Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microkernel/">Microkernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Moby/">Moby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monitoring/">Monitoring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA-GPU/">NVIDIA GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOP/">OOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS-X/">OS X</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openstack/">Openstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PXE/">PXE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming/">Programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prometheus/">Prometheus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Puppet/">Puppet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPDK/">SPDK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSD/">SSD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Smart-Contract/">Smart Contract</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Solidity/">Solidity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TensorFlow/">TensorFlow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vagrant/">Vagrant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Visualization/">Visualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+    </div>
+  </div>
+
+
             </div>
         </li>
         
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/atom.xml">Feed</a>
+        </li>
+        
+        
+        
+
+    </nav>
+</div>
+
+    <aside id="aside" class="aside">
+    <div id="aside-mask" class="aside-mask"></div>
+    <div id="aside-inner" class="aside-inner">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"><i class="icon-search-stroke"></i></button><input type="hidden" name="sitesearch" value="https://kairen.github.io"></form>
 
         
-            <li class="no-padding">
-                <a class="waves-effect menu-home " href="/" >
-                    <i class="fa fa-home "></i>
-                    
-                    Home
-                </a>
-            </li>
         
-            <li class="no-padding">
-                <a class="waves-effect menu-archive " href="/archives" >
-                    <i class="fa fa-archive "></i>
-                    
-                    Archives
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
-                    <i class="fa fa-bookmark "></i>
-                    
-                    Categories
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-about " href="/about" >
-                    <i class="fa fa-user "></i>
-                    
-                    About
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-search modal-trigger " href="#search" >
-                    <i class="fa fa-search "></i>
-                    
-                    Search
-                </a>
-            </li>
-        
-    </ul>
 
-    <ul class="side-nav indigo darken-1" id="category-menu">
-    
-
+        
+        <div class="author-meta">
             
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+            <div class="author-avatar">
+                <a href="/">
+                    <img src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" title="Sanonz">
                 </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">13</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">24</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/iOS/">
-                    iOS <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Programming/">
-                    Programming <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">7</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/TensorFlow/">
-                    TensorFlow <span class="right">4</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Linux/">
-                    Linux <span class="right">12</span></a>
-                </a>
-            </li>
-
-        
-
-    </ul>
-</div>
-
-        </div>
-    </div>
-</nav>
-
-<div id="search" class="modal search-modal">
-    <div class="row">
-        <div class="input-field col s12">
-              <input id="search-input" type="text">
-              <label for="search-input">Search</label>
-        </div>
-
-    </div>
-    <div id="search-result" class="search-result col s12">
-
-    </div>
-</div>
-
-
-    <main>
-        <div class="container main-container">
-    
-
-<nav class="page-nav hide-on-small-only">
-    <div class="nav-wrapper indigo">
-        <span class="breadcrumb">Current page(Tags)</span>
-        
-
-        
-            <a class="breadcrumb" href="/tags/Kubernetes/">Kubernetes</a>
-        
-    </div>
-</nav>
-
-
-
-    <div class="collection mt-0">
-        
-            <a href="/2018/06/25/kubernetes/k8x-exec-api/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-06-25T09:08:54.000Z">2018-06-25</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kubernetes exec API 串接分析
-            </a>
-        
-            <a href="/2018/06/23/devops/prometheus-operator/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-06-23T04:23:01.000Z">2018-06-23</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Prometheus Operator 介紹與安裝
-            </a>
-        
-            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-05-30T09:08:54.000Z">2018-05-30</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                以 Keystone 作為 Kubernetes 使用者認證
-            </a>
-        
-            <a href="/2018/04/21/kubernetes/aws-k8s-federation/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-04-21T09:08:54.000Z">2018-04-21</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                在 AWS 上建立跨地區的 Kubernetes Federation 叢集
-            </a>
-        
-            <a href="/2018/04/18/kubernetes/deploy/kops-aws/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-04-18T09:08:54.000Z">2018-04-18</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                使用 Kops 部署 Kubernetes 至公有雲(AWS)
-            </a>
-        
-            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-04-15T09:08:54.000Z">2018-04-15</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                整合 OpenLDAP 進行 Kubernetes 身份認證
-            </a>
-        
-            <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-04-05T09:08:54.000Z">2018-04-05</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)
-            </a>
-        
-            <a href="/2018/03/21/kubernetes/k8s-federation/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-03-21T09:08:54.000Z">2018-03-21</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                使用 kubefed 建立 Kubernetes Federation(On-premises)
-            </a>
-        
-            <a href="/2018/03/15/tensorflow/kubeflow/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-03-15T09:08:54.000Z">2018-03-15</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                利用 Kubeflow 來管理 TensorFlow 應用程式
-            </a>
-        
-            <a href="/2018/03/01/kubernetes/nvidia-device-plugin/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-03-01T09:08:54.000Z">2018-03-01</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kubernetes NVIDIA Device Plugins
-            </a>
-        
-            <a href="/2018/01/08/kubernetes/rbac-sa-kubectl/" class="collection-item grey-text text-darken-1">
-                <time datetime="2018-01-08T09:08:54.000Z">2018-01-08</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                利用 RBAC + SA 進行 Kubectl 權限控管
-            </a>
-        
-            <a href="/2017/12/20/openstack/stackube/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-12-20T08:23:01.000Z">2017-12-20</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                多租戶 Kubernetes 部署方案 Stackube
-            </a>
-        
-            <a href="/2017/11/29/openstack/openstack-helm/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-11-29T08:23:01.000Z">2017-11-29</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Deploy OpenStack on Kubernetes using OpenStack-helm
-            </a>
-        
-            <a href="/2017/10/27/kubernetes/deploy/manual-v1.8/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-10-27T09:08:54.000Z">2017-10-27</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)
-            </a>
-        
-            <a href="/2017/08/29/openstack/kuryr-kubernetes/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-08-29T08:23:01.000Z">2017-08-29</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                利用 Kuryr 整合 OpenStack 與 Kubernetes 網路
-            </a>
-        
-            <a href="/2017/07/22/kubernetes/deploy/linuxkit-k8s/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-07-21T16:00:00.000Z">2017-07-22</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                利用 LinuxKit 建立 Kubernetes 叢集
-            </a>
-        
-            <a href="/2017/03/25/kubernetes/helm-quickstart/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-03-25T09:08:54.000Z">2017-03-25</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kuberentes Helm 介紹
-            </a>
-        
-            <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-03-17T09:08:54.000Z">2017-03-17</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kubespray 部署實體機 Kubernetes v1.6 叢集
-            </a>
-        
-            <a href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-02-19T09:08:54.000Z">2017-02-19</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                kube-ansible 快速部署實體機 HA 叢集
-            </a>
-        
-            <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" class="collection-item grey-text text-darken-1">
-                <time datetime="2017-02-17T09:08:54.000Z">2017-02-17</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                kube-ansible 快速部署 HA 測試環境
-            </a>
-        
-            <a href="/2016/12/16/kubernetes/deploy/manual-v1.6/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-12-16T09:08:54.000Z">2016-12-16</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kubernetes v1.6.x 全手動苦工安裝教學
-            </a>
-        
-            <a href="/2016/10/23/kubernetes/deploy/minikube/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-10-23T09:08:54.000Z">2016-10-23</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Minikube 部署 Local 測試環境
-            </a>
-        
-            <a href="/2016/09/29/kubernetes/deploy/kubeadm/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-09-29T09:08:54.000Z">2016-09-29</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                只要用 kubeadm 小朋友都能部署 Kubernetes
-            </a>
-        
-            <a href="/2016/02/24/kubernetes/deploy/official-ansible/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-02-24T09:08:54.000Z">2016-02-24</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                透過官方 Ansible 部署 Kubernetes(Unrecommended)
-            </a>
-        
-            <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-02-23T09:08:54.000Z">2016-02-23</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)
-            </a>
-        
-            <a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-01-16T09:08:54.000Z">2016-01-16</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                kube-up 腳本部署 Kubernetes 叢集(Deprecated)
-            </a>
-        
-            <a href="/2016/01/14/kubernetes/deploy/docker-multi/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-01-14T09:08:54.000Z">2016-01-14</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                hyperkube 建立多節點 Kubernetes(Unrecommended)
-            </a>
-        
-            <a href="/2016/01/13/kubernetes/deploy/docker-singal/" class="collection-item grey-text text-darken-1">
-                <time datetime="2016-01-13T09:08:54.000Z">2016-01-13</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                hyperkube 建立單機 Kubernetes(Unrecommended)
-            </a>
-        
-            <a href="/2015/11/10/kubernetes/k8s-intro/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-11-10T09:08:54.000Z">2015-11-10</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Kuberentes 是什麼？
-            </a>
-        
-    </div>
-
-
-</div>
-
-        <div class="fixed-action-btn float-sitemap">
-    <a class="btn-floating btn-large pink">
-      <i class="fa fa-caret-square-o-up"></i>
-    </a>
-    <ul>
-      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
-      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
-    </ul>
-  </div>
-
-    </main>
-    <footer class="page-footer black darken-1">
-    
-    <div class="container">
-        <div class="row">
+            </div>
             
-            <div class="social-group col m4 s12">
-                <h5 class="white-text">Social</h5>
-                
-                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
-                        <i class="fa fa-2x fa-facebook-official"></i>
-                    </a>
-                
-                    <a class="social-link" href="https://github.com/kairen" target="_blank">
-                        <i class="fa fa-2x fa-github"></i>
-                    </a>
-                
-                    <a class="social-link" href="mailto:k2r2bai@gmail.com" target="_blank">
-                        <i class="fa fa-2x fa-envelope"></i>
-                    </a>
-                
-                    <a class="social-link" href="/atom.xml" target="_blank">
-                        <i class="fa fa-2x fa-rss"></i>
-                    </a>
-                
-                <div class="site-visitors-container white-text">
-                    <span>
-                    </span>
-                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
-                    <span>
-                    </span>
+            <div class="author-name">KaiRen Bai</div>
+            <div class="author-work">Software Developer</div>
+            <div class="author-location">
+                <i class="icon-location vm"></i>
+                <span class="vm">New Taipei, Taiwan</span>
+            </div>
+            
+            <div class="author-thread-wrap">
+                <div class="author-threads clearfix">
+                    
+                    <a class="thread-item" href="https://github.com/kairen" target="_blank" rel="noopener"><i class="icon-github"></i></a>
+                    
+                    
+                    <a class="thread-item" href="https://twitter.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
+                    
+                    
+                    <a class="thread-item" href="https://www.facebook.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-circle-more"></i></a>
+                    
                 </div>
             </div>
             
-
-            
-            <div class="col m8 s12">
-                <h5 class="white-text">Links</h5>
-                
-                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
-                
-                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
-                
-            </div>
-            
         </div>
+        
     </div>
+</aside>
+
+</header>
+
+        <div id="content" class="content">
+    <article class="article" itemscope itemprop="blogPost">
     
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/06/25/kubernetes/k8x-exec-api/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-06-25T09:08:54.000Z" itemprop="datePublished">2018-06-25</time>
+</a>
 
-    <div class="footer-copyright green-link-context">
-        <div class="container">
-            © 2015 KaiRen, All rights reserved.
-            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
-        </div>
-    </div>
-</footer>
-
-
-    <noscript>
-    <div class="noscript">
-        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
-    </div>
-</noscript>
-<div class="noscript">
-    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
 </div>
 
 
-<script src="/js/jquery.min.js"></script>
-<script src="/js/materialize.min.js"></script>
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
-</script>
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇將說明 Kubernetes exec API 的運作方式，並以簡單範例進行開發在前後端上。雖然 Kubernetes 提供了不同資源的 RESTful API 來進行 CRUD 操作，但是部分 API 並非單純的回傳一個資料，有些是需要透過 SPDY 或 WebSocket 建立長連線串流，這種 API 以 exec、attach 為主，目標是對一個 Pod 執行指定指令，或者進入該 Pod 進行互動等等。</p>
+        
+        <p class="article-more-link">
+            <a href="/2018/06/25/kubernetes/k8x-exec-api/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
 
-<script>
-    (function($) {
-        $(document).ready(function() {
-            // 隐藏禁用javascript（针对微信内置浏览器）的提示
-            $('.noscript').hide();
 
-            // 图片缩放效果
-            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
-
-            // 给图片加上点击放大效果（materialbox插件）
-            $imgs.addClass('materialboxed').each(function(i, el) {
-                $(this).attr('data-caption', $(this).attr('alt') || ' ');
-            }).materialbox();
-
-            // 优化表格的显示
-            $('table').each(function() {
-                var $table = $(this);
-                // 除去多行代码的情况
-                if ($table.find('pre').length == 0) {
-                    $table.addClass('responsive-table striped bordered');
-                }
-            });
-
-            // 首页幻灯片
-            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
-
-            $(".button-collapse").sideNav();
-            $(".category-menu").sideNav();
-
-            // 针对gallery post
-            $('.carousel').carousel({full_width: true});
-            $('.carousel-control.prev').click(function() {
-                $('.carousel').carousel('prev');
-            });
-            $('.carousel-control.next').click(function() {
-                $('.carousel').carousel('next');
-            });
-
-            // 文章目录
-            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
-
-            // 目录随屏幕滚动（防止目录过长越过footer）
-            var $toc = $('.toc');
-            var scrollTargetTop = 0;
-            $(window).scroll(function() {
-                var $activeLink = $toc.find('a.active.section');
-                if ($(window).scrollTop() < 100) {
-                    scrollTargetTop = 0;
-                } else {
-                    if ($activeLink[0]) {
-                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
-                    }
-                }
-                $toc.css('top', '-' + scrollTargetTop + 'px');
-            });
-
-            // 修正文章目录的left-border颜色
-            var color = $('.table-of-contents-text').css('color');
-            $('.table-of-contents-link').css('border-left-color', color);
-
-            // 针对移动端做的优化：FAB按钮点击一下收回
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                $('.fixed-action-btn').addClass('click-to-toggle');
-            }
-            // 回到顶部
-            $('.btn-return-top').click(function() {
-                $('body, html').animate({
-                    scrollTop: 0
-                }, 500);
-            });
-
-            // 重置读书页面的Tab标签页的颜色
-            $('li.tab a').hover(function() {
-                $(this).toggleClass('text-lighten-4');
-            });
-            $('.indicator').addClass('pink lighten-2');
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/06/23/devops/prometheus-operator/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-06-23T04:23:01.000Z" itemprop="datePublished">2018-06-23</time>
+</a>
 
             
-            // 添加new标签
-            $('.menu-home').append('<span class="new badge pink"></span>');
-            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
+</div>
 
-            // 搜索功能
-            $('.modal-trigger').leanModal({
-                // 打开搜索框时自动聚焦
-                ready: function() {
-                    if ($('#search').is(":visible")) {
-                        $('#search-input').focus();
-                    }
-                }
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：</p>
+<p><img src="https://coreos.com/sites/default/files/inline-images/p1.png" alt=""></p>
+        
+        <p class="article-more-link">
+            <a href="/2018/06/23/devops/prometheus-operator/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/">以 Keystone 作為 Kubernetes 使用者認證</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/05/30/kubernetes/k8s-integration-keystone/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-05-30T09:08:54.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Keystone/">Keystone</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本文章將說明如何整合 Keystone 來提供給 Kubernetes 進行使用者認證。但由於 Keystone 整合 Kubernetes 認證在 1.10.x 版本已從原生移除(<code>--experimental-keystone-url</code>, <code>--experimental-keystone-ca-file</code>)，並轉而使用 <a href="https://github.com/kubernetes/cloud-provider-openstack" target="_blank" rel="noopener">cloud-provider-openstack</a> 中的 Webhook 來達成，而篇將說明如何建置與設定以整合該 Webhook。</p>
+        
+        <p class="article-more-link">
+            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/21/kubernetes/aws-k8s-federation/">在 AWS 上建立跨地區的 Kubernetes Federation 叢集</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/21/kubernetes/aws-k8s-federation/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-21T09:08:54.000Z" itemprop="datePublished">2018-04-21</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/AWS/">AWS</a>, <a class="article-tag-link" href="/tags/Federation/">Federation</a>, <a class="article-tag-link" href="/tags/Kops/">Kops</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇延續先前 On-premises Federation 與 Kops 經驗來嘗試在 AWS 上建立 Federaion 叢集，這邊架構如下圖所示：</p>
+<p><img src="/images/kops-fed/fed-clusters.png" alt=""></p>
+        
+        <p class="article-more-link">
+            <a href="/2018/04/21/kubernetes/aws-k8s-federation/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/18/kubernetes/deploy/kops-aws/">使用 Kops 部署 Kubernetes 至公有雲(AWS)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/18/kubernetes/deploy/kops-aws/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-18T09:08:54.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/AWS/">AWS</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kubernetes/kops" target="_blank" rel="noopener">Kops</a> 是 Kubernetes 官方維護的專案，是一套 Production ready 的 Kubernetes 部署、升級與管理工具，早期用於 AWS 公有雲上建置 Kubernetes 叢集使用，但隨著社群的推進已支援 GCP、vSphere(Alpha)，未來也會有更多公有雲平台慢慢被支援(Maybe)。本篇簡單撰寫使用 Kops 部署一個叢集，過去自己因為公司都是屬於建置 On-premises 的 Kubernetes，因此很少使用 Kops，剛好最近社群分享又再一次接觸的關析，所以就來寫個文章。</p>
+<p>本次安裝的軟體版本：</p>
+<ul>
+<li>Kubernetes v1.9.3</li>
+<li>Kops v1.9.0</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2018/04/18/kubernetes/deploy/kops-aws/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/">整合 OpenLDAP 進行 Kubernetes 身份認證</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/15/kubernetes/k8s-integration-ldap/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-15T09:08:54.000Z" itemprop="datePublished">2018-04-15</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/LDAP/">LDAP</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本文將說明如何整合 OpenLDAP 來提供給 Kubernetes 進行使用者認證。Kubernetes 官方並沒有提供針對 LDAP 與 AD 的整合，但是可以藉由 <a href="https://kubernetes.io/docs/admin/authentication/#webhook-token-authentication" target="_blank" rel="noopener">Webhook Token Authentication</a> 以及 <a href="https://kubernetes.io/docs/admin/authentication/#authenticating-proxy" target="_blank" rel="noopener">Authenticating Proxy</a> 來達到整合功能。概念是開發一個 HTTP Server 提供 POST Method 來塞入 Bearer Token，而該 HTTP Server 利用 LDAP library 檢索對應 Token 的 User 進行認證，成功後回傳該 User 的所有 Group 等資訊，而這時可以利用 Kubernetes 針對該 User 的 Group 設定對應的 RBAC role 進行權限控管。</p>
+        
+        <p class="article-more-link">
+            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/05/kubernetes/deploy/manual-v1.10/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-05T09:08:54.000Z" itemprop="datePublished">2018-04-05</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Calico/">Calico</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇延續過往<code>手動安裝方式</code>來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a> 來選擇自己最喜歡的方式。</p>
+<p>本次安裝的軟體版本：</p>
+<ul>
+<li>Kubernetes v1.10.0</li>
+<li>CNI v0.6.0</li>
+<li>Etcd v3.1.13</li>
+<li>Calico v3.0.4</li>
+<li>Docker CE latest version</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/03/21/kubernetes/k8s-federation/">使用 kubefed 建立 Kubernetes Federation(On-premises)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/03/21/kubernetes/k8s-federation/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-03-21T09:08:54.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Federation/">Federation</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/" target="_blank" rel="noopener">Kubernetes Federation(聯邦)</a> 是實現跨地區與跨服務商多個 Kubernetes 叢集的管理機制。Kubernetes Federation 的架構非常類似純 Kubenretes 叢集，Federation 會擁有自己的 API Server 與 Controller Manager 來提供一個標準的 Kubernetes API，以及管理聯邦叢集，並利用 Etcd 來儲存所有狀態，不過差異在於 Kubenretes 只管理多個節點，而 Federation 是管理所有被註冊的 Kubernetes 叢集。</p>
+        
+        <p class="article-more-link">
+            <a href="/2018/03/21/kubernetes/k8s-federation/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/03/15/tensorflow/kubeflow/">利用 Kubeflow 來管理 TensorFlow 應用程式</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/03/15/tensorflow/kubeflow/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-03-15T09:08:54.000Z" itemprop="datePublished">2018-03-15</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/DL-ML/">DL/ML</a>, <a class="article-tag-link" href="/tags/GPU/">GPU</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/TensorFlow/">TensorFlow</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kubeflow/kubeflow" target="_blank" rel="noopener">Kubeflow</a> 是 Google 開源的機器學習工具，目標是簡化在 Kubernetes 上運行機器學習的過程，使之更簡單、可攜帶與可擴展。Kubeflow 目標不是在於重建其他服務，而是提供一個最佳開發系統來部署到各種基礎設施架構中，另外由於使用 Kubernetes 來做為基礎，因此只要有 Kubernetes 的地方，都能夠執行 Kubeflow。</p>
+<center><img src="/images/kubeflow/logo.png" alt=""></center>
+        
+        <p class="article-more-link">
+            <a href="/2018/03/15/tensorflow/kubeflow/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/03/01/kubernetes/nvidia-device-plugin/">Kubernetes NVIDIA Device Plugins</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/03/01/kubernetes/nvidia-device-plugin/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-03-01T09:08:54.000Z" itemprop="datePublished">2018-03-01</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/NVIDIA-GPU/">NVIDIA GPU</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://kubernetes.io/docs/concepts/cluster-administration/device-plugins/" target="_blank" rel="noopener">Device Plugins</a> 是 Kubernetes v1.8 版本開始加入的 Alpha 功能，目標是結合 Extended Resource 來支援 GPU、FPGA、高效能 NIC、InfiniBand 等硬體設備介接的插件，這樣好處在於硬體供應商不需要修改 Kubernetes 核心程式，只需要依據 <a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">Device Plugins 介面</a>來實作特定硬體設備插件，就能夠提供給 Kubernetes Pod 使用。而本篇會稍微提及 Device Plugin 原理，並說明如何使用 NVIDIA device plugin。</p>
+<p>P.S. 傳統的<code>alpha.kubernetes.io/nvidia-gpu</code>將於 1.11 版本移除，因此與 GPU 相關的排程與部署原始碼都將從 Kubernetes 核心移除。<br>
+        
+        <p class="article-more-link">
+            <a href="/2018/03/01/kubernetes/nvidia-device-plugin/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/01/08/kubernetes/rbac-sa-kubectl/">利用 RBAC + SA 進行 Kubectl 權限控管</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/01/08/kubernetes/rbac-sa-kubectl/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-01-08T09:08:54.000Z" itemprop="datePublished">2018-01-08</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Kubernetes-RBAC/">Kubernetes RBAC</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>這邊說明如何建立不同 Service account user，以及 RBAC 來定義存取規則，並綁定於指定 Service account ，以對指定 Namespace 中資源進行存取權限控制。</p>
+        
+        <p class="article-more-link">
+            <a href="/2018/01/08/kubernetes/rbac-sa-kubectl/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/12/20/openstack/stackube/">多租戶 Kubernetes 部署方案 Stackube</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/12/20/openstack/stackube/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-12-20T08:23:01.000Z" itemprop="datePublished">2017-12-20</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Openstack/">Openstack</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/openstack/stackube" target="_blank" rel="noopener">Stackube</a>是一個 Kubernetes-centric 的 OpenStack 發行版本(架構如下圖所示)，該專案結合 Kubernetes 與 OpenStack 的技術來達到真正的 Kubernetes 租戶隔離，如租戶實例採用 Frakti 來進行隔離、網路採用 Neutron OVS 達到每個 Namespace 擁有獨立的網路資源等。本篇會簡單介紹如何用 DevStack 建立測試用 Stackube。</p>
+        
+        <p class="article-more-link">
+            <a href="/2017/12/20/openstack/stackube/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/11/29/openstack/openstack-helm/">Deploy OpenStack on Kubernetes using OpenStack-helm</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/11/29/openstack/openstack-helm/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-11-29T08:23:01.000Z" itemprop="datePublished">2017-11-29</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Helm/">Helm</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Openstack/">Openstack</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">OpenStack Helm</a> 是一個提供部署建置的專案，其目的是為了推動 OpenStack 生產環境的解決方案，而這種部署方式採用容器化方式，並執行於 Kubernetes 系統上來提供 OpenStack 服務的管理與排程等使用。</p>
+<p><img src="https://i.imgur.com/8sMjowM.png" alt=""></p>
+        
+        <p class="article-more-link">
+            <a href="/2017/11/29/openstack/openstack-helm/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/10/27/kubernetes/deploy/manual-v1.8/">Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/10/27/kubernetes/deploy/manual-v1.8/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-10-27T09:08:54.000Z" itemprop="datePublished">2017-10-27</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Calico/">Calico</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署 Kubernetes v1.8.x 版本，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+<p>本次安裝版本為：</p>
+<ul>
+<li>Kubernetes v1.8.6</li>
+<li>CNI v0.6.0</li>
+<li>Etcd v3.2.9</li>
+<li>Calico v2.6.2</li>
+<li>Docker v17.10.0-ce</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2017/10/27/kubernetes/deploy/manual-v1.8/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/08/29/openstack/kuryr-kubernetes/">利用 Kuryr 整合 OpenStack 與 Kubernetes 網路</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/08/29/openstack/kuryr-kubernetes/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-08-29T08:23:01.000Z" itemprop="datePublished">2017-08-29</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/OpenStack/">OpenStack</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/openstack/kuryr-kubernetes" target="_blank" rel="noopener">Kubernetes Kuryr</a> 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運作，並且能夠使用 Neutron 的 L3 與 Security Group 來對網路進行路由，以及阻擋特定來源 Port。</p>
+<p><img src="https://i.imgur.com/2XfP3vb.png" alt=""></p>
+        
+        <p class="article-more-link">
+            <a href="/2017/08/29/openstack/kuryr-kubernetes/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/07/22/kubernetes/deploy/linuxkit-k8s/">利用 LinuxKit 建立 Kubernetes 叢集</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/07/22/kubernetes/deploy/linuxkit-k8s/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-07-21T16:00:00.000Z" itemprop="datePublished">2017-07-22</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/LinuxKit/">LinuxKit</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>LinuxKit 是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，先前有簡單介紹與操作過，可以參考<a href="https://kairen.github.io/2017/04/23/container/linuxkit/">LinuxKit</a>。本篇則將利用 LinuxKit 來建立 Kubernetes 的映像檔，並部署簡單的 Kubernetes 叢集。</p>
+<p><img src="/images/kube/moby+kubernetes.png" alt=""></p>
+        
+        <p class="article-more-link">
+            <a href="/2017/07/22/kubernetes/deploy/linuxkit-k8s/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/03/25/kubernetes/helm-quickstart/">Kuberentes Helm 介紹</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/03/25/kubernetes/helm-quickstart/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-03-25T09:08:54.000Z" itemprop="datePublished">2017-03-25</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Helm/">Helm</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kubernetes/helm" target="_blank" rel="noopener">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：</p>
+<ul>
+<li>查詢與使用熱門的 <a href="https://github.com/kubernetes/charts" target="_blank" rel="noopener">Kubernetes Chart</a> 軟體套件。</li>
+<li>以 Kuberntes Chart 來分享自己的應用程式。</li>
+<li>可利用 Chart 來重複建立應用程式。</li>
+<li>智能地管理 Kubernetes manifest 檔案。</li>
+<li>管理釋出的 Helm 版本。</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2017/03/25/kubernetes/helm-quickstart/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/">Kubespray 部署實體機 Kubernetes v1.6 叢集</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-03-17T09:08:54.000Z" itemprop="datePublished">2017-03-17</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kubernetes-incubator/kubespray" target="_blank" rel="noopener">Kubespray</a> 是 Kubernetes incubator 中的專案，目標是提供 Production Ready Kubernetes 部署方案，該專案基礎是透過 Ansible Playbook 來定義系統與 Kubernetes 叢集部署的任務，目前 Kubespray 有以下幾個特點：</p>
+<ul>
+<li>可以部署在 AWS, GCE, Azure, OpenStack 或者 Baremetal.</li>
+<li>部署 High Available Kubernetes 叢集.</li>
+<li>可組合性(Composable)，可自行選擇 Network Plugin (flannel, calico, canal, weave) 來部署.</li>
+<li>支援多種 Linux distributions(CoreOS, Debian Jessie, Ubuntu 16.04, CentOS/RHEL7).</li>
+</ul>
+<p>本篇將說明如何透過 Kubespray 部署 Kubernetes 至實體機器節點，安裝版本如下所示：</p>
+<ul>
+<li>Kubernetes v1.6.4</li>
+<li>Etcd v3.1.6</li>
+<li>Flannel v0.7.1</li>
+<li>Docker v17.04.0-ce</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/">kube-ansible 快速部署實體機 HA 叢集</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-02-19T09:08:54.000Z" itemprop="datePublished">2017-02-19</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
+<p>本安裝各軟體版本如下：</p>
+<ul>
+<li>Kubernetes v1.8.3</li>
+<li>Etcd v3.2.9</li>
+<li>Docker v1.13.0+</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/">kube-ansible 快速部署 HA 測試環境</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2017/02/17/kubernetes/deploy/kube-ansible-test/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2017-02-17T09:08:54.000Z" itemprop="datePublished">2017-02-17</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
+<p>kube-ansible 提供了以下幾項功能：</p>
+<ul>
+<li>Kubernetes 1.8.0+.</li>
+<li>Ceph on Kubernetes cluster.</li>
+<li>Common addons.</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/12/16/kubernetes/deploy/manual-v1.6/">Kubernetes v1.6.x 全手動苦工安裝教學</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/12/16/kubernetes/deploy/manual-v1.6/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-12-16T09:08:54.000Z" itemprop="datePublished">2016-12-16</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本章將以<code>全手動安裝方式</code>來部署，主要是學習與了解 Kubernetes 建置流程。若想要瞭解更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a>來選擇自己最喜歡的方式。</p>
+<p>本次安裝版本為：</p>
+<ul>
+<li>Kubernetes v1.6.4</li>
+<li>Etcd v3.1.6</li>
+<li>Flannel v0.7.1</li>
+<li>Docker v17.05.0-ce</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/12/16/kubernetes/deploy/manual-v1.6/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/10/23/kubernetes/deploy/minikube/">Minikube 部署 Local 測試環境</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/10/23/kubernetes/deploy/minikube/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-10-23T09:08:54.000Z" itemprop="datePublished">2016-10-23</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kubernetes/minikube" target="_blank" rel="noopener">Minikube</a> 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。</p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Minikube v0.22.3</li>
+<li>Kubernetes v1.7.5</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/10/23/kubernetes/deploy/minikube/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/09/29/kubernetes/deploy/kubeadm/">只要用 kubeadm 小朋友都能部署 Kubernetes</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/09/29/kubernetes/deploy/kubeadm/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-09-29T09:08:54.000Z" itemprop="datePublished">2016-09-29</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/CentOS/">CentOS</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Ubuntu/">Ubuntu</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" target="_blank" rel="noopener">kubeadm</a>是 Kubernetes 官方推出的部署工具，該工具實作類似 Docker swarm 一樣的部署方式，透過初始化 Master 節點來提供給 Node 快速加入，kubeadm 目前屬於測試環境用階段，但隨著時間推移會越來越多功能被支援，這邊可以看 <a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm Roadmap</a> 來更進一步知道功能發展狀態。</p>
+<blockquote>
+<p>若想利用 Ansible 安裝的話，可以參考這邊 <a href="https://github.com/kairen/kubeadm-ansible" target="_blank" rel="noopener">kubeadm-ansible</a>。</p>
+</blockquote>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Kubernetes v1.9.6</li>
+<li>Etcd v3</li>
+<li>Flannel v0.9.1</li>
+<li>Docker v18.02.0-ce</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/09/29/kubernetes/deploy/kubeadm/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/02/24/kubernetes/deploy/official-ansible/">透過官方 Ansible 部署 Kubernetes(Unrecommended)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/02/24/kubernetes/deploy/official-ansible/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-02-24T09:08:54.000Z" itemprop="datePublished">2016-02-24</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
+<center><img src="/images/kube/kube-ansible.png" alt=""></center>
+
+<p>本次安裝版本為：</p>
+<ul>
+<li>Kubernetes v1.5.2</li>
+<li>Etcd v3.1.0</li>
+<li>Flannel v0.5.5</li>
+<li>Docker v1.12.6</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/02/24/kubernetes/deploy/official-ansible/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-02-23T09:08:54.000Z" itemprop="datePublished">2016-02-23</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/CoreOS/">CoreOS</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Vagrant/">Vagrant</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本節將透過 Vagrant 與 CoreOS 來部署單機多節點的 Kubernetes 虛擬叢集，並使用 Kubernetest CLI 工具與 API 進行溝通。</p>
+<p>本次安裝版本為：</p>
+<ul>
+<li>CoreOS alpha.</li>
+<li>Kubernetes v1.5.4.</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/">kube-up 腳本部署 Kubernetes 叢集(Deprecated)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/01/16/kubernetes/deploy/kubeup-deploy/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-01-16T09:08:54.000Z" itemprop="datePublished">2016-01-16</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Ubuntu/">Ubuntu</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方腳本<code>kube-up.sh</code>來部署 Kubernetes 到 Ubuntu 14.04 系統上。其他更多平台的部署可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Creating a Kubernetes Cluster</a>。</p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Kubernetes v1.5.4</li>
+<li>Etcd v2.3.0</li>
+<li>Flannel v0.5.5</li>
+<li>Docker v1.13.1</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/01/14/kubernetes/deploy/docker-multi/">hyperkube 建立多節點 Kubernetes(Unrecommended)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/01/14/kubernetes/deploy/docker-multi/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-01-14T09:08:54.000Z" itemprop="datePublished">2016-01-14</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇將說明如何透過 Docker 來部署一個多節點的 kubernetes 叢集。其架構圖如下所示：</p>
+<p><img src="/images/kube/multinode-docker.png" alt=""></p>
+<p>本環境安裝資訊：</p>
+<ul>
+<li>Kubernetes v1.5.5</li>
+<li>Docker v17.03.0-ce</li>
+</ul>
+        
+        <p class="article-more-link">
+            <a href="/2016/01/14/kubernetes/deploy/docker-multi/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2016/01/13/kubernetes/deploy/docker-singal/">hyperkube 建立單機 Kubernetes(Unrecommended)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2016/01/13/kubernetes/deploy/docker-singal/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2016-01-13T09:08:54.000Z" itemprop="datePublished">2016-01-13</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇將說明如何透過 Docker 來部署一個單機的 kubernetes。其架構圖如下所示：</p>
+<p><img src="/images/kube/singlenode-docker.png" alt=""></p>
+        
+        <p class="article-more-link">
+            <a href="/2016/01/13/kubernetes/deploy/docker-singal/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2015/11/10/kubernetes/k8s-intro/">Kuberentes 是什麼？</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2015/11/10/kubernetes/k8s-intro/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2015-11-10T09:08:54.000Z" itemprop="datePublished">2015-11-10</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Linux-Container/">Linux Container</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Kubernetes 是 Google 的開源專案，主要用於管理跨主機容器化叢集系統。該專案脫胎於 Google 內部叢集管理工具 Borg，早期主要貢獻者更是參與 Borg 專案的人員，大概基本上都認為 Kubernetes 許多概念與架構是來至 Google 十餘年的設計、部署、管理大規模容器的經驗。</p>
+<p>Kubernetes 在 Docker 叢集管理中是很重要的一員，其實作了許多功能，包含應用程式部署、叢集節點擴展、自動容錯機制等，並且能夠統一管理跨主機的管理。其架構如下圖所示。</p>
+<center><img src="/images/kube/kubernets-arch.png" alt=""></center>
+        
+        <p class="article-more-link">
+            <a href="/2015/11/10/kubernetes/k8s-intro/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+
+
+
+</div>
+        <footer class="footer">
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme by <a href="https://github.com/sanonz/hexo-theme-concise" target="_blank">Concise</a>
+</footer>
+
+
+    </div>
+
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            var nodes = {
+                nav: $('#nav'),
+                aside: $('#aside'),
+                navTags: $('#nav-tags')
+            };
+
+            $('#open-panel, #aside-mask').on('click', function() {
+                nodes.aside.toggleClass('panel-show');
             });
-            var searchXml = "search.xml";
-            if (searchXml.length == 0) {
-             	searchXml = "search.xml";
-            }
-            var searchPath = "/" + searchXml;
-            initSearch(searchPath, 'search-input', 'search-result');
+            $('#nav-tag').on('click', function(event) {
+                event.preventDefault();console.log(nodes.navTags.attr('class'))
+                nodes.navTags.toggleClass('tag-show');console.log(nodes.navTags.attr('class'))
+            })/*.hover(function() {
+                nodes.navTags.addClass('tag-show');
+            }, function() {
+                nodes.navTags.removeClass('tag-show');
+            });*/
+
+            
         });
-
-        // 初始化搜索与匹配函数
-        var initSearch = function(path, search_id, content_id) {
-            'use strict';
-            $.ajax({
-                url: path,
-                dataType: "xml",
-                success: function(xmlResponse) {
-                    // get the contents from search data
-                    var datas = $("entry", xmlResponse).map(function() {
-                        return {
-                            title: $("title", this).text(),
-                            content: $("content", this).text(),
-                            url: $("url", this).text()
-                        };
-                    }).get();
-                    var $input = document.getElementById(search_id);
-                    var $resultContent = document.getElementById(content_id);
-                    $input.addEventListener('input', function() {
-                        var str = '<ul class=\"search-result-list\">';
-                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-                        $resultContent.innerHTML = "";
-                        if (this.value.trim().length <= 0) {
-                            return;
-                        }
-                        // perform local searching
-                        datas.forEach(function(data) {
-                            var isMatch = true;
-                            var content_index = [];
-                            var data_title = data.title.trim().toLowerCase();
-                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
-                            var data_url = data.url;
-                            var index_title = -1;
-                            var index_content = -1;
-                            var first_occur = -1;
-                            // only match artiles with not empty titles and contents
-                            if (data_title != '' && data_content != '') {
-                                keywords.forEach(function(keyword, i) {
-                                    index_title = data_title.indexOf(keyword);
-                                    index_content = data_content.indexOf(keyword);
-                                    if (index_title < 0 && index_content < 0) {
-                                        isMatch = false;
-                                    } else {
-                                        if (index_content < 0) {
-                                            index_content = 0;
-                                        }
-                                        if (i == 0) {
-                                            first_occur = index_content;
-                                        }
-                                    }
-                                });
-                            }
-                            // show search results
-                            if (isMatch) {
-                                keywords.forEach(function(keyword) {
-                                    var regS = new RegExp(keyword, "gi");
-                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
-                                });
-
-                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
-                                var content = data.content.trim().replace(/<[^>]+>/g, "");
-                                if (first_occur >= 0) {
-                                    // cut out 100 characters
-                                    var start = first_occur - 20;
-                                    var end = first_occur + 80;
-                                    if (start < 0) {
-                                        start = 0;
-                                    }
-                                    if (start == 0) {
-                                        end = 100;
-                                    }
-                                    if (end > content.length) {
-                                        end = content.length;
-                                    }
-                                    var match_content = content.substring(start, end);
-                                    // highlight all keywords
-                                    keywords.forEach(function(keyword) {
-                                        var regS = new RegExp(keyword, "gi");
-                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
-                                    });
-
-                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
-                                }
-                                str += "</li>";
-                            }
-                        });
-                        str += "</ul>";
-                        $resultContent.innerHTML = str;
-                    });
-                }
-            });
-        }
-    })(jQuery);
-</script>
-
-
-<script src="/js/prettify.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("pre").addClass("prettyprint");
-        prettyPrint();
-    });
-</script>
-
-
-
-
-
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
-</script>
-<script type="text/javascript" async
-  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
+    </script>
 
 </body>
 </html>

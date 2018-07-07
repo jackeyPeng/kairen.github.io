@@ -1,618 +1,303 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8" />
 
     
 
-    <title>PXE | KaiRen&#39;s Blog</title>
-    <meta name="author" content="Kyle Bai">
-    
-    <meta name="description" content="Note my learning.">
-    
-    
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-    
-    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
-
-    
-    <meta property="og:image" content="undefined"/>
     
 
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
-    <link rel="stylesheet" href="/css/lib/materialize.min.css">
-    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+    <title>Tag: PXE | KaiRen&#39;s Blog</title>
+    <meta name="author" content="Kyle Bai" />
+    <meta name="version" content="1.0.0" />
+    <meta name="keywords" content="undefined" />
+    <meta name="description" content="Note my learning." />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta name="baidu-site-verification" content="F0CXvmUgA9" />
 
     
-        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
     
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="icon" href="/images/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
-
 <body>
-    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
 
-    <nav class="black">
-    <div class="nav-wrapper">
-        <a href="#" data-activates="main-menu" class="button-collapse">
-            <i class="fa fa-navicon"></i>
-        </a>
-        <div class="">
-            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
-            <ul class="right hide-on-med-and-down">
-                
-                    <li>
-                        <a class="menu-home " href="/" >
-                            <i class="fa fa-home "></i>
-                            
-                            Home
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-archive " href="/archives" >
-                            <i class="fa fa-archive "></i>
-                            
-                            Archives
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
-                            <i class="fa fa-bookmark "></i>
-                            
-                            Categories
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-about " href="/about" >
-                            <i class="fa fa-user "></i>
-                            
-                            About
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-search modal-trigger " href="#search" >
-                            <i class="fa fa-search "></i>
-                            
-                            Search
-                        </a>
-                    </li>
-                
-            </ul>
-            <div>
-    <ul class="side-nav indigo darken-1" id="main-menu">
+    <div class="app">
+        <header class="header clearfix">
+    <div id="nav" class="nav">
+    <button id="open-panel" class="open-panel"><i class="icon-library"></i></button>
+
+    <nav class="nav-inner">
+
         
-        <li class="side-user">
-            <div class="row">
-                <div class="col s4 no-padding">
-                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
-                </div>
-                <div class="info col s8 valign-wrapper no-padding">
-                    <div class="valign">
-                        <p class="name">Kyle Bai</p>
-                        <p class="desc">悲慘研替攻陳屍中....</p>
-                    </div>
-                </div>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/categories">Category</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/archives">Archive</a>
+        </li>
+        
+        
+        
+        <li class="nav-item nav-item-tag">
+            <a id="nav-tag" class="nav-link" href="#">Tag</a>
+            <div id="nav-tags" class="nav-tag-wrap">
+                <i class="nav-tag-arrow"></i>
+                
+  <div class="widget-wrap">
+    <h3 class="widget-title">
+        <i class="icon-tag vm"></i>
+        <span class="vm">Tags</span>
+    </h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWS/">AWS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/">Ansible</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Automation-Engine/">Automation Engine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-Metal/">Bare Metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-metal/">Bare-metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blockchain/">Blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlueStore/">BlueStore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNCF/">CNCF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calico/">Calico</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ceph/">Ceph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Concurrent/">Concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Container/">Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoreOS/">CoreOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DC-OS/">DC/OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL-ML/">DL/ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Collect/">Data Collect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevOps/">DevOps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevStack/">DevStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Distribution-System/">Distribution System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-Swarm/">Docker Swarm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-registry/">Docker registry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ethereum/">Ethereum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Federation/">Federation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/File-System/">File System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go-lang/">Go lang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP-Server/">HTTP Server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Helm/">Helm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Availability/">High Availability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Keystone/">Keystone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kops/">Kops</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/">Kubernetes</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes-RBAC/">Kubernetes RBAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDAP/">LDAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux-Container/">Linux Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinuxKit/">LinuxKit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Load-Balancer/">Load Balancer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logging/">Logging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mesos/">Mesos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Message-Queue/">Message Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microkernel/">Microkernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Moby/">Moby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monitoring/">Monitoring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA-GPU/">NVIDIA GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOP/">OOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS-X/">OS X</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openstack/">Openstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PXE/">PXE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming/">Programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prometheus/">Prometheus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Puppet/">Puppet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPDK/">SPDK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSD/">SSD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Smart-Contract/">Smart Contract</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Solidity/">Solidity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TensorFlow/">TensorFlow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vagrant/">Vagrant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Visualization/">Visualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+    </div>
+  </div>
+
+
             </div>
         </li>
         
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/atom.xml">Feed</a>
+        </li>
+        
+        
+        
+
+    </nav>
+</div>
+
+    <aside id="aside" class="aside">
+    <div id="aside-mask" class="aside-mask"></div>
+    <div id="aside-inner" class="aside-inner">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"><i class="icon-search-stroke"></i></button><input type="hidden" name="sitesearch" value="https://kairen.github.io"></form>
 
         
-            <li class="no-padding">
-                <a class="waves-effect menu-home " href="/" >
-                    <i class="fa fa-home "></i>
-                    
-                    Home
-                </a>
-            </li>
         
-            <li class="no-padding">
-                <a class="waves-effect menu-archive " href="/archives" >
-                    <i class="fa fa-archive "></i>
-                    
-                    Archives
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
-                    <i class="fa fa-bookmark "></i>
-                    
-                    Categories
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-about " href="/about" >
-                    <i class="fa fa-user "></i>
-                    
-                    About
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-search modal-trigger " href="#search" >
-                    <i class="fa fa-search "></i>
-                    
-                    Search
-                </a>
-            </li>
-        
-    </ul>
 
-    <ul class="side-nav indigo darken-1" id="category-menu">
-    
-
+        
+        <div class="author-meta">
             
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+            <div class="author-avatar">
+                <a href="/">
+                    <img src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" title="Sanonz">
                 </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">13</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">24</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/iOS/">
-                    iOS <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Programming/">
-                    Programming <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">7</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/TensorFlow/">
-                    TensorFlow <span class="right">4</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Linux/">
-                    Linux <span class="right">12</span></a>
-                </a>
-            </li>
-
-        
-
-    </ul>
-</div>
-
-        </div>
-    </div>
-</nav>
-
-<div id="search" class="modal search-modal">
-    <div class="row">
-        <div class="input-field col s12">
-              <input id="search-input" type="text">
-              <label for="search-input">Search</label>
-        </div>
-
-    </div>
-    <div id="search-result" class="search-result col s12">
-
-    </div>
-</div>
-
-
-    <main>
-        <div class="container main-container">
-    
-
-<nav class="page-nav hide-on-small-only">
-    <div class="nav-wrapper indigo">
-        <span class="breadcrumb">Current page(Tags)</span>
-        
-
-        
-            <a class="breadcrumb" href="/tags/PXE/">PXE</a>
-        
-    </div>
-</nav>
-
-
-
-    <div class="collection mt-0">
-        
-            <a href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-12-04T04:23:01.000Z">2015-12-04</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Ubuntu Metal as a Service 安裝
-            </a>
-        
-            <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-10-11T04:23:01.000Z">2015-10-11</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                Ubuntu PXE 安裝與設定
-            </a>
-        
-            <a href="/2015/10/03/linux/centos/centos-pxe/" class="collection-item grey-text text-darken-1">
-                <time datetime="2015-10-03T04:23:01.000Z">2015-10-03</time>
-                <span>&nbsp;&nbsp;&nbsp;</span>
-                CentOS 6.5 PXE 安裝與設定
-            </a>
-        
-    </div>
-
-
-</div>
-
-        <div class="fixed-action-btn float-sitemap">
-    <a class="btn-floating btn-large pink">
-      <i class="fa fa-caret-square-o-up"></i>
-    </a>
-    <ul>
-      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
-      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
-    </ul>
-  </div>
-
-    </main>
-    <footer class="page-footer black darken-1">
-    
-    <div class="container">
-        <div class="row">
+            </div>
             
-            <div class="social-group col m4 s12">
-                <h5 class="white-text">Social</h5>
-                
-                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
-                        <i class="fa fa-2x fa-facebook-official"></i>
-                    </a>
-                
-                    <a class="social-link" href="https://github.com/kairen" target="_blank">
-                        <i class="fa fa-2x fa-github"></i>
-                    </a>
-                
-                    <a class="social-link" href="mailto:k2r2bai@gmail.com" target="_blank">
-                        <i class="fa fa-2x fa-envelope"></i>
-                    </a>
-                
-                    <a class="social-link" href="/atom.xml" target="_blank">
-                        <i class="fa fa-2x fa-rss"></i>
-                    </a>
-                
-                <div class="site-visitors-container white-text">
-                    <span>
-                    </span>
-                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
-                    <span>
-                    </span>
+            <div class="author-name">KaiRen Bai</div>
+            <div class="author-work">Software Developer</div>
+            <div class="author-location">
+                <i class="icon-location vm"></i>
+                <span class="vm">New Taipei, Taiwan</span>
+            </div>
+            
+            <div class="author-thread-wrap">
+                <div class="author-threads clearfix">
+                    
+                    <a class="thread-item" href="https://github.com/kairen" target="_blank" rel="noopener"><i class="icon-github"></i></a>
+                    
+                    
+                    <a class="thread-item" href="https://twitter.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
+                    
+                    
+                    <a class="thread-item" href="https://www.facebook.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-circle-more"></i></a>
+                    
                 </div>
             </div>
             
-
-            
-            <div class="col m8 s12">
-                <h5 class="white-text">Links</h5>
-                
-                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
-                
-                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
-                
-            </div>
-            
         </div>
+        
     </div>
+</aside>
+
+</header>
+
+        <div id="content" class="content">
+    <article class="article" itemscope itemprop="blogPost">
     
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/">Ubuntu Metal as a Service 安裝</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2015-12-04T04:23:01.000Z" itemprop="datePublished">2015-12-04</time>
+</a>
 
-    <div class="footer-copyright green-link-context">
-        <div class="container">
-            © 2015 KaiRen, All rights reserved.
-            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
-        </div>
-    </div>
-</footer>
-
-
-    <noscript>
-    <div class="noscript">
-        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
-    </div>
-</noscript>
-<div class="noscript">
-    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Bare-Metal/">Bare Metal</a>, <a class="article-tag-link" href="/tags/Linux/">Linux</a>, <a class="article-tag-link" href="/tags/PXE/">PXE</a>
 </div>
 
 
-<script src="/js/jquery.min.js"></script>
-<script src="/js/materialize.min.js"></script>
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
-</script>
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Ubuntu MAAS 提供了裸機服務，將雲端的語言帶到物理伺服器中，其功能可以讓企業一次大量部署伺服器硬體環境的作業系統與基本設定等功能。</p>
+        
+        <p class="article-more-link">
+            <a href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
 
-<script>
-    (function($) {
-        $(document).ready(function() {
-            // 隐藏禁用javascript（针对微信内置浏览器）的提示
-            $('.noscript').hide();
 
-            // 图片缩放效果
-            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
-
-            // 给图片加上点击放大效果（materialbox插件）
-            $imgs.addClass('materialboxed').each(function(i, el) {
-                $(this).attr('data-caption', $(this).attr('alt') || ' ');
-            }).materialbox();
-
-            // 优化表格的显示
-            $('table').each(function() {
-                var $table = $(this);
-                // 除去多行代码的情况
-                if ($table.find('pre').length == 0) {
-                    $table.addClass('responsive-table striped bordered');
-                }
-            });
-
-            // 首页幻灯片
-            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
-
-            $(".button-collapse").sideNav();
-            $(".category-menu").sideNav();
-
-            // 针对gallery post
-            $('.carousel').carousel({full_width: true});
-            $('.carousel-control.prev').click(function() {
-                $('.carousel').carousel('prev');
-            });
-            $('.carousel-control.next').click(function() {
-                $('.carousel').carousel('next');
-            });
-
-            // 文章目录
-            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
-
-            // 目录随屏幕滚动（防止目录过长越过footer）
-            var $toc = $('.toc');
-            var scrollTargetTop = 0;
-            $(window).scroll(function() {
-                var $activeLink = $toc.find('a.active.section');
-                if ($(window).scrollTop() < 100) {
-                    scrollTargetTop = 0;
-                } else {
-                    if ($activeLink[0]) {
-                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
-                    }
-                }
-                $toc.css('top', '-' + scrollTargetTop + 'px');
-            });
-
-            // 修正文章目录的left-border颜色
-            var color = $('.table-of-contents-text').css('color');
-            $('.table-of-contents-link').css('border-left-color', color);
-
-            // 针对移动端做的优化：FAB按钮点击一下收回
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                $('.fixed-action-btn').addClass('click-to-toggle');
-            }
-            // 回到顶部
-            $('.btn-return-top').click(function() {
-                $('body, html').animate({
-                    scrollTop: 0
-                }, 500);
-            });
-
-            // 重置读书页面的Tab标签页的颜色
-            $('li.tab a').hover(function() {
-                $(this).toggleClass('text-lighten-4');
-            });
-            $('.indicator').addClass('pink lighten-2');
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/">Ubuntu PXE 安裝與設定</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2015/10/11/linux/ubuntu/ubuntu-pxe/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2015-10-11T04:23:01.000Z" itemprop="datePublished">2015-10-11</time>
+</a>
 
             
-            // 添加new标签
-            $('.menu-home').append('<span class="new badge pink"></span>');
-            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Bare-Metal/">Bare Metal</a>, <a class="article-tag-link" href="/tags/Linux/">Linux</a>, <a class="article-tag-link" href="/tags/PXE/">PXE</a>
+</div>
 
-            // 搜索功能
-            $('.modal-trigger').leanModal({
-                // 打开搜索框时自动聚焦
-                ready: function() {
-                    if ($('#search').is(":visible")) {
-                        $('#search-input').focus();
-                    }
-                }
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。</p>
+<p><img src="/images/linux/pxe.png" alt="PXE"></p>
+        
+        <p class="article-more-link">
+            <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2015/10/03/linux/centos/centos-pxe/">CentOS 6.5 PXE 安裝與設定</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2015/10/03/linux/centos/centos-pxe/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2015-10-03T04:23:01.000Z" itemprop="datePublished">2015-10-03</time>
+</a>
+
+            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Bare-Metal/">Bare Metal</a>, <a class="article-tag-link" href="/tags/Linux/">Linux</a>, <a class="article-tag-link" href="/tags/PXE/">PXE</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。</p>
+        
+        <p class="article-more-link">
+            <a href="/2015/10/03/linux/centos/centos-pxe/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
+
+
+
+
+
+</div>
+        <footer class="footer">
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme by <a href="https://github.com/sanonz/hexo-theme-concise" target="_blank">Concise</a>
+</footer>
+
+
+    </div>
+
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            var nodes = {
+                nav: $('#nav'),
+                aside: $('#aside'),
+                navTags: $('#nav-tags')
+            };
+
+            $('#open-panel, #aside-mask').on('click', function() {
+                nodes.aside.toggleClass('panel-show');
             });
-            var searchXml = "search.xml";
-            if (searchXml.length == 0) {
-             	searchXml = "search.xml";
-            }
-            var searchPath = "/" + searchXml;
-            initSearch(searchPath, 'search-input', 'search-result');
+            $('#nav-tag').on('click', function(event) {
+                event.preventDefault();console.log(nodes.navTags.attr('class'))
+                nodes.navTags.toggleClass('tag-show');console.log(nodes.navTags.attr('class'))
+            })/*.hover(function() {
+                nodes.navTags.addClass('tag-show');
+            }, function() {
+                nodes.navTags.removeClass('tag-show');
+            });*/
+
+            
         });
-
-        // 初始化搜索与匹配函数
-        var initSearch = function(path, search_id, content_id) {
-            'use strict';
-            $.ajax({
-                url: path,
-                dataType: "xml",
-                success: function(xmlResponse) {
-                    // get the contents from search data
-                    var datas = $("entry", xmlResponse).map(function() {
-                        return {
-                            title: $("title", this).text(),
-                            content: $("content", this).text(),
-                            url: $("url", this).text()
-                        };
-                    }).get();
-                    var $input = document.getElementById(search_id);
-                    var $resultContent = document.getElementById(content_id);
-                    $input.addEventListener('input', function() {
-                        var str = '<ul class=\"search-result-list\">';
-                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-                        $resultContent.innerHTML = "";
-                        if (this.value.trim().length <= 0) {
-                            return;
-                        }
-                        // perform local searching
-                        datas.forEach(function(data) {
-                            var isMatch = true;
-                            var content_index = [];
-                            var data_title = data.title.trim().toLowerCase();
-                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
-                            var data_url = data.url;
-                            var index_title = -1;
-                            var index_content = -1;
-                            var first_occur = -1;
-                            // only match artiles with not empty titles and contents
-                            if (data_title != '' && data_content != '') {
-                                keywords.forEach(function(keyword, i) {
-                                    index_title = data_title.indexOf(keyword);
-                                    index_content = data_content.indexOf(keyword);
-                                    if (index_title < 0 && index_content < 0) {
-                                        isMatch = false;
-                                    } else {
-                                        if (index_content < 0) {
-                                            index_content = 0;
-                                        }
-                                        if (i == 0) {
-                                            first_occur = index_content;
-                                        }
-                                    }
-                                });
-                            }
-                            // show search results
-                            if (isMatch) {
-                                keywords.forEach(function(keyword) {
-                                    var regS = new RegExp(keyword, "gi");
-                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
-                                });
-
-                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
-                                var content = data.content.trim().replace(/<[^>]+>/g, "");
-                                if (first_occur >= 0) {
-                                    // cut out 100 characters
-                                    var start = first_occur - 20;
-                                    var end = first_occur + 80;
-                                    if (start < 0) {
-                                        start = 0;
-                                    }
-                                    if (start == 0) {
-                                        end = 100;
-                                    }
-                                    if (end > content.length) {
-                                        end = content.length;
-                                    }
-                                    var match_content = content.substring(start, end);
-                                    // highlight all keywords
-                                    keywords.forEach(function(keyword) {
-                                        var regS = new RegExp(keyword, "gi");
-                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
-                                    });
-
-                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
-                                }
-                                str += "</li>";
-                            }
-                        });
-                        str += "</ul>";
-                        $resultContent.innerHTML = str;
-                    });
-                }
-            });
-        }
-    })(jQuery);
-</script>
-
-
-<script src="/js/prettify.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("pre").addClass("prettyprint");
-        prettyPrint();
-    });
-</script>
-
-
-
-
-
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
-</script>
-<script type="text/javascript" async
-  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
+    </script>
 
 </body>
 </html>

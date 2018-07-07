@@ -1,665 +1,513 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8" />
+
+    
 
     
 
     <title>KaiRen&#39;s Blog</title>
-    <meta name="author" content="Kyle Bai">
-    
-    <meta name="description" content="Note my learning.">
-    
-    
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Kyle Bai" />
+    <meta name="version" content="1.0.0" />
+    <meta name="keywords" content="undefined" />
+    <meta name="description" content="Note my learning." />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <meta name="baidu-site-verification" content="F0CXvmUgA9" />
 
     
-    <meta property="og:site_name" content="KaiRen&#39;s Blog"/>
-
     
-    <meta property="og:image" content="undefined"/>
+    <link rel="icon" href="/images/favicon.png">
     
 
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="alternate" href="/atom.xml" title="KaiRen&#39;s Blog" type="application/atom+xml">
-    <link rel="stylesheet" href="/css/lib/materialize.min.css">
-    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
-    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
-
-    
-        <link rel="stylesheet" href="/css/lib/tomorrow-night.css" type="text/css">
-    
-    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
-
-
 <body>
-    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
 
-    <nav class="black">
-    <div class="nav-wrapper">
-        <a href="#" data-activates="main-menu" class="button-collapse">
-            <i class="fa fa-navicon"></i>
-        </a>
-        <div class="">
-            <a href="/" class="brand-logo hide-on-med-and-down">KaiRen&#39;s Blog</a>
-            <ul class="right hide-on-med-and-down">
-                
-                    <li>
-                        <a class="menu-home " href="/" >
-                            <i class="fa fa-home "></i>
-                            
-                            Home
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-archive " href="/archives" >
-                            <i class="fa fa-archive "></i>
-                            
-                            Archives
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
-                            <i class="fa fa-bookmark "></i>
-                            
-                            Categories
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-about " href="/about" >
-                            <i class="fa fa-user "></i>
-                            
-                            About
-                        </a>
-                    </li>
-                
-                    <li>
-                        <a class="menu-search modal-trigger " href="#search" >
-                            <i class="fa fa-search "></i>
-                            
-                            Search
-                        </a>
-                    </li>
-                
-            </ul>
-            <div>
-    <ul class="side-nav indigo darken-1" id="main-menu">
+    <div class="app">
+        <header class="header clearfix">
+    <div id="nav" class="nav">
+    <button id="open-panel" class="open-panel"><i class="icon-library"></i></button>
+
+    <nav class="nav-inner">
+
         
-        <li class="side-user">
-            <div class="row">
-                <div class="col s4 no-padding">
-                    <img class="avatar-image circle responsive-img" src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" alt="User Avatar">
-                </div>
-                <div class="info col s8 valign-wrapper no-padding">
-                    <div class="valign">
-                        <p class="name">Kyle Bai</p>
-                        <p class="desc">悲慘研替攻陳屍中....</p>
-                    </div>
-                </div>
+        
+        <li class="nav-item active">
+            <a class="nav-link" href="/">Home</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/categories">Category</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/archives">Archive</a>
+        </li>
+        
+        
+        
+        <li class="nav-item nav-item-tag">
+            <a id="nav-tag" class="nav-link" href="#">Tag</a>
+            <div id="nav-tags" class="nav-tag-wrap">
+                <i class="nav-tag-arrow"></i>
+                
+  <div class="widget-wrap">
+    <h3 class="widget-title">
+        <i class="icon-tag vm"></i>
+        <span class="vm">Tags</span>
+    </h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWS/">AWS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/">Ansible</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Automation-Engine/">Automation Engine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-Metal/">Bare Metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-metal/">Bare-metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blockchain/">Blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlueStore/">BlueStore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNCF/">CNCF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calico/">Calico</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ceph/">Ceph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Concurrent/">Concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Container/">Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoreOS/">CoreOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DC-OS/">DC/OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL-ML/">DL/ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Collect/">Data Collect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevOps/">DevOps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevStack/">DevStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Distribution-System/">Distribution System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-Swarm/">Docker Swarm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-registry/">Docker registry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ethereum/">Ethereum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Federation/">Federation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/File-System/">File System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go-lang/">Go lang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP-Server/">HTTP Server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Helm/">Helm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Availability/">High Availability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Keystone/">Keystone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kops/">Kops</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/">Kubernetes</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes-RBAC/">Kubernetes RBAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDAP/">LDAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux-Container/">Linux Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinuxKit/">LinuxKit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Load-Balancer/">Load Balancer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logging/">Logging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mesos/">Mesos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Message-Queue/">Message Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microkernel/">Microkernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Moby/">Moby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monitoring/">Monitoring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA-GPU/">NVIDIA GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOP/">OOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS-X/">OS X</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openstack/">Openstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PXE/">PXE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming/">Programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prometheus/">Prometheus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Puppet/">Puppet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPDK/">SPDK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSD/">SSD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Smart-Contract/">Smart Contract</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Solidity/">Solidity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TensorFlow/">TensorFlow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vagrant/">Vagrant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Visualization/">Visualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+    </div>
+  </div>
+
+
             </div>
         </li>
         
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/about">About</a>
+        </li>
+        
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" href="/atom.xml">Feed</a>
+        </li>
+        
+        
+        
+
+    </nav>
+</div>
+
+    <aside id="aside" class="aside">
+    <div id="aside-mask" class="aside-mask"></div>
+    <div id="aside-inner" class="aside-inner">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"><i class="icon-search-stroke"></i></button><input type="hidden" name="sitesearch" value="https://kairen.github.io"></form>
 
         
-            <li class="no-padding">
-                <a class="waves-effect menu-home " href="/" >
-                    <i class="fa fa-home "></i>
-                    
-                    Home
-                </a>
-            </li>
         
-            <li class="no-padding">
-                <a class="waves-effect menu-archive " href="/archives" >
-                    <i class="fa fa-archive "></i>
-                    
-                    Archives
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
-                    <i class="fa fa-bookmark "></i>
-                    
-                    Categories
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-about " href="/about" >
-                    <i class="fa fa-user "></i>
-                    
-                    About
-                </a>
-            </li>
-        
-            <li class="no-padding">
-                <a class="waves-effect menu-search modal-trigger " href="#search" >
-                    <i class="fa fa-search "></i>
-                    
-                    Search
-                </a>
-            </li>
-        
-    </ul>
 
-    <ul class="side-nav indigo darken-1" id="category-menu">
-    
-
+        
+        <div class="author-meta">
             
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Blockchain/">
-                    Blockchain <span class="right">4</span></a>
+            <div class="author-avatar">
+                <a href="/">
+                    <img src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" title="Sanonz">
                 </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Ceph/">
-                    Ceph <span class="right">9</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Container/">
-                    Container <span class="right">8</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Spark/">
-                    Spark <span class="right">10</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/DevOps/">
-                    DevOps <span class="right">13</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Golang/">
-                    Golang <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Kubernetes/">
-                    Kubernetes <span class="right">24</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/iOS/">
-                    iOS <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Programming/">
-                    Programming <span class="right">1</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/OpenStack/">
-                    OpenStack <span class="right">7</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/TensorFlow/">
-                    TensorFlow <span class="right">4</span></a>
-                </a>
-            </li>
-
-        
-
-            <li class="collapse-level-0" collapse-level="0">
-                <a class="no-padding" href="/categories/Linux/">
-                    Linux <span class="right">12</span></a>
-                </a>
-            </li>
-
-        
-
-    </ul>
-</div>
-
-        </div>
-    </div>
-</nav>
-
-<div id="search" class="modal search-modal">
-    <div class="row">
-        <div class="input-field col s12">
-              <input id="search-input" type="text">
-              <label for="search-input">Search</label>
-        </div>
-
-    </div>
-    <div id="search-result" class="search-result col s12">
-
-    </div>
-</div>
-
-
-    <main>
-        
-
-
-
-<div id="article-list" class="container main-container">
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a></h1>
-    
-
-
             </div>
-
-            <time class="green-link-context" datetime="2018-06-29T04:23:01.000Z"><a href="/2018/06/29/devops/prometheus-federation/">2018-06-29</a></time>
-
             
-    <div class="tags-row">
-        
-            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
-        
-            <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
-        
-            <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
-        
-            <a href="/tags/Prometheus/" class="chip pink lighten-1">Prometheus</a>
+            <div class="author-name">KaiRen Bai</div>
+            <div class="author-work">Software Developer</div>
+            <div class="author-location">
+                <i class="icon-location vm"></i>
+                <span class="vm">New Taipei, Taiwan</span>
+            </div>
+            
+            <div class="author-thread-wrap">
+                <div class="author-threads clearfix">
+                    
+                    <a class="thread-item" href="https://github.com/kairen" target="_blank" rel="noopener"><i class="icon-github"></i></a>
+                    
+                    
+                    <a class="thread-item" href="https://twitter.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
+                    
+                    
+                    <a class="thread-item" href="https://www.facebook.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-circle-more"></i></a>
+                    
+                </div>
+            </div>
+            
+        </div>
         
     </div>
+</aside>
 
+</header>
 
+        <div id="content" class="content">
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/06/29/devops/prometheus-federation/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-06-29T04:23:01.000Z" itemprop="datePublished">2018-06-29</time>
+</a>
 
             
-                <div class="entry green-link-context">
-                    <p>Prometheus 在效能上是能夠以單個 Server 支撐百萬個時間序列，當然根據不同規模的改變，Promethes 是能夠進行擴展的，這邊將介紹 Prometheus Federation 來達到此效果。</p>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
+</div>
+
+
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>Prometheus 在效能上是能夠以單個 Server 支撐百萬個時間序列，當然根據不同規模的改變，Promethes 是能夠進行擴展的，這邊將介紹 Prometheus Federation 來達到此效果。</p>
 <p>Prometheus Federation 允許一台 Prometheus Server 從另一台 Prometheus Server 刮取選定的時間序列資料。Federation 提供 Prometheus 擴展能力，這能夠讓 Prometheus 節點擴展至多個，並且能夠實現高可靠性(High Availability)與切片(Sharding)。對於 Prometheus 的 Federation 有不同的使用方式，一般分為<code>Cross-service federation</code>與<code>Hierarchical federation</code>。</p>
-                </div>
-            
-        </div>
-
         
-        <div class="card-action green-link-context">
-            <a href="/2018/06/29/devops/prometheus-federation/">READ MORE</a>
-        </ div>
+        <p class="article-more-link">
+            <a href="/2018/06/29/devops/prometheus-federation/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
         
-    </div>
+        
+    </section>
 </article>
 
+
+    <article class="article" itemscope itemprop="blogPost">
     
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a></h1>
-    
-
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-06-25T09:08:54.000Z"><a href="/2018/06/25/kubernetes/k8x-exec-api/">2018-06-25</a></time>
-
-            
-    <div class="tags-row">
+    <header class="article-header">
         
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
+        <h1 itemprop="name">
+            <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
+        </h1>
         
-    </div>
-
-
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/06/25/kubernetes/k8x-exec-api/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-06-25T09:08:54.000Z" itemprop="datePublished">2018-06-25</time>
+</a>
 
             
-                <div class="entry green-link-context">
-                    <p>本篇將說明 Kubernetes exec API 的運作方式，並以簡單範例進行開發在前後端上。雖然 Kubernetes 提供了不同資源的 RESTful API 來進行 CRUD 操作，但是部分 API 並非單純的回傳一個資料，有些是需要透過 SPDY 或 WebSocket 建立長連線串流，這種 API 以 exec、attach 為主，目標是對一個 Pod 執行指定指令，或者進入該 Pod 進行互動等等。</p>
-                </div>
-            
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
+
+
         </div>
-
+    </header>
+    
+    <section class="article-body markdown-body">
         
-        <div class="card-action green-link-context">
-            <a href="/2018/06/25/kubernetes/k8x-exec-api/">READ MORE</a>
-        </ div>
+        <p>本篇將說明 Kubernetes exec API 的運作方式，並以簡單範例進行開發在前後端上。雖然 Kubernetes 提供了不同資源的 RESTful API 來進行 CRUD 操作，但是部分 API 並非單純的回傳一個資料，有些是需要透過 SPDY 或 WebSocket 建立長連線串流，這種 API 以 exec、attach 為主，目標是對一個 Pod 執行指定指令，或者進入該 Pod 進行互動等等。</p>
         
-    </div>
+        <p class="article-more-link">
+            <a href="/2018/06/25/kubernetes/k8x-exec-api/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-06-23T04:23:01.000Z"><a href="/2018/06/23/devops/prometheus-operator/">2018-06-23</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/06/23/devops/prometheus-operator/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-06-23T04:23:01.000Z" itemprop="datePublished">2018-06-23</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
-        
-            <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
-        
-            <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
-        
-            <a href="/tags/Prometheus/" class="chip pink lighten-1">Prometheus</a>
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：</p>
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：</p>
 <p><img src="https://coreos.com/sites/default/files/inline-images/p1.png" alt=""></p>
-                </div>
-            
-        </div>
-
         
-        <div class="card-action green-link-context">
-            <a href="/2018/06/23/devops/prometheus-operator/">READ MORE</a>
-        </ div>
+        <p class="article-more-link">
+            <a href="/2018/06/23/devops/prometheus-operator/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
         
-    </div>
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-06-10T04:23:01.000Z"><a href="/2018/06/10/devops/prometheus-intro/">2018-06-10</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/06/10/devops/prometheus-intro/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-06-10T04:23:01.000Z" itemprop="datePublished">2018-06-10</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/DevOps/" class="chip pink lighten-1">DevOps</a>
-        
-            <a href="/tags/Monitoring/" class="chip pink lighten-1">Monitoring</a>
-        
-            <a href="/tags/CNCF/" class="chip pink lighten-1">CNCF</a>
-        
-            <a href="/tags/Prometheus/" class="chip pink lighten-1">Prometheus</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p>Prometheus 是一套開放式原始碼的<code>系統監控警報框架</code>與<code>TSDB(Time Series Database)</code>，該專案是由 SoundCloud 的工程師(前 Google 工程師)建立，Prometheus 啟發於 Google 的 Borgmon 監控系統。目前 Prometheus 已貢獻到 CNCF 成為孵化專案(2016-)，其受歡迎程度僅次於 Kubernetes。</p>
-                </div>
-            
         </div>
-
+    </header>
+    
+    <section class="article-body markdown-body">
         
-        <div class="card-action green-link-context">
-            <a href="/2018/06/10/devops/prometheus-intro/">READ MORE</a>
-        </ div>
+        <p>Prometheus 是一套開放式原始碼的<code>系統監控警報框架</code>與<code>TSDB(Time Series Database)</code>，該專案是由 SoundCloud 的工程師(前 Google 工程師)建立，Prometheus 啟發於 Google 的 Borgmon 監控系統。目前 Prometheus 已貢獻到 CNCF 成為孵化專案(2016-)，其受歡迎程度僅次於 Kubernetes。</p>
         
-    </div>
+        <p class="article-more-link">
+            <a href="/2018/06/10/devops/prometheus-intro/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/05/30/kubernetes/k8s-integration-keystone/">以 Keystone 作為 Kubernetes 使用者認證</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-05-30T09:08:54.000Z"><a href="/2018/05/30/kubernetes/k8s-integration-keystone/">2018-05-30</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/">以 Keystone 作為 Kubernetes 使用者認證</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/05/30/kubernetes/k8s-integration-keystone/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-05-30T09:08:54.000Z" itemprop="datePublished">2018-05-30</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/Keystone/" class="chip pink lighten-1">Keystone</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Keystone/">Keystone</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p>本文章將說明如何整合 Keystone 來提供給 Kubernetes 進行使用者認證。但由於 Keystone 整合 Kubernetes 認證在 1.10.x 版本已從原生移除(<code>--experimental-keystone-url</code>, <code>--experimental-keystone-ca-file</code>)，並轉而使用 <a href="https://github.com/kubernetes/cloud-provider-openstack" target="_blank" rel="noopener">cloud-provider-openstack</a> 中的 Webhook 來達成，而篇將說明如何建置與設定以整合該 Webhook。</p>
-                </div>
-            
         </div>
-
+    </header>
+    
+    <section class="article-body markdown-body">
         
-        <div class="card-action green-link-context">
-            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/">READ MORE</a>
-        </ div>
+        <p>本文章將說明如何整合 Keystone 來提供給 Kubernetes 進行使用者認證。但由於 Keystone 整合 Kubernetes 認證在 1.10.x 版本已從原生移除(<code>--experimental-keystone-url</code>, <code>--experimental-keystone-ca-file</code>)，並轉而使用 <a href="https://github.com/kubernetes/cloud-provider-openstack" target="_blank" rel="noopener">cloud-provider-openstack</a> 中的 Webhook 來達成，而篇將說明如何建置與設定以整合該 Webhook。</p>
         
-    </div>
+        <p class="article-more-link">
+            <a href="/2018/05/30/kubernetes/k8s-integration-keystone/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/04/21/kubernetes/aws-k8s-federation/">在 AWS 上建立跨地區的 Kubernetes Federation 叢集</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-04-21T09:08:54.000Z"><a href="/2018/04/21/kubernetes/aws-k8s-federation/">2018-04-21</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/21/kubernetes/aws-k8s-federation/">在 AWS 上建立跨地區的 Kubernetes Federation 叢集</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/21/kubernetes/aws-k8s-federation/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-21T09:08:54.000Z" itemprop="datePublished">2018-04-21</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/AWS/" class="chip pink lighten-1">AWS</a>
-        
-            <a href="/tags/Kops/" class="chip pink lighten-1">Kops</a>
-        
-            <a href="/tags/Federation/" class="chip pink lighten-1">Federation</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/AWS/">AWS</a>, <a class="article-tag-link" href="/tags/Federation/">Federation</a>, <a class="article-tag-link" href="/tags/Kops/">Kops</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p>本篇延續先前 On-premises Federation 與 Kops 經驗來嘗試在 AWS 上建立 Federaion 叢集，這邊架構如下圖所示：</p>
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇延續先前 On-premises Federation 與 Kops 經驗來嘗試在 AWS 上建立 Federaion 叢集，這邊架構如下圖所示：</p>
 <p><img src="/images/kops-fed/fed-clusters.png" alt=""></p>
-                </div>
-            
-        </div>
-
         
-        <div class="card-action green-link-context">
-            <a href="/2018/04/21/kubernetes/aws-k8s-federation/">READ MORE</a>
-        </ div>
+        <p class="article-more-link">
+            <a href="/2018/04/21/kubernetes/aws-k8s-federation/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
         
-    </div>
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/04/18/kubernetes/deploy/kops-aws/">使用 Kops 部署 Kubernetes 至公有雲(AWS)</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-04-18T09:08:54.000Z"><a href="/2018/04/18/kubernetes/deploy/kops-aws/">2018-04-18</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/18/kubernetes/deploy/kops-aws/">使用 Kops 部署 Kubernetes 至公有雲(AWS)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/18/kubernetes/deploy/kops-aws/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-18T09:08:54.000Z" itemprop="datePublished">2018-04-18</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/AWS/" class="chip pink lighten-1">AWS</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/AWS/">AWS</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://github.com/kubernetes/kops" target="_blank" rel="noopener">Kops</a> 是 Kubernetes 官方維護的專案，是一套 Production ready 的 Kubernetes 部署、升級與管理工具，早期用於 AWS 公有雲上建置 Kubernetes 叢集使用，但隨著社群的推進已支援 GCP、vSphere(Alpha)，未來也會有更多公有雲平台慢慢被支援(Maybe)。本篇簡單撰寫使用 Kops 部署一個叢集，過去自己因為公司都是屬於建置 On-premises 的 Kubernetes，因此很少使用 Kops，剛好最近社群分享又再一次接觸的關析，所以就來寫個文章。</p>
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://github.com/kubernetes/kops" target="_blank" rel="noopener">Kops</a> 是 Kubernetes 官方維護的專案，是一套 Production ready 的 Kubernetes 部署、升級與管理工具，早期用於 AWS 公有雲上建置 Kubernetes 叢集使用，但隨著社群的推進已支援 GCP、vSphere(Alpha)，未來也會有更多公有雲平台慢慢被支援(Maybe)。本篇簡單撰寫使用 Kops 部署一個叢集，過去自己因為公司都是屬於建置 On-premises 的 Kubernetes，因此很少使用 Kops，剛好最近社群分享又再一次接觸的關析，所以就來寫個文章。</p>
 <p>本次安裝的軟體版本：</p>
 <ul>
 <li>Kubernetes v1.9.3</li>
 <li>Kops v1.9.0</li>
 </ul>
-                </div>
-            
-        </div>
-
         
-        <div class="card-action green-link-context">
-            <a href="/2018/04/18/kubernetes/deploy/kops-aws/">READ MORE</a>
-        </ div>
+        <p class="article-more-link">
+            <a href="/2018/04/18/kubernetes/deploy/kops-aws/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
         
-    </div>
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/04/15/kubernetes/k8s-integration-ldap/">整合 OpenLDAP 進行 Kubernetes 身份認證</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-04-15T09:08:54.000Z"><a href="/2018/04/15/kubernetes/k8s-integration-ldap/">2018-04-15</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/">整合 OpenLDAP 進行 Kubernetes 身份認證</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/15/kubernetes/k8s-integration-ldap/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-15T09:08:54.000Z" itemprop="datePublished">2018-04-15</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/LDAP/" class="chip pink lighten-1">LDAP</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/LDAP/">LDAP</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p>本文將說明如何整合 OpenLDAP 來提供給 Kubernetes 進行使用者認證。Kubernetes 官方並沒有提供針對 LDAP 與 AD 的整合，但是可以藉由 <a href="https://kubernetes.io/docs/admin/authentication/#webhook-token-authentication" target="_blank" rel="noopener">Webhook Token Authentication</a> 以及 <a href="https://kubernetes.io/docs/admin/authentication/#authenticating-proxy" target="_blank" rel="noopener">Authenticating Proxy</a> 來達到整合功能。概念是開發一個 HTTP Server 提供 POST Method 來塞入 Bearer Token，而該 HTTP Server 利用 LDAP library 檢索對應 Token 的 User 進行認證，成功後回傳該 User 的所有 Group 等資訊，而這時可以利用 Kubernetes 針對該 User 的 Group 設定對應的 RBAC role 進行權限控管。</p>
-                </div>
-            
         </div>
-
+    </header>
+    
+    <section class="article-body markdown-body">
         
-        <div class="card-action green-link-context">
-            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/">READ MORE</a>
-        </ div>
+        <p>本文將說明如何整合 OpenLDAP 來提供給 Kubernetes 進行使用者認證。Kubernetes 官方並沒有提供針對 LDAP 與 AD 的整合，但是可以藉由 <a href="https://kubernetes.io/docs/admin/authentication/#webhook-token-authentication" target="_blank" rel="noopener">Webhook Token Authentication</a> 以及 <a href="https://kubernetes.io/docs/admin/authentication/#authenticating-proxy" target="_blank" rel="noopener">Authenticating Proxy</a> 來達到整合功能。概念是開發一個 HTTP Server 提供 POST Method 來塞入 Bearer Token，而該 HTTP Server 利用 LDAP library 檢索對應 Token 的 User 進行認證，成功後回傳該 User 的所有 Group 等資訊，而這時可以利用 Kubernetes 針對該 User 的 Group 設定對應的 RBAC role 進行權限控管。</p>
         
-    </div>
+        <p class="article-more-link">
+            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-04-05T09:08:54.000Z"><a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">2018-04-05</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/04/05/kubernetes/deploy/manual-v1.10/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-04-05T09:08:54.000Z" itemprop="datePublished">2018-04-05</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/Docker/" class="chip pink lighten-1">Docker</a>
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/Calico/" class="chip pink lighten-1">Calico</a>
-        
-    </div>
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Calico/">Calico</a>, <a class="article-tag-link" href="/tags/Docker/">Docker</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
+</div>
 
 
-
-            
-                <div class="entry green-link-context">
-                    <p>本篇延續過往<code>手動安裝方式</code>來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a> 來選擇自己最喜歡的方式。</p>
+        </div>
+    </header>
+    
+    <section class="article-body markdown-body">
+        
+        <p>本篇延續過往<code>手動安裝方式</code>來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 <a href="https://kubernetes.io/docs/getting-started-guides/" target="_blank" rel="noopener">Picking the Right Solution</a> 來選擇自己最喜歡的方式。</p>
 <p>本次安裝的軟體版本：</p>
 <ul>
 <li>Kubernetes v1.10.0</li>
@@ -668,395 +516,101 @@
 <li>Calico v3.0.4</li>
 <li>Docker CE latest version</li>
 </ul>
-                </div>
-            
-        </div>
-
         
-        <div class="card-action green-link-context">
-            <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">READ MORE</a>
-        </ div>
+        <p class="article-more-link">
+            <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
         
-    </div>
+        
+    </section>
 </article>
 
-    
-        <article class="simple-article">
-    <div class="card">
-        <div class="card-content">
-            <div class="article-title">
-                
-    
-        <h1 class="indigo-link-context"><a href="/2018/03/21/kubernetes/k8s-federation/">使用 kubefed 建立 Kubernetes Federation(On-premises)</a></h1>
-    
 
-
-            </div>
-
-            <time class="green-link-context" datetime="2018-03-21T09:08:54.000Z"><a href="/2018/03/21/kubernetes/k8s-federation/">2018-03-21</a></time>
+    <article class="article" itemscope itemprop="blogPost">
+    
+    <header class="article-header">
+        
+        <h1 itemprop="name">
+            <a href="/2018/03/21/kubernetes/k8s-federation/">使用 kubefed 建立 Kubernetes Federation(On-premises)</a>
+        </h1>
+        
+        <div class="article-meta clearfix">
+            <a class="article-date" href="/2018/03/21/kubernetes/k8s-federation/">
+    
+    <i class="icon-calendar"></i>
+    
+    <time datetime="2018-03-21T09:08:54.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
 
             
-    <div class="tags-row">
-        
-            <a href="/tags/Kubernetes/" class="chip pink lighten-1">Kubernetes</a>
-        
-            <a href="/tags/Federation/" class="chip pink lighten-1">Federation</a>
-        
-    </div>
-
-
-
-            
-                <div class="entry green-link-context">
-                    <p><a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/" target="_blank" rel="noopener">Kubernetes Federation(聯邦)</a> 是實現跨地區與跨服務商多個 Kubernetes 叢集的管理機制。Kubernetes Federation 的架構非常類似純 Kubenretes 叢集，Federation 會擁有自己的 API Server 與 Controller Manager 來提供一個標準的 Kubernetes API，以及管理聯邦叢集，並利用 Etcd 來儲存所有狀態，不過差異在於 Kubenretes 只管理多個節點，而 Federation 是管理所有被註冊的 Kubernetes 叢集。</p>
-                </div>
-            
-        </div>
-
-        
-        <div class="card-action green-link-context">
-            <a href="/2018/03/21/kubernetes/k8s-federation/">READ MORE</a>
-        </ div>
-        
-    </div>
-</article>
-
-    
-
-    <ul class="pagination center-align">
-    <li class="disabled">
-        <a href="/"><i class="fa fa-angle-left"></i></a>
-    </li>
-    
-    
-        <li class="active pink"><a href="/">1</a></li>
-    
-        <li class="waves-effect"><a href="/page/2">2</a></li>
-    
-        <li class="waves-effect"><a href="/page/3">3</a></li>
-    
-        <li class="waves-effect"><a href="/page/4">4</a></li>
-    
-        <li class="waves-effect"><a href="/page/5">5</a></li>
-    
-        <li class="waves-effect"><a href="/page/6">6</a></li>
-    
-        <li class="waves-effect"><a href="/page/7">7</a></li>
-    
-        <li class="waves-effect"><a href="/page/8">8</a></li>
-    
-        <li class="waves-effect"><a href="/page/9">9</a></li>
-    
-        <li class="waves-effect"><a href="/page/10">10</a></li>
-    
-    
-    <li class="">
-        <a href="/page/2/"><i class="fa fa-angle-right"></i></a>
-    </li>
- </ul>
-
+<div class="article-tag-list">
+    <i class="icon-tag"></i>
+    <a class="article-tag-link" href="/tags/Federation/">Federation</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>
 </div>
 
-        <div class="fixed-action-btn float-sitemap">
-    <a class="btn-floating btn-large pink">
-      <i class="fa fa-caret-square-o-up"></i>
-    </a>
-    <ul>
-      <li><a class="btn-return-top btn-floating waves-effect green" title="Return to top"><i class="fa fa-arrow-circle-o-up"></i></a></li>
-      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
-    </ul>
-  </div>
 
-    </main>
-    <footer class="page-footer black darken-1">
-    
-    <div class="container">
-        <div class="row">
-            
-            <div class="social-group col m4 s12">
-                <h5 class="white-text">Social</h5>
-                
-                    <a class="social-link" href="https://www.facebook.com/kyle.bai6054" target="_blank">
-                        <i class="fa fa-2x fa-facebook-official"></i>
-                    </a>
-                
-                    <a class="social-link" href="https://github.com/kairen" target="_blank">
-                        <i class="fa fa-2x fa-github"></i>
-                    </a>
-                
-                    <a class="social-link" href="mailto:k2r2bai@gmail.com" target="_blank">
-                        <i class="fa fa-2x fa-envelope"></i>
-                    </a>
-                
-                    <a class="social-link" href="/atom.xml" target="_blank">
-                        <i class="fa fa-2x fa-rss"></i>
-                    </a>
-                
-                <div class="site-visitors-container white-text">
-                    <span>
-                    </span>
-                    <span>&nbsp;Welcome to contact me!&nbsp;</span>
-                    <span>
-                    </span>
-                </div>
-            </div>
-            
-
-            
-            <div class="col m8 s12">
-                <h5 class="white-text">Links</h5>
-                
-                    <a class="social-link" href="https://github.com/OSE-Lab" target="_blank">OSE-Lab</a>
-                
-                    <a class="social-link" href="https://www.gitbook.com/@kairen" target="_blank">GitBook</a>
-                
-            </div>
-            
         </div>
-    </div>
+    </header>
     
+    <section class="article-body markdown-body">
+        
+        <p><a href="https://kubernetes.io/docs/concepts/cluster-administration/federation/" target="_blank" rel="noopener">Kubernetes Federation(聯邦)</a> 是實現跨地區與跨服務商多個 Kubernetes 叢集的管理機制。Kubernetes Federation 的架構非常類似純 Kubenretes 叢集，Federation 會擁有自己的 API Server 與 Controller Manager 來提供一個標準的 Kubernetes API，以及管理聯邦叢集，並利用 Etcd 來儲存所有狀態，不過差異在於 Kubenretes 只管理多個節點，而 Federation 是管理所有被註冊的 Kubernetes 叢集。</p>
+        
+        <p class="article-more-link">
+            <a href="/2018/03/21/kubernetes/k8s-federation/#more">
+                <span class="vm">MORE..</span>
+                <i class="icon-arrow-double-right vm"></i>    
+            </a>
+        </p>
+        
+        
+    </section>
+</article>
 
-    <div class="footer-copyright green-link-context">
-        <div class="container">
-            © 2015 KaiRen, All rights reserved.
-            <p class="right" style="margin-top: 0;">Blog powered by <a href="https://hexo.io">Hexo</a> | Theme <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
-        </div>
-    </div>
+
+
+
+<nav class="page-nav">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+</nav>
+
+
+</div>
+        <footer class="footer">
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme by <a href="https://github.com/sanonz/hexo-theme-concise" target="_blank">Concise</a>
 </footer>
 
 
-    <noscript>
-    <div class="noscript">
-        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
     </div>
-</noscript>
-<div class="noscript">
-    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
-</div>
 
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
+    
+    <script type="text/javascript">
+        $(function() {
+            var nodes = {
+                nav: $('#nav'),
+                aside: $('#aside'),
+                navTags: $('#nav-tags')
+            };
 
-<script src="/js/jquery.min.js"></script>
-<script src="/js/materialize.min.js"></script>
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
-</script>
-
-<script>
-    (function($) {
-        $(document).ready(function() {
-            // 隐藏禁用javascript（针对微信内置浏览器）的提示
-            $('.noscript').hide();
-
-            // 图片缩放效果
-            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
-
-            // 给图片加上点击放大效果（materialbox插件）
-            $imgs.addClass('materialboxed').each(function(i, el) {
-                $(this).attr('data-caption', $(this).attr('alt') || ' ');
-            }).materialbox();
-
-            // 优化表格的显示
-            $('table').each(function() {
-                var $table = $(this);
-                // 除去多行代码的情况
-                if ($table.find('pre').length == 0) {
-                    $table.addClass('responsive-table striped bordered');
-                }
+            $('#open-panel, #aside-mask').on('click', function() {
+                nodes.aside.toggleClass('panel-show');
             });
-
-            // 首页幻灯片
-            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
-
-            $(".button-collapse").sideNav();
-            $(".category-menu").sideNav();
-
-            // 针对gallery post
-            $('.carousel').carousel({full_width: true});
-            $('.carousel-control.prev').click(function() {
-                $('.carousel').carousel('prev');
-            });
-            $('.carousel-control.next').click(function() {
-                $('.carousel').carousel('next');
-            });
-
-            // 文章目录
-            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
-
-            // 目录随屏幕滚动（防止目录过长越过footer）
-            var $toc = $('.toc');
-            var scrollTargetTop = 0;
-            $(window).scroll(function() {
-                var $activeLink = $toc.find('a.active.section');
-                if ($(window).scrollTop() < 100) {
-                    scrollTargetTop = 0;
-                } else {
-                    if ($activeLink[0]) {
-                        scrollTargetTop = $activeLink.offset().top - $toc.offset().top;
-                    }
-                }
-                $toc.css('top', '-' + scrollTargetTop + 'px');
-            });
-
-            // 修正文章目录的left-border颜色
-            var color = $('.table-of-contents-text').css('color');
-            $('.table-of-contents-link').css('border-left-color', color);
-
-            // 针对移动端做的优化：FAB按钮点击一下收回
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                $('.fixed-action-btn').addClass('click-to-toggle');
-            }
-            // 回到顶部
-            $('.btn-return-top').click(function() {
-                $('body, html').animate({
-                    scrollTop: 0
-                }, 500);
-            });
-
-            // 重置读书页面的Tab标签页的颜色
-            $('li.tab a').hover(function() {
-                $(this).toggleClass('text-lighten-4');
-            });
-            $('.indicator').addClass('pink lighten-2');
+            $('#nav-tag').on('click', function(event) {
+                event.preventDefault();console.log(nodes.navTags.attr('class'))
+                nodes.navTags.toggleClass('tag-show');console.log(nodes.navTags.attr('class'))
+            })/*.hover(function() {
+                nodes.navTags.addClass('tag-show');
+            }, function() {
+                nodes.navTags.removeClass('tag-show');
+            });*/
 
             
-            // 添加new标签
-            $('.menu-home').append('<span class="new badge pink"></span>');
-            
-
-            // 搜索功能
-            $('.modal-trigger').leanModal({
-                // 打开搜索框时自动聚焦
-                ready: function() {
-                    if ($('#search').is(":visible")) {
-                        $('#search-input').focus();
-                    }
-                }
-            });
-            var searchXml = "search.xml";
-            if (searchXml.length == 0) {
-             	searchXml = "search.xml";
-            }
-            var searchPath = "/" + searchXml;
-            initSearch(searchPath, 'search-input', 'search-result');
         });
-
-        // 初始化搜索与匹配函数
-        var initSearch = function(path, search_id, content_id) {
-            'use strict';
-            $.ajax({
-                url: path,
-                dataType: "xml",
-                success: function(xmlResponse) {
-                    // get the contents from search data
-                    var datas = $("entry", xmlResponse).map(function() {
-                        return {
-                            title: $("title", this).text(),
-                            content: $("content", this).text(),
-                            url: $("url", this).text()
-                        };
-                    }).get();
-                    var $input = document.getElementById(search_id);
-                    var $resultContent = document.getElementById(content_id);
-                    $input.addEventListener('input', function() {
-                        var str = '<ul class=\"search-result-list\">';
-                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-                        $resultContent.innerHTML = "";
-                        if (this.value.trim().length <= 0) {
-                            return;
-                        }
-                        // perform local searching
-                        datas.forEach(function(data) {
-                            var isMatch = true;
-                            var content_index = [];
-                            var data_title = data.title.trim().toLowerCase();
-                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
-                            var data_url = data.url;
-                            var index_title = -1;
-                            var index_content = -1;
-                            var first_occur = -1;
-                            // only match artiles with not empty titles and contents
-                            if (data_title != '' && data_content != '') {
-                                keywords.forEach(function(keyword, i) {
-                                    index_title = data_title.indexOf(keyword);
-                                    index_content = data_content.indexOf(keyword);
-                                    if (index_title < 0 && index_content < 0) {
-                                        isMatch = false;
-                                    } else {
-                                        if (index_content < 0) {
-                                            index_content = 0;
-                                        }
-                                        if (i == 0) {
-                                            first_occur = index_content;
-                                        }
-                                    }
-                                });
-                            }
-                            // show search results
-                            if (isMatch) {
-                                keywords.forEach(function(keyword) {
-                                    var regS = new RegExp(keyword, "gi");
-                                    data_title = data_title.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
-                                });
-
-                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
-                                var content = data.content.trim().replace(/<[^>]+>/g, "");
-                                if (first_occur >= 0) {
-                                    // cut out 100 characters
-                                    var start = first_occur - 20;
-                                    var end = first_occur + 80;
-                                    if (start < 0) {
-                                        start = 0;
-                                    }
-                                    if (start == 0) {
-                                        end = 100;
-                                    }
-                                    if (end > content.length) {
-                                        end = content.length;
-                                    }
-                                    var match_content = content.substring(start, end);
-                                    // highlight all keywords
-                                    keywords.forEach(function(keyword) {
-                                        var regS = new RegExp(keyword, "gi");
-                                        match_content = match_content.replace(regS, "<span class=\"search-keyword green lighten-2\">" + keyword + "</span>");
-                                    });
-
-                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
-                                }
-                                str += "</li>";
-                            }
-                        });
-                        str += "</ul>";
-                        $resultContent.innerHTML = str;
-                    });
-                }
-            });
-        }
-    })(jQuery);
-</script>
-
-
-<script src="/js/prettify.js"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $("pre").addClass("prettyprint");
-        prettyPrint();
-    });
-</script>
-
-
-
-
-
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
-</script>
-<script type="text/javascript" async
-  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
+    </script>
 
 </body>
 </html>
