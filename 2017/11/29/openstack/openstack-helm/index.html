@@ -1,163 +1,292 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
+
+<!-- Head tag -->
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Deploy OpenStack on Kubernetes using OpenStack-helm - KaiRen&#39;s Blog
+        
+    </title>
 
-    
+    <link rel="canonical" href="https://kairen.github.io/2017/11/29/openstack/openstack-helm/">
 
-    
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 
-    <title>Deploy OpenStack on Kubernetes using OpenStack-helm | KaiRen&#39;s Blog</title>
-    <meta name="author" content="Kyle Bai" />
-    <meta name="version" content="1.0.0" />
-    <meta name="keywords" content="undefined" />
-    <meta name="description" content="OpenStack Helm 是一個提供部署建置的專案，其目的是為了推動 OpenStack 生產環境的解決方案，而這種部署方式採用容器化方式，並執行於 Kubernetes 系統上來提供 OpenStack 服務的管理與排程等使用。
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/beantech.min.css">
 
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
 
-而本篇文章將說明如何建置多節點的 OpenStack Helm 環境來進行功能驗證。
-節點與安裝版本以下為各節點的硬體資訊。
+    <link rel="stylesheet" href="/css/widget.css">
 
+    <link rel="stylesheet" href="/css/rocket.css">
 
+    <link rel="stylesheet" href="/css/signature.css">
 
-IP Address
-Role
-CPU
-Memory
+    <link rel="stylesheet" href="/css/toc.css">
 
-
-
-
-172.22.132.10
-vip
--
--
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 
-172.22.13" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-    <meta name="baidu-site-verification" content="F0CXvmUgA9" />
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
 
-    
-    
-    <link rel="icon" href="/images/favicon.png">
-    
 
-    <link rel="stylesheet" href="/css/style.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
 </head>
-<body>
 
-    <div class="app">
-        <header class="header clearfix">
-    <div id="nav" class="nav">
-    <button id="open-panel" class="open-panel"><i class="icon-library"></i></button>
 
-    <nav class="nav-inner">
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('undefined')
+            /*post*/
+        
+    }
+    
+</style>
 
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/categories">Category</a>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/archives">Archive</a>
-        </li>
-        
-        
-        
-        <li class="nav-item nav-item-tag">
-            <a id="nav-tag" class="nav-link" href="#">Tag</a>
-            <div id="nav-tags" class="nav-tag-wrap">
-                <i class="nav-tag-arrow"></i>
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-  <div class="widget-wrap">
-    <h3 class="widget-title">
-        <i class="icon-tag vm"></i>
-        <span class="vm">Tags</span>
-    </h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWS/">AWS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/">Ansible</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Automation-Engine/">Automation Engine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-Metal/">Bare Metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-metal/">Bare-metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blockchain/">Blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlueStore/">BlueStore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNCF/">CNCF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calico/">Calico</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ceph/">Ceph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Concurrent/">Concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Container/">Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoreOS/">CoreOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DC-OS/">DC/OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL-ML/">DL/ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Collect/">Data Collect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevOps/">DevOps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevStack/">DevStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Distribution-System/">Distribution System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-Swarm/">Docker Swarm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-registry/">Docker registry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ethereum/">Ethereum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Federation/">Federation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/File-System/">File System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go-lang/">Go lang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP-Server/">HTTP Server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Helm/">Helm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Availability/">High Availability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Keystone/">Keystone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kops/">Kops</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/">Kubernetes</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes-RBAC/">Kubernetes RBAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDAP/">LDAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux-Container/">Linux Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinuxKit/">LinuxKit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Load-Balancer/">Load Balancer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logging/">Logging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mesos/">Mesos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Message-Queue/">Message Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microkernel/">Microkernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Moby/">Moby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monitoring/">Monitoring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA-GPU/">NVIDIA GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOP/">OOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS-X/">OS X</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openstack/">Openstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PXE/">PXE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming/">Programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prometheus/">Prometheus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Puppet/">Puppet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPDK/">SPDK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSD/">SSD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Smart-Contract/">Smart Contract</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Solidity/">Solidity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TensorFlow/">TensorFlow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vagrant/">Vagrant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Visualization/">Visualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-    </div>
-  </div>
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                              <a class="tag" href="/tags/#Helm" title="Helm">Helm</a>
+                            
+                              <a class="tag" href="/tags/#Openstack" title="Openstack">Openstack</a>
+                            
+                        </div>
+                        <h1>Deploy OpenStack on Kubernetes using OpenStack-helm</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Kyle Bai on
+                            2017-11-29
+                        </span>
+                    </div>
+                
 
 
+                </div>
             </div>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/about">About</a>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/atom.xml">Feed</a>
-        </li>
-        
-        
-        
-
-    </nav>
-</div>
-
-    <aside id="aside" class="aside">
-    <div id="aside-mask" class="aside-mask"></div>
-    <div id="aside-inner" class="aside-inner">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"><i class="icon-search-stroke"></i></button><input type="hidden" name="sitesearch" value="https://kairen.github.io"></form>
-
-        
-        
-        
-        
-
-        
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#節點與安裝版本"><span class="toc-number">1.</span> <span class="toc-text">節點與安裝版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kubernetes-叢集"><span class="toc-number">2.</span> <span class="toc-text">Kubernetes 叢集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化與設定基本需求"><span class="toc-number">2.1.</span> <span class="toc-text">初始化與設定基本需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安裝與設定-Kube-ansible"><span class="toc-number">2.2.</span> <span class="toc-text">安裝與設定 Kube-ansible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部屬-Kubernetes-叢集"><span class="toc-number">2.3.</span> <span class="toc-text">部屬 Kubernetes 叢集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#OpenStack-helm-叢集"><span class="toc-number">3.</span> <span class="toc-text">OpenStack-helm 叢集</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Helm-init"><span class="toc-number">3.1.</span> <span class="toc-text">Helm init</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事前準備"><span class="toc-number">3.2.</span> <span class="toc-text">事前準備</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ceph-Chart"><span class="toc-number">3.3.</span> <span class="toc-text">Ceph Chart</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#OpenStack-Chart"><span class="toc-number">3.4.</span> <span class="toc-text">OpenStack Chart</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#測試-OpenStack-功能"><span class="toc-number">4.</span> <span class="toc-text">測試 OpenStack 功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Refers"><span class="toc-number">5.</span> <span class="toc-text">Refers</span></a></li></ol>
-        
+        </div>
     </div>
-</aside>
-
 </header>
 
-        <div id="content" class="content"><article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            Deploy OpenStack on Kubernetes using OpenStack-helm
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2017/11/29/openstack/openstack-helm/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2017-11-29T08:23:01.000Z" itemprop="datePublished">2017-11-29</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Helm/">Helm</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Openstack/">Openstack</a>
-</div>
-
-
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">KaiRen&#39;s Blog</a>
         </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p><a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">OpenStack Helm</a> 是一個提供部署建置的專案，其目的是為了推動 OpenStack 生產環境的解決方案，而這種部署方式採用容器化方式，並執行於 Kubernetes 系統上來提供 OpenStack 服務的管理與排程等使用。</p>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">OpenStack Helm</a> 是一個提供部署建置的專案，其目的是為了推動 OpenStack 生產環境的解決方案，而這種部署方式採用容器化方式，並執行於 Kubernetes 系統上來提供 OpenStack 服務的管理與排程等使用。</p>
 <p><img src="https://i.imgur.com/8sMjowM.png" alt=""></p>
 <a id="more"></a>
 <p>而本篇文章將說明如何建置多節點的 OpenStack Helm 環境來進行功能驗證。</p>
@@ -864,70 +993,270 @@ $ neutron router-gateway-set router1 ext-net
 <li><a href="https://docs.openstack.org/openstack-helm/latest/install/multinode.html" target="_blank" rel="noopener">Multi Node</a></li>
 </ul>
 
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/12/20/openstack/stackube/" data-toggle="tooltip" data-placement="top" title="多租戶 Kubernetes 部署方案 Stackube">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/10/27/kubernetes/deploy/manual-v1.8/" data-toggle="tooltip" data-placement="top" title="Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
         
-    </section>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點與安裝版本"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點與安裝版本</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-叢集"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Kubernetes 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#初始化與設定基本需求"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">初始化與設定基本需求</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝與設定-Kube-ansible"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">安裝與設定 Kube-ansible</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部屬-Kubernetes-叢集"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">部屬 Kubernetes 叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#OpenStack-helm-叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">OpenStack-helm 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Helm-init"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Helm init</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ceph-Chart"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Ceph Chart</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#OpenStack-Chart"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">OpenStack Chart</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試-OpenStack-功能"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">測試 OpenStack 功能</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Refers"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Refers</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                          <a class="tag" href="/tags/#Helm" title="Helm">Helm</a>
+                        
+                          <a class="tag" href="/tags/#Openstack" title="Openstack">Openstack</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
 </article>
 
 
 
-<div class="comments">
-    <div id="disqus_thread">
-        <p class="comment-tips">国内查看评论需要代理~</p>
-    </div>
-    <script>
-    window.disqus_config = function () {
-        this.language = 'zh';
-        this.page.url = 'https://kairen.github.io/2017/11/29/openstack/openstack-helm/';
-        this.page.title = 'Deploy OpenStack on Kubernetes using OpenStack-helm';
-        this.page.identifier = '2017/11/29/openstack/openstack-helm/';
-    };
-    (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = 'https://k2r2bai.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
 
-</div>
-        <footer class="footer">
-    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme by <a href="https://github.com/sanonz/hexo-theme-concise" target="_blank">Concise</a>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/kairen">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Kyle Bai 2018
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
 </footer>
 
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
 
-    </div>
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
-    
-    <script type="text/javascript" src="/js/scrollspy.min.js"></script>
-    
-    <script type="text/javascript">
-        $(function() {
-            var nodes = {
-                nav: $('#nav'),
-                aside: $('#aside'),
-                navTags: $('#nav-tags')
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://kairen.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
             };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
 
-            $('#open-panel, #aside-mask').on('click', function() {
-                nodes.aside.toggleClass('panel-show');
-            });
-            $('#nav-tag').on('click', function(event) {
-                event.preventDefault();console.log(nodes.navTags.attr('class'))
-                nodes.navTags.toggleClass('tag-show');console.log(nodes.navTags.attr('class'))
-            })/*.hover(function() {
-                nodes.navTags.addClass('tag-show');
-            }, function() {
-                nodes.navTags.removeClass('tag-show');
-            });*/
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
 
-            
-            $(document.body).scrollspy({target: '#aside-inner'});
-            
-        });
-    </script>
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://kairen.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>
+
 </html>

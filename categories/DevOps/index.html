@@ -1,887 +1,2218 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
+
+<!-- Head tag -->
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          KaiRen&#39;s Blog
+        
+    </title>
 
-    
+    <link rel="canonical" href="https://kairen.github.io/categories/DevOps/">
 
-    
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 
-    <title>Category: DevOps | KaiRen&#39;s Blog</title>
-    <meta name="author" content="Kyle Bai" />
-    <meta name="version" content="1.0.0" />
-    <meta name="keywords" content="undefined" />
-    <meta name="description" content="Note my learning." />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-    <meta name="baidu-site-verification" content="F0CXvmUgA9" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/beantech.min.css">
 
-    
-    
-    <link rel="icon" href="/images/favicon.png">
-    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
 </head>
-<body>
 
-    <div class="app">
-        <header class="header clearfix">
-    <div id="nav" class="nav">
-    <button id="open-panel" class="open-panel"><i class="icon-library"></i></button>
 
-    <nav class="nav-inner">
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/undefined')
+            /*page*/
+        
+    }
+    
+</style>
 
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-        </li>
-        
-        
-        
-        <li class="nav-item active">
-            <a class="nav-link" href="/categories">Category</a>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/archives">Archive</a>
-        </li>
-        
-        
-        
-        <li class="nav-item nav-item-tag">
-            <a id="nav-tag" class="nav-link" href="#">Tag</a>
-            <div id="nav-tags" class="nav-tag-wrap">
-                <i class="nav-tag-arrow"></i>
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-  <div class="widget-wrap">
-    <h3 class="widget-title">
-        <i class="icon-tag vm"></i>
-        <span class="vm">Tags</span>
-    </h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AWS/">AWS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ansible/">Ansible</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Automation-Engine/">Automation Engine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-Metal/">Bare Metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bare-metal/">Bare-metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Blockchain/">Blockchain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BlueStore/">BlueStore</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNCF/">CNCF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Calico/">Calico</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CentOS/">CentOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ceph/">Ceph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Concurrent/">Concurrent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Container/">Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoreOS/">CoreOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DC-OS/">DC/OS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DL-ML/">DL/ML</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Data-Collect/">Data Collect</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Database/">Database</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevOps/">DevOps</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DevStack/">DevStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Distribution-System/">Distribution System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-Swarm/">Docker Swarm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker-registry/">Docker registry</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ethereum/">Ethereum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Federation/">Federation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/File-System/">File System</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/">GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Go-lang/">Go lang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HDFS/">HDFS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP-Server/">HTTP Server</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Helm/">Helm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/High-Availability/">High Availability</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Keystone/">Keystone</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kops/">Kops</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes/">Kubernetes</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kubernetes-RBAC/">Kubernetes RBAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LDAP/">LDAP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux-Container/">Linux Container</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LinuxKit/">LinuxKit</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Load-Balancer/">Load Balancer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Logging/">Logging</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Machine-Learning/">Machine Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mesos/">Mesos</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Message-Queue/">Message Queue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microkernel/">Microkernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Moby/">Moby</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Monitoring/">Monitoring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA-GPU/">NVIDIA GPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OOP/">OOP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OS-X/">OS X</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenStack/">OpenStack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Openstack/">Openstack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PXE/">PXE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Programming/">Programming</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prometheus/">Prometheus</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Puppet/">Puppet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPDK/">SPDK</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSD/">SSD</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Smart-Contract/">Smart Contract</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Solidity/">Solidity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spark/">Spark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Storage/">Storage</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/TensorFlow/">TensorFlow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vagrant/">Vagrant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Visualization/">Visualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
-    </div>
-  </div>
+                    <div class="site-heading">
+                        <h1>KaiRen&#39;s Blog</h1>
+                        <!--<hr class="small">-->
+                        <span class="subheading">Learn Anything, Anytime, Anywhere~</span>
+                    </div>
+                
 
 
-            </div>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/about">About</a>
-        </li>
-        
-        
-        
-        <li class="nav-item">
-            <a class="nav-link" href="/atom.xml">Feed</a>
-        </li>
-        
-        
-        
-
-    </nav>
-</div>
-
-    <aside id="aside" class="aside">
-    <div id="aside-mask" class="aside-mask"></div>
-    <div id="aside-inner" class="aside-inner">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"><i class="icon-search-stroke"></i></button><input type="hidden" name="sitesearch" value="https://kairen.github.io"></form>
-
-        
-        
-
-        
-        <div class="author-meta">
-            
-            <div class="author-avatar">
-                <a href="/">
-                    <img src="https://avatars2.githubusercontent.com/u/4667563?v=3&amp;u=cfebb19866a76b9f7e6e55a010f0fe96634168fd&amp;s=400" title="Sanonz">
-                </a>
-            </div>
-            
-            <div class="author-name">KaiRen Bai</div>
-            <div class="author-work">Software Developer</div>
-            <div class="author-location">
-                <i class="icon-location vm"></i>
-                <span class="vm">New Taipei, Taiwan</span>
-            </div>
-            
-            <div class="author-thread-wrap">
-                <div class="author-threads clearfix">
-                    
-                    <a class="thread-item" href="https://twitter.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-twitter"></i></a>
-                    
-                    
-                    <a class="thread-item" href="https://www.facebook.com/k2r2bai" target="_blank" rel="noopener"><i class="icon-facebook"></i></a>
-                    
-                    
-                    <a class="thread-item" href="https://www.linkedin.com/in/k2r2bai/" target="_blank" rel="noopener"><i class="icon-linkedin"></i></a>
-                    
-                    
-                    <a class="thread-item" href="https://github.com/kairen" target="_blank" rel="noopener"><i class="icon-github"></i></a>
-                    
-                    
-                    <a class="thread-item" href="mailto:k2r2.bai@gmail.com" target="_blank" rel="noopener"><i class="icon-email"></i></a>
-                    
                 </div>
             </div>
-            
         </div>
-        
     </div>
-</aside>
-
 </header>
 
-        <div id="content" class="content">
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2018/06/29/devops/prometheus-federation/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2018-06-29T04:23:01.000Z" itemprop="datePublished">2018-06-29</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
-</div>
-
-
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">KaiRen&#39;s Blog</a>
         </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Prometheus 在效能上是能夠以單個 Server 支撐百萬個時間序列，當然根據不同規模的改變，Promethes 是能夠進行擴展的，這邊將介紹 Prometheus Federation 來達到此效果。</p>
-<p>Prometheus Federation 允許一台 Prometheus Server 從另一台 Prometheus Server 刮取選定的時間序列資料。Federation 提供 Prometheus 擴展能力，這能夠讓 Prometheus 節點擴展至多個，並且能夠實現高可靠性(High Availability)與切片(Sharding)。對於 Prometheus 的 Federation 有不同的使用方式，一般分為<code>Cross-service federation</code>與<code>Hierarchical federation</code>。</p>
-        
-        <p class="article-more-link">
-            <a href="/2018/06/29/devops/prometheus-federation/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
 
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
 
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2018/06/23/devops/prometheus-operator/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2018-06-23T04:23:01.000Z" itemprop="datePublished">2018-06-23</time>
-</a>
+                    
 
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
-</div>
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
 
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
 
+                        
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                </ul>
+            </div>
         </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p><a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：</p>
-<p><img src="https://coreos.com/sites/default/files/inline-images/p1.png" alt=""></p>
-        
-        <p class="article-more-link">
-            <a href="/2018/06/23/devops/prometheus-operator/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
 
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2018/06/10/devops/prometheus-intro/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2018-06-10T04:23:01.000Z" itemprop="datePublished">2018-06-10</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/CNCF/">CNCF</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Prometheus/">Prometheus</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Prometheus 是一套開放式原始碼的<code>系統監控警報框架</code>與<code>TSDB(Time Series Database)</code>，該專案是由 SoundCloud 的工程師(前 Google 工程師)建立，Prometheus 啟發於 Google 的 Borgmon 監控系統。目前 Prometheus 已貢獻到 CNCF 成為孵化專案(2016-)，其受歡迎程度僅次於 Kubernetes。</p>
-        
-        <p class="article-more-link">
-            <a href="/2018/06/10/devops/prometheus-intro/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/18/devops/ansible/ansible-playbook/">Ansible Playbooks</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/18/devops/ansible/ansible-playbook/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-18T04:23:01.000Z" itemprop="datePublished">2016-02-18</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Playbooks 是 Ansible 的設定、部署與編配語言等。可以被用來描述一個被遠端的主機要執行的指令方案，或是一組 IT 行程執行的指令集合。</p>
-<p>在基礎層面上，Playbooks 可以被用來管理部署到遠端主機的組態檔案，在更高階層上 Playbooks 可以循序對多層式架構上的伺服器執行線上的 Polling 更新內部的操作，並將操作委派給其他主機，包含過程中發生的監視器服務、負載平衡伺服器等。</p>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/18/devops/ansible/ansible-playbook/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/">Ansible Dynamic Inventory</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-17T06:23:01.000Z" itemprop="datePublished">2016-02-17</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>在預設情況下，我們所使用的都是一個靜態的 Inventory 檔案，編輯主機、群組以及變數時都需要固定手動編輯完成。</p>
-<p>Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部腳本或程式來產生指定的格式的 JSON 字串。這樣做的好處就是可以透過這個外部腳本與程式來管理系統（如 API）抓取最新資源訊息。</p>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/17/devops/ansible/ansible-inventory/">Ansible Inventory</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/17/devops/ansible/ansible-inventory/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-17T04:23:01.000Z" itemprop="datePublished">2016-02-17</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
-<p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="noopener">Dynamic Inventory</a>。</p>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/17/devops/ansible/ansible-inventory/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/17/devops/ansible/ansible-adhoc/">Ansible Ad-Hoc 指令與 Modules</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/17/devops/ansible/ansible-adhoc/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-17T04:23:01.000Z" itemprop="datePublished">2016-02-17</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Ansible/">Ansible</a>, <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。</p>
-<p>模組（也被稱為<code>Task plugins</code>或是<code>Library plugins</code>）是 Ansible 中實際執行的功能，它們會在每個 Playbook 任務中被執行，也可以透過 ansible 直接呼叫使用。目前 Ansible 已經擁有許多模組，可參閱 <a href="http://docs.ansible.com/ansible/modules_by_category.html" target="_blank" rel="noopener">Module Index</a>。</p>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/17/devops/ansible/ansible-adhoc/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/16/devops/ansible/ansible-basic/">Ansible 介紹與使用</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/16/devops/ansible/ansible-basic/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-16T04:23:01.000Z" itemprop="datePublished">2016-02-16</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Ansible 是最近越來越夯多 DevOps 自動化組態管理軟體，從 2013 年發起的專案，由於該架構為無 agent 程式的架構，以部署靈活與程式碼易讀而受到矚目。Ansible 除了有開源版本之外，還針對企業用戶推出 Ansible Tower 版本，已有許多知名企業採用，如 Apple、Twitter 等。</p>
-<p>Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與私有雲或 CMDB（組態管理資料庫）中的主機，其中 Ansible 編排是由<code>Inventory(主機與群組規則)</code>、<code>API</code>、<code>Modules(模組)</code>與<code>Plugins(插件)</code>組合而成。</p>
-<p><center><img src="/images/devops/ansible-arch.jpg" alt=""></center><br>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/16/devops/ansible/ansible-basic/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/14/devops/puppet-foreman/">Foreman 管理 Puppet</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/14/devops/puppet-foreman/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-14T04:23:01.000Z" itemprop="datePublished">2016-02-14</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Puppet/">Puppet</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Foreman 是一個 Puppet 的生命周期管理系統，類似 puppet-dashboard，通過它可以很直觀的查看 Puppet 所有客戶端的同步狀態與 facter 參數。</p>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/14/devops/puppet-foreman/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/13/devops/puppet-basic/">Puppet 介紹與使用</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/13/devops/puppet-basic/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-13T04:23:01.000Z" itemprop="datePublished">2016-02-13</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Puppet 是一個開放原始碼專案，基於 Ruby 的系統組態管理工具，採用 Client/Server 的部署架構。是一個為了實現資料中心自動化管理，而被設計的組態管理軟體，它使用跨平台語言規範，管理組態檔案、使用者、軟體套件與系統服務等。用戶端預設每個半小時會與伺服器溝通一次，來確定是否有更新。當然也可以配置主動觸發來強制用戶端更新。這樣可以把平常的系統管理工作程式碼化，透過程式碼化的好處是可以分享、保存與避免重複勞動，也可以快速恢復以及快速的大規模環境部署伺服器。</p>
-<center><img src="/images/devops/puppet-dataflow.png" alt="puppet-dataflow.png"></center>
-
-<p><strong>優點：</strong></p>
-<ul>
-<li>成熟的組態管理軟體。</li>
-<li>應用廣泛。</li>
-<li>功能很完善。</li>
-<li>提供許多資源可以配置</li>
-<li>擁有許多的支持者。</li>
-</ul>
-<p><strong>缺點：</strong></p>
-<ul>
-<li>無法批次處理。</li>
-<li>語言採用 DSL 與 Ruby。</li>
-<li>缺少錯誤回報與檢查。</li>
-<li>要透過程式定義先後順序。</li>
-</ul>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/13/devops/puppet-basic/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/12/devops/saltstack-basic/">SaltStack 介紹</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/12/devops/saltstack-basic/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-12T04:23:01.000Z" itemprop="datePublished">2016-02-12</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Automation-Engine/">Automation Engine</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Saltstack 是一套基礎設施管理開發套件、簡單易部署、可擴展到管理成千上萬的伺服器、控制速度佳(以 ms 為單位)。Saltstack 提供了動態基礎設施溝通總線用於編配、遠端執行、配置管理等等。Saltstack 是從 2011 年開始的專案，已經是很成熟的開源專案。該專案簡單的兩大基礎功能就是配置管理與遠端指令執行。</p>
-<p>Saltstack 採用集中化管理，我們一般可以理解為 Puppet 的簡化版本與 <a href="https://fedorahosted.org/func/" target="_blank" rel="noopener">Func</a><br>的加強版本。Saltstack 是基於 Python 語言開發的，結合輕量級訊息佇列（ZeroMQ）以及 Python 第三方模組（Pyzmq、PyCrypto、Pyjinja2、python-msgpack與PyYAML等）。</p>
-<p><img src="/images/devops/saltstack-arch.png" alt=""></p>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/12/devops/saltstack-basic/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/02/11/devops/graphite/">利用 Graphite 監控系統資料</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/02/11/devops/graphite/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-02-11T04:23:01.000Z" itemprop="datePublished">2016-02-11</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/Data-Collect/">Data Collect</a>, <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>Graphite 是一款開源的監控繪圖工具。Graphite 可以實時收集、存儲、顯示時間序列類型的數據（time series data）。它主要有三個部分構成：</p>
-<ol>
-<li><strong>Carbon</strong>：基於 Twisted 的行程，用來接收資料。</li>
-<li><strong>Whisper</strong>：專門儲存時間序列類型資料的小型資料庫。</li>
-<li><strong>Graphite</strong> webapp：基於 Django 的網頁應用程式。</li>
-</ol>
-        
-        <p class="article-more-link">
-            <a href="/2016/02/11/devops/graphite/#more">
-                <span class="vm">MORE..</span>
-                <i class="icon-arrow-double-right vm"></i>    
-            </a>
-        </p>
-        
-        
-    </section>
-</article>
-
-
-    <article class="article" itemscope itemprop="blogPost">
-    
-    <header class="article-header">
-        
-        <h1 itemprop="name">
-            <a href="/2016/01/03/devops/elk/">用 ELK 做監控系統</a>
-        </h1>
-        
-        <div class="article-meta clearfix">
-            <a class="article-date" href="/2016/01/03/devops/elk/">
-    
-    <i class="icon-calendar"></i>
-    
-    <time datetime="2016-01-03T04:23:01.000Z" itemprop="datePublished">2016-01-03</time>
-</a>
-
-            
-<div class="article-tag-list">
-    <i class="icon-tag"></i>
-    <a class="article-tag-link" href="/tags/DevOps/">DevOps</a>, <a class="article-tag-link" href="/tags/Logging/">Logging</a>, <a class="article-tag-link" href="/tags/Monitoring/">Monitoring</a>, <a class="article-tag-link" href="/tags/Visualization/">Visualization</a>
-</div>
-
-
-        </div>
-    </header>
-    
-    <section class="article-body markdown-body">
-        
-        <p>ELK 是由三個套件的開頭英文組成的縮寫，其 E 表示<code>Elasticsearch</code>，L 表示<code>Logstash</code>，K 表示<code>Kibana</code>，作為收集資料、資料索引以及資料視覺化的工具集合，以下分別簡單介紹三個套件。</p>
-<h2 id="Logstash"><a href="#Logstash" class="headerlink" title="Logstash"></a>Logstash</h2><p>Logstash 可以簡單、有效、快速的處理Log資料，不過Logstash的主要功能是處理時間類型的Log，也就是在Log檔中有時間戳記（TimeStamp）的資料，而分析Log資料主要就是分析事件發生的時間和內容</p>
-<h3 id="Logstash-Forwarder"><a href="#Logstash-Forwarder" class="headerlink" title="Logstash Forwarder"></a>Logstash Forwarder</h3><p>可傳送所收集到的 Log 訊息到 Logstash。</p>
-<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p>Elasticsearch 是一個開源的資料搜尋分析系統，它可以解決現在 Web 去做資料庫的搜尋的種種問題，嚴格來說也不只是 web，(有可能是為了撈資料的效能，或是 schema free,  real-time 等等)。</p>
-<h2 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h2><p>Kibana 是一個開源和免費的工具，他可以幫助您匯總、分析和搜索重要數據日志並提供友好的web界面</p>
-<h2 id="系統與安裝版本"><a href="#系統與安裝版本" class="headerlink" title="系統與安裝版本"></a>系統與安裝版本</h2><ul>
-<li>OS: Ubuntu 14.04</li>
-<li>Elasticsearch 1.4.4</li>
-<li>Logstash 1.5.0</li>
-<li>Kibana 4</li>
-</ul>
-<h2 id="進行安裝"><a href="#進行安裝" class="headerlink" title="進行安裝"></a>進行安裝</h2><h3 id="首先安裝-Java-Oracle"><a href="#首先安裝-Java-Oracle" class="headerlink" title="首先安裝 Java Oracle"></a>首先安裝 Java Oracle</h3><pre><code>sudo apt-get purge openjdk*
-sudo apt-get -y autoremove
-sudo add-apt-repository -y ppa:webupd8team/java
-sudo apt-get update
-echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-sudo apt-get -y install oracle-java7-installer
-</code></pre><h3 id="安裝-Elasticsearch"><a href="#安裝-Elasticsearch" class="headerlink" title="安裝 Elasticsearch"></a>安裝 Elasticsearch</h3><p>匯入 Elasticsearch public GPG key 到 apt</p>
-<pre><code>wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
-</code></pre><p>建立 Elasticsearch source list：</p>
-<pre><code>echo &#39;deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main&#39; | sudo tee /etc/apt/sources.list.d/elasticsearch.list
-</code></pre><p>更新套件：</p>
-<pre><code>sudo apt-get update
-</code></pre><p>安裝 elasticsearch 1.4.4：</p>
-<pre><code>sudo apt-get -y install elasticsearch=1.4.4
-</code></pre><p>安裝完成，開啟配置檔：</p>
-<pre><code>sudo vi /etc/elasticsearch/elasticsearch.yml
-</code></pre><p>如果想限制給外界存取 Elasticsearch，可找到  <code>network.host</code> ，將內容取代成”localhost”，如下：</p>
-<pre><code>network.host: localhost
-</code></pre><p>開啟 Elasticsearch：</p>
-<pre><code>sudo service elasticsearch restart
-</code></pre><p>重開機立即啟動 Elasticsearch ：</p>
-<pre><code>sudo update-rc.d elasticsearch defaults 95 10
-</code></pre><h3 id="安裝-Kibana"><a href="#安裝-Kibana" class="headerlink" title="安裝 Kibana"></a>安裝 Kibana</h3><p>下載 Kibana 4 到 opt 資料夾</p>
-<pre><code>cd /opt
-</code></pre><p>使用<code>wget</code>下載 Kibana 套件壓縮檔：</p>
-<pre><code>wget https://download.elasticsearch.org/kibana/kibana/kibana-4.0.1-linux-x64.tar.gz
-</code></pre><p>解壓縮檔案：</p>
-<pre><code>tar xvf kibana-*.tar.gz
-</code></pre><p>開啟 Kibana 配置檔：</p>
-<pre><code>vi ~/kibana-4*/config/kibana.yml
-</code></pre><p>配置檔中找到<code>host</code>將 IP address “0.0.0.0” 取代成 “localhost”，此設定讓 Kibana 只能被 localhost 存取，如下：</p>
-<pre><code>host: &quot;localhost&quot;
-</code></pre><p>將下載完的 kibana 資料夾名稱改成 kibana：</p>
-<pre><code>sudo mv kibana-4.0.1-linux-x64 kibana
-</code></pre><p>Kibana 執行 <code>/opt/kibana/bin/kibana</code> 來開啟，但我們想用 service 的方式開啟。</p>
-<p>下載 Kibana 4 init 腳本:</p>
-<pre><code>cd /etc/init.d &amp;&amp; sudo wget https://gist.githubusercontent.com/thisismitch/8b15ac909aed214ad04a/raw/bce61d85643c2dcdfbc2728c55a41dab444dca20/kibana4
-</code></pre><p>開啟 Kibana service：</p>
-<pre><code>sudo chmod +x /etc/init.d/kibana4
-sudo update-rc.d kibana4 defaults 96 9
-sudo service kibana4 start
-</code></pre><h3 id="安裝-Logstash"><a href="#安裝-Logstash" class="headerlink" title="安裝 Logstash"></a>安裝 Logstash</h3><p>建立 Logstash source list：</p>
-<pre><code>echo &#39;deb http://packages.elasticsearch.org/logstash/1.5/debian stable main&#39; | sudo tee /etc/apt/sources.list.d/logstash.list
-</code></pre><p>更新套件：</p>
-<pre><code>sudo apt-get update
-</code></pre><p>安裝 Logstash：</p>
-<pre><code>sudo apt-get install logstash
-</code></pre><h3 id="產生-SSL-認證"><a href="#產生-SSL-認證" class="headerlink" title="產生 SSL 認證"></a>產生 SSL 認證</h3><p>因為我們將使用 Logstash Forwarder 收集 logs並傳送到 Logstash Server ，所以我們必須建立一對SSL 認證的 key：</p>
-<pre><code>sudo mkdir -p /etc/pki/tls/certs
-sudo mkdir /etc/pki/tls/private
-</code></pre><p>設定 openssl 配置：</p>
-<pre><code>sudo vi /etc/ssl/openssl.cnf
-</code></pre><p>配置檔中找到 <code>[ v3_ca ]</code> ，並新增以下內容：</p>
-<pre><code>subjectAltName = IP:logstash_server_private_ip
-</code></pre><p>產生 SSL 認證和 private key 到 <code>/etc/pki/tls/</code> ，如下：</p>
-<pre><code>cd /etc/pki/tls
-</code></pre><p>設定 SSL 驗證：</p>
-<pre><code>sudo openssl req -config /etc/ssl/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
-</code></pre><h3 id="配置-Logstash"><a href="#配置-Logstash" class="headerlink" title="配置 Logstash"></a>配置 Logstash</h3><p>新增配置檔 <code>01-lumberjack-input.conf</code>：</p>
-<pre><code>sudo vi /etc/logstash/conf.d/01-lumberjack-input.conf
-</code></pre><p>新增以下配置內容：</p>
-<pre><code>input {
-  lumberjack {
-    port =&gt; 5000
-    type =&gt; &quot;logs&quot;
-    ssl_certificate =&gt; &quot;/etc/pki/tls/certs/logstash-forwarder.crt&quot;
-    ssl_key =&gt; &quot;/etc/pki/tls/private/logstash-forwarder.key&quot;
-  }
-}
-</code></pre><p>新增配置檔 <code>10-syslog.conf</code>：</p>
-<pre><code>sudo vi /etc/logstash/conf.d/10-syslog.conf
-</code></pre><p>新增以下配置內容：</p>
-<pre><code>filter {
-  if [type] == &quot;syslog&quot; {
-    grok {
-      match =&gt; { &quot;message&quot; =&gt; &quot;%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}&quot; }
-      add_field =&gt; [ &quot;received_at&quot;, &quot;%{@timestamp}&quot; ]
-      add_field =&gt; [ &quot;received_from&quot;, &quot;%{host}&quot; ]
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
     }
-    syslog_pri { }
-    date {
-      match =&gt; [ &quot;syslog_timestamp&quot;, &quot;MMM  d HH:mm:ss&quot;, &quot;MMM dd HH:mm:ss&quot; ]
-    }
-  }
-}
-</code></pre><p>新增配置檔 <code>30-lumberjack-output.conf</code>：</p>
-<pre><code>sudo vi /etc/logstash/conf.d/30-lumberjack-output.conf
-</code></pre><p>新增以下配置內容：</p>
-<pre><code>output {
-  elasticsearch { host =&gt; localhost }
-  stdout { codec =&gt; rubydebug }
-}
-</code></pre><p>重啟 Logstash：</p>
-<pre><code>sudo service logstash restart
-</code></pre><p>完成後就可以設置<code>Logstash Forwarder</code>（簡單說就是加入 Client）。</p>
-<h4 id="複製-SSL-Certificate-與-Logstash-Forwarder-套件-On-Logstash-Server"><a href="#複製-SSL-Certificate-與-Logstash-Forwarder-套件-On-Logstash-Server" class="headerlink" title="複製 SSL Certificate 與 Logstash Forwarder 套件 (On Logstash Server)"></a>複製 SSL Certificate 與 Logstash Forwarder 套件 (On Logstash Server)</h4><pre><code>scp /etc/pki/tls/certs/logstash-forwarder.crt user@client_server_private_address:/tmp
-</code></pre><h4 id="安裝-Logstash-Forwarder-套件-On-Client"><a href="#安裝-Logstash-Forwarder-套件-On-Client" class="headerlink" title="安裝 Logstash Forwarder 套件 (On Client)"></a>安裝 Logstash Forwarder 套件 (On Client)</h4><p>Logstash Forwarder source list：</p>
-<pre><code>echo &#39;deb http://packages.elasticsearch.org/logstashforwarder/debian stable main&#39; | sudo tee /etc/apt/sources.list.d/logstashforwarder.list
-</code></pre><p>一樣可使用Elasticsearch的 GPG key 來安裝：</p>
-<pre><code>wget -O - http://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
-</code></pre><p>安裝 Logstash Forwarder package：</p>
-<pre><code>sudo apt-get update
-sudo apt-get install logstash-forwarder
-</code></pre><p>複製 Logstash server’s SSL認證到 <code>/etc/pki/tls/certs</code>：</p>
-<pre><code>sudo mkdir -p /etc/pki/tls/certs
-sudo cp /tmp/logstash-forwarder.crt /etc/pki/tls/certs/
-</code></pre><h4 id="配置-Logstash-Forwarder"><a href="#配置-Logstash-Forwarder" class="headerlink" title="配置 Logstash Forwarder"></a>配置 Logstash Forwarder</h4><p>設定Logstash Forwarder 配置檔(<code>On Client Server</code>)：</p>
-<pre><code>sudo vi /etc/logstash-forwarder.conf
-</code></pre><p>配置檔中找到 <code>network</code> ，底下加入以下內容：</p>
-<pre><code>&quot;servers&quot;: [ &quot;logstash_server_private_address:5000&quot; ],
-    &quot;timeout&quot;: 15,
-    ssl ca&quot;: &quot;/etc/pki/tls/certs/logstash-forwarder.crt&quot;
-</code></pre><p>配置檔中找到 <code>files</code> ，底下加入以下內容：</p>
-<pre><code>   {
-      &quot;paths&quot;: [
-        &quot;/var/log/syslog&quot;,
-        &quot;/var/log/auth.log&quot;
-       ],
-      &quot;fields&quot;: { &quot;type&quot;: &quot;syslog&quot; }
-    }
-</code></pre><p>重啟 Logstash Forwarder：</p>
-<pre><code>sudo service logstash-forwarder restart
-</code></pre><p>完成後，即可開啟瀏覽器，網址列輸入<a href="locahost:5601" target="_blank" rel="noopener">locahost:5601</a>。</p>
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
+
+<!-- USE SIDEBAR -->
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
+            
+                
+<!-- Main Content -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <!-- 归档列表 -->
+
+            
+
+             <!-- 归档列表 -->
+
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2018">
+                    <span class="tag-text">2018</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    07-09
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/" style="color: #0085a1">
+                        <span>
+                            Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-29
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/06/29/devops/prometheus-federation/" style="color: #0085a1">
+                        <span>
+                            了解 Prometheus Federation 功能
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-25
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/06/25/kubernetes/k8x-exec-api/" style="color: #0085a1">
+                        <span>
+                            Kubernetes exec API 串接分析
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-23
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/06/23/devops/prometheus-operator/" style="color: #0085a1">
+                        <span>
+                            Prometheus Operator 介紹與安裝
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-10
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/06/10/devops/prometheus-intro/" style="color: #0085a1">
+                        <span>
+                            Prometheus 介紹與基礎入門
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-30
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/05/30/kubernetes/k8s-integration-keystone/" style="color: #0085a1">
+                        <span>
+                            以 Keystone 作為 Kubernetes 使用者認證
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-21
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/04/21/kubernetes/aws-k8s-federation/" style="color: #0085a1">
+                        <span>
+                            在 AWS 上建立跨地區的 Kubernetes Federation 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-18
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/04/18/kubernetes/deploy/kops-aws/" style="color: #0085a1">
+                        <span>
+                            使用 Kops 部署 Kubernetes 至公有雲(AWS)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-15
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/04/15/kubernetes/k8s-integration-ldap/" style="color: #0085a1">
+                        <span>
+                            整合 OpenLDAP 進行 Kubernetes 身份認證
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-05
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/" style="color: #0085a1">
+                        <span>
+                            Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-21
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/03/21/kubernetes/k8s-federation/" style="color: #0085a1">
+                        <span>
+                            使用 kubefed 建立 Kubernetes Federation(On-premises)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-15
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/03/15/tensorflow/kubeflow/" style="color: #0085a1">
+                        <span>
+                            利用 Kubeflow 來管理 TensorFlow 應用程式
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-01
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/03/01/kubernetes/nvidia-device-plugin/" style="color: #0085a1">
+                        <span>
+                            Kubernetes NVIDIA Device Plugins
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/02/17/container/docker-nvidia-install/" style="color: #0085a1">
+                        <span>
+                            安裝 NVIDIA Docker 2 來讓容器使用 GPU
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-11
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/02/11/ceph/luminous-crush-issue/" style="color: #0085a1">
+                        <span>
+                            Ceph Luminous CRUSH map 400000000000000 問題
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-08
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2018/01/08/kubernetes/rbac-sa-kubectl/" style="color: #0085a1">
+                        <span>
+                            利用 RBAC + SA 進行 Kubectl 權限控管
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                </ul>
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2017">
+                    <span class="tag-text">2017</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    12-20
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/12/20/openstack/stackube/" style="color: #0085a1">
+                        <span>
+                            多租戶 Kubernetes 部署方案 Stackube
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-29
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/11/29/openstack/openstack-helm/" style="color: #0085a1">
+                        <span>
+                            Deploy OpenStack on Kubernetes using OpenStack-helm
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-27
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/10/27/kubernetes/deploy/manual-v1.8/" style="color: #0085a1">
+                        <span>
+                            Kubernetes v1.8.x 全手動苦工安裝教學(TL;DR)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    08-29
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/08/29/openstack/kuryr-kubernetes/" style="color: #0085a1">
+                        <span>
+                            利用 Kuryr 整合 OpenStack 與 Kubernetes 網路
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    08-16
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/08/16/openstack/ironic/" style="color: #0085a1">
+                        <span>
+                            利用 OpenStack Ironic 提供裸機部署服務
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    07-22
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/07/22/kubernetes/deploy/linuxkit-k8s/" style="color: #0085a1">
+                        <span>
+                            利用 LinuxKit 建立 Kubernetes 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-28
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/05/28/blockchain/smart-contracts/" style="color: #0085a1">
+                        <span>
+                            智能合約(Smart contracts)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-27
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/05/27/blockchain/browser-solidity/" style="color: #0085a1">
+                        <span>
+                            利用 Browser Solidity 部署智能合約
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-26
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/05/26/blockchain/geth-monitoring/" style="color: #0085a1">
+                        <span>
+                            監控 Go Ethereum 的區塊鏈狀況
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-25
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/05/25/blockchain/multi-node-geth/" style="color: #0085a1">
+                        <span>
+                            建立 Go Ethereum 私有網路鏈
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-10
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/05/10/container/harbor-install/" style="color: #0085a1">
+                        <span>
+                            Enterprise 的 Docker registry 平台 Harbor
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-23
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/04/23/container/linuxkit/" style="color: #0085a1">
+                        <span>
+                            品嚐 Moby LinuxKit 的 Linux 作業系統
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-10
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/04/10/tensorflow/intro/" style="color: #0085a1">
+                        <span>
+                            TensorFlow 基本使用與分散式概念
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-25
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/03/25/kubernetes/helm-quickstart/" style="color: #0085a1">
+                        <span>
+                            Kuberentes Helm 介紹
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/" style="color: #0085a1">
+                        <span>
+                            Kubespray 部署實體機 Kubernetes v1.6 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-12
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/03/12/tensorflow/install-source/" style="color: #0085a1">
+                        <span>
+                            Ubuntu 16.04 安裝 TensorFlow GPU GTX 1060
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-19
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/" style="color: #0085a1">
+                        <span>
+                            kube-ansible 快速部署實體機 HA 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" style="color: #0085a1">
+                        <span>
+                            kube-ansible 快速部署 HA 測試環境
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                </ul>
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2016">
+                    <span class="tag-text">2016</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    12-16
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/12/16/kubernetes/deploy/manual-v1.6/" style="color: #0085a1">
+                        <span>
+                            Kubernetes v1.6.x 全手動苦工安裝教學
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    12-03
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/12/03/ceph/ceph-spdk/" style="color: #0085a1">
+                        <span>
+                            Ceph 使用 SPDK 加速 NVMe SSD
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-28
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/11/28/ceph/deploy/ceph-deploy-bluestore/" style="color: #0085a1">
+                        <span>
+                            Using bluestore in Kraken
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-16
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/11/16/container/docker-swarm/" style="color: #0085a1">
+                        <span>
+                            簡單部署 Docker Swarm 測試叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-23
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/10/23/kubernetes/deploy/minikube/" style="color: #0085a1">
+                        <span>
+                            Minikube 部署 Local 測試環境
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-01
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/10/01/tensorflow/tensorflow-docker/" style="color: #0085a1">
+                        <span>
+                            TensorFlow on Docker
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    09-29
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/09/29/kubernetes/deploy/kubeadm/" style="color: #0085a1">
+                        <span>
+                            只要用 kubeadm 小朋友都能部署 Kubernetes
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    08-19
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/08/19/golang/go-install/" style="color: #0085a1">
+                        <span>
+                            Go 語言環境安裝
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    08-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/08/17/data-engineer/dcos-install/" style="color: #0085a1">
+                        <span>
+                            簡單部署 DC/OS 於 CentOS 上
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    07-21
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/07/21/openstack/kolla-ansible/" style="color: #0085a1">
+                        <span>
+                            OpenStack Kolla 初體驗
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    07-05
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/07/05/linux/ubuntu/bcache/" style="color: #0085a1">
+                        <span>
+                            用 Bcache 來加速硬碟效能
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-24
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/06/24/data-engineer/build-spark/" style="color: #0085a1">
+                        <span>
+                            Building Spark Source Code
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-02
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/06/02/openstack/kuryr-install/" style="color: #0085a1">
+                        <span>
+                            Docker 串接 OpenStack Neutron Kuryr 網路
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-27
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/05/27/linux/ubuntu/flashcache/" style="color: #0085a1">
+                        <span>
+                            用 Flashcache 建立高容量與高效能儲存
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-26
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/05/26/linux/ubuntu/corosync-pacemaker/" style="color: #0085a1">
+                        <span>
+                            Pacemaker + Corosync 做服務 HA
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-15
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/05/15/ceph/rados-java/" style="color: #0085a1">
+                        <span>
+                            利用 rados-java 存取 Ceph
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    05-06
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/05/06/data-engineer/alluxio/" style="color: #0085a1">
+                        <span>
+                            Alluxio 分散式虛擬儲存系統
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-21
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/04/21/linux/ubuntu/dm-cache/" style="color: #0085a1">
+                        <span>
+                            DM-cache 建立混和區塊裝置
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-06
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/04/06/data-engineer/akka-intro/" style="color: #0085a1">
+                        <span>
+                            Akka 基本介紹
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-04
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/04/04/data-engineer/apache-flume/" style="color: #0085a1">
+                        <span>
+                            Apache Flume 快速上手
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-01
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/04/01/openstack/how-to-contribute/" style="color: #0085a1">
+                        <span>
+                            OpenStack 貢獻基本流程
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    04-01
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/04/01/linux/ubuntu/drbd/" style="color: #0085a1">
+                        <span>
+                            DRBD 進行跨節點的區塊儲存備份
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-29
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/03/29/linux/ubuntu/keepalived/" style="color: #0085a1">
+                        <span>
+                            利用 Keepalived 提供 VIP
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    03-28
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/03/28/linux/ubuntu/haproxy/" style="color: #0085a1">
+                        <span>
+                            使用 HAProxy 進行負載平衡
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-24
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/24/kubernetes/deploy/official-ansible/" style="color: #0085a1">
+                        <span>
+                            透過官方 Ansible 部署 Kubernetes(Unrecommended)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-23
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/" style="color: #0085a1">
+                        <span>
+                            Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-18
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/18/devops/ansible/ansible-playbook/" style="color: #0085a1">
+                        <span>
+                            Ansible Playbooks
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/" style="color: #0085a1">
+                        <span>
+                            Ansible Dynamic Inventory
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/17/devops/ansible/ansible-inventory/" style="color: #0085a1">
+                        <span>
+                            Ansible Inventory
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/17/devops/ansible/ansible-adhoc/" style="color: #0085a1">
+                        <span>
+                            Ansible Ad-Hoc 指令與 Modules
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-16
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/16/devops/ansible/ansible-basic/" style="color: #0085a1">
+                        <span>
+                            Ansible 介紹與使用
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-15
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/15/ceph/deploy/ceph-ansible/" style="color: #0085a1">
+                        <span>
+                            Ceph Ansible 自動化建立 Ceph 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-14
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/14/devops/puppet-foreman/" style="color: #0085a1">
+                        <span>
+                            Foreman 管理 Puppet
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-13
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/13/devops/puppet-basic/" style="color: #0085a1">
+                        <span>
+                            Puppet 介紹與使用
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-12
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/12/devops/saltstack-basic/" style="color: #0085a1">
+                        <span>
+                            SaltStack 介紹
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-11
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/11/ceph/deploy/ceph-docker/" style="color: #0085a1">
+                        <span>
+                            Docker 快速部署 Ceph 測試叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    02-11
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/02/11/devops/graphite/" style="color: #0085a1">
+                        <span>
+                            利用 Graphite 監控系統資料
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-16
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/01/16/kubernetes/deploy/kubeup-deploy/" style="color: #0085a1">
+                        <span>
+                            kube-up 腳本部署 Kubernetes 叢集(Deprecated)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-14
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/01/14/kubernetes/deploy/docker-multi/" style="color: #0085a1">
+                        <span>
+                            hyperkube 建立多節點 Kubernetes(Unrecommended)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-13
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/01/13/kubernetes/deploy/docker-singal/" style="color: #0085a1">
+                        <span>
+                            hyperkube 建立單機 Kubernetes(Unrecommended)
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-05
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/01/05/container/docker-network/" style="color: #0085a1">
+                        <span>
+                            學習 Docker Network 之間的差別
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-03
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/01/03/devops/elk/" style="color: #0085a1">
+                        <span>
+                            用 ELK 做監控系統
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    01-02
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2016/01/02/container/docker-registry/" style="color: #0085a1">
+                        <span>
+                            自己建立 Docker Registry
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                </ul>
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2015">
+                    <span class="tag-text">2015</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    12-06
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/12/06/container/docker-machine-driver/" style="color: #0085a1">
+                        <span>
+                            Docker Machine Driver 使用
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    12-04
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/" style="color: #0085a1">
+                        <span>
+                            Ubuntu Metal as a Service 安裝
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-24
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/24/linux/ubuntu/nfs/" style="color: #0085a1">
+                        <span>
+                            NFS 簡單安裝與使用
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-21
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/21/ceph/cephfs/" style="color: #0085a1">
+                        <span>
+                            Ceph FS 基本操作
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-20
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/20/ceph/deploy/ceph-deploy/" style="color: #0085a1">
+                        <span>
+                            使用 ceph-deploy 工具部署 Ceph 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-19
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/19/ceph/ceph-intro/" style="color: #0085a1">
+                        <span>
+                            Ceph 分散式儲存系統介紹
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-17
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/17/data-engineer/apache-cassandra/" style="color: #0085a1">
+                        <span>
+                            Apache Cassandra 分散式資料庫
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-10
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/10/kubernetes/k8s-intro/" style="color: #0085a1">
+                        <span>
+                            Kuberentes 是什麼？
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-09
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/09/container/docker/" style="color: #0085a1">
+                        <span>
+                            Docker 基礎介紹
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-04
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/11/04/linux/ubuntu/apache2-proxy/" style="color: #0085a1">
+                        <span>
+                            簡單設定 Apache2 Proxy 與 VirtualHost
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-13
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/10/13/data-engineer/kafka-install/" style="color: #0085a1">
+                        <span>
+                            Apache Kafka 叢集
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-12
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/10/12/data-engineer/spark-mesos/" style="color: #0085a1">
+                        <span>
+                            Spark on Mesos 多節點部署
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-11
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/" style="color: #0085a1">
+                        <span>
+                            Ubuntu PXE 安裝與設定
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    10-03
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/10/03/linux/centos/centos-pxe/" style="color: #0085a1">
+                        <span>
+                            CentOS 6.5 PXE 安裝與設定
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    09-19
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/09/19/data-engineer/spark-yarn/" style="color: #0085a1">
+                        <span>
+                            Spark on Hadoop YARN 單機安裝
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    09-18
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2015/09/18/data-engineer/spark-standalone/" style="color: #0085a1">
+                        <span>
+                            Spark Standalone 模擬分散式運算
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                </ul>
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2014">
+                    <span class="tag-text">2014</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    06-03
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2014/06/03/msic/oop/" style="color: #0085a1">
+                        <span>
+                            基本物件導向概念
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                </ul>
+            </div>
+            
+            <div class="one-tag-list">
+                <span class="fa fa-calendar-times-o listing-seperator" id="2013">
+                    <span class="tag-text">2013</span>
+                </span>
+                <ul>
+                
+                  <!-- <li class="listing-item">
+                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
+                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
+                  </li> -->
+                 <li >
+                    11-03
+                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                    <a href="/2013/11/03/msic/ios-code-style/" style="color: #0085a1">
+                        <span>
+                            NYTime Objective-C 程式規範
+                        </span>
+                    </a>
+                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
+                </li>
+                
+                </ul>
+            </div>
+            
+
+
+        </div>
+    </div>
+</div>
+
+
+                <!-- 如果开启评论功能 -->
+                
+            </div>
+
+          <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5><a href="/about/">ABOUT ME</a></h5>
+    <div class="short-about">
 
         
-    </section>
-</article>
+            <img id = "avatar_pic" src="/images/profile.png" />
+        
 
+        
+            <p>Hi, I&#39;m KaiRen(aka Kyle). A RDSS software engineer at inwinSTACK. Live in New Taipei, Taiwan.</p>
+        
 
+        <!-- SNS Link -->
+        <ul class="list-inline">
+            
+            
+                <li>
+                    <a target="_blank" href="https://twitter.com/k2r2bai">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
 
+            
 
+            
+                <li>
+                    <a target="_blank" href="https://www.facebook.com/k2r2bai">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
 
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/kairen">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+            
+            
+            
+                <li>
+                    <a target="_blank"  href="https://www.linkedin.com/in/k2r2bai">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+</section>
+        <hr>
+    
+        
+  <h5>RECENT POSTS</h3>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
+        </li>
+      
+        <li>
+          <a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a>
+        </li>
+      
+        <li>
+          <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
+        </li>
+      
+        <li>
+          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
+        </li>
+      
+        <li>
+          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
+        </li>
+      
+    </ul>
+  </div>
+
+        <hr>
+    
+        <!-- Featured Tags -->
+
+<section>
+    <!-- no hr -->
+    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+</section>
+
+        <hr>
+    
 </div>
-        <footer class="footer">
-    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, Theme by <a href="https://github.com/sanonz/hexo-theme-concise" target="_blank">Concise</a>
+
+        
+    </div>
+</div>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/kairen">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Kyle Bai 2018
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
 </footer>
 
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
 
-    </div>
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.9.0/jquery.min.js"></script>
-    
-    <script type="text/javascript">
-        $(function() {
-            var nodes = {
-                nav: $('#nav'),
-                aside: $('#aside'),
-                navTags: $('#nav-tags')
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://kairen.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
             };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
 
-            $('#open-panel, #aside-mask').on('click', function() {
-                nodes.aside.toggleClass('panel-show');
-            });
-            $('#nav-tag').on('click', function(event) {
-                event.preventDefault();console.log(nodes.navTags.attr('class'))
-                nodes.navTags.toggleClass('tag-show');console.log(nodes.navTags.attr('class'))
-            })/*.hover(function() {
-                nodes.navTags.addClass('tag-show');
-            }, function() {
-                nodes.navTags.removeClass('tag-show');
-            });*/
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
 
-            
-        });
-    </script>
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://kairen.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>
+
 </html>
