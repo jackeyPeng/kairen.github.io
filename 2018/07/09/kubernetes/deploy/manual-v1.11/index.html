@@ -405,6 +405,9 @@ EOF
 
 $ sysctl -p /etc/sysctl.d/k8s.conf
 </code></pre>
+<blockquote>
+<p>關於<code>bridge-nf-call-iptables</code>的啟用取決於是否將容器連接到<code>Linux bridge</code>或使用其他一些機制(如 SDN vSwitch)。</p>
+</blockquote>
 <ul>
 <li>Kubernetes v1.8+ 要求關閉系統 Swap，請在<code>所有節點</code>利用以下指令關閉：</li>
 </ul>
