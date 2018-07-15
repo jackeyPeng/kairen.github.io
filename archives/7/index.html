@@ -97,7 +97,7 @@
     </div>
 </header>
 
-	
+
     <!-- Navigation -->
 <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
     <div class="container-fluid">
@@ -129,14 +129,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -222,7 +222,7 @@
 
                         
                     
-                    
+
                 </ul>
             </div>
         </div>
@@ -349,16 +349,18 @@ Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部�
 
 <div class="post-preview">
 
-    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
+    <a href="/2016/02/17/devops/ansible/ansible-inventory/">
         <h2 class="post-title">
-            Ansible Ad-Hoc 指令與 Modules
+            Ansible Inventory
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
-模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
+            Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於/etc/ansible/hosts。
+IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
+
+Hosts ......
         </div>
     </a>
     
@@ -382,18 +384,16 @@ Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部�
 
 <div class="post-preview">
 
-    <a href="/2016/02/17/devops/ansible/ansible-inventory/">
+    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
         <h2 class="post-title">
-            Ansible Inventory
+            Ansible Ad-Hoc 指令與 Modules
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於/etc/ansible/hosts。
-IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
-
-Hosts ......
+            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
+模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
         </div>
     </a>
     
@@ -800,6 +800,8 @@ ceph-aio
             
         
             
+        
+            
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
             
         
@@ -812,11 +814,9 @@ ceph-aio
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
             
         
             
@@ -860,15 +860,15 @@ ceph-aio
             
         
             
+        
+            
+        
+            
+        
+            
+        
+            
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
-            
-        
-            
-        
-            
-        
-            
-        
             
         
             
