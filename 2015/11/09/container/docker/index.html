@@ -138,6 +138,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -146,7 +149,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -288,8 +291,7 @@
 <blockquote>
 <p>Docker 並非一個新興技術，而是過往的 Linux Container 技術的基礎上進行封裝。因此使用者只需要關注應用程式如何被部署與執行就好，而不用管容器是如何被建置出來。</p>
 </blockquote>
-<center><img src="/images/docker/docker-logo.png" alt="Docker"></center>
-
+<center>![Docker](/images/docker/docker-logo.png)</center>
 <a id="more"></a>
 <p>使用 Docker 有以下幾項好處：</p>
 <ul>
@@ -304,22 +306,22 @@
 <blockquote>
 <p>微軟過往許多需要相依於 Windows 語言應用程式也慢慢被支援到 Docker 了。</p>
 </blockquote>
-<h2 id="Docker-Container-vs-傳統虛擬化"><a href="#Docker-Container-vs-傳統虛擬化" class="headerlink" title="Docker Container vs 傳統虛擬化"></a>Docker Container vs 傳統虛擬化</h2><p>傳統虛擬化技術一般是透過在 Host OS 上安裝 Hypervisor（VMM），然後由 Hypervisor 來管理不同虛擬主機，每個虛擬主機都需要安裝不同的作業系統，因此每個環境被獨立的完全隔離。</p>
-<center><img src="/images/docker/vmm-layer.png" alt="虛擬化"></center>
-
+<h2><span id="docker-container-vs-傳統虛擬化">Docker Container vs 傳統虛擬化</span></h2>
+<p>傳統虛擬化技術一般是透過在 Host OS 上安裝 Hypervisor（VMM），然後由 Hypervisor 來管理不同虛擬主機，每個虛擬主機都需要安裝不同的作業系統，因此每個環境被獨立的完全隔離。</p>
+<center>![虛擬化](/images/docker/vmm-layer.png)</center>
 <p>然而 Docker 提供應用程式在獨立的 Container 中執行，這些Container 並不需要像虛擬化一樣額外依附在 Hypervisor 甚至 Guest OS 上，而是透過 Docker engine 來進行管理。</p>
-<center><img src="/images/docker/container-layer.png" alt="Docker Container"></center>
-
-<h2 id="Docker-基本概念"><a href="#Docker-基本概念" class="headerlink" title="Docker 基本概念"></a>Docker 基本概念</h2><p>Docker 擁有幾個基本概念，其中包含 Docker 三大重要部分與元件。我們將針對這些概念進行概述，也會在其他章節進一步說明。</p>
+<center>![Docker Container](/images/docker/container-layer.png)</center>
+<h2><span id="docker-基本概念">Docker 基本概念</span></h2>
+<p>Docker 擁有幾個基本概念，其中包含 Docker 三大重要部分與元件。我們將針對這些概念進行概述，也會在其他章節進一步說明。</p>
 <ul>
 <li><strong>Docker images</strong>：Image（映像檔）被用來啟動容器的實際執行得應用程式環境。這概念類似 VM 的映像檔，VM 透過映像檔來啟動作業系統，並執行許多服務，但 Docker 的映像檔則只是檔案系統的儲存狀態，是一個唯讀的板模。</li>
-<li><p><strong>Docker containers</strong>：Container（容器）是一個應用程式執行的實例，Docker 會提供獨立、安全的環境給應用程式執行，容器是從映像檔建立，並運作於主機上。</p>
+<li><strong>Docker containers</strong>：Container（容器）是一個應用程式執行的實例，Docker 會提供獨立、安全的環境給應用程式執行，容器是從映像檔建立，並運作於主機上。</li>
+</ul>
 <blockquote>
 <p>P.S 盡量不要在一個 Container 執行過多的服務。</p>
 </blockquote>
-</li>
-<li><p><strong>Docker registries</strong>：Registries 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="noopener">Deploying a registry server</a>。</p>
-</li>
+<ul>
+<li><strong>Docker registries</strong>：Registries 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="noopener">Deploying a registry server</a>。</li>
 </ul>
 <p>Docker 的推出與發展非常迅速，相關的部署工具與資源相繼出現，更因此讓原名為 dotcloud 變成 Docker, Inc。Docker 也在 2014 - 2015 年推出了以下三大工具：</p>
 <ul>
@@ -327,16 +329,17 @@
 <li><strong><a href="https://docs.docker.com/compose/overview/" target="_blank" rel="noopener">docker-compose</a></strong>：Compose 是 Docker 的編配工具，可以用來建置 Swarm 上的多節點容器化叢集與單一節點的應用程式。Compose 的前身是 Fig，使用者可以透過定義 YAML 檔案來描述與維護所有應用程式服務定義與部署，如多個服務之間如何連接等，使用 Compose 部署的應用程式可以在不影響其他服務情況下自動更新。</li>
 <li><strong><a href="https://docs.docker.com/swarm/overview/" target="_blank" rel="noopener">docker-swarm</a></strong>：Swarm 是 Docker 的原生叢集與調度工具，它基於應用程式生命週期、容器使用、效能需求自動優化分散式應用程式的基礎架構。且 Swarm 可以透過許多服務發現（Service Discovery）套件來打造 HA 的叢集，Swarm 也提供很高的靈活性，使應用程式可以簡單的分散部署在多主機環境上。</li>
 </ul>
-<h2 id="使用者操作-Docker-的方法"><a href="#使用者操作-Docker-的方法" class="headerlink" title="使用者操作 Docker 的方法"></a>使用者操作 Docker 的方法</h2><p>Docker 主機上會執行一個 Docker daemon，就能夠開啟許多 Container。如果要對 Docker 進行操作的話，可以使用 Docker client 軟體，如 docker client、docker-py、Kitematic，這些工具會分別採用以下兩種方式來對部署 Docker daemon 進行管理：</p>
+<h2><span id="使用者操作-docker-的方法">使用者操作 Docker 的方法</span></h2>
+<p>Docker 主機上會執行一個 Docker daemon，就能夠開啟許多 Container。如果要對 Docker 進行操作的話，可以使用 Docker client 軟體，如 docker client、docker-py、Kitematic，這些工具會分別採用以下兩種方式來對部署 Docker daemon 進行管理：</p>
 <ol>
 <li><a href="http://en.wikipedia.org/wiki/Unix_domain_socket" target="_blank" rel="noopener">UNIX Sockets</a></li>
 <li><a href="http://en.wikipedia.org/wiki/Representational_state_transfer" target="_blank" rel="noopener">RESTful API</a></li>
 </ol>
 <p>溝通方式如下圖所示，其中 Docker daemon 可以同時安裝 Docker client 來直接進行 Docker 使用（一般安裝都會有），詳細資訊可以參閱 <a href="https://docs.docker.com/reference/api/docker_remote_api/" target="_blank" rel="noopener">Docker Remote API - Docker Documentation</a>。</p>
-<center><img src="/images/docker/communication.png" alt="溝通方式"></center>
-
+<center>![溝通方式](/images/docker/communication.png)</center>
 <p>最後有興趣看每週 Docker 的新聞可以訂閱 Docker Weekly，參閱   <a href="https://www.docker.com/newsletter-subscription" target="_blank" rel="noopener">Docker Newsletter</a></p>
-<h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
+<h2><span id="參考資源">參考資源</span></h2>
+<ul>
 <li><a href="https://www.docker.com/" target="_blank" rel="noopener">Docker 官方</a></li>
 <li><a href="https://blog.docker.com/2016/03/swarmweek-swarm-maintainers/?mkt_tok=3RkMMJWWfF9wsRonuqTMZKXonjHpfsX54uQqUKO1lMI%2F0ER3fOvrPUfGjI4DS8piI%2BSLDwEYGJlv6SgFQ7LMMaZq1rgMXBk%3D" target="_blank" rel="noopener">Docker Blog</a></li>
 <li><a href="http://www.infoq.com/cn/dockerdeep/" target="_blank" rel="noopener">InfoQ Docker 深入淺出</a></li>
@@ -385,7 +388,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Docker-Container-vs-傳統虛擬化"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Docker Container vs 傳統虛擬化</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Docker-基本概念"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Docker 基本概念</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#使用者操作-Docker-的方法"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">使用者操作 Docker 的方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考資源"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">參考資源</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Docker Container vs 傳統虛擬化</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Docker 基本概念</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">使用者操作 Docker 的方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">參考資源</span></a></li></ol>
         
         </div>
       </aside>
@@ -414,6 +417,15 @@
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

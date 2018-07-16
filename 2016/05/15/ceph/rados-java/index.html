@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -286,50 +289,53 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><a href="https://github.com/ceph/rados-java" target="_blank" rel="noopener">rados-java</a> 透過 JNA 來綁定 librados (C) 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。</p>
+                <p><a href="https://github.com/ceph/rados-java" target="_blank" rel="noopener">rados-java</a> 透過 JNA 來綁定 librados © 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。</p>
 <a id="more"></a>
-<h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>在開始進行之前，需要滿足以下幾項要求：</p>
+<h2><span id="環境準備">環境準備</span></h2>
+<p>在開始進行之前，需要滿足以下幾項要求：</p>
 <ul>
 <li>需要部署一個 Ceph 叢集，可以參考 <a href="https://kairen.github.io/2016/02/11/ceph/deploy/ceph-docker/">Ceph Docker 部署</a>。</li>
 <li>執行 rados-java 程式的環境，要能夠與 Ceph 叢集溝通(ceph.conf、admin key)。</li>
 <li>需要安裝 Ceph 相關 library。可以透過以下方式安裝：</li>
 </ul>
-<pre><code class="sh">$ wget -q -O- &#39;https://download.ceph.com/keys/release.asc&#39; | sudo apt-key add -
+<pre><code class="language-sh">$ wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
 $ echo &quot;deb https://download.ceph.com/debian-kraken/ $(lsb_release -sc) main&quot; | sudo tee /etc/apt/sources.list.d/ceph.list
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y ceph
 </code></pre>
-<h2 id="建構-rados-java-jar-檔"><a href="#建構-rados-java-jar-檔" class="headerlink" title="建構 rados-java jar 檔"></a>建構 rados-java jar 檔</h2><p>首先需要安裝一些相關軟體來提供建構 rados-java 使用：</p>
-<pre><code class="sh">$ sudo apt-get install -y software-properties-common
+<h2><span id="建構-rados-java-jar-檔">建構 rados-java jar 檔</span></h2>
+<p>首先需要安裝一些相關軟體來提供建構 rados-java 使用：</p>
+<pre><code class="language-sh">$ sudo apt-get install -y software-properties-common
 $ sudo add-apt-repository -y ppa:webupd8team/java
 $ sudo apt-get update
 $ sudo apt-get -y install oracle-java8-installer git libjna-java
 $ sudo ln -s /usr/share/java/jna-4.2.2.jar /usr/lib/jvm/java-8-oracle/jre/lib/ext/
 </code></pre>
 <p>接著安裝 maven 3.3.1 + 工具：</p>
-<pre><code class="sh">wget &quot;http://ftp.tc.edu.tw/pub/Apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz&quot;
+<pre><code class="language-sh">wget &quot;http://ftp.tc.edu.tw/pub/Apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz&quot;
 tar -zxf apache-maven-3.3.9-bin.tar.gz
 sudo cp -R apache-maven-3.3.9 /usr/local/
 sudo ln -s /usr/local/apache-maven-3.3.9/bin/mvn /usr/bin/mvn
 mvn --version
 </code></pre>
 <p>然後透過 Git 取得 rados-java 原始碼：</p>
-<pre><code class="sh">$ git clone &quot;https://github.com/ceph/rados-java.git&quot;
+<pre><code class="language-sh">$ git clone &quot;https://github.com/ceph/rados-java.git&quot;
 $ cd rados-java &amp;&amp; git checkout v0.3.0
 $ mvn clean install -Dmaven.test.skip=true
 </code></pre>
 <p>完成後將 rados-java Jar 檔複製到<code>/usr/share/java/</code>底下，並設定 JAR 連結 JVM Class path：</p>
-<pre><code class="sh">$ sudo cp target/rados-0.3.0.jar /usr/share/java
+<pre><code class="language-sh">$ sudo cp target/rados-0.3.0.jar /usr/share/java
 $ sudo ln -s /usr/share/java/rados-0.3.0.jar /usr/lib/jvm/java-8-oracle/jre/lib/ext/
 </code></pre>
 <blockquote>
 <p>這邊也可以直接透過下載 Jar 檔來完成：</p>
-<pre><code class="sh">$ wget &quot;http://central.maven.org/maven2/com/ceph/rados/0.3.0/rados-0.3.0.jar&quot;
+</blockquote>
+<pre><code class="language-sh">$ wget &quot;http://central.maven.org/maven2/com/ceph/rados/0.3.0/rados-0.3.0.jar&quot;
 $ sudo cp rados-0.3.0.jar /usr/share/java/
 </code></pre>
-</blockquote>
 <p>最後就可以透過簡單範例程式存取 Ceph 了。</p>
-<h2 id="簡單測試程式"><a href="#簡單測試程式" class="headerlink" title="簡單測試程式"></a>簡單測試程式</h2><p>這邊透過 Java 程式連結到 Ceph 叢集，並且存取<code>data</code>儲存池來寫入物件，建立與編輯<code>Example.java</code>檔，加入以下程式內容：</p>
-<pre><code class="java">import com.ceph.rados.Rados;
+<h2><span id="簡單測試程式">簡單測試程式</span></h2>
+<p>這邊透過 Java 程式連結到 Ceph 叢集，並且存取<code>data</code>儲存池來寫入物件，建立與編輯<code>Example.java</code>檔，加入以下程式內容：</p>
+<pre><code class="language-java">import com.ceph.rados.Rados;
 import com.ceph.rados.exceptions.RadosException;
 
 import java.io.File;
@@ -370,19 +376,20 @@ public class Example {
 }
 </code></pre>
 <p>撰寫完程式後，執行以下指令來看結果：</p>
-<pre><code class="sh">$ javac Example.java
+<pre><code class="language-sh">$ javac Example.java
 $ sudo java Example
 Connected to the cluster.
 Put kyle-say
 Put my-object
 </code></pre>
-<h2 id="透過-rados-指令檢查"><a href="#透過-rados-指令檢查" class="headerlink" title="透過 rados 指令檢查"></a>透過 rados 指令檢查</h2><p>當程式正確執行後，就可以透過 rados 指令來確認物件是否正確被寫入：</p>
-<pre><code class="sh">$ sudo rados -p data ls
+<h2><span id="透過-rados-指令檢查">透過 rados 指令檢查</span></h2>
+<p>當程式正確執行後，就可以透過 rados 指令來確認物件是否正確被寫入：</p>
+<pre><code class="language-sh">$ sudo rados -p data ls
 kyle-say
 my-object
 </code></pre>
 <p>透過 Get 指令來取得物件的內容：</p>
-<pre><code class="sh">$ sudo rados -p data get kyle-say -
+<pre><code class="language-sh">$ sudo rados -p data get kyle-say -
 Hello World!
 
 $ sudo rados -p data get my-object -
@@ -431,7 +438,7 @@ This is my object.
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#環境準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建構-rados-java-jar-檔"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">建構 rados-java jar 檔</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#簡單測試程式"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">簡單測試程式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#透過-rados-指令檢查"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">透過 rados 指令檢查</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">建構 rados-java jar 檔</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">簡單測試程式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">透過 rados 指令檢查</span></a></li></ol>
         
         </div>
       </aside>
@@ -462,6 +469,15 @@ This is my object.
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -288,66 +291,69 @@
 
                 <p>Flashcache 是 Facebook 的一個開源專案，主要被用於資料庫加速。基本結構為在硬碟（HDD）前面加了一層快取，即採用固態硬碟（SSD）裝置，把熱資料保存於快取中，寫入的過程也是先寫到 SSD，然後由 SSD 同步到傳統硬碟，最後的資料將保存於硬碟中，這樣可以不用擔心 SSD 損壞造成資料遺失問題，同時又可以有大容量、高效能的儲存。</p>
 <a id="more"></a>
-<h3 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h3><p>本教學採用 Ubuntu 14.04 LTS 進行安裝，並建立快取。首先安裝相依套件：</p>
-<pre><code class="sh">$ sudo apt-get install -y git build-essential dkms linux-headers-`uname -r`
+<h3><span id="安裝">安裝</span></h3>
+<p>本教學採用 Ubuntu 14.04 LTS 進行安裝，並建立快取。首先安裝相依套件：</p>
+<pre><code class="language-sh">$ sudo apt-get install -y git build-essential dkms linux-headers-`uname -r`
 </code></pre>
 <p>完成後，透過 git 指令將專案下載至主機上：</p>
-<pre><code class="sh">$ git clone https://github.com/facebook/flashcache.git
+<pre><code class="language-sh">$ git clone https://github.com/facebook/flashcache.git
 $ cd flashcache
 </code></pre>
 <p>進入目錄編譯 flashcache 套件，並透過 make 進行安裝套件：</p>
-<pre><code class="sh">$ make
+<pre><code class="language-sh">$ make
 $ sudo make install
 </code></pre>
 <p>安裝完成後，就可以載入 flashcache 模組，透過以下指令：</p>
-<pre><code class="sh">$ sudo modprobe flashcache
+<pre><code class="language-sh">$ sudo modprobe flashcache
 </code></pre>
 <blockquote>
 <p>若要檢查是否載入成功的話，可以使用以下指令：</p>
-<pre><code class="sh">$ dmesg | tail
+</blockquote>
+<pre><code class="language-sh">$ dmesg | tail
 [24181.921706] flashcache: module verification failed: signature and/or  required key missing - tainting kernel
 [24181.922785] flashcache: flashcache-3.1.1 initialized
 </code></pre>
-</blockquote>
 <p>設定開機時自動載入模組：</p>
-<pre><code class="sh">$ echo &quot;flashcache&quot; | sudo tee -a /etc/modules
+<pre><code class="language-sh">$ echo &quot;flashcache&quot; | sudo tee -a /etc/modules
 </code></pre>
-<h3 id="設定快取"><a href="#設定快取" class="headerlink" title="設定快取"></a>設定快取</h3><p>首先準備一顆 SSD 與 HDD，並安裝於同一台主機上，如以下硬碟結構：</p>
-<pre><code class="sh">+-------+----------+       +--------+---------+       
+<h3><span id="設定快取">設定快取</span></h3>
+<p>首先準備一顆 SSD 與 HDD，並安裝於同一台主機上，如以下硬碟結構：</p>
+<pre><code class="language-sh">+-------+----------+       +--------+---------+       
 | [ 固態硬碟(SSD)]  |       |  [ 傳統硬碟(HDD)]  |       
 |  System   disk   +-------+  System   disk   +
 |    (/dev/sdb)    |       |    (/dev/sdc)    |
 +------------------+       +------------------+
 </code></pre>
 <p>在開始前，必須先將傳統硬碟進行格式化：</p>
-<pre><code class="sh">$ sudo mkfs.ext4 /dev/sdc
+<pre><code class="language-sh">$ sudo mkfs.ext4 /dev/sdc
 </code></pre>
 <p>接著要初始化 Flashcache，然後透過 Flashcache 指令來設定快取：</p>
-<pre><code class="sh">$ sudo flashcache_create -p back -b 4k cachedev /dev/sdb /dev/sdc
+<pre><code class="language-sh">$ sudo flashcache_create -p back -b 4k cachedev /dev/sdb /dev/sdc
 cachedev cachedev, ssd_devname /dev/sdb, disk_devname /dev/sdc cache mode WRITE_BACK
 block_size 8, md_block_size 8, cache_size 0
 Flashcache metadata will use 614MB of your 7950MB main memory
 </code></pre>
 <p>完成後，就可以透過 mount 來使用快取：</p>
-<pre><code class="sh">$ sudo mount /dev/mapper/cachedev /mnt
+<pre><code class="language-sh">$ sudo mount /dev/mapper/cachedev /mnt
 </code></pre>
 <p>若要在開機時自動 mount 為 Flashcache 的快取固態硬碟，可以在<code>rc.local</code>加入以下內容：</p>
-<pre><code class="sh">flashcache_load /dev/sdb
+<pre><code class="language-sh">flashcache_load /dev/sdb
 mount /dev/mapper/cachedev /mnt
 </code></pre>
 <p>若想監控 Flashcache 資訊的話，可以使用以下工具：</p>
-<pre><code class="sh">$ flashstat
+<pre><code class="language-sh">$ flashstat
 </code></pre>
 <p>最後，若想要刪除 Flashcache 的話，可以使用以下指令：</p>
-<pre><code class="sh">$ sudo umount /mnt
+<pre><code class="language-sh">$ sudo umount /mnt
 $ sudo flashcache_destroy /dev/sdb
 $ sudo dmsetup remove cachedev
 </code></pre>
-<h3 id="fio-測試"><a href="#fio-測試" class="headerlink" title="fio 測試"></a>fio 測試</h3><p>這邊採用 fio 來進行測試，首先透過<code>apt-get</code>安裝套件：</p>
-<pre><code class="sh">$ sudo apt-get install fio
+<h3><span id="fio-測試">fio 測試</span></h3>
+<p>這邊採用 fio 來進行測試，首先透過<code>apt-get</code>安裝套件：</p>
+<pre><code class="language-sh">$ sudo apt-get install fio
 </code></pre>
 <p>完成後，即可透過 fio 指令進行效能測試：</p>
-<pre><code class="sh">$ fio --filename=/dev/sdb --direct=1 \
+<pre><code class="language-sh">$ fio --filename=/dev/sdb --direct=1 \
 --rw=randrw --ioengine=libaio --bs=4k \
 --rwmixread=100 --iodepth=16 \
 --numjobs=16 --runtime=60 \
@@ -358,15 +364,13 @@ $ sudo dmsetup remove cachedev
 <ul>
 <li><code>--filename=/dev/sdb</code>：指定要測試的磁碟。</li>
 <li><code>--direct=1</code>：預設值為 0 ,必須設定為 1 才會測試到真實的 non-buffered I/O。</li>
-<li><code>--rw=randrw</code>：可以設定的參數如下 randrw 代表 random(隨機) 的 read(讀) write(寫),其他的請參考下面說明。<ul>
+<li><code>--rw=randrw</code>：可以設定的參數如下 randrw 代表 random(隨機) 的 read(讀) write(寫),其他的請參考下面說明。</li>
 <li><strong>read</strong> : Sequential reads. (循序讀)</li>
 <li><strong>write</strong> : Sequential writes. (循序寫)</li>
 <li><strong>randread</strong> : Random reads. (隨機讀)</li>
 <li><strong>randwrite</strong> : Random writes. (隨機寫)</li>
 <li><strong>rw</strong> : Mixed sequential reads and writes. (循序讀寫)</li>
 <li><strong>randrw</strong> : Mixed random reads and writes. (隨機讀寫)</li>
-</ul>
-</li>
 <li><code>--ioengine=libaio</code>：定義如何跑 I/O 的方式, libaio 是 Linux 本身非同步(asynchronous) I/O 的方式. 其他還有 sync , psync , vsync , posixaio , mmap , splice , syslet-rw , sg , null , net , netsplice , cpuio , guasi , external。</li>
 <li><code>--bs=4k</code>：bs 或是 blocksize ,也就是檔案寫入大小,預設值為 4K。</li>
 <li><code>--rwmixread=100</code>： 當設定為 Mixed ,同一時間 read 的比例為多少,預設為 50%。</li>
@@ -378,7 +382,8 @@ $ sudo dmsetup remove cachedev
 <li><code>--name=4ktest</code>：代表這是一個新的測試 Job。</li>
 </ul>
 </blockquote>
-<h3 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h3><ul>
+<h3><span id="參考資料">參考資料</span></h3>
+<ul>
 <li><a href="http://benjr.tw/34632" target="_blank" rel="noopener">Fio – Flexible I/O Tester</a></li>
 <li><a href="https://github.com/facebook/flashcache/wiki/QuickStart-Recipe-for-Ubuntu-11.10" target="_blank" rel="noopener">Flashcache Wiki</a></li>
 <li><a href="http://navyaijm.blog.51cto.com/4647068/1567698" target="_blank" rel="noopener">Flashcache初次体验</a></li>
@@ -427,7 +432,7 @@ $ sudo dmsetup remove cachedev
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#設定快取"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">設定快取</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#fio-測試"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">fio 測試</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#參考資料"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">參考資料</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">設定快取</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">fio 測試</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">參考資料</span></a></li></ol>
         
         </div>
       </aside>
@@ -458,6 +463,15 @@ $ sudo dmsetup remove cachedev
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

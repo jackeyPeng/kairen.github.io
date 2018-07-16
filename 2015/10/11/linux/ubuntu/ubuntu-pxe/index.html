@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -294,10 +297,13 @@
 <li>DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知用戶端 TFTP 所在的位置為何才行</li>
 <li>TFTP 則是提供用戶端 boot loader 及 kernel file 下載點的重要服務</li>
 </ul>
-<h2 id="Kickstart"><a href="#Kickstart" class="headerlink" title="Kickstart"></a>Kickstart</h2><p>我們在手動安裝作業系統時，會針對需求安裝作業系統的相關套件、設定、disk切割等，當我們重複的輸入這些資訊時，隨著需安裝的電腦越多會越裝越阿雜，如果有人可以幫你完成這樣一套輸入資訊的話，就可以快速的自動化部署多台電腦，除了方便外，心情也格外爽快。</p>
+<h2><span id="kickstart">Kickstart</span></h2>
+<p>我們在手動安裝作業系統時，會針對需求安裝作業系統的相關套件、設定、disk切割等，當我們重複的輸入這些資訊時，隨著需安裝的電腦越多會越裝越阿雜，如果有人可以幫你完成這樣一套輸入資訊的話，就可以快速的自動化部署多台電腦，除了方便外，心情也格外爽快。</p>
 <p>kickstart是Red Hat公司針對自動化安裝Red Had、Fedora、CentOS而制定的問題回覆規範，透過這個套件可以指定回覆設定問題，更能夠指定作業系統安裝其他套裝軟體，也可以執行Script(sh, bash)，通常kickstart設定檔(.cfg)是透過system-config-kickstart產生。也可以利用GUI的CentOS下產生安裝用的cfg檔案。</p>
-<h2 id="Preseed"><a href="#Preseed" class="headerlink" title="Preseed"></a>Preseed</h2><p>相對於kickstart，preseed是Debain/Ubuntu的自動化安裝回覆套件。</p>
-<h2 id="其他工具"><a href="#其他工具" class="headerlink" title="其他工具"></a>其他工具</h2><ul>
+<h2><span id="preseed">Preseed</span></h2>
+<p>相對於kickstart，preseed是Debain/Ubuntu的自動化安裝回覆套件。</p>
+<h2><span id="其他工具">其他工具</span></h2>
+<ul>
 <li>Stacki 3</li>
 <li>Ubuntu MAAS</li>
 <li>Foreman</li>
@@ -305,10 +311,12 @@
 <li>OpenStack Ironic</li>
 <li>Crowbar</li>
 </ul>
-<h2 id="PXE-安裝與設定"><a href="#PXE-安裝與設定" class="headerlink" title="PXE 安裝與設定"></a>PXE 安裝與設定</h2><p>首先安裝相關軟體，如 TFTP、DHCP等：</p>
-<pre><code class="sh">sudo apt-get install -y tftpd-hpa isc-dhcp-server lftp openbsd-inetd
+<h2><span id="pxe-安裝與設定">PXE 安裝與設定</span></h2>
+<p>首先安裝相關軟體，如 TFTP、DHCP等：</p>
+<pre><code class="language-sh">sudo apt-get install -y tftpd-hpa isc-dhcp-server lftp openbsd-inetd
 </code></pre>
-<h3 id="DHCP-設定"><a href="#DHCP-設定" class="headerlink" title="DHCP 設定"></a>DHCP 設定</h3><p>首先編輯 <code>/etc/dhcp/dhcpd.conf</code>檔案，在下面配置 DHCP：</p>
+<h3><span id="dhcp-設定">DHCP 設定</span></h3>
+<p>首先編輯 <code>/etc/dhcp/dhcpd.conf</code>檔案，在下面配置 DHCP：</p>
 <pre><code>ddns-update-style none;
 default-lease-time 600;
 max-lease-time 7200;
@@ -322,21 +330,24 @@ subnet 10.21.10.0 netmask 255.255.255.0 {
     filename &quot;pxelinux.0&quot;;
     next-server 10.21.10.240;
 }
-</code></pre><p>完成後，重新啟動 DHCP 服務：</p>
-<pre><code class="sh">$ sudo service isc-dhcp-server restart
+</code></pre>
+<p>完成後，重新啟動 DHCP 服務：</p>
+<pre><code class="language-sh">$ sudo service isc-dhcp-server restart
 
  * Stopping ISC DHCP server dhcpd [fail]
  * Starting ISC DHCP server dhcpd [ OK ]
 </code></pre>
 <p>檢查 DHCP 是否正確被啟動：</p>
-<pre><code class="sh">$ sudo netstat -lu | grep boot
+<pre><code class="language-sh">$ sudo netstat -lu | grep boot
 
 udp        0      0 *:bootps                *:*
 </code></pre>
-<h3 id="TFTP-Server-設定"><a href="#TFTP-Server-設定" class="headerlink" title="TFTP Server 設定"></a>TFTP Server 設定</h3><p>編輯<code>/etc/inetd.conf</code>檔案，在最下面加入以下內容：</p>
+<h3><span id="tftp-server-設定">TFTP Server 設定</span></h3>
+<p>編輯<code>/etc/inetd.conf</code>檔案，在最下面加入以下內容：</p>
 <pre><code>tftp dgram udp wait root /usr/sbin/in.tftpd  /usr/sbin/in.tftpd -s /var/lib/tftpboot
-</code></pre><p>接著設定 Boot 時啟動服務，以及重新啟動相關服務：</p>
-<pre><code class="sh">$ sudo update-inetd --enable BOOT
+</code></pre>
+<p>接著設定 Boot 時啟動服務，以及重新啟動相關服務：</p>
+<pre><code class="language-sh">$ sudo update-inetd --enable BOOT
 $ sudo service openbsd-inetd restart
 
  * Restarting internet superserver inetd [ OK ]
@@ -344,15 +355,16 @@ $ sudo service openbsd-inetd restart
 $ sudo service tftpd-hpa restart
 </code></pre>
 <p>檢查 TFTP Server 是否正確啟動：</p>
-<pre><code class="sh">$ netstat -lu | grep tftp
+<pre><code class="language-sh">$ netstat -lu | grep tftp
 
 udp        0      0 *:tftp                  *:*
 </code></pre>
-<h3 id="建立開機選單"><a href="#建立開機選單" class="headerlink" title="建立開機選單"></a>建立開機選單</h3><p>完成後安裝 syslinux:</p>
-<pre><code class="sh">sudo apt-get -y install syslinux
+<h3><span id="建立開機選單">建立開機選單</span></h3>
+<p>完成後安裝 syslinux:</p>
+<pre><code class="language-sh">sudo apt-get -y install syslinux
 </code></pre>
 <p>複製 syslinux 設定檔至<code>/var/lib/tftpboot</code>目錄中：</p>
-<pre><code class="sh">sudo cp /usr/lib/syslinux/menu.c32  /var/lib/tftpboot
+<pre><code class="language-sh">sudo cp /usr/lib/syslinux/menu.c32  /var/lib/tftpboot
 sudo cp /usr/lib/syslinux/vesamenu.c32 /var/lib/tftpboot
 sudo cp /usr/lib/syslinux/pxelinux.0 /var/lib/tftpboot
 sudo cp /usr/lib/syslinux/memdisk /var/lib/tftpboot
@@ -360,7 +372,7 @@ sudo cp /usr/lib/syslinux/mboot.c32 /var/lib/tftpboot
 sudo cp /usr/lib/syslinux/chain.c32 /var/lib/tftpboot
 </code></pre>
 <p>建立<code>/var/lib/tftpboot/pxelinux.cfg</code>目錄：</p>
-<pre><code class="sh">$ sudo mkdir /var/lib/tftpboot/pxelinux.cfg
+<pre><code class="language-sh">$ sudo mkdir /var/lib/tftpboot/pxelinux.cfg
 </code></pre>
 <p>接著編輯<code>/var/lib/tftpboot/pxelinux.cfg/default</code>檔案，設定開機選單，以下為簡單設定範例：</p>
 <pre><code>UI vesamenu.c32
@@ -387,6 +399,7 @@ LABEL Ubuntu Server 14.04
   kernel ./ubuntu/server/14.04/linux
   append initrd=./ubuntu/server/14.04/initrd.gz method=http://10.21.10.240/ubuntu/server/14.04/
 </code></pre>
+
                 
 
                 <hr>
@@ -429,7 +442,7 @@ LABEL Ubuntu Server 14.04
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kickstart"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Kickstart</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Preseed"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Preseed</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#其他工具"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">其他工具</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#PXE-安裝與設定"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">PXE 安裝與設定</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#DHCP-設定"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">DHCP 設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#TFTP-Server-設定"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">TFTP Server 設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立開機選單"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">建立開機選單</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Kickstart</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Preseed</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">其他工具</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">PXE 安裝與設定</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">DHCP 設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">TFTP Server 設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">建立開機選單</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -460,6 +473,15 @@ LABEL Ubuntu Server 14.04
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

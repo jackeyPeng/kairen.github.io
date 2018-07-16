@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -295,7 +298,8 @@
 </ul>
 <a id="more"></a>
 <p>而在 OS 部分以支援<code>Ubuntu 16.x</code>及<code>CentOS 7.x</code>的虛擬機與實體機部署。</p>
-<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
+<h2><span id="節點資訊">節點資訊</span></h2>
+<p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
 <table>
 <thead>
 <tr>
@@ -362,7 +366,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認以下幾個項目：</p>
+<h2><span id="事前準備">事前準備</span></h2>
+<p>安裝前需要確認以下幾個項目：</p>
 <ul>
 <li>所有節點的網路之間可以互相溝通。</li>
 <li><code>部署節點(這邊為 master1)</code>對其他節點不需要 SSH 密碼即可登入。</li>
@@ -372,16 +377,17 @@
 <li><code>部署節點(這邊為 master1)</code>需要安裝 Ansible。</li>
 </ul>
 <p>Ubuntu 16.04 安裝 Ansible:</p>
-<pre><code class="sh">$ sudo apt-get install -y software-properties-common git cowsay
+<pre><code class="language-sh">$ sudo apt-get install -y software-properties-common git cowsay
 $ sudo apt-add-repository -y ppa:ansible/ansible
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible
 </code></pre>
 <p>CentOS 7 安裝 Ansible：</p>
-<pre><code class="sh">$ sudo yum install -y epel-release
+<pre><code class="language-sh">$ sudo yum install -y epel-release
 $ sudo yum -y install ansible cowsay
 </code></pre>
-<h2 id="部署-Kubernetes-叢集"><a href="#部署-Kubernetes-叢集" class="headerlink" title="部署 Kubernetes 叢集"></a>部署 Kubernetes 叢集</h2><p>首先透過 Git 取得 HA Kubernetes Ansible 的專案：</p>
-<pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
+<h2><span id="部署-kubernetes-叢集">部署 Kubernetes 叢集</span></h2>
+<p>首先透過 Git 取得 HA Kubernetes Ansible 的專案：</p>
+<pre><code class="language-sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
 $ cd kube-ansible
 </code></pre>
 <p>然後編輯<code>inventory</code>檔案，來加入要部署的節點角色：</p>
@@ -400,8 +406,9 @@ nodes
 
 [kube-addon:children]
 masters
-</code></pre><p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
-<pre><code class="yml"># Kubenrtes version, only support 1.8.0+.
+</code></pre>
+<p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
+<pre><code class="language-yml"># Kubenrtes version, only support 1.8.0+.
 kube_version: 1.8.3
 
 # CRI plugin,
@@ -443,10 +450,10 @@ kube_monitoring: true # Grafana + Infuxdb + Heapster monitoring
 
 # Ingress controller
 ingress: true
-ingress_type: nginx # &#39;nginx&#39;, &#39;haproxy&#39;, &#39;traefik&#39;
+ingress_type: nginx # 'nginx', 'haproxy', 'traefik'
 </code></pre>
 <p>確認<code>group_vars/all.yml</code>完成後，透過 ansible ping 來檢查叢集狀態：</p>
-<pre><code class="sh">$ ansible all -m ping
+<pre><code class="language-sh">$ ansible all -m ping
 172.20.3.91 | SUCCESS =&gt; {
     &quot;changed&quot;: false,
     &quot;ping&quot;: &quot;pong&quot;
@@ -454,10 +461,10 @@ ingress_type: nginx # &#39;nginx&#39;, &#39;haproxy&#39;, &#39;traefik&#39;
 ...
 </code></pre>
 <p>接著就可以透過以下指令進行部署叢集：</p>
-<pre><code class="sh">$ ansible-playbook cluster.yml
+<pre><code class="language-sh">$ ansible-playbook cluster.yml
 </code></pre>
 <p>執行後需要等一點時間，當完成後就可以進入任何一台 Master 進行操作：</p>
-<pre><code class="sh">$ kubectl get node
+<pre><code class="language-sh">$ kubectl get node
 NAME      STATUS            AGE
 master1   Ready,master      3m
 master2   Ready,master      3m
@@ -469,10 +476,11 @@ node4     Ready             1m
 node5     Ready             1m
 </code></pre>
 <p>接著就可以部署 Addons 了，透過以下方式進行：</p>
-<pre><code class="sh">$ ansible-playbook addons.yml
+<pre><code class="language-sh">$ ansible-playbook addons.yml
 </code></pre>
-<h2 id="驗證叢集"><a href="#驗證叢集" class="headerlink" title="驗證叢集"></a>驗證叢集</h2><p>當完成上述步驟後，就可以在任一台<code>master</code>節點進行操作 Kubernetes：</p>
-<pre><code class="sh">$ kubectl get po -n kube-system
+<h2><span id="驗證叢集">驗證叢集</span></h2>
+<p>當完成上述步驟後，就可以在任一台<code>master</code>節點進行操作 Kubernetes：</p>
+<pre><code class="language-sh">$ kubectl get po -n kube-system
 NAME                                    READY     STATUS    RESTARTS   AGE
 ...
 kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
@@ -481,7 +489,7 @@ kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
 <p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <p>接著透過 Etcd 來查看目前 Leader 狀態：</p>
-<pre><code class="sh">$ export CA=&quot;/etc/etcd/ssl&quot;
+<pre><code class="language-sh">$ export CA=&quot;/etc/etcd/ssl&quot;
 $ ETCDCTL_API=3 etcdctl \
     --cacert=${CA}/etcd-ca.pem \
     --cert=${CA}/etcd.pem \
@@ -493,8 +501,9 @@ $ ETCDCTL_API=3 etcdctl \
 75809e2ee8d8d4b4: name=master2 peerURLs=http://172.20.3.92:2380 clientURLs=http://172.20.3.92:2379 isLeader=false
 af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http://172.20.3.93:2379 isLeader=true
 </code></pre>
-<h2 id="重置叢集"><a href="#重置叢集" class="headerlink" title="重置叢集"></a>重置叢集</h2><p>若想要將整個叢集進行重置的話，可以使用以下方式：</p>
-<pre><code class="sh">$ ansible-playbook reset.yml
+<h2><span id="重置叢集">重置叢集</span></h2>
+<p>若想要將整個叢集進行重置的話，可以使用以下方式：</p>
+<pre><code class="language-sh">$ ansible-playbook reset.yml
 </code></pre>
 
                 
@@ -539,7 +548,7 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Kubernetes-叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證叢集"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#重置叢集"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">重置叢集</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">重置叢集</span></a></li></ol>
         
         </div>
       </aside>
@@ -570,6 +579,15 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

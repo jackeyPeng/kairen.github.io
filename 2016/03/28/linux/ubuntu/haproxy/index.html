@@ -138,6 +138,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -146,7 +149,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -295,7 +298,8 @@
 <li>支援虛擬機的使用</li>
 </ul>
 <a id="more"></a>
-<h3 id="HAProxy-安裝"><a href="#HAProxy-安裝" class="headerlink" title="HAProxy 安裝"></a>HAProxy 安裝</h3><p>本教學會使用到一台 Proxy 節點與兩台 Web 節點，如下：</p>
+<h3><span id="haproxy-安裝">HAProxy 安裝</span></h3>
+<p>本教學會使用到一台 Proxy 節點與兩台 Web 節點，如下：</p>
 <table>
 <thead>
 <tr>
@@ -319,49 +323,50 @@
 </tbody>
 </table>
 <p>本篇採用 Ubuntu 作業系統，因此可透過 apt 直接安裝，以下範例是在 Ubuntu Server 環境中操作：</p>
-<pre><code class="sh">$ sudo apt-get install software-properties-common python-software-properties
+<pre><code class="language-sh">$ sudo apt-get install software-properties-common python-software-properties
 $ sudo apt-add-repository ppa:vbernat/haproxy-1.5
 $ sudo apt-get update
 $ sudo apt-get install haproxy
 </code></pre>
 <blockquote>
 <p>若要安裝其他版本，可以修改成以下：</p>
-<pre><code class="sh">sudo apt-add-repository ppa:vbernat/haproxy-1.6
+<pre><code class="language-sh">sudo apt-add-repository ppa:vbernat/haproxy-1.6
 </code></pre>
 </blockquote>
-<h3 id="HAProxy-設定"><a href="#HAProxy-設定" class="headerlink" title="HAProxy 設定"></a>HAProxy 設定</h3><p>完成安裝後，要透過編輯<code>/etc/haproxy/haproxy.cfg</code>設定檔來配置 Proxy：</p>
-<pre><code class="sh">global
-    log /dev/log    local0
-    log /dev/log    local1 notice
-    chroot /var/lib/haproxy
-    stats socket /run/haproxy/admin.sock mode 660 level admin
-    stats timeout 30s
-    user haproxy
-    group haproxy
-    daemon
+<h3><span id="haproxy-設定">HAProxy 設定</span></h3>
+<p>完成安裝後，要透過編輯<code>/etc/haproxy/haproxy.cfg</code>設定檔來配置 Proxy：</p>
+<pre><code class="language-sh">global
+	log /dev/log	local0
+	log /dev/log	local1 notice
+	chroot /var/lib/haproxy
+	stats socket /run/haproxy/admin.sock mode 660 level admin
+	stats timeout 30s
+	user haproxy
+	group haproxy
+	daemon
         maxconn 1024
 
-    ca-base /etc/ssl/certs
-    crt-base /etc/ssl/private
+	ca-base /etc/ssl/certs
+	crt-base /etc/ssl/private
 
-    ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
-    ssl-default-bind-options no-sslv3
+	ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+	ssl-default-bind-options no-sslv3
 
 defaults
-    log    global
-    mode    http
-    option    httplog
-    option    dontlognull
+	log	global
+	mode	http
+	option	httplog
+	option	dontlognull
         timeout connect 5000
         timeout client  50000
         timeout server  50000
-    errorfile 400 /etc/haproxy/errors/400.http
-    errorfile 403 /etc/haproxy/errors/403.http
-    errorfile 408 /etc/haproxy/errors/408.http
-    errorfile 500 /etc/haproxy/errors/500.http
-    errorfile 502 /etc/haproxy/errors/502.http
-    errorfile 503 /etc/haproxy/errors/503.http
-    errorfile 504 /etc/haproxy/errors/504.http
+	errorfile 400 /etc/haproxy/errors/400.http
+	errorfile 403 /etc/haproxy/errors/403.http
+	errorfile 408 /etc/haproxy/errors/408.http
+	errorfile 500 /etc/haproxy/errors/500.http
+	errorfile 502 /etc/haproxy/errors/502.http
+	errorfile 503 /etc/haproxy/errors/503.http
+	errorfile 504 /etc/haproxy/errors/504.http
 
 frontend nginxs_proxy
     bind 172.17.0.2:80
@@ -388,7 +393,7 @@ listen haproxy_stats
     stats uri  /stats
 </code></pre>
 <p>完成設定後，需重啟服務：</p>
-<pre><code class="sh">$ sudo service haproxy restart
+<pre><code class="language-sh">$ sudo service haproxy restart
 </code></pre>
 
                 
@@ -433,7 +438,7 @@ listen haproxy_stats
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#HAProxy-安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">HAProxy 安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#HAProxy-設定"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">HAProxy 設定</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">HAProxy 安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">HAProxy 設定</span></a></li></ol>
         
         </div>
       </aside>
@@ -462,6 +467,15 @@ listen haproxy_stats
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

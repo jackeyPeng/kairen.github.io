@@ -136,6 +136,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -144,7 +147,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -284,8 +287,9 @@
 
                 <p>本篇將說明 Kubernetes exec API 的運作方式，並以簡單範例進行開發在前後端上。雖然 Kubernetes 提供了不同資源的 RESTful API 來進行 CRUD 操作，但是部分 API 並非單純的回傳一個資料，有些是需要透過 SPDY 或 WebSocket 建立長連線串流，這種 API 以 exec、attach 為主，目標是對一個 Pod 執行指定指令，或者進入該 Pod 進行互動等等。</p>
 <a id="more"></a>
-<h2 id="Exec-API-Endpoint"><a href="#Exec-API-Endpoint" class="headerlink" title="Exec API Endpoint"></a>Exec API Endpoint</h2><p>首先了解一下 Kubernetes exec API endpoint，由於 Kubernetes 官方文件並未提供相關資訊，因此這邊透過 kubectl 指令來了解 API 的結構：</p>
-<pre><code class="shell=">$ cat &lt;&lt;EOF | kubectl create -f -
+<h2><span id="exec-api-endpoint">Exec API Endpoint</span></h2>
+<p>首先了解一下 Kubernetes exec API endpoint，由於 Kubernetes 官方文件並未提供相關資訊，因此這邊透過 kubectl 指令來了解 API 的結構：</p>
+<pre><code class="language-shell=">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: v1
 kind: Pod
 metadata:
@@ -294,7 +298,7 @@ spec:
   containers:
   - name: ubuntu
     image: ubuntu:16.04
-    command: [&#39;/bin/bash&#39;, &#39;-c&#39;, &#39;while :; do  echo Hello; sleep 1; done &#39;]
+    command: ['/bin/bash', '-c', 'while :; do  echo Hello; sleep 1; done ']
 EOF
 
 $ kubectl -v=8 exec -ti ubuntu bash
@@ -313,13 +317,16 @@ I0625 10:39:33.716271   93099 round_trippers.go:383] POST https://xxx.xxx.xxx.xx
 <li><strong>stderr</strong>：是否開啟標準錯誤輸出，通常是<code>預設開啟</code>。類型為<code>bool</code>值。</li>
 <li><strong>tty</strong>：是否分配一個偽終端設備(Pseudo TTY, PTY)。ㄒ為<code>bool</code>值。</li>
 </ul>
-<h2 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h2><p>Execute 是利用 SPDY 與 WebSocket 協定進行串流溝通的 API，其中 SPDY 在 Kubernetes 官方的 client-go 已經有實現(參考 <a href="https://github.com/kubernetes/client-go/blob/master/tools/remotecommand/remotecommand.go" target="_blank" rel="noopener">Remote command</a>)，而 kubectl 正是使用 SPDY，但是 SPDY 目前已經規劃在未來將被<a href="https://github.com/kubernetes/features/issues/384" target="_blank" rel="noopener">移棄</a>，因此建議選擇使用 WebSocket 來作為串流溝通。但而無論是使用哪一個協定，都要注意請求的 Header 必須有<code>Connection: Upgrade</code>、<code>Upgrade: xxx</code>等，不然 API Server 會拒絕存取請求。</p>
-<h2 id="HTTP-Headers"><a href="#HTTP-Headers" class="headerlink" title="HTTP Headers"></a>HTTP Headers</h2><p>除了 SPDY 與 WebSocket 所需要的 Headers(如 Upgrade 等)外，使用者與開發者還必須提供兩個 Headers 來確保能夠正確授權並溝通：</p>
+<h2><span id="protocol">Protocol</span></h2>
+<p>Execute 是利用 SPDY 與 WebSocket 協定進行串流溝通的 API，其中 SPDY 在 Kubernetes 官方的 client-go 已經有實現(參考 <a href="https://github.com/kubernetes/client-go/blob/master/tools/remotecommand/remotecommand.go" target="_blank" rel="noopener">Remote command</a>)，而 kubectl 正是使用 SPDY，但是 SPDY 目前已經規劃在未來將被<a href="https://github.com/kubernetes/features/issues/384" target="_blank" rel="noopener">移棄</a>，因此建議選擇使用 WebSocket 來作為串流溝通。但而無論是使用哪一個協定，都要注意請求的 Header 必須有<code>Connection: Upgrade</code>、<code>Upgrade: xxx</code>等，不然 API Server 會拒絕存取請求。</p>
+<h2><span id="http-headers">HTTP Headers</span></h2>
+<p>除了 SPDY 與 WebSocket 所需要的 Headers(如 Upgrade 等)外，使用者與開發者還必須提供兩個 Headers 來確保能夠正確授權並溝通：</p>
 <ul>
 <li><strong>Authorization</strong>：該 Header 是用來提供給 API Server 做認證請求的資訊，通常會是以<code>Authorization: Bearer &lt;token&gt;</code>的形式。</li>
 <li><strong>Accept</strong>：指定客戶端能夠接收的內容類型，一般為<code>Accept: application/json</code>，若輸入不支援的類型將會被 API 以<code>406 Not Acceptable</code> 拒絕請求。</li>
 </ul>
-<h2 id="溝通協定"><a href="#溝通協定" class="headerlink" title="溝通協定"></a>溝通協定</h2><p>一旦符合上述所有資訊後，WebSocket(或 SPDY)就能夠建立連線，並且與 API Server 進行溝通。而當寫入 WebSocket 時，資料將被傳送到標準輸入(stdin)，而 WebSocket 的接收將會是標準輸出(stdout)與輸出錯誤(stderr)。Kubernetes API Server 簡單定義了一個協定來復用 stdout 與 stderr。因此可以理解當 WebSocket 建立連線後，傳送資料時需要再 Buffer 的第一個字元定義為 stdin(buf[0] = 0)，而接收資料時要判斷 stdout(buf[0] = 1) 與 stderr(buf[0] = 2)。其資訊如下：</p>
+<h2><span id="溝通協定">溝通協定</span></h2>
+<p>一旦符合上述所有資訊後，WebSocket(或 SPDY)就能夠建立連線，並且與 API Server 進行溝通。而當寫入 WebSocket 時，資料將被傳送到標準輸入(stdin)，而 WebSocket 的接收將會是標準輸出(stdout)與輸出錯誤(stderr)。Kubernetes API Server 簡單定義了一個協定來復用 stdout 與 stderr。因此可以理解當 WebSocket 建立連線後，傳送資料時需要再 Buffer 的第一個字元定義為 stdin(buf[0] = 0)，而接收資料時要判斷 stdout(buf[0] = 1) 與 stderr(buf[0] = 2)。其資訊如下：</p>
 <table>
 <thead>
 <tr>
@@ -343,7 +350,7 @@ I0625 10:39:33.716271   93099 round_trippers.go:383] POST https://xxx.xxx.xxx.xx
 </tbody>
 </table>
 <p>下面簡單以發送<code>ls</code>指令為例：</p>
-<pre><code class="shell="># 傳送`ls`指令，必須 buf[0] 自行塞入 0 字元來表示 stdin。
+<pre><code class="language-shell="># 傳送`ls`指令，必須 buf[0] 自行塞入 0 字元來表示 stdin。
 buf = [0 108 115 10]
 
 # Receive
@@ -396,7 +403,7 @@ buf = [1 108 115 13 10 27 91 48 109 27 91 ...]
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Exec-API-Endpoint"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Exec API Endpoint</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Protocol"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Protocol</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#HTTP-Headers"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">HTTP Headers</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#溝通協定"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">溝通協定</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Exec API Endpoint</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Protocol</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">HTTP Headers</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">溝通協定</span></a></li></ol>
         
         </div>
       </aside>
@@ -423,6 +430,15 @@ buf = [1 108 115 13 10 27 91 48 109 27 91 ...]
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

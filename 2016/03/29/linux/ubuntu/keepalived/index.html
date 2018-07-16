@@ -138,6 +138,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -146,7 +149,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -286,15 +289,19 @@
 
                 <p>Keepalived 是一種基於 VRRP 協定實現的高可靠 Web 服務方案，用於防止單點故障問題。因此一個 Web 服務運作至少會擁有兩台伺服器執行 Keepalived，一台作為 master，一台作為 backup，並提供一個虛擬 IP（VIP），master 會定期發送特定訊息給 backup 伺服器，當 backup 沒收到 master 訊息時，表示 master 已故障，這時候 backup 會接管 VIP，繼續提供服務，來確保服務的高可靠性。</p>
 <a id="more"></a>
-<h3 id="VRRP"><a href="#VRRP" class="headerlink" title="VRRP"></a>VRRP</h3><p>VRRP（Virtual Router Redundancy Protocol，虛擬路由器備援協定），是一個提供備援路由器來解決單點故障問題的協定，該協定有兩個重要概念：</p>
+<h3><span id="vrrp">VRRP</span></h3>
+<p>VRRP（Virtual Router Redundancy Protocol，虛擬路由器備援協定），是一個提供備援路由器來解決單點故障問題的協定，該協定有兩個重要概念：</p>
 <ul>
-<li><p><strong>VRRP 路由器與虛擬路由器</strong>：VRRP 路由器是表示運作 VRRP 的路由器，是一個實體裝置，而虛擬路由器是指由 VRRP 建立的邏輯路由器。一組 VRRP 路由器協同運作，並一起構成一台虛擬路由器，該虛擬路由對外提供一個唯一固定的 IP 與 MAC 位址的邏輯路由器。</p>
+<li>
+<p><strong>VRRP 路由器與虛擬路由器</strong>：VRRP 路由器是表示運作 VRRP 的路由器，是一個實體裝置，而虛擬路由器是指由 VRRP 建立的邏輯路由器。一組 VRRP 路由器協同運作，並一起構成一台虛擬路由器，該虛擬路由對外提供一個唯一固定的 IP 與 MAC 位址的邏輯路由器。</p>
 </li>
-<li><p><strong>主控制路由器（master）與備援路由器（backup）</strong>：主要是在一組 VRRP 中的兩種互斥角色。一個 VRRP 群組中只能擁有一台是 master，但可以有多個 backup 路由器。</p>
+<li>
+<p><strong>主控制路由器（master）與備援路由器（backup）</strong>：主要是在一組 VRRP 中的兩種互斥角色。一個 VRRP 群組中只能擁有一台是 master，但可以有多個 backup 路由器。</p>
 </li>
 </ul>
 <p>VRRP 協定使用選擇策略從路由器群組挑選一台作為 master 來負責 ARP 與轉送 IP 封包，群組中其他路由器則作為 backup 的角色處理等待狀態。當由於某種原因造成 master 故障時，backup 會在幾秒內成為 master 繼續提供服務，該階段不用改變任何 IP 與 MAC 位址。</p>
-<h3 id="Keepalived-節點配置"><a href="#Keepalived-節點配置" class="headerlink" title="Keepalived 節點配置"></a>Keepalived 節點配置</h3><p>本教學將使用以下主機數量與角色：</p>
+<h3><span id="keepalived-節點配置">Keepalived 節點配置</span></h3>
+<p>本教學將使用以下主機數量與角色：</p>
 <table>
 <thead>
 <tr>
@@ -317,27 +324,29 @@
 </tr>
 </tbody>
 </table>
-<h3 id="安裝與設定"><a href="#安裝與設定" class="headerlink" title="安裝與設定"></a>安裝與設定</h3><p>這 ubuntu 14.04 LTS Server 中已經內建了 Keepalived 可以透過 apt-get 來安裝：</p>
-<pre><code class="sh">$ sudo apt-get install -y keepalived
+<h3><span id="安裝與設定">安裝與設定</span></h3>
+<p>這 ubuntu 14.04 LTS Server 中已經內建了 Keepalived 可以透過 apt-get 來安裝：</p>
+<pre><code class="language-sh">$ sudo apt-get install -y keepalived
 </code></pre>
 <blockquote>
 <p>也可以透過 source code 進行安裝，流程如下：</p>
-<pre><code class="sh">$ sudo apt-get install build-essential libssl-dev
+</blockquote>
+<pre><code class="language-sh">$ sudo apt-get install build-essential libssl-dev
 $ wget http://www.keepalived.org/software/keepalived-1.2.2.tar.gz
 $ tar -zxvf keepalived-1.2.2.tar.gz
 $ cd keepalived-1.2.2
 $ ./configure --prefix=/usr/local/keepalived
 $ make &amp;&amp; make install
 </code></pre>
-</blockquote>
 <p>完成後，要將需要的設定檔進行複製到<code>/etc/</code>:</p>
 <pre><code>$ cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/keepalived
 $ cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
 $ cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
 $ mkdir -p /etc/keepalived/
 $ cp /usr/local/etc/keepalived/keepalived.conf /etc/keepalived/keepalived.conf
-</code></pre><p>安裝完成後編輯<code>/etc/keepalived/keepalived.conf</code>檔案進行設定，在<code>master</code>節點加入以下內容：</p>
-<pre><code class="sh">global_defs {
+</code></pre>
+<p>安裝完成後編輯<code>/etc/keepalived/keepalived.conf</code>檔案進行設定，在<code>master</code>節點加入以下內容：</p>
+<pre><code class="language-sh">global_defs {
    notification_email {
       user@example.com
    }
@@ -368,7 +377,7 @@ vrrp_instance VI_1 {
 }
 </code></pre>
 <p>Master 完成後，接著編輯<code>backup</code>節點的<code>/etc/keepalived/keepalived.conf</code>，加入以下內容：</p>
-<pre><code class="sh">global_defs {
+<pre><code class="language-sh">global_defs {
    notification_email {
        user@example.com
    }
@@ -442,7 +451,7 @@ vrrp_instance VI_1 {
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#VRRP"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">VRRP</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Keepalived-節點配置"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Keepalived 節點配置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝與設定"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝與設定</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">VRRP</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Keepalived 節點配置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝與設定</span></a></li></ol>
         
         </div>
       </aside>
@@ -471,6 +480,15 @@ vrrp_instance VI_1 {
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

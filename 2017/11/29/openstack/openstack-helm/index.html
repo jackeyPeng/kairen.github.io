@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -290,7 +293,8 @@
 <p><img src="https://i.imgur.com/8sMjowM.png" alt=""></p>
 <a id="more"></a>
 <p>而本篇文章將說明如何建置多節點的 OpenStack Helm 環境來進行功能驗證。</p>
-<h2 id="節點與安裝版本"><a href="#節點與安裝版本" class="headerlink" title="節點與安裝版本"></a>節點與安裝版本</h2><p>以下為各節點的硬體資訊。</p>
+<h2><span id="節點與安裝版本">節點與安裝版本</span></h2>
+<p>以下為各節點的硬體資訊。</p>
 <table>
 <thead>
 <tr>
@@ -334,50 +338,20 @@
 </tbody>
 </table>
 <p>使用 Kernel、作業系統與軟體版本：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>資訊描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>作業系統版本</td>
-<td>16.04.3 LTS (Xenial Xerus)</td>
-</tr>
-<tr>
-<td>Kernel 版本</td>
-<td>4.4.0-101-generic</td>
-</tr>
-<tr>
-<td>Kubernetes</td>
-<td>v1.8.4</td>
-</tr>
-<tr>
-<td>Docker</td>
-<td>Docker 17.09.0-ce</td>
-</tr>
-<tr>
-<td>Calico</td>
-<td>v2.6.2</td>
-</tr>
-<tr>
-<td>Etcd</td>
-<td>v3.2.9</td>
-</tr>
-<tr>
-<td>Ceph</td>
-<td>v10.2.10</td>
-</tr>
-<tr>
-<td>Helm</td>
-<td>v2.7.0</td>
-</tr>
-</tbody>
-</table>
-<h2 id="Kubernetes-叢集"><a href="#Kubernetes-叢集" class="headerlink" title="Kubernetes 叢集"></a>Kubernetes 叢集</h2><p>本節說明如何建立 Kubernetes Cluster，這邊採用 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 工具來建立。</p>
-<h3 id="初始化與設定基本需求"><a href="#初始化與設定基本需求" class="headerlink" title="初始化與設定基本需求"></a>初始化與設定基本需求</h3><p>安裝前需要確認以下幾個項目：</p>
+<p>|              	| 資訊描述                     |<br>
+|--------------	|----------------------------|<br>
+| 作業系統版本 	  | 16.04.3 LTS (Xenial Xerus) |<br>
+| Kernel 版本    | 4.4.0-101-generic          |<br>
+| Kubernetes   	| v1.8.4                     |<br>
+| Docker       	| Docker 17.09.0-ce          |<br>
+| Calico      	| v2.6.2                     |<br>
+| Etcd         	| v3.2.9                     |<br>
+| Ceph         	| v10.2.10                   |<br>
+| Helm         	| v2.7.0                     |</p>
+<h2><span id="kubernetes-叢集">Kubernetes 叢集</span></h2>
+<p>本節說明如何建立 Kubernetes Cluster，這邊採用 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 工具來建立。</p>
+<h3><span id="初始化與設定基本需求">初始化與設定基本需求</span></h3>
+<p>安裝前需要確認以下幾個項目：</p>
 <ul>
 <li>所有節點的網路之間可以互相溝通。</li>
 <li><code>部署節點</code>對其他節點不需要 SSH 密碼即可登入。</li>
@@ -386,7 +360,7 @@
 <li>所有節點需要設定<code>/etc/host</code>解析到所有主機。</li>
 <li><code>部署節點</code>需要安裝 <strong>Ansible &gt;= 2.4.0</strong>。</li>
 </ul>
-<pre><code class="shell"># Ubuntu install
+<pre><code class="language-shell"># Ubuntu install
 $ sudo apt-get install -y software-properties-common
 $ sudo apt-add-repository -y ppa:ansible/ansible
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible git make
@@ -395,8 +369,9 @@ $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible git make
 $ sudo yum install -y epel-release
 $ sudo yum -y install ansible cowsay
 </code></pre>
-<h3 id="安裝與設定-Kube-ansible"><a href="#安裝與設定-Kube-ansible" class="headerlink" title="安裝與設定 Kube-ansible"></a>安裝與設定 Kube-ansible</h3><p>首先取得最新穩定版本的 Kubernetes Ansible:</p>
-<pre><code class="shell">$ git clone https://github.com/kairen/kube-ansible.git
+<h3><span id="安裝與設定-kube-ansible">安裝與設定 Kube-ansible</span></h3>
+<p>首先取得最新穩定版本的 Kubernetes Ansible:</p>
+<pre><code class="language-shell">$ git clone https://github.com/kairen/kube-ansible.git
 $ cd kube-ansible
 </code></pre>
 <p>然後新增<code>inventory</code>檔案來描述要部屬的主機角色:</p>
@@ -417,8 +392,9 @@ nodes
 
 [kube-addon:children]
 masters
-</code></pre><p>接著編輯<code>group_vars/all.yml</code>檔案來添加與修改以下內容：</p>
-<pre><code class="yaml"># Kubenrtes version, only support 1.8.0+.
+</code></pre>
+<p>接著編輯<code>group_vars/all.yml</code>檔案來添加與修改以下內容：</p>
+<pre><code class="language-yaml"># Kubenrtes version, only support 1.8.0+.
 kube_version: 1.8.4
 
 # CNI plugin
@@ -460,7 +436,7 @@ ceph_cluster: true
 </ul>
 </blockquote>
 <p>接著由於 OpenStack-helm 使用的 Kubernetes Controller Manager 不同，因此要修改<code>roles/commons/container-images/defaults/main.yml</code>的 Image 來源如下：</p>
-<pre><code class="yaml">...
+<pre><code class="language-yaml">...
   manager:
   name: kube-controller-manager
   repos: kairen/
@@ -469,10 +445,10 @@ ceph_cluster: true
 </code></pre>
 <p>完後成修改 storage roles 設定版本並進行安裝。</p>
 <p>首先編輯<code>roles/storage/ceph/defaults/main.yml</code>修改版本為以下：</p>
-<pre><code class="yaml">ceph_version: jewel
+<pre><code class="language-yaml">ceph_version: jewel
 </code></pre>
 <p>接著編輯<code>roles/storage/ceph/tasks/main.yml</code>修改成以下內容：</p>
-<pre><code class="yaml">---
+<pre><code class="language-yaml">---
 
 - name: Install Ceph dependency packages
   include_tasks: install-ceph.yml
@@ -493,8 +469,9 @@ ceph_cluster: true
 #   run_once: true
 #   ignore_errors: true
 </code></pre>
-<h3 id="部屬-Kubernetes-叢集"><a href="#部屬-Kubernetes-叢集" class="headerlink" title="部屬 Kubernetes 叢集"></a>部屬 Kubernetes 叢集</h3><p>確認<code>group_vars/all.yml</code>與其他設定都完成後，就透過 ansible ping 來檢查叢集狀態：</p>
-<pre><code class="shell">$ ansible -i inventory all -m ping
+<h3><span id="部屬-kubernetes-叢集">部屬 Kubernetes 叢集</span></h3>
+<p>確認<code>group_vars/all.yml</code>與其他設定都完成後，就透過 ansible ping 來檢查叢集狀態：</p>
+<pre><code class="language-shell">$ ansible -i inventory all -m ping
 ...
 172.22.132.101 | SUCCESS =&gt; {
     &quot;changed&quot;: false,
@@ -504,7 +481,7 @@ ceph_cluster: true
 ...
 </code></pre>
 <p>接著就可以透過以下指令進行部署叢集：</p>
-<pre><code class="shell">$ ansible-playbook cluster.yml
+<pre><code class="language-shell">$ ansible-playbook cluster.yml
 ...
 TASK [cni : Apply calico network daemonset] *********************************************************************************************************************************
 changed: [172.22.132.101 -&gt; 172.22.132.101]
@@ -516,7 +493,7 @@ PLAY RECAP *********************************************************************
 172.22.132.28              : ok=51   changed=19   unreachable=0    failed=0
 </code></pre>
 <p>完成後，進入<code>master</code>節點執行以下指令確認叢集：</p>
-<pre><code class="shell">$ kubectl get node
+<pre><code class="language-shell">$ kubectl get node
 NAME           STATUS    ROLES     AGE       VERSION
 kube-master1   Ready     master    1h        v1.8.4
 kube-node1     Ready     &lt;none&gt;    1h        v1.8.4
@@ -542,20 +519,22 @@ kube-proxy-x9zdb                           1/1       Running   1          1h
 kube-scheduler-kube-master1                1/1       Running   1          1h
 </code></pre>
 <p>檢查 kube-dns 是否連 host 都能夠解析:</p>
-<pre><code class="shell">$ nslookup kubernetes
-Server:        10.96.0.10
-Address:    10.96.0.10#53
+<pre><code class="language-shell">$ nslookup kubernetes
+Server:		10.96.0.10
+Address:	10.96.0.10#53
 
 Non-authoritative answer:
-Name:    kubernetes.default.svc.cluster.local
+Name:	kubernetes.default.svc.cluster.local
 Address: 10.96.0.1
 </code></pre>
 <p>接著安裝 Ceph 套件：</p>
-<pre><code class="sh">$ ansible-playbook storage.yml
+<pre><code class="language-sh">$ ansible-playbook storage.yml
 </code></pre>
-<h2 id="OpenStack-helm-叢集"><a href="#OpenStack-helm-叢集" class="headerlink" title="OpenStack-helm 叢集"></a>OpenStack-helm 叢集</h2><p>本節說明如何建立 OpenStack on Kubernetes 使用 Helm，部署是使用 <a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">openstack-helm</a>。過程將透過 OpenStack-helm 來在 Kubernetes 建置 OpenStack 叢集。以下所有操作都在<code>kube-master1</code>上進行。</p>
-<h3 id="Helm-init"><a href="#Helm-init" class="headerlink" title="Helm init"></a>Helm init</h3><p>在開始前需要先將 Helm 進行初始化，以提供後續使用，然而這邊由於使用到 RBAC 的關係，因此需建立一個 Service account 來提供給 Helm 使用：</p>
-<pre><code class="shell">$ kubectl -n kube-system create sa tiller
+<h2><span id="openstack-helm-叢集">OpenStack-helm 叢集</span></h2>
+<p>本節說明如何建立 OpenStack on Kubernetes 使用 Helm，部署是使用 <a href="https://github.com/openstack/openstack-helm" target="_blank" rel="noopener">openstack-helm</a>。過程將透過 OpenStack-helm 來在 Kubernetes 建置 OpenStack 叢集。以下所有操作都在<code>kube-master1</code>上進行。</p>
+<h3><span id="helm-init">Helm init</span></h3>
+<p>在開始前需要先將 Helm 進行初始化，以提供後續使用，然而這邊由於使用到 RBAC 的關係，因此需建立一個 Service account 來提供給 Helm 使用：</p>
+<pre><code class="language-shell">$ kubectl -n kube-system create sa tiller
 $ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 $ helm init --service-account tiller
 </code></pre>
@@ -563,7 +542,7 @@ $ helm init --service-account tiller
 <p>由於 <code>kube-ansible</code> 本身包含 Helm 工具, 因此不需要自己安裝，只需要依據上面指令進行 init 即可。</p>
 </blockquote>
 <p>新增一個檔案<code>openrc</code>來提供環境變數：</p>
-<pre><code class="shell">export HELM_HOST=$(kubectl describe svc/tiller-deploy -n kube-system | awk &#39;/Endpoints/{print $2}&#39;)
+<pre><code class="language-shell">export HELM_HOST=$(kubectl describe svc/tiller-deploy -n kube-system | awk '/Endpoints/{print $2}')
 export OSD_CLUSTER_NETWORK=172.22.132.0/24
 export OSD_PUBLIC_NETWORK=172.22.132.0/24
 export WORK_DIR=local
@@ -576,13 +555,14 @@ export CEPH_RGW_KEYSTONE_ENABLED=true
 </ul>
 </blockquote>
 <p>完成後，透過 source 指令引入:</p>
-<pre><code class="shell">$ source openrc
+<pre><code class="language-shell">$ source openrc
 $ helm version
 Client: &amp;version.Version{SemVer:&quot;v2.7.0&quot;, GitCommit:&quot;08c1144f5eb3e3b636d9775617287cc26e53dba4&quot;, GitTreeState:&quot;clean&quot;}
 Server: &amp;version.Version{SemVer:&quot;v2.7.0&quot;, GitCommit:&quot;08c1144f5eb3e3b636d9775617287cc26e53dba4&quot;, GitTreeState:&quot;clean&quot;}
 </code></pre>
-<h3 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h3><p>首先透過 Kubernetes label 來標示每個節點的角色：</p>
-<pre><code class="shell">kubectl label nodes openstack-control-plane=enabled --all
+<h3><span id="事前準備">事前準備</span></h3>
+<p>首先透過 Kubernetes label 來標示每個節點的角色：</p>
+<pre><code class="language-shell">kubectl label nodes openstack-control-plane=enabled --all
 kubectl label nodes ceph-mon=enabled --all
 kubectl label nodes ceph-osd=enabled --all
 kubectl label nodes ceph-mds=enabled --all
@@ -593,7 +573,8 @@ kubectl label nodes openstack-compute-node=enabled --all
 </code></pre>
 <blockquote>
 <p>這邊為了避免過度的節點污染，因此不讓 masters 充當任何角色：</p>
-<pre><code class="shell">kubectl label nodes kube-master1 openstack-control-plane-
+</blockquote>
+<pre><code class="language-shell">kubectl label nodes kube-master1 openstack-control-plane-
 kubectl label nodes kube-master1 ceph-mon-
 kubectl label nodes kube-master1 ceph-osd-
 kubectl label nodes kube-master1 ceph-mds-
@@ -602,9 +583,8 @@ kubectl label nodes kube-master1 ceph-mgr-
 kubectl label nodes kube-master1 openvswitch-
 kubectl label nodes kube-master1 openstack-compute-node-
 </code></pre>
-</blockquote>
 <p>由於使用 Kubernetes RBAC，而目前 openstack-helm 有 bug，不會正確建立 Service account 的 ClusterRoleBindings，因此要手動建立(這邊偷懶一下直接使用 Admin roles)：</p>
-<pre><code class="shell">$ cat &lt;&lt;EOF | kubectl create -f -
+<pre><code class="language-shell">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
@@ -636,14 +616,15 @@ EOF
 </code></pre>
 <blockquote>
 <p>若沒有建立的話，會有類似以下的錯誤資訊：</p>
+</blockquote>
 <pre><code>Error from server (Forbidden): error when creating &quot;STDIN&quot;: secrets is forbidden: User &quot;system:serviceaccount:ceph:default&quot; cannot create secrets in the namespace &quot;ceph&quot;
-</code></pre></blockquote>
+</code></pre>
 <p>下載最新版本 openstack-helm 專案：</p>
-<pre><code class="shell">$ git clone https://github.com/openstack/openstack-helm.git
+<pre><code class="language-shell">$ git clone https://github.com/openstack/openstack-helm.git
 $ cd openstack-helm
 </code></pre>
 <p>現在須建立 openstack-helm chart 來提供部署使用：</p>
-<pre><code class="shell">$ helm serve &amp;
+<pre><code class="language-shell">$ helm serve &amp;
 $ helm repo add local http://localhost:8879/charts
 $ make
 # output
@@ -651,10 +632,11 @@ $ make
 1 chart(s) linted, no failures
 if [ -d congress ]; then helm package congress; fi
 Successfully packaged chart and saved it to: /root/openstack-helm/congress-0.1.0.tgz
-make[1]: Leaving directory &#39;/root/openstack-helm&#39;
+make[1]: Leaving directory '/root/openstack-helm'
 </code></pre>
-<h3 id="Ceph-Chart"><a href="#Ceph-Chart" class="headerlink" title="Ceph Chart"></a>Ceph Chart</h3><p>在部署 OpenStack 前，需要先部署 Ceph 叢集，這邊透過以下指令建置：</p>
-<pre><code class="shell">$ helm install --namespace=ceph ${WORK_DIR}/ceph --name=ceph \
+<h3><span id="ceph-chart">Ceph Chart</span></h3>
+<p>在部署 OpenStack 前，需要先部署 Ceph 叢集，這邊透過以下指令建置：</p>
+<pre><code class="language-shell">$ helm install --namespace=ceph ${WORK_DIR}/ceph --name=ceph \
   --set endpoints.identity.namespace=openstack \
   --set endpoints.object_store.namespace=ceph \
   --set endpoints.ceph_mon.namespace=ceph \
@@ -675,7 +657,7 @@ make[1]: Leaving directory &#39;/root/openstack-helm&#39;
 </ul>
 </blockquote>
 <p>成功安裝 Ceph chart 後，就可以透過 kubectl 來查看結果：</p>
-<pre><code class="shell">$ kubectl -n ceph get po
+<pre><code class="language-shell">$ kubectl -n ceph get po
 NAME                                   READY     STATUS    RESTARTS   AGE
 ceph-mds-57798cc8f6-r898r              1/1       Running   2          10min
 ceph-mon-96p9r                         1/1       Running   0          10min
@@ -690,11 +672,11 @@ ceph-rbd-provisioner-599ff9575-vpcr6   1/1       Running   0          10min
 ceph-rgw-7c8c5d4f6f-8fq9c              1/1       Running   3          10min
 </code></pre>
 <p>確認 Ceph 叢集建立正確：</p>
-<pre><code class="shell">$ MON_POD=$(kubectl get pods \
+<pre><code class="language-shell">$ MON_POD=$(kubectl get pods \
   --namespace=ceph \
   --selector=&quot;application=ceph&quot; \
   --selector=&quot;component=mon&quot; \
-  --no-headers | awk &#39;{ print $1; exit }&#39;)
+  --no-headers | awk '{ print $1; exit }')
 $ kubectl exec -n ceph ${MON_POD} -- ceph -s
 
     cluster 02ad8724-dee0-4f55-829f-3cc24e2c7571
@@ -710,10 +692,10 @@ $ kubectl exec -n ceph ${MON_POD} -- ceph -s
                  856 active+clean
 </code></pre>
 <blockquote>
-<p>Warn 這邊忽略，OSD 機器太少….。</p>
+<p>Warn 這邊忽略，OSD 機器太少…。</p>
 </blockquote>
 <p>接著為了讓 Ceph 可以在其他 Kubernetes namespace 中存取 PVC，這邊要產生 client secret key 於 openstack namespace 中來提供給 OpenStack 元件使用，這邊執行以下 Chart 來產生：</p>
-<pre><code class="shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=ceph-openstack-config \
+<pre><code class="language-shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=ceph-openstack-config \
   --set endpoints.identity.namespace=openstack \
   --set endpoints.object_store.namespace=ceph \
   --set endpoints.ceph_mon.namespace=ceph \
@@ -727,7 +709,7 @@ $ kubectl exec -n ceph ${MON_POD} -- ceph -s
   --set deployment.rgw_keystone_user_and_endpoints=false
 </code></pre>
 <p>檢查 pod 與 secret 是否建立成功：</p>
-<pre><code class="shell">$ kubectl -n openstack get secret,po -a
+<pre><code class="language-shell">$ kubectl -n openstack get secret,po -a
 NAME                          TYPE                                  DATA      AGE
 secrets/default-token-q2r87   kubernetes.io/service-account-token   3         2m
 secrets/pvc-ceph-client-key   kubernetes.io/rbd                     1         2m
@@ -735,21 +717,22 @@ secrets/pvc-ceph-client-key   kubernetes.io/rbd                     1         2m
 NAME                                           READY     STATUS      RESTARTS   AGE
 po/ceph-namespace-client-key-generator-w84n4   0/1       Completed   0          2m
 </code></pre>
-<h3 id="OpenStack-Chart"><a href="#OpenStack-Chart" class="headerlink" title="OpenStack Chart"></a>OpenStack Chart</h3><p>確認沒問題後，就可以開始部署 OpenStack chart 了。首先先安裝 Mariadb cluster:</p>
-<pre><code class="shell">$ helm install --name=mariadb ./mariadb --namespace=openstack
+<h3><span id="openstack-chart">OpenStack Chart</span></h3>
+<p>確認沒問題後，就可以開始部署 OpenStack chart 了。首先先安裝 Mariadb cluster:</p>
+<pre><code class="language-shell">$ helm install --name=mariadb ./mariadb --namespace=openstack
 </code></pre>
 <blockquote>
 <p>這邊跑超久…34mins…，原因可能是 Storage 效能問題。</p>
 </blockquote>
 <p>這邊正確執行後，會依序依據 StatefulSet 建立起 Pod 組成 Cluster：</p>
-<pre><code class="shell">$ kubectl -n openstack get po
+<pre><code class="language-shell">$ kubectl -n openstack get po
 NAME        READY     STATUS    RESTARTS   AGE
 mariadb-0   1/1       Running   0          37m
 mariadb-1   1/1       Running   0          4m
 mariadb-2   1/1       Running   0          2m
 </code></pre>
 <p>當 Mariadb cluster 完成後，就可以部署一些需要的服務，如 RabbitMQ, OVS 等：</p>
-<pre><code class="shell">helm install --name=memcached ./memcached --namespace=openstack
+<pre><code class="language-shell">helm install --name=memcached ./memcached --namespace=openstack
 helm install --name=etcd-rabbitmq ./etcd --namespace=openstack
 helm install --name=rabbitmq ./rabbitmq --namespace=openstack
 helm install --name=ingress ./ingress --namespace=openstack
@@ -757,7 +740,7 @@ helm install --name=libvirt ./libvirt --namespace=openstack
 helm install --name=openvswitch ./openvswitch --namespace=openstack
 </code></pre>
 <p>上述指令若正確執行的話，會分別建立起以下服務：</p>
-<pre><code class="shell">$ kubectl -n openstack get po
+<pre><code class="language-shell">$ kubectl -n openstack get po
 NAME                                   READY     STATUS    RESTARTS   AGE
 etcd-5c9bc8c97f-jpm2k                  1/1       Running   0          4m
 ingress-api-jhjjv                      1/1       Running   0          4m
@@ -782,7 +765,7 @@ rabbitmq-6fdb8879df-875zz              1/1       Running   0          4m
 rabbitmq-6fdb8879df-h5wj6              1/1       Running   0          4m
 </code></pre>
 <p>一旦所有基礎服務與元件都建立完成後，就可以開始部署 OpenStack 的專案 Chart，首先建立 Keystone 來提供身份認證服務：</p>
-<pre><code class="shell">$ helm install --namespace=openstack --name=keystone ./keystone \
+<pre><code class="language-shell">$ helm install --namespace=openstack --name=keystone ./keystone \
   --set pod.replicas.api=1
 
 $ kubectl -n openstack get po -l application=keystone
@@ -795,12 +778,12 @@ keystone-db-sync-2bxtp          1/1       Running    0          4m        0     
 <p>這邊由於叢集規模問題，副本數都為一份。</p>
 </blockquote>
 <p>這時候會先建立 Keystone database tables，完成後將啟動 API pod，如以下結果：</p>
-<pre><code class="shell">$ kubectl -n openstack get po -l application=keystone
+<pre><code class="language-shell">$ kubectl -n openstack get po -l application=keystone
 NAME                            READY     STATUS    RESTARTS   AGE
 keystone-api-74c774d448-dkqmj   1/1       Running   0          11m
 </code></pre>
 <p>如果安裝支援 RGW 的 Keystone endpoint 的話，可以使用以下方式建立：</p>
-<pre><code class="shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=radosgw-openstack \
+<pre><code class="language-shell">$ helm install --namespace=openstack ${WORK_DIR}/ceph --name=radosgw-openstack \
   --set endpoints.identity.namespace=openstack \
   --set endpoints.object_store.namespace=ceph \
   --set endpoints.ceph_mon.namespace=ceph \
@@ -820,7 +803,7 @@ ceph-ks-service-tr9xt                       0/1       Completed   0          1m
 ceph-ks-user-z5tlt                          0/1       Completed   0          1m
 </code></pre>
 <p>完成後，安裝 Horizon chart 來提供 OpenStack dashbaord：</p>
-<pre><code class="shell">$ helm install --namespace=openstack --name=horizon ./horizon \
+<pre><code class="language-shell">$ helm install --namespace=openstack --name=horizon ./horizon \
   --set network.enable_node_port=true \
   --set network.node_port=31000
 
@@ -836,7 +819,7 @@ horizon-7c54878549-45668   1/1       Running   0          3m
 <li><strong>swift</strong>: 另用 OpenStack switf 所提供的物件儲存服務來儲存 images.</li>
 </ul>
 <p>這邊可以利用以下方式來部署不同的儲存後端：</p>
-<pre><code class="shell">$ export GLANCE_BACKEND=radosgw
+<pre><code class="language-shell">$ export GLANCE_BACKEND=radosgw
 $ helm install --namespace=openstack --name=glance ./glance \
   --set pod.replicas.api=1 \
   --set pod.replicas.registry=1 \
@@ -848,7 +831,7 @@ glance-api-6cd8b856d6-lhzfs        1/1       Running   0          14m
 glance-registry-599f8b857b-gt4c6   1/1       Running   0          14m
 </code></pre>
 <p>接著安裝 Neutron chart 來提供 OpenStack 虛擬化網路服務：</p>
-<pre><code class="shell">$ helm install --namespace=openstack --name=neutron ./neutron \
+<pre><code class="language-shell">$ helm install --namespace=openstack --name=neutron ./neutron \
   --set pod.replicas.server=1
 
 $ kubectl -n openstack get po -l application=neutron
@@ -868,7 +851,7 @@ neutron-ovs-agent-xlx7z           1/1       Running   0          9h
 neutron-server-6f45d74b87-6wmck   1/1       Running   0          9h
 </code></pre>
 <p>接著安裝 Nova chart 來提供 OpenStack 虛擬機運算服務:</p>
-<pre><code class="shell">$ helm install --namespace=openstack --name=nova ./nova \
+<pre><code class="language-shell">$ helm install --namespace=openstack --name=nova ./nova \
   --set pod.replicas.api_metadata=1 \
   --set pod.replicas.osapi=1 \
   --set pod.replicas.conductor=1 \
@@ -890,7 +873,7 @@ nova-placement-api-f7c79578f-hj2g9   1/1       Running   0          9h
 nova-scheduler-778866f555-mmksg      1/1       Running   0          9h
 </code></pre>
 <p>接著安裝 Cinfer chart 來提供 OpenStack 區塊儲存服務:</p>
-<pre><code class="shell">$ helm install --namespace=openstack --name=cinder ./cinder \
+<pre><code class="language-shell">$ helm install --namespace=openstack --name=cinder ./cinder \
   --set pod.replicas.api=1
 
 $ kubectl -n openstack get po -l application=cinder
@@ -901,14 +884,14 @@ cinder-scheduler-65f9dd49bf-6htwg   1/1       Running   0          32m
 cinder-volume-69bfb67b4-bmst2       1/1       Running   0          32m
 </code></pre>
 <p>(option)都完成後，將 Horizon 服務透過 NodePort 方式曝露出來(如果上面 Horizon chart 沒反應的話)，執行以下指令編輯：</p>
-<pre><code class="shell">$ kubectl -n openstack edit svc horizon-int
+<pre><code class="language-shell">$ kubectl -n openstack edit svc horizon-int
 # 修改 type:
   type: NodePort
 </code></pre>
 <p>最後連接 <a href="http://172.22.132.10:31000" target="_blank" rel="noopener">Horizon Dashboard</a>，預設使用者為<code>admin/password</code>。</p>
 <p><img src="https://i.imgur.com/8yunUPy.png" alt=""></p>
 <p>其他 Chart 可以利用以下方式來安裝，如 Heat chart：</p>
-<pre><code class="shell">$ helm install --namespace=openstack --name=heat ./heat
+<pre><code class="language-shell">$ helm install --namespace=openstack --name=heat ./heat
 
 $ kubectl -n openstack get po -l application=heat
 NAME                              READY     STATUS    RESTARTS   AGE
@@ -917,11 +900,12 @@ heat-cfn-79dbf55789-bq4wh         1/1       Running   0          13m
 heat-cloudwatch-bcc4647f4-4c4ln   1/1       Running   0          13m
 heat-engine-55cfcc86f8-cct4m      1/1       Running   0          13m
 </code></pre>
-<h2 id="測試-OpenStack-功能"><a href="#測試-OpenStack-功能" class="headerlink" title="測試 OpenStack 功能"></a>測試 OpenStack 功能</h2><p>在<code>kube-master1</code>安裝 openstack client:</p>
-<pre><code class="shell">$ sudo pip install python-openstackclient
+<h2><span id="測試-openstack-功能">測試 OpenStack 功能</span></h2>
+<p>在<code>kube-master1</code>安裝 openstack client:</p>
+<pre><code class="language-shell">$ sudo pip install python-openstackclient
 </code></pre>
 <p>建立<code>adminrc</code>來提供 client 環境變數：</p>
-<pre><code class="shell">export OS_PROJECT_DOMAIN_NAME=default
+<pre><code class="language-shell">export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
@@ -931,7 +915,7 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 </code></pre>
 <p>引入環境變數，並透過 openstack client 測試：</p>
-<pre><code class="shell">$ source adminrc
+<pre><code class="language-shell">$ source adminrc
 $ openstack user list
 +----------------------------------+-----------+
 | ID                               | Name      |
@@ -946,7 +930,7 @@ $ openstack user list
 +----------------------------------+-----------+
 </code></pre>
 <p>接著需要設定對外網路來提供給 VM 存取，在有<code>neutron-l3-agent</code>節點上，新增一個腳本<code>setup-gateway.sh</code>：</p>
-<pre><code class="shell">#!/bin/bash
+<pre><code class="language-shell">#!/bin/bash
 set -x
 
 # Assign IP address to br-ex
@@ -966,11 +950,11 @@ sudo iptables -t nat -A POSTROUTING -o ${DEFAULT_ROUTE_DEV} -s ${OSH_EXT_SUBNET}
 </ul>
 </blockquote>
 <p>然後透過執行該腳本建立一個 bridge 網路：</p>
-<pre><code class="shell">$ chmod u+x setup-gateway.sh
+<pre><code class="language-shell">$ chmod u+x setup-gateway.sh
 $ ./setup-gateway.sh
 </code></pre>
 <p>確認完成後，接著建立 Neutron ext net，透過以下指令進行建立：</p>
-<pre><code class="shell">$ openstack network create \
+<pre><code class="language-shell">$ openstack network create \
    --share --external \
    --provider-physical-network external \
    --provider-network-type flat ext-net
@@ -984,11 +968,16 @@ $ openstack subnet create --network ext-net \
 $ openstack router create router1
 $ neutron router-gateway-set router1 ext-net
 </code></pre>
-<p>直接進入 Dashboard 新增 Self-service Network:<br><img src="https://i.imgur.com/lqMrgqs.png" alt=""></p>
-<p>加入到 router1:<br><img src="https://i.imgur.com/4aNnF3O.png" alt=""></p>
-<p>完成後，就可以建立 instance，這邊都透過 Dashboard 來操作：<br><img src="https://i.imgur.com/fCYkxSC.png" alt=""></p>
-<p>透過 SSH 進入 instance：<br><img src="https://i.imgur.com/Ijylo9X.png" alt=""></p>
-<h2 id="Refers"><a href="#Refers" class="headerlink" title="Refers"></a>Refers</h2><ul>
+<p>直接進入 Dashboard 新增 Self-service Network:<br>
+<img src="https://i.imgur.com/lqMrgqs.png" alt=""></p>
+<p>加入到 router1:<br>
+<img src="https://i.imgur.com/4aNnF3O.png" alt=""></p>
+<p>完成後，就可以建立 instance，這邊都透過 Dashboard 來操作：<br>
+<img src="https://i.imgur.com/fCYkxSC.png" alt=""></p>
+<p>透過 SSH 進入 instance：<br>
+<img src="https://i.imgur.com/Ijylo9X.png" alt=""></p>
+<h2><span id="refers">Refers</span></h2>
+<ul>
 <li><a href="https://github.com/portdirect/sydney-workshop" target="_blank" rel="noopener">sydney-workshop</a></li>
 <li><a href="https://docs.openstack.org/openstack-helm/latest/install/multinode.html" target="_blank" rel="noopener">Multi Node</a></li>
 </ul>
@@ -1035,7 +1024,7 @@ $ neutron router-gateway-set router1 ext-net
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點與安裝版本"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點與安裝版本</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-叢集"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Kubernetes 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#初始化與設定基本需求"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">初始化與設定基本需求</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝與設定-Kube-ansible"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">安裝與設定 Kube-ansible</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部屬-Kubernetes-叢集"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">部屬 Kubernetes 叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#OpenStack-helm-叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">OpenStack-helm 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Helm-init"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Helm init</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ceph-Chart"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Ceph Chart</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#OpenStack-Chart"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">OpenStack Chart</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試-OpenStack-功能"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">測試 OpenStack 功能</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Refers"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Refers</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點與安裝版本</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Kubernetes 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">初始化與設定基本需求</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">安裝與設定 Kube-ansible</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">部屬 Kubernetes 叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">OpenStack-helm 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Helm init</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">Ceph Chart</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">OpenStack Chart</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">測試 OpenStack 功能</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Refers</span></a></li></ol>
         
         </div>
       </aside>
@@ -1066,6 +1055,15 @@ $ neutron router-gateway-set router1 ext-net
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

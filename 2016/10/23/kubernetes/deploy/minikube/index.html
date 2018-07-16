@@ -138,6 +138,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -146,7 +149,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -291,32 +294,34 @@
 <li>Kubernetes v1.7.5</li>
 </ul>
 <a id="more"></a>
-<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
+<h2><span id="事前準備">事前準備</span></h2>
+<p>安裝前需要確認叢集滿足以下幾點：</p>
 <ul>
 <li>安裝 <code>xhyve driver</code>, <code>VirtualBox</code> 或 <code>VMware Fusion</code>。</li>
 <li>安裝 kubectl 工具。</li>
 </ul>
 <p>以下為<code>Mac OS X</code>下載方式：</p>
-<pre><code class="sh">$ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.5/bin/darwin/amd64/kubectl
+<pre><code class="language-sh">$ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.5/bin/darwin/amd64/kubectl
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
 <p>如果是<code>Linux</code>則使用以下方式：</p>
-<pre><code class="sh">$ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.5/bin/linux/amd64/kubectl
+<pre><code class="language-sh">$ curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.7.5/bin/linux/amd64/kubectl
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
-<h2 id="快速開始"><a href="#快速開始" class="headerlink" title="快速開始"></a>快速開始</h2><p>Minikube 支援了許多作業系統，若是 <code>OS X</code> 的開發者，可以透過該指令安裝：</p>
-<pre><code class="sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.22.3/minikube-darwin-amd64
+<h2><span id="快速開始">快速開始</span></h2>
+<p>Minikube 支援了許多作業系統，若是 <code>OS X</code> 的開發者，可以透過該指令安裝：</p>
+<pre><code class="language-sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.22.3/minikube-darwin-amd64
 $ chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
 </code></pre>
 <p>若是 <code>Linux</code> 開發者則利用以下指令安裝：</p>
-<pre><code class="sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.22.3/minikube-linux-amd64
+<pre><code class="language-sh">$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.22.3/minikube-linux-amd64
 $ chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/
 </code></pre>
 <p>下載完成後，就可以透過以下指令建立環境：</p>
-<pre><code class="sh">$ minikube get-k8s-versions
+<pre><code class="language-sh">$ minikube get-k8s-versions
 The following Kubernetes versions are available:
-    - v1.8.0
-    - v1.7.5
+	- v1.8.0
+	- v1.7.5
 ...
 
 $ minikube start
@@ -331,7 +336,7 @@ Starting cluster components...
 Kubectl is now configured to use the cluster.
 </code></pre>
 <p>看到上述資訊表示已完成啟動 Kubernetes 虛擬機，這時候可以透過 kubectl 來查看資訊：</p>
-<pre><code class="sh">$ kubectl get node
+<pre><code class="language-sh">$ kubectl get node
 NAME       STATUS    AGE       VERSION
 minikube   Ready     2m        v1.7.5
 
@@ -352,14 +357,14 @@ svc/kubernetes-dashboard   10.0.0.222   &lt;nodes&gt;       80:30000/TCP    2m
 <p>新版本 Minikube 預設會自動啟動上述 Addons。這時可以透過瀏覽器進入 <a href="http://192.168.99.100:30000/" target="_blank" rel="noopener">Dashboard</a>。</p>
 </blockquote>
 <p>想啟動 Extra addons 的話，可以透過以下指令來達成：</p>
-<pre><code class="sh">$ minikube addons list
+<pre><code class="language-sh">$ minikube addons list
 $ minikube addons enable heapster
 </code></pre>
 <blockquote>
 <p>若要移除則使用<code>minikube addons disable heapster</code>指令。</p>
 </blockquote>
 <p>取得虛擬機裡面的 Docker env：</p>
-<pre><code class="sh">$ eval $(minikube docker-env)
+<pre><code class="language-sh">$ eval $(minikube docker-env)
 $ docker version
 Client:
  Version:      17.10.0-ce
@@ -379,11 +384,12 @@ Server:
  Experimental: false
 </code></pre>
 <p>(option)若想要移除與刪除虛擬機的話，可以透過以下指令進行：</p>
-<pre><code class="sh">$ minikube stop
+<pre><code class="language-sh">$ minikube stop
 $ minikube delete
 </code></pre>
-<h2 id="執行簡單測試應用程式"><a href="#執行簡單測試應用程式" class="headerlink" title="執行簡單測試應用程式"></a>執行簡單測試應用程式</h2><p>這邊利用 echoserver 來測試 Minikube 功能，首先透過以下指令啟動一個 Deployment：</p>
-<pre><code class="sh">$ kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080
+<h2><span id="執行簡單測試應用程式">執行簡單測試應用程式</span></h2>
+<p>這邊利用 echoserver 來測試 Minikube 功能，首先透過以下指令啟動一個 Deployment：</p>
+<pre><code class="language-sh">$ kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080
 $ kubectl get deploy,po
 NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 deploy/hello-minikube   1         1         1            1           11m
@@ -392,14 +398,14 @@ NAME                                READY     STATUS    RESTARTS   AGE
 po/hello-minikube-938614450-31rtv   1/1       Running   0          11m
 </code></pre>
 <p>接著 expose 服務來進行存取：</p>
-<pre><code class="sh">$ kubectl expose deployment hello-minikube --type=NodePort
+<pre><code class="language-sh">$ kubectl expose deployment hello-minikube --type=NodePort
 $ kubectl get svc
 NAME             CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
 hello-minikube   10.0.0.164   &lt;nodes&gt;       8080:30371/TCP   4s
 kubernetes       10.0.0.1     &lt;none&gt;        443/TCP          29m
 </code></pre>
 <p>最後透過 cURL 來存取服務：</p>
-<pre><code class="sh">$ curl $(minikube service hello-minikube --url)
+<pre><code class="language-sh">$ curl $(minikube service hello-minikube --url)
 CLIENT VALUES:
 client_address=172.17.0.1
 command=GET
@@ -449,7 +455,7 @@ real path=/
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#快速開始"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">快速開始</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#執行簡單測試應用程式"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">執行簡單測試應用程式</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">快速開始</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">執行簡單測試應用程式</span></a></li></ol>
         
         </div>
       </aside>
@@ -478,6 +484,15 @@ real path=/
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

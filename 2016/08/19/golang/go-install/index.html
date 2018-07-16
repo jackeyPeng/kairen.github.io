@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -288,31 +291,37 @@
 
                 <p>Go 語言是 Google 開發的該世代 C 語言，延續 C 語言的一些優點，是一種靜態強刑別、編譯型，且具有並行機制與垃圾回收功能的語言。由於其<code>並行機制</code>讓 Go 在撰寫多執行緒與網路程式都非常容易。值得一提的是 Go 語言的設計者也包含過去設計 C 語言的 <a href="https://en.wikipedia.org/wiki/Ken_Thompson" target="_blank" rel="noopener">Ken Thompson</a>。目前 Go 語言基於 1.x 每半年發布一個版本。</p>
 <a id="more"></a>
-<h2 id="Go-語言安裝"><a href="#Go-語言安裝" class="headerlink" title="Go 語言安裝"></a>Go 語言安裝</h2><p>Go 語言安裝非常容易，目前已支援多個平台的作業系統，以下針對幾個常見的作業系統進行教學。</p>
+<h2><span id="go-語言安裝">Go 語言安裝</span></h2>
+<p>Go 語言安裝非常容易，目前已支援多個平台的作業系統，以下針對幾個常見的作業系統進行教學。</p>
 <blockquote>
 <p>P.S. 以下教學皆使用 64 bit 進行安裝。</p>
 </blockquote>
-<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><p>首先透過網路下載 Go 語言的壓縮檔：</p>
-<pre><code class="sh">$ wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
+<h3><span id="linux">Linux</span></h3>
+<p>首先透過網路下載 Go 語言的壓縮檔：</p>
+<pre><code class="language-sh">$ wget https://storage.googleapis.com/golang/go1.8.linux-amd64.tar.gz
 </code></pre>
 <p>然後將壓縮檔內的資料全部解壓縮到<code>/usr/local</code>底下：</p>
-<pre><code class="sh">$ sudo tar -C /usr/local -xzf go1.8.linux-amd64.tar.gz
+<pre><code class="language-sh">$ sudo tar -C /usr/local -xzf go1.8.linux-amd64.tar.gz
 </code></pre>
 <p>之後編輯<code>.bashrc</code>檔案，在最下面加入以下內容：</p>
 <pre><code>export GOROOT=/usr/local/go
 export GOPATH=${HOME}/go
 export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
-</code></pre><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><p>Mac OS X 安裝可以透過官方封裝好的檔案來進行安裝，下載 <a href="https://storage.googleapis.com/golang/go1.8.darwin-amd64.pkg" target="_blank" rel="noopener">go1.8.darwin-amd64.pkg</a>，然後雙擊進行安裝。</p>
+</code></pre>
+<h3><span id="mac-os-x">Mac OS X</span></h3>
+<p>Mac OS X 安裝可以透過官方封裝好的檔案來進行安裝，下載 <a href="https://storage.googleapis.com/golang/go1.8.darwin-amd64.pkg" target="_blank" rel="noopener">go1.8.darwin-amd64.pkg</a>，然後雙擊進行安裝。</p>
 <p>完成後，編輯<code>.bashrc</code>檔案來加入套件的安裝路徑：</p>
 <pre><code>export PATH=$PATH:/usr/local/go/bin
 export GOPATH=~/Go
 export PATH=$PATH:$GOPATH/bin
-</code></pre><h3 id="簡單入門"><a href="#簡單入門" class="headerlink" title="簡單入門"></a>簡單入門</h3><p>建立目錄<code>hello-go</code>，並新增檔案<code>hello.go</code>：</p>
-<pre><code class="sh">$ mkdir hello-go
+</code></pre>
+<h3><span id="簡單入門">簡單入門</span></h3>
+<p>建立目錄<code>hello-go</code>，並新增檔案<code>hello.go</code>：</p>
+<pre><code class="language-sh">$ mkdir hello-go
 $ cd hello-go &amp;&amp; touch hello.go
 </code></pre>
 <p>接著編輯<code>hello.go</code>加入以下內容：</p>
-<pre><code class="go">package main
+<pre><code class="language-go">package main
 import &quot;fmt&quot;
 
 func main() {
@@ -320,11 +329,12 @@ func main() {
 }
 </code></pre>
 <p>完成後執行以下指令：</p>
-<pre><code class="sh">$ go build
+<pre><code class="language-sh">$ go build
 $ ./hello
 Hello world, GO !
 </code></pre>
-<h2 id="其他-Framework-與網站"><a href="#其他-Framework-與網站" class="headerlink" title="其他 Framework 與網站"></a>其他 Framework 與網站</h2><p>以下整理相關 Go 語言的套件與不錯網站。</p>
+<h2><span id="其他-framework-與網站">其他 Framework 與網站</span></h2>
+<p>以下整理相關 Go 語言的套件與不錯網站。</p>
 <table>
 <thead>
 <tr>
@@ -347,11 +357,12 @@ Hello world, GO !
 </tr>
 <tr>
 <td>Social 框架</td>
-<td>ChannelMail.io</td>
+<td><a href="http://ChannelMail.io" target="_blank" rel="noopener">ChannelMail.io</a></td>
 </tr>
 </tbody>
 </table>
-<h2 id="參考資訊"><a href="#參考資訊" class="headerlink" title="參考資訊"></a>參考資訊</h2><ul>
+<h2><span id="參考資訊">參考資訊</span></h2>
+<ul>
 <li><a href="http://gophergala.com/blog/gopher/gala/2015/01/31/finalists/" target="_blank" rel="noopener">Gopher Gala 2015 Finalists</a></li>
 <li><a href="https://github.com/showcases/web-application-frameworks" target="_blank" rel="noopener">Web application frameworks</a></li>
 </ul>
@@ -398,7 +409,7 @@ Hello world, GO !
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Go-語言安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Go 語言安裝</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Linux"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Linux</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Mac-OS-X"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Mac OS X</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#簡單入門"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">簡單入門</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#其他-Framework-與網站"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">其他 Framework 與網站</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考資訊"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">參考資訊</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Go 語言安裝</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Linux</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Mac OS X</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">簡單入門</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">其他 Framework 與網站</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">參考資訊</span></a></li></ol>
         
         </div>
       </aside>
@@ -429,6 +440,15 @@ Hello world, GO !
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

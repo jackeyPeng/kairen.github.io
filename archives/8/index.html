@@ -128,6 +128,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -136,7 +139,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -296,7 +299,8 @@ Whisper：專門儲存時間序列類型資料的小型資料庫。
 Graphite webapp：基於 Django 的網頁應用程式。
 
 
-安裝 Graphite在開始配置 G......
+安裝 Graphite
+在開始配置 ......
         </div>
     </a>
     
@@ -374,14 +378,15 @@ Kubernetes v1.5.5
 Docker v17.03.0-ce
 
 
-節點資訊本次安裝作業系統採用Ubuntu 16.04 Server，測試環境為 Vagrant with Libvirt 或 Vbox：
+節點資訊
+本次安裝作業系統採用Ubuntu 16.04 Server，測試環境為 Vagrant with Libvirt 或 Vbox：
 
 
 
 IP Address
 Role
 CPU
-Memo......
+Mem......
         </div>
     </a>
     
@@ -414,12 +419,13 @@ Memo......
             本篇將說明如何透過 Docker 來部署一個單機的 kubernetes。其架構圖如下所示：
 
 
-事前準備在開始安裝前，我們必須在部署的主機或虛擬機安裝與完成以下兩點：
+事前準備
+在開始安裝前，我們必須在部署的主機或虛擬機安裝與完成以下兩點：
 
 確認安裝 Docker Engine 於主機作業系統。
 
 $ curl -fsSL &quot;https://get.docker.com/&quot; | sh
-$ sudo iptables -P FORWARD A......
+$ sudo iptables -P FORWARD ......
         </div>
     </a>
     
@@ -457,7 +463,8 @@ None Mode
 Container Mode
 
 
-Bridge ModeBridg......
+Bridge Mode
+Brid......
         </div>
     </a>
     
@@ -488,7 +495,8 @@ Bridge ModeBridg......
         </h3>
         <div class="post-content-preview">
             ELK 是由三個套件的開頭英文組成的縮寫，其 E 表示Elasticsearch，L 表示Logstash，K 表示Kibana，作為收集資料、資料索引以及資料視覺化的工具集合，以下分別簡單介紹三個套件。
-LogstashLogstash 可以簡單、有效、快速的處理Log資料，不過Logstash的主要功能是處理時間類型的Log，也就是在Log檔中有時間戳記（TimeStamp）的資料，而分......
+Logstash
+Logstash 可以簡單、有效、快速的處理Log資料，不過Logstash的主要功能是處理時間類型的Log，也就是在Log檔中有時間戳記（TimeStamp）的資料，而......
         </div>
     </a>
     
@@ -588,8 +596,9 @@ LogstashLogstash 可以簡單、有效、快速的處理Log資料，不過Logsta
         <div class="post-content-preview">
             Ubuntu MAAS 提供了裸機服務，將雲端的語言帶到物理伺服器中，其功能可以讓企業一次大量部署伺服器硬體環境的作業系統與基本設定等功能。
 
-安裝與設定首先為了方便系統操作，將sudo設置為不需要密碼：
-$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp......
+安裝與設定
+首先為了方便系統操作，將sudo設置為不需要密碼：
+$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&am......
         </div>
     </a>
     
@@ -623,8 +632,9 @@ $ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ub
         <div class="post-content-preview">
             網路檔案系統(Network FileSystem，NFS)是早期由 SUN 公司所開發出來的分散式檔案系統協定。主要透過 RPC Service 使檔案能夠共享於網路中，NFS 的好處是它支援了不同系統與機器的溝通能力，使資料能夠很輕易透過網路共享給別人。
 
-安裝與設定首先在 NFS 節點安裝以下套件：
-$ sudo apt-get -y install nfs-kernel-server......
+安裝與設定
+首先在 NFS 節點安裝以下套件：
+$ sudo apt-get -y install nfs-kernel-serve......
         </div>
     </a>
     
@@ -824,9 +834,9 @@ $ sudo apt-get -y install nfs-kernel-server......
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
-            
         
+            
+            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
             
         
             
@@ -870,15 +880,15 @@ $ sudo apt-get -y install nfs-kernel-server......
             
         
             
-        
-            
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            
+        
+            
+        
+            
+        
+            
+        
             
         
             

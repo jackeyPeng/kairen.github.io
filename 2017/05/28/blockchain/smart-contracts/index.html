@@ -142,6 +142,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -150,7 +153,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -291,7 +294,8 @@
                 <p><code>智能合約(Smart Contracts)</code> 是在 Ethereum 區塊鏈中所屬的物件。它們包含程式碼函式以及能夠與其他合約進行互動、做出決策、儲存資料與傳送乙太幣給其他人。合約是由創建者所定義，但是它們的執行與他們所提供的服務，都是由 Ethereum 網路本身提供。它們將存在且可被執行，只要整個網路存在，並且只會因程式中有撰寫自我銷毀的功能才會消失。</p>
 <p>我可以用合約做什麼呢？只要想像力夠豐富，要做什麼幾乎都沒問題，但以下指南只會是入門，讓我們去實現一些簡單的事情。</p>
 <a id="more"></a>
-<h3 id="Smart-Sponsor"><a href="#Smart-Sponsor" class="headerlink" title="Smart Sponsor"></a>Smart Sponsor</h3><p>本節將說明一智能合約範例，透過建構一個合約來允許以下賬戶持有人進行互動。</p>
+<h3><span id="smart-sponsor">Smart Sponsor</span></h3>
+<p>本節將說明一智能合約範例，透過建構一個合約來允許以下賬戶持有人進行互動。</p>
 <ul>
 <li>一個慈善機構舉行籌款活動，我們稱之為 <strong>thebenefactor</strong>。</li>
 <li>一個受贊助的 runner 想為慈善機構募款，我們稱之為 <strong>therunner</strong>。</li>
@@ -328,7 +332,7 @@
 <p>要注意很重要的一點，任何改變合約的狀態(建立、承若、退還或 drawing down)都需要在區塊鏈上建立交易，這意味著這些交易不會被儲存，要直到這些交易的區塊被開採。操作只能讀取到一個現有合約狀態(getPot 或讀取公有成員變數)都不需要進行挖礦。這是一個很重要且微妙的點：寫入操作是很慢的(因為我們要等到採礦完成)。由於這情況合約可能永遠不會被建立到區塊鍊中，因此呼叫方需要提供一些獎勵，來促進礦工去工作。這是被稱為 gas 的 Ethereum 術語，所有的寫入操作都是需要 gas 的支出來改變區塊鍊的狀態。</p>
 <p>幸運的是我們不需要購買真正的乙太幣，以及參與 Ethereum 網路。我們可以使用相同的軟體，但要配置它運行一個本地測試區塊鏈，以及產生自己的假乙太幣。</p>
 <p>以下為一個 Solidity 語言的智能合約範例：</p>
-<pre><code class="js">contract smartSponsor {
+<pre><code class="language-js">contract smartSponsor {
   address public owner;
   address public benefactor;
   bool public refunded;
@@ -399,7 +403,8 @@
 <li><code>throw</code>被稱為某些函式(functions)，用以防止資料被寫入錯誤的資料到該區塊鏈中。</li>
 </ul>
 </blockquote>
-<h2 id="參考連結"><a href="#參考連結" class="headerlink" title="參考連結"></a>參考連結</h2><ul>
+<h2><span id="參考連結">參考連結</span></h2>
+<ul>
 <li><a href="https://medium.com/@kpcb_edge/our-thoughts-on-ethereum-31520b164e00#.2q1i88278" target="_blank" rel="noopener">Our thoughts on Ethereum</a></li>
 <li><a href="https://www.ethereum.org/greeter" target="_blank" rel="noopener">Building a smart contract using the command line</a></li>
 <li><a href="https://developer.ibm.com/clouddataservices/2016/05/19/block-chain-technology-smart-contracts-and-ethereum/" target="_blank" rel="noopener">Block chain technology, smart contracts and Ethereum</a></li>
@@ -447,7 +452,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Smart-Sponsor"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Smart Sponsor</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考連結"><span class="toc-nav-number"></span> <span class="toc-nav-text">參考連結</span></a>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Smart Sponsor</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number"></span> <span class="toc-nav-text">參考連結</span></a>
         
         </div>
       </aside>
@@ -480,6 +485,15 @@
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

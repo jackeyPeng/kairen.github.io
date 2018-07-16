@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -289,29 +292,29 @@
                 <p>在預設情況下，我們所使用的都是一個靜態的 Inventory 檔案，編輯主機、群組以及變數時都需要固定手動編輯完成。</p>
 <p>Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部腳本或程式來產生指定的格式的 JSON 字串。這樣做的好處就是可以透過這個外部腳本與程式來管理系統（如 API）抓取最新資源訊息。</p>
 <a id="more"></a>
-<p> Ansible 使用者通常會互動於大多數的物理硬體，因此會有許多人可能也是<code>Cobbler</code>的使用者。</p>
+<p>Ansible 使用者通常會互動於大多數的物理硬體，因此會有許多人可能也是<code>Cobbler</code>的使用者。</p>
 <blockquote>
 <p>Cobbler 是一個透過網路部署 Linux 的服務，而且經過調整更能夠進行 Windows 部署。該工具是使用 Python 開發，因此輕巧便利，使用簡單指令就可以完成 PXE 網路安裝環境。</p>
 </blockquote>
-<p> 比如說以下這個範例就是透過腳本程式產生的：</p>
-<pre><code class="sh"> {
-    &quot;production&quot;: [&quot;delaware.example.com&quot;, &quot;georgia.example.com&quot;,
-        &quot;maryland.example.com&quot;, &quot;newhampshire.example.com&quot;,
-        &quot;newjersey.example.com&quot;, &quot;newyork.example.com&quot;,
-        &quot;northcarolina.example.com&quot;, &quot;pennsylvania.example.com&quot;,
-        &quot;rhodeisland.example.com&quot;, &quot;virginia.example.com&quot;
-    ],
-    &quot;staging&quot;: [&quot;ontario.example.com&quot;, &quot;quebec.example.com&quot;],
-    &quot;vagrant&quot;: [&quot;vagrant1&quot;, &quot;vagrant2&quot;, &quot;vagrant3&quot;],
-    &quot;lb&quot;: [&quot;delaware.example.com&quot;],
-    &quot;web&quot;: [&quot;georgia.example.com&quot;, &quot;newhampshire.example.com&quot;,
-        &quot;newjersey.example.com&quot;, &quot;ontario.example.com&quot;, &quot;vagrant1&quot;
-    ]
-    &quot;task&quot;: [&quot;newyork.example.com&quot;, &quot;northcarolina.example.com&quot;,
-        &quot;ontario.example.com&quot;, &quot;vagrant2&quot;
-    ],
-    &quot;redis&quot;: [&quot;pennsylvania.example.com&quot;, &quot;quebec.example.com&quot;, &quot;vagrant3&quot;],
-    &quot;db&quot;: [&quot;rhodeisland.example.com&quot;, &quot;virginia.example.com&quot;, &quot;vagrant3&quot;]
+<p>比如說以下這個範例就是透過腳本程式產生的：</p>
+<pre><code class="language-sh">{
+   &quot;production&quot;: [&quot;delaware.example.com&quot;, &quot;georgia.example.com&quot;,
+       &quot;maryland.example.com&quot;, &quot;newhampshire.example.com&quot;,
+       &quot;newjersey.example.com&quot;, &quot;newyork.example.com&quot;,
+       &quot;northcarolina.example.com&quot;, &quot;pennsylvania.example.com&quot;,
+       &quot;rhodeisland.example.com&quot;, &quot;virginia.example.com&quot;
+   ],
+   &quot;staging&quot;: [&quot;ontario.example.com&quot;, &quot;quebec.example.com&quot;],
+   &quot;vagrant&quot;: [&quot;vagrant1&quot;, &quot;vagrant2&quot;, &quot;vagrant3&quot;],
+   &quot;lb&quot;: [&quot;delaware.example.com&quot;],
+   &quot;web&quot;: [&quot;georgia.example.com&quot;, &quot;newhampshire.example.com&quot;,
+       &quot;newjersey.example.com&quot;, &quot;ontario.example.com&quot;, &quot;vagrant1&quot;
+   ]
+   &quot;task&quot;: [&quot;newyork.example.com&quot;, &quot;northcarolina.example.com&quot;,
+       &quot;ontario.example.com&quot;, &quot;vagrant2&quot;
+   ],
+   &quot;redis&quot;: [&quot;pennsylvania.example.com&quot;, &quot;quebec.example.com&quot;, &quot;vagrant3&quot;],
+   &quot;db&quot;: [&quot;rhodeisland.example.com&quot;, &quot;virginia.example.com&quot;, &quot;vagrant3&quot;]
 }
 </code></pre>
 <p>使用方式如下：</p>
@@ -339,7 +342,7 @@
                     
                     
                         <li class="next">
-                            <a href="/2016/02/17/devops/ansible/ansible-inventory/" data-toggle="tooltip" data-placement="top" title="Ansible Inventory">Next Post &rarr;</a>
+                            <a href="/2016/02/17/devops/ansible/ansible-adhoc/" data-toggle="tooltip" data-placement="top" title="Ansible Ad-Hoc 指令與 Modules">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -400,6 +403,15 @@
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

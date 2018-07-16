@@ -128,6 +128,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -136,7 +139,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -290,10 +293,10 @@
         </h3>
         <div class="post-content-preview">
             Ceph FS 底層的部分同樣是由 RADOS(OSDs + Monitors + MDSs) 提供，在上一層同樣與 librados 溝通，最上層則是有不同的 library 將其轉換成標準的 POSIX 檔案系統供使用。
+![](/images/ceph/cephfs.png)
 
-
-
-建立一個 Ceph File System首先將一個叢集建立完成，並提供 Metadata Server Node 與 Client，建立 Client 可以透過......
+建立一個 Ceph File System
+首先將一個叢集建立完成，並提供 Metadata Server ......
         </div>
     </a>
     
@@ -327,8 +330,9 @@
         <div class="post-content-preview">
             本節將介紹如何透過 ceph-deploy 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台Monitor與三台OSD。而 MDS 則是當使用到 CephFS 的時候才需要部署。
 
-環境準備在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：
-             ......
+環境準備
+在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：
+            ......
         </div>
     </a>
     
@@ -488,9 +492,10 @@ Kubernetes 在 Docker 叢集管理中是很重要的一員，其實作了許多�
         <div class="post-content-preview">
             Apache2 是一套經過測試與用於生產環境的 HTTP 伺服器，在許多網頁伺服器中被廣泛的採用，Apache2 除了本身能力強大外，其也整合了許多的額外模組來提供更多的擴展功能。
 
-Apache2 安裝與設定要安裝 Apache 伺服器很簡單，只需要透過 APT 進行安裝即可：
+Apache2 安裝與設定
+要安裝 Apache 伺服器很簡單，只需要透過 APT 進行安裝即可：
 $ sudo apt-get update
-$ sudo apt-get install -y libapach......
+$ sudo apt-get install -y libapac......
         </div>
     </a>
     
@@ -557,9 +562,7 @@ Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
         <div class="post-content-preview">
             Spark + Mesos 叢集是由多個主節點與工作節點組合而成，它實作了兩層的排程（Scheduler）來提供粗/細粒度的排程。在 Mesos 中主節點（Master）主要負責資料的分配與排程，然而從節點（Slave）則是主要執行任務負載的角色。Mesos 也提供了高可靠的部署模式，可利用多個主節點的 ZooKeeper 來做服務發現。
 
-
-
-在 Mesos 上所執行的應用程式都被稱為框架......
+![](/images/spark/mesos.p......
         </div>
     </a>
     
@@ -794,9 +797,9 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
-            
         
+            
+            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
             
         
             
@@ -840,15 +843,15 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
             
         
             
-        
-            
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            
+        
+            
+        
+            
+        
+            
+        
             
         
             

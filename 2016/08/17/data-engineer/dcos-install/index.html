@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -289,91 +292,58 @@
                 <p>DC/OS(Data Center Operating System，資料中心作業系統)是 Mesosphere 公司開源的系統，該平台提供了諸多巨量資料處理框架與系統的建置，並以分散式系統 Mesos 作為核心，提供系統資源的隔離與調度，使用者可以根據需求與策略來應用系統資源。</p>
 <p>而本篇將說明如何透過 UI 與 CLI 進行安裝 DC/OS。</p>
 <a id="more"></a>
-<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>DC/OS 最低需求要四台主機，以下為本次安裝的硬體設備：</p>
-<table>
-<thead>
-<tr>
-<th>Role</th>
-<th>RAM</th>
-<th>Disk</th>
-<th>CPUs</th>
-<th>IP Address</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>bootstrap</td>
-<td>16 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.101</td>
-</tr>
-<tr>
-<td>master</td>
-<td>8 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.102</td>
-</tr>
-<tr>
-<td>agent-1</td>
-<td>8 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.103</td>
-</tr>
-<tr>
-<td>agent-2</td>
-<td>8 GB 記憶體</td>
-<td>250 GB 儲存空間</td>
-<td>四核處理器</td>
-<td>10.0.0.104</td>
-</tr>
-</tbody>
-</table>
+<h2><span id="節點配置">節點配置</span></h2>
+<p>DC/OS 最低需求要四台主機，以下為本次安裝的硬體設備：</p>
+<p>| Role       	| RAM         	| Disk            	| CPUs       	| IP Address 	|<br>
+|------------	|-------------	|-----------------	|------------	|------------	|<br>
+| bootstrap 	| 16 GB 記憶體 	| 250 GB 儲存空間 	| 四核處理器 	| 10.0.0.101 	|<br>
+| master    	| 8 GB 記憶體 	| 250 GB 儲存空間 	| 四核處理器 	| 10.0.0.102 	|<br>
+| agent-1    	| 8 GB 記憶體 	| 250 GB 儲存空間 	| 四核處理器 	| 10.0.0.103 	|<br>
+| agent-2    	| 8 GB 記憶體 	| 250 GB 儲存空間 	| 四核處理器 	| 10.0.0.104 	|</p>
 <p>請以上節點都分別安裝 RHEL 或者 CentOS 作業系統。並且設定 IP 為靜態固定，編輯<code>/etc/sysconfig/network-scripts/ifcfg-&lt;name&gt;</code>檔案，加入以下內容：</p>
-<pre><code class="sh">ONBOOT=&quot;yes&quot;
+<pre><code class="language-sh">ONBOOT=&quot;yes&quot;
 IPADDR=&quot;10.0.0.104&quot;
 PREFIX=&quot;24&quot;
 GATEWAY=&quot;10.0.0.1&quot;
 DNS1=&quot;8.8.8.8&quot;
 DNS2=&quot;8.8.8.4&quot;
 </code></pre>
-<h2 id="安裝前準備"><a href="#安裝前準備" class="headerlink" title="安裝前準備"></a>安裝前準備</h2><p>在開始安裝以前，首先需要在每一台節點將基本環境的軟體更新：</p>
-<pre><code class="sh">$ sudo yum upgrade -y
+<h2><span id="安裝前準備">安裝前準備</span></h2>
+<p>在開始安裝以前，首先需要在每一台節點將基本環境的軟體更新：</p>
+<pre><code class="language-sh">$ sudo yum upgrade -y
 </code></pre>
 <blockquote>
 <p>完成後檢查是否是最新版本，可以透過以下方式查看 Kernel：</p>
-<pre><code class="sh">$ uname -r
+</blockquote>
+<pre><code class="language-sh">$ uname -r
 3.10.0-327.13.1.el7.x86_64
 </code></pre>
-</blockquote>
 <blockquote>
 <p>如果不是以上版本，請執行以下指令：</p>
-<pre><code class="sh">$ sudo yum upgrade --assumeyes --tolerant
+</blockquote>
+<pre><code class="language-sh">$ sudo yum upgrade --assumeyes --tolerant
 $ sudo yum update --assumeyes
 </code></pre>
-</blockquote>
 <p>由於在 CentOS 與 RHEL 預設會開啟防火牆，故要關閉防火牆與開機時自動啟動：</p>
-<pre><code class="sh">$ sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
+<pre><code class="language-sh">$ sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
 </code></pre>
 <p>接著安裝一些基本工具軟體：</p>
-<pre><code class="sh">$ sudo yum install -y tar xz unzip curl ipset vim
+<pre><code class="language-sh">$ sudo yum install -y tar xz unzip curl ipset vim
 </code></pre>
 <p>設定啟動 OverlayFS :</p>
-<pre><code class="sh">$ sudo tee /etc/modules-load.d/overlay.conf &lt;&lt;-&#39;EOF&#39;
+<pre><code class="language-sh">$ sudo tee /etc/modules-load.d/overlay.conf &lt;&lt;-'EOF'
 overlay
 EOF
 </code></pre>
 <p>設定關閉 SELinux 與設定一些資訊，並重新啟動：</p>
-<pre><code class="sh">$ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config &amp;&amp;
+<pre><code class="language-sh">$ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config &amp;&amp;
 sudo groupadd nogroup &amp;&amp;
 sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 &amp;&amp;
 sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 &amp;&amp;
 sudo reboot
 </code></pre>
 <p>完成重新啟動後，在每一台節點安裝 Docker，首先要取得 Repos，設定以下來讓 yum 可以抓取：</p>
-<pre><code class="sh">$ sudo tee /etc/yum.repos.d/docker.repo &lt;&lt;-&#39;EOF&#39;
+<pre><code class="language-sh">$ sudo tee /etc/yum.repos.d/docker.repo &lt;&lt;-'EOF'
 [dockerrepo]
 name=Docker Repository
 baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
@@ -383,65 +353,68 @@ gpgkey=https://yum.dockerproject.org/gpg
 EOF
 </code></pre>
 <p>設定 systemd 執行 Docker daemon 於 OverlayFS：</p>
-<pre><code class="sh">$ sudo mkdir -p /etc/systemd/system/docker.service.d &amp;&amp; sudo tee /etc/systemd/system/docker.service.d/override.conf &lt;&lt;- EOF
+<pre><code class="language-sh">$ sudo mkdir -p /etc/systemd/system/docker.service.d &amp;&amp; sudo tee /etc/systemd/system/docker.service.d/override.conf &lt;&lt;- EOF
 [Service]
 ExecStart=
 ExecStart=/usr/bin/docker daemon --storage-driver=overlay -H fd://
 EOF
 </code></pre>
 <p>安裝 Docker engine，並啟動 docker 與設定開機啟動：</p>
-<pre><code class="sh">$ sudo yum install --assumeyes --tolerant docker-engine
+<pre><code class="language-sh">$ sudo yum install --assumeyes --tolerant docker-engine
 $ sudo systemctl start docker
 $ sudo systemctl enable docker
 </code></pre>
 <blockquote>
 <p>這邊可以設定使用者加入 docker 群組：</p>
-<pre><code class="sh">$ sudo gpasswd -a $(whoami) docker
-</code></pre>
 </blockquote>
-<h2 id="安裝-Bootstrap-Node"><a href="#安裝-Bootstrap-Node" class="headerlink" title="安裝 Bootstrap Node"></a>安裝 Bootstrap Node</h2><p>Bootstrap 節點主要提供佈署的功能，可以採用 UI 或 CLI 來進行部署，以下將說明如何透過建置 Bootstrap 來完成 DC/OS 佈署。</p>
-<h3 id="GUI-安裝"><a href="#GUI-安裝" class="headerlink" title="GUI 安裝"></a>GUI 安裝</h3><p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="noopener">DC/OS installer</a>：</p>
-<pre><code class="sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
+<pre><code class="language-sh">$ sudo gpasswd -a $(whoami) docker
+</code></pre>
+<h2><span id="安裝-bootstrap-node">安裝 Bootstrap Node</span></h2>
+<p>Bootstrap 節點主要提供佈署的功能，可以採用 UI 或 CLI 來進行部署，以下將說明如何透過建置 Bootstrap 來完成 DC/OS 佈署。</p>
+<h3><span id="gui-安裝">GUI 安裝</span></h3>
+<p>這邊採用 GUI 方式來佈署 DC/OS，首先下載 <a href="https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh?_ga=1.252969481.1283195233.1461920094" target="_blank" rel="noopener">DC/OS installer</a>：</p>
+<pre><code class="language-sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
 </code></pre>
 <p>接著執行啟動 DC/OS UI：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --web -v
+<pre><code class="language-sh">$ sudo bash dcos_generate_config.sh --web -v
 </code></pre>
-<p>完成後，即可開啟瀏覽器輸入 <a href="http://&lt;bootstrap-node-public-ip&gt;:9000" target="_blank" rel="noopener">bootstrap web</a></p>
+<p>完成後，即可開啟瀏覽器輸入 <a href="http://%3Cbootstrap-node-public-ip%3E:9000" target="_blank" rel="noopener">bootstrap web</a></p>
 <p>這邊需要輸入 Bootstrap 節點的 SSH 私有金鑰，透過以下方式產生與印出：</p>
-<pre><code class="sh">$ ssh-keygen -t rsa
+<pre><code class="language-sh">$ ssh-keygen -t rsa
 $ cat .ssh/id_rsa
 </code></pre>
 <p>並建立一個腳本檔案<code>ip-detect</code>，並加入以下內容：</p>
-<pre><code class="sh">#!/bin/bash
+<pre><code class="language-sh">#!/bin/bash
 set -o nounset -o errexit
 
 IP=&lt;MASTER_IP&gt;
 
-echo $(ip route get ${IP} | awk &#39;{print $NF; exit}&#39;)
+echo $(ip route get ${IP} | awk '{print $NF; exit}')
 </code></pre>
 <p>上傳以上資訊，並填入 Master 與 Agent 的 IP Address。</p>
-<h3 id="CLI-安裝"><a href="#CLI-安裝" class="headerlink" title="CLI 安裝"></a>CLI 安裝</h3><p>DC/OS 除了可以透過 GUI 進行安裝，也可以透過 CLI 的方式來佈署，首先建立目錄<code>genconf</code>：</p>
-<pre><code class="sh">$ mkdir -p dcos_cluster
+<h3><span id="cli-安裝">CLI 安裝</span></h3>
+<p>DC/OS 除了可以透過 GUI 進行安裝，也可以透過 CLI 的方式來佈署，首先建立目錄<code>genconf</code>：</p>
+<pre><code class="language-sh">$ mkdir -p dcos_cluster
 $ cd dcos_cluster
 $ mkdir -p genconf
 </code></pre>
 <p>然後下載 DC/OS installer 來進行安裝，並且查看所有指令：</p>
-<pre><code class="sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
+<pre><code class="language-sh">$ wget https://downloads.dcos.io/dcos/EarlyAccess/dcos_generate_config.sh
 $ sudo bash dcos_generate_config.sh --help
 </code></pre>
 <p>建立一個腳本檔案<code>genconf/ip-detect</code>，並加入以下內容：</p>
-<pre><code class="sh">#!/bin/bash
+<pre><code class="language-sh">#!/bin/bash
 set -o nounset -o errexit
 
 IP=&lt;MASTER_IP&gt;
 
-echo $(ip route get ${IP} | awk &#39;{print $NF; exit}&#39;)
+echo $(ip route get ${IP} | awk '{print $NF; exit}')
 </code></pre>
 <blockquote>
 <p><code>MASTER_IP</code>為修改成主節點 IP。</p>
 </blockquote>
 <p>接著建立設定檔<code>genconf/config.yaml</code>，並加入以下內容：</p>
-<pre><code class="sh">---
+<pre><code class="language-sh">---
 agent_list:
 - &lt;agent-private-ip-1&gt;
 - &lt;agent-private-ip-2&gt;
@@ -469,10 +442,10 @@ ssh_user: &lt;username&gt;
 <p><code>&lt;username&gt;</code> 修改成 <code>cloud-user</code>。P.S 這邊是用 cloud image。</p>
 </blockquote>
 <p>完成後複製 Bootstrap 節點的 SSH 私有金鑰到目錄底下：</p>
-<pre><code class="sh">$ cp &lt;path-to-key&gt; genconf/ssh_key &amp;&amp; chmod 0600 genconf/ssh_key
+<pre><code class="language-sh">$ cp &lt;path-to-key&gt; genconf/ssh_key &amp;&amp; chmod 0600 genconf/ssh_key
 </code></pre>
 <p>透過 DC/OS installer 產生設定資訊：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --genconf
+<pre><code class="language-sh">$ sudo bash dcos_generate_config.sh --genconf
 Extracting image from this script and loading into docker daemon, this step can take a few minutes
 dcos-genconf.e060aa49ac4ab62d5e-1e14856f55e5d5d07b.tar
 Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
@@ -501,32 +474,33 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
     │           └── dcos-metadata--setup_6dac2d99011d6219b32d9f66cafa9845b7cf6d74.tar.xz
     ├── ssh_key
     └── state
-</code></pre><p>若沒問題就可以 prerequisites 佈署階段：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --install-prereqs
+</code></pre>
+<p>若沒問題就可以 prerequisites 佈署階段：</p>
+<pre><code class="language-sh">$ sudo bash dcos_generate_config.sh --install-prereqs
 Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING INSTALL PREREQUISITES
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START install_prereqs
 </code></pre>
 <p>若沒問題就可以執行 preflight 來驗證叢集是否可以安裝：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --preflight
+<pre><code class="language-sh">$ sudo bash dcos_generate_config.sh --preflight
 Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING PREFLIGHT
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START run_preflight
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; STAGE preflight
 </code></pre>
 <p>一樣若沒問題就可以執行 deploy 來安裝 DC/OS：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --deploy
+<pre><code class="language-sh">$ sudo bash dcos_generate_config.sh --deploy
 Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING DC/OS INSTALLATION
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START deploy_master
 </code></pre>
 <p>最後沒問題就可以執行 postflight 來確認服務是否有啟動：</p>
-<pre><code class="sh">$ sudo bash dcos_generate_config.sh --postflight
+<pre><code class="language-sh">$ sudo bash dcos_generate_config.sh --postflight
 Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/genconf
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; EXECUTING POSTFLIGHT
 ====&gt; dcos_installer.action_lib.prettyprint:: ====&gt; START run_postflight
 </code></pre>
-<p>都完成後就可以查看 <a href="http://&lt;master-public-ip&gt;:8181/exhibitor/v1/ui/index.html" target="_blank" rel="noopener">Zookpeer</a> 與 <a href="http://&lt;public-master-ip&gt;/" target="_blank" rel="noopener">DC/OS</a>。</p>
+<p>都完成後就可以查看 <a href="http://%3Cmaster-public-ip%3E:8181/exhibitor/v1/ui/index.html" target="_blank" rel="noopener">Zookpeer</a> 與 <a href="http://%3Cpublic-master-ip%3E/" target="_blank" rel="noopener">DC/OS</a>。</p>
 
                 
 
@@ -570,7 +544,7 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點配置"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Bootstrap-Node"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝 Bootstrap Node</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#GUI-安裝"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">GUI 安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CLI-安裝"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">CLI 安裝</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝 Bootstrap Node</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">GUI 安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">CLI 安裝</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -601,6 +575,15 @@ Running mesosphere/dcos-genconf docker with BUILD_DIR set to /home/centos/gencon
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

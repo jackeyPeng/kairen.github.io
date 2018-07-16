@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -286,7 +289,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>本篇主要介紹如何使用 <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">NVIDIA Docker v2</a> 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使用 NVIDIA Docker v2 的 Runtime 來執行 GPU 應用。</p>
+                <p>本篇主要介紹如何使用 <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">NVIDIA Docker v2</a> 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 --runtime 來選擇使用 NVIDIA Docker v2 的 Runtime 來執行 GPU 應用。</p>
 <a id="more"></a>
 <p>安裝前需要確認滿足以下幾點：</p>
 <ul>
@@ -296,18 +299,18 @@
 <li>NVIDIA drivers ~= 361.93 (untested on older versions)</li>
 </ul>
 <p>首先透過 APT 安裝 Docker CE or EE v17.12 版本：</p>
-<pre><code class="sh">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+<pre><code class="language-sh">$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 $ echo &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial edge&quot; | sudo tee /etc/apt/sources.list.d/docker.list
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y docker-ce=18.03.1~ce-0~ubuntu
 </code></pre>
 <p>接著透過 APT 安裝 NVIDIA Driver(v390.30) 與 CUDA 9.1：</p>
-<pre><code class="sh">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+<pre><code class="language-sh">$ wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
 $ sudo dpkg -i cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
 $ sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y cuda
 </code></pre>
 <p>測試 NVIDIA Dirver 與 CUDA 是否有安裝完成：</p>
-<pre><code class="sh">$ cat /usr/local/cuda/version.txt
+<pre><code class="language-sh">$ cat /usr/local/cuda/version.txt
 CUDA Version 9.1.85
 
 $ sudo nvidia-smi
@@ -330,13 +333,13 @@ Tue Mar 13 06:10:39 2018
 +-----------------------------------------------------------------------------+
 </code></pre>
 <p>確認上述無誤後，接著安裝 NVIDIA Docker v2，這邊透過 APT 來進行安裝：</p>
-<pre><code class="sh">$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+<pre><code class="language-sh">$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 $ curl -s -L https://nvidia.github.io/nvidia-docker/ubuntu16.04/amd64/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y nvidia-docker2=2.0.3+docker18.03.1-1
 $ sudo pkill -SIGHUP dockerd
 </code></pre>
 <p>測試 NVIDIA runtime，這邊下載 NVIDIA image 來進行測試：</p>
-<pre><code class="sh">$ docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+<pre><code class="language-sh">$ docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 ...
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 390.30                 Driver Version: 390.30                    |
@@ -356,7 +359,7 @@ $ sudo pkill -SIGHUP dockerd
 +-----------------------------------------------------------------------------+
 </code></pre>
 <p>透過 TensorFlow GPU image 來進行測試，這邊執行後登入 IP:8888 執行簡單範例程式：</p>
-<pre><code class="sh">$ docker run --runtime=nvidia -it -p 8888:8888 tensorflow/tensorflow:latest-gpu
+<pre><code class="language-sh">$ docker run --runtime=nvidia -it -p 8888:8888 tensorflow/tensorflow:latest-gpu
 ...
 2018-03-13 06:44:21.719705: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1212] Found device 0 with properties:
 name: GeForce GTX 1060 3GB major: 6 minor: 1 memoryClockRate(GHz): 1.7845
@@ -439,6 +442,15 @@ totalMemory: 2.95GiB freeMemory: 2.88GiB
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

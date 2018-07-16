@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -286,7 +289,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="Akka"><a href="#Akka" class="headerlink" title="Akka"></a>Akka</h1><p>Akka 是基於 Actor 模型以 Scala 程式語言開發而成的開源工具，被用在建置可擴展、彈性、高度並行、分散式與快速響應的 JVM 應用程式平台。現在許多高度並行（Concurrent） JVM 應用程式被廣泛應用，尤其以巨量資料處理框架為甚，諸如：Spark、Storm等，甚至可以基於 Akka 建置高平行的 Web 框架，更能建置分散式系統。Akka 最主要的目是要解決同步造成的效能問題，以及可能發生的死鎖問題。</p>
+                <h1><span id="akka">Akka</span></h1>
+<p>Akka 是基於 Actor 模型以 Scala 程式語言開發而成的開源工具，被用在建置可擴展、彈性、高度並行、分散式與快速響應的 JVM 應用程式平台。現在許多高度並行（Concurrent） JVM 應用程式被廣泛應用，尤其以巨量資料處理框架為甚，諸如：Spark、Storm等，甚至可以基於 Akka 建置高平行的 Web 框架，更能建置分散式系統。Akka 最主要的目是要解決同步造成的效能問題，以及可能發生的死鎖問題。</p>
 <p>Akka 目前擁有以下幾個特點：</p>
 <ul>
 <li>高度並行與分散式</li>
@@ -305,8 +309,7 @@
 <li>提供異步（Async）非阻塞、高效能的事件驅動程式模型。</li>
 <li>非常輕量的事件處理（每 GB Heap 記憶體有幾百萬的 Actor）</li>
 </ul>
-<center><img src="/images/spark/single_play.png" alt=""></center>
-
+<center>![](/images/spark/single_play.png)</center>
 <p>Actor 是一個運算實體，在開發程式中就是對實體之間所回應接受到的訊息做互動，同時並行的<code>傳送有限數量的訊息給其他 Actor</code>、<code>建立有限數量的 Actor</code> 以及<code>設計指定接收到下一個訊息時的行為</code>。</p>
 <p>Actor 之間是獨立的，多個 Actor 進行互動只能透過自定的訊息（Message）來完成發送與接收處理。如果一個 Actor 在某一個時刻收到多個 Actor 發送的訊息，就會發生並行問題，這時就需要一個訊息佇列來進行訊息的儲存與分散。可參考 <a href="http://www.infoq.com/cn/news/2014/11/intro-actor-model" target="_blank" rel="noopener">Akka 為範例，介紹 Actor 模型</a>。</p>
 <p>Akka 應用場景有以下幾個項目，當然這不是全部：</p>
@@ -317,7 +320,8 @@
 <li>通訊 Hub（Communications Hub）</li>
 <li>複雜事件串流處理（Complex Event Stream Processing）</li>
 </ul>
-<h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><p>Akka 一般在 Java 有兩種安裝方式，如以下：</p>
+<h2><span id="安裝">安裝</span></h2>
+<p>Akka 一般在 Java 有兩種安裝方式，如以下：</p>
 <ul>
 <li>當作 Library 使用，就是直接 Import JAR 使用。可參考 <a href="http://doc.akka.io/docs/akka/2.4.2/java.html?_ga=1.230769695.1061481694.1456285775" target="_blank" rel="noopener">Java Documentation</a>。</li>
 <li>將應用放到獨立的微核心（Microkernel）裡使用。可參考 <a href="http://doc.akka.io/docs/akka/2.3.10/scala/microkernel.html" target="_blank" rel="noopener">Microkernel</a>。</li>
@@ -365,7 +369,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Akka"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Akka</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">安裝</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Akka</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">安裝</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -396,6 +400,15 @@
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

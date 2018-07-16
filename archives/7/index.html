@@ -128,6 +128,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -136,7 +139,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -325,7 +328,40 @@
             在預設情況下，我們所使用的都是一個靜態的 Inventory 檔案，編輯主機、群組以及變數時都需要固定手動編輯完成。
 Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部腳本或程式來產生指定的格式的 JSON 字串。這樣做的好處就是可以透過這個外部腳本與程式來管理系統（如 API）抓取最新資源訊息。
 
- Ansible 使用者通常會互動於大多數的物理硬體，......
+Ansible 使用者通常會互動於大多數的物理硬體，因......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-02-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#DevOps" title="DevOps">DevOps</a>
+            
+              <a href="/tags/#Automation Engine" title="Automation Engine">Automation Engine</a>
+            
+              <a href="/tags/#Ansible" title="Ansible">Ansible</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
+        <h2 class="post-title">
+            Ansible Ad-Hoc 指令與 Modules
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
+模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
         </div>
     </a>
     
@@ -361,39 +397,6 @@ Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部�
 IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
 
 Hosts ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-02-17
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#DevOps" title="DevOps">DevOps</a>
-            
-              <a href="/tags/#Automation Engine" title="Automation Engine">Automation Engine</a>
-            
-              <a href="/tags/#Ansible" title="Ansible">Ansible</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
-        <h2 class="post-title">
-            Ansible Ad-Hoc 指令與 Modules
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
-模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
         </div>
     </a>
     
@@ -458,7 +461,8 @@ Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與...
         <div class="post-content-preview">
             本節將介紹如何透過 ceph-ansible 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台 Monitor與三台 OSD。而 MDS 則是當使用到 CephFS 的時候才需要部署。
 
-節點資訊本安裝將使用四台虛擬機器作為部署主機，虛擬機器採用 OpenStack，其規格為以下：
+節點資訊
+本安裝將使用四台虛擬機器作為部署主機，虛擬機器採用 OpenStack，其規格為以下：
 
 
 
@@ -471,7 +475,7 @@ IP Address
 
 
 
-mon......
+mo......
         </div>
     </a>
     
@@ -505,9 +509,10 @@ mon......
         <div class="post-content-preview">
             Foreman 是一個 Puppet 的生命周期管理系統，類似 puppet-dashboard，通過它可以很直觀的查看 Puppet 所有客戶端的同步狀態與 facter 參數。
 
-事前準備由於 foreman 是取決於 puppet 執行主機的組態管理，他需要部署一個 puppet master 與 agent 環境。下面的列表為在安裝之前需要備設定的項目：
+事前準備
+由於 foreman 是取決於 puppet 執行主機的組態管理，他需要部署一個 puppet master 與 agent 環境。下面的列表為在安裝之前需要備設定的項目：
 
-Root 權限：所有伺服器......
+Root 權限：所有伺服......
         </div>
     </a>
     
@@ -601,22 +606,14 @@ Saltstack 採用集中化管理，我們一般可以理解為 Pupp......
         </h3>
         <div class="post-content-preview">
             本節將介紹如何透過 ceph-docker 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要1 Monitor與3 OSD。另外部署 MDS 與 RGW 來進行簡單測試。
+![](/images/ceph/docker-ceph.jpg)
+
+節點配置
+本安裝採用一台虛擬機器來提供部署，可使用 VBox 或 OpenStack 等建立，其環境資源大小如下：
 
 
 
-節點配置本安裝採用一台虛擬機器來提供部署，可使用 VBox 或 OpenStack 等建立，其環境資源大小如下：
-
-
-
-hostname
-CPUs
-RAM
-
-
-
-
-ceph-aio
-2vCP......
+ho......
         </div>
     </a>
     
@@ -814,9 +811,9 @@ ceph-aio
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
-            
         
+            
+            <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
             
         
             
@@ -860,15 +857,15 @@ ceph-aio
             
         
             
-        
-            
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            
+        
+            
+        
+            
+        
+            
+        
             
         
             

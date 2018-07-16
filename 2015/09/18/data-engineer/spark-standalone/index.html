@@ -136,6 +136,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -144,7 +147,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -284,17 +287,18 @@
 
                 <p>本教學為安裝 Spark Standalone 的叢集版本，將 Spark 應用程式執行於自己的分散式機制與各台機器連結上，來讓應用程式執行於不同的工作節點上。</p>
 <a id="more"></a>
-<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先我們要在各節點先安裝 ssh-server 與 Java JDK，並配置需要的相關環境：</p>
-<pre><code class="sh">$ sudo apt-get install openssh-server
+<h2><span id="事前準備">事前準備</span></h2>
+<p>首先我們要在各節點先安裝 ssh-server 與 Java JDK，並配置需要的相關環境：</p>
+<pre><code class="language-sh">$ sudo apt-get install openssh-server
 </code></pre>
 <p>設定<user>(hadoop)不用需打 sudo 密碼：</user></p>
-<pre><code class="sh">$ echo &quot;hadoop ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/hadoop &amp;&amp; sudo chmod 440 /etc/sudoers.d/hadoop
+<pre><code class="language-sh">$ echo &quot;hadoop ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/hadoop &amp;&amp; sudo chmod 440 /etc/sudoers.d/hadoop
 </code></pre>
 <blockquote>
 <p>P.S 要注意 <code>hadoop</code> 要隨著現在使用的 User 變動。</p>
 </blockquote>
 <p>建立ssh key，並複製 key 使之不用密碼登入：</p>
-<pre><code class="sh">$ ssh-keygen -t rsa
+<pre><code class="language-sh">$ ssh-keygen -t rsa
 $ ssh-copy-id localhost
 </code></pre>
 <p>安裝Java 1.7 JDK：</p>
@@ -306,56 +310,61 @@ $ sudo apt-get update
 $ echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 $ echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 $ sudo apt-get -y install oracle-java7-installer
-</code></pre><p>新增各節點 Hostname 至 <code>/etc/hosts</code> 檔案：</p>
-<pre><code class="sh">127.0.0.1 localhost
+</code></pre>
+<p>新增各節點 Hostname 至 <code>/etc/hosts</code> 檔案：</p>
+<pre><code class="language-sh">127.0.0.1 localhost
 
 192.168.1.10 hadoop-master
 192.168.1.11 hadoop-slave1
 192.168.1.11 hadoop-slave2
 </code></pre>
 <p>並在<code>Master</code>節點複製所有<code>Slave</code>的 ssh key：</p>
-<pre><code class="sh">$ ssh-copy-id ubuntu@hadoop-slave1
+<pre><code class="language-sh">$ ssh-copy-id ubuntu@hadoop-slave1
 $ ssh-copy-id ubuntu@hadoop-slave2
 </code></pre>
-<h2 id="安裝-Spark"><a href="#安裝-Spark" class="headerlink" title="安裝 Spark"></a>安裝 Spark</h2><p>首先下載 Spark，並修改權限：</p>
-<pre><code class="sh">$ curl -s https://d3kbcqa49mib13.cloudfront.net/spark-1.5.2-bin-hadoop2.6.tgz | sudo tar -xz -C /opt/
+<h2><span id="安裝-spark">安裝 Spark</span></h2>
+<p>首先下載 Spark，並修改權限：</p>
+<pre><code class="language-sh">$ curl -s https://d3kbcqa49mib13.cloudfront.net/spark-1.5.2-bin-hadoop2.6.tgz | sudo tar -xz -C /opt/
 $ sudo mv /opt/spark-1.5.2-bin-hadoop2.6 /opt/spark
 $ sudo chown $USER:$USER -R /opt/spark
 </code></pre>
 <p>之後到<code>spark/conf</code>目錄，將<code>spark-env.sh.template</code>複製為<code>spark-env.sh</code>：</p>
-<pre><code class="sh">$ cp spark-env.sh.template spark-env.sh
+<pre><code class="language-sh">$ cp spark-env.sh.template spark-env.sh
 </code></pre>
 <p>在<code>spark-env.sh</code>這內容最下方增加這幾筆環境參數：</p>
-<pre><code class="sh">export SPARK_MASTER_IP=&quot;hadoop-master&quot;  
+<pre><code class="language-sh">export SPARK_MASTER_IP=&quot;hadoop-master&quot;  
 export SPARK_MASTER_PORT=&quot;7077&quot;
 export SPARK_MASTER_WEBUI_PORT=&quot;8090&quot;   
 </code></pre>
 <blockquote>
-<p><code>SPARK_MASTER_IP</code>為主節點（Master）的 IP。<br><code>SPARK_MASTER_PORT</code>為主節點（Master）的 Port。<br><code>SPARK_MASTER_WEBUI_PORT</code>為 WebUI 的 Port，預設為 8080。</p>
+<p><code>SPARK_MASTER_IP</code>為主節點（Master）的 IP。<br>
+<code>SPARK_MASTER_PORT</code>為主節點（Master）的 Port。<br>
+<code>SPARK_MASTER_WEBUI_PORT</code>為 WebUI 的 Port，預設為 8080。</p>
 </blockquote>
 <p>接著複製<code>slaves.template</code>為<code>slaves</code>：</p>
-<pre><code class="sh">$ cp slaves.template slaves
+<pre><code class="language-sh">$ cp slaves.template slaves
 </code></pre>
 <p>在最下方增加每台機器的 hostname：</p>
-<pre><code class="sh">hadoop-slave1
+<pre><code class="language-sh">hadoop-slave1
 hadoop-slave2
 </code></pre>
 <p>完成後將設定檔複製給其他台機器：</p>
-<pre><code class="sh">scp -r /opt/spark ubuntu@hadoop-slave1:/opt
+<pre><code class="language-sh">scp -r /opt/spark ubuntu@hadoop-slave1:/opt
 scp -r /opt/spark ubuntu@hadoop-slave2:/opt
 </code></pre>
 <p>啟動 Spark ：</p>
-<pre><code class="sh">/opt/spark/sbin/start-all.sh
+<pre><code class="language-sh">/opt/spark/sbin/start-all.sh
 </code></pre>
 <blockquote>
-<p>這樣 Spark 就啟動完成了，開啟 <a href="http://&lt;ip&gt;:8090" target="_blank" rel="noopener">Web UI</a> 來檢查狀態。</p>
+<p>這樣 Spark 就啟動完成了，開啟 <a href="http://%3Cip%3E:8090" target="_blank" rel="noopener">Web UI</a> 來檢查狀態。</p>
 </blockquote>
 <p>設定使用者環境參數：</p>
-<pre><code class="sh">$ echo &quot;export SPARK_HOME=/opt/spark&quot; | sudo tee -a ~/.bashrc
+<pre><code class="language-sh">$ echo &quot;export SPARK_HOME=/opt/spark&quot; | sudo tee -a ~/.bashrc
 $ echo &quot;export PATH=\$SPARK_HOME/bin:\$PATH&quot; | sudo tee -a ~/.bashrc
 </code></pre>
-<h2 id="驗證系統"><a href="#驗證系統" class="headerlink" title="驗證系統"></a>驗證系統</h2><p>為了驗證 Spark 是否成功安裝，可以透過執行一個範例程式來看看結果，如下所示：</p>
-<pre><code class="sh">$ cd /opt/spark
+<h2><span id="驗證系統">驗證系統</span></h2>
+<p>為了驗證 Spark 是否成功安裝，可以透過執行一個範例程式來看看結果，如下所示：</p>
+<pre><code class="language-sh">$ cd /opt/spark
 $ spark-submit --class org.apache.spark.examples.SparkPi \
 --master spark://hadoop-master:7077 \
 --num-executors 1 \
@@ -407,7 +416,7 @@ lib/spark-examples*.jar \
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Spark"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝 Spark</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證系統"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">驗證系統</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝 Spark</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">驗證系統</span></a></li></ol>
         
         </div>
       </aside>
@@ -434,6 +443,15 @@ lib/spark-examples*.jar \
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

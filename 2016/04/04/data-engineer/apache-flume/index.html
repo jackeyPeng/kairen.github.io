@@ -138,6 +138,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -146,7 +149,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -286,7 +289,8 @@
 
                 <p>Apache Flume 是一個分散式日誌收集系統，是由 Cloudera 公司開發的一款高效能、高可靠性和高恢復性的系統。它能從不同來源的大量日誌資料進行高效收集、聚合、移動，最後儲存到一個資料中心儲存系統當中。架構經過重構後，從原來的 Flume OG 到現在的 Flume NG。Flume NG 更像一個輕量化的小套件，簡單使用且容易適應不同方式收集日誌，且支援 Failover 和 Load Balancing</p>
 <a id="more"></a>
-<h2 id="架構角色說明"><a href="#架構角色說明" class="headerlink" title="架構角色說明"></a>架構角色說明</h2><p>Flume 架構中主要有以下幾個核心:</p>
+<h2><span id="架構角色說明">架構角色說明</span></h2>
+<p>Flume 架構中主要有以下幾個核心:</p>
 <ul>
 <li><strong>Event</strong>：一個資料單元，會附帶一個可選的訊息來源。ex:日誌紀錄、avro。</li>
 <li><strong>Client</strong>：操作位在原點的 Event 且將它傳送到 Flume Agent，主要是產生資料，運行在一個獨立程式。</li>
@@ -295,26 +299,27 @@
 <li><strong>Channel</strong>：轉換 Event 的一個臨時儲存空間，保有從 Source 傳送過來的 Event。</li>
 <li><strong>Sink</strong>:從 Channel 中讀取並且移除 Event，將 Event 傳遞到 Flow Pipeline 的下一個 Agent（如果存在的話）。</li>
 </ul>
-<center><img src="/images/spark/flume_architecture.png" alt=""></center>
-
-<h2 id="安裝-Apache-Flume"><a href="#安裝-Apache-Flume" class="headerlink" title="安裝 Apache Flume"></a>安裝 Apache Flume</h2><p>本節將說明如何部署 Apache Flume，其中包含單機與多機部署方式。</p>
-<h3 id="單機"><a href="#單機" class="headerlink" title="單機"></a>單機</h3><p>首先節點需先安裝 Java，這邊採用 Oracle 的 Java8 來進行安裝：</p>
-<pre><code class="sh">$ sudo add-apt-repository -y ppa:webupd8team/java
+<center>![](/images/spark/flume_architecture.png)</center>
+<h2><span id="安裝-apache-flume">安裝 Apache Flume</span></h2>
+<p>本節將說明如何部署 Apache Flume，其中包含單機與多機部署方式。</p>
+<h3><span id="單機">單機</span></h3>
+<p>首先節點需先安裝 Java，這邊採用 Oracle 的 Java8 來進行安裝：</p>
+<pre><code class="language-sh">$ sudo add-apt-repository -y ppa:webupd8team/java
 $ sudo apt-get update
 $ sudo apt-get install -y oracle-java8-installer
 </code></pre>
 <p>完成後，在主機上安裝下載 Flume 套件，使用<code>wget</code>下載：</p>
-<pre><code class="sh">$ wget &quot;ftp://ftp.twaren.net/Unix/Web/apache/flume/1.6.0/apache-flume-1.6.0-src.tar.gz&quot;
+<pre><code class="language-sh">$ wget &quot;ftp://ftp.twaren.net/Unix/Web/apache/flume/1.6.0/apache-flume-1.6.0-src.tar.gz&quot;
 $ wget &quot;ftp://ftp.twaren.net/Unix/Web/apache/flume/1.6.0/apache-flume-1.6.0-bin.tar.gz&quot;
 $ tar zxvf apache-flume-1.6.0-src.tar.gz
 $ tar zxvf apache-flume-1.6.0-bin.tar.gz
 </code></pre>
 <p>下載完後，將 src 覆蓋到 bin 底下，並解壓縮到<code>/opt</code>底下:</p>
-<pre><code class="sh">$ sudo cp -ri apache-flume-1.6.0-src/* apache-flume-1.6.0-bin
+<pre><code class="language-sh">$ sudo cp -ri apache-flume-1.6.0-src/* apache-flume-1.6.0-bin
 $ sudo mv /opt/apache-flume-1.5.0-bin /opt/flume
 </code></pre>
 <p>之後到<code>/opt/flume/conf</code>底下建立 example 配置檔:</p>
-<pre><code class="sh">$ sudo vim example.conf
+<pre><code class="language-sh">$ sudo vim example.conf
 </code></pre>
 <p>設定以下內容:</p>
 <pre><code># example.conf: A single-node Flume configuration
@@ -340,14 +345,15 @@ a1.channels.c1.transactionCapacity = 100
 # Bind the source and sink to the channel
 a1.sources.r1.channels = c1
 a1.sinks.k1.channel = c1
-</code></pre><p>之後啟動 Flume:</p>
-<pre><code class="sh">$ bin/flume-ng agent -c conf -f example.conf -n a1 -Dflume.root.logger=INFO,console
+</code></pre>
+<p>之後啟動 Flume:</p>
+<pre><code class="language-sh">$ bin/flume-ng agent -c conf -f example.conf -n a1 -Dflume.root.logger=INFO,console
 </code></pre>
 <blockquote>
 <p><code>-c/--conf</code>設定檔目錄，<code>-f/--conf-file</code>設定檔案路徑，<code>-n/--name</code>指定 agent 的名稱</p>
 </blockquote>
 <p>驗證 Flume 開啟是否已開啟</p>
-<pre><code class="sh">$ jps
+<pre><code class="language-sh">$ jps
 6760 Jps
 6623 Application
 </code></pre>
@@ -359,9 +365,10 @@ OK
 
 # 輸出
 2016-02-24 11:40:30,389 INFO sink.LoggerSink: Event: { headers:{} body: 48 65 6C 6C 6F 20 77 6F 72 6C 64 21 0D          HI!. }
-</code></pre><h3 id="多節點部署"><a href="#多節點部署" class="headerlink" title="多節點部署"></a>多節點部署</h3><p>本節說明多機部署方式，流程為 Agent1 和 Agent2 主要是兩個來源蒐集端，本身會監聽且接收 Flume 本地端的訊息，然後將資料整合到 Collector 做資料日誌整理</p>
-<center><img src="/images/spark/flume_cluster.png" alt=""></center>
-
+</code></pre>
+<h3><span id="多節點部署">多節點部署</span></h3>
+<p>本節說明多機部署方式，流程為 Agent1 和 Agent2 主要是兩個來源蒐集端，本身會監聽且接收 Flume 本地端的訊息，然後將資料整合到 Collector 做資料日誌整理</p>
+<center>![](/images/spark/flume_cluster.png)</center>
 <p>部署節點角色規則如下:</p>
 <table>
 <thead>
@@ -427,8 +434,9 @@ agent1.sinkgroups.g1.sinks = k1
 agent1.sinkgroups.g1.processor.type = failover
 agent1.sinkgroups.g1.processor.priority.k1 = 10
 agent1.sinkgroups.g1.processor.maxpenalty = 10000
-</code></pre><p><code>Collector</code> 配置內容如下:</p>
-<pre><code class="sh"># flume-server.properties: Agent1 Flume configuration
+</code></pre>
+<p><code>Collector</code> 配置內容如下:</p>
+<pre><code class="language-sh"># flume-server.properties: Agent1 Flume configuration
 
 #set Agent name
 a1.sources = r1
@@ -457,14 +465,14 @@ a1.sinks.k1.channel=c1
 <p>最後分別啓動<code>Agent</code>和<code>Collector</code>的 Flume</p>
 <blockquote>
 <p>Agent:</p>
-<pre><code class="sh">$ bin/flume-ng agent -n agent1 -c conf -f flume-client.properties -Dflume.root.logger=DEBUG,console
-</code></pre>
 </blockquote>
+<pre><code class="language-sh">$ bin/flume-ng agent -n agent1 -c conf -f flume-client.properties -Dflume.root.logger=DEBUG,console
+</code></pre>
 <blockquote>
 <p>Collector:</p>
-<pre><code class="sh">$ bin/flume-ng agent -n a1 -c conf -f flume-server.properties -Dflume.root.logger=DEBUG,console
-</code></pre>
 </blockquote>
+<pre><code class="language-sh">$ bin/flume-ng agent -n a1 -c conf -f flume-server.properties -Dflume.root.logger=DEBUG,console
+</code></pre>
 
                 
 
@@ -508,7 +516,7 @@ a1.sinks.k1.channel=c1
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#架構角色說明"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">架構角色說明</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Apache-Flume"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝 Apache Flume</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#單機"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">單機</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#多節點部署"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">多節點部署</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">架構角色說明</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝 Apache Flume</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">單機</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">多節點部署</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -537,6 +545,15 @@ a1.sinks.k1.channel=c1
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>

@@ -140,6 +140,9 @@
                     
 
                         
+                    
+
+                        
                         <li>
                             <a href="/archive/">Archives</a>
                         </li>
@@ -148,7 +151,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -289,7 +292,8 @@
                 <p>Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於<code>/etc/ansible/hosts</code>。</p>
 <p>IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 <a href="http://docs.ansible.com/ansible/intro_dynamic_inventory.html" target="_blank" rel="noopener">Dynamic Inventory</a>。</p>
 <a id="more"></a>
-<h3 id="Hosts-and-Groups"><a href="#Hosts-and-Groups" class="headerlink" title="Hosts and Groups"></a>Hosts and Groups</h3><p>Inventory 是一個<code>INI-like</code>格式的檔案，如以下範例所示：</p>
+<h3><span id="hosts-and-groups">Hosts and Groups</span></h3>
+<p>Inventory 是一個<code>INI-like</code>格式的檔案，如以下範例所示：</p>
 <pre><code>mail.example.com
 
 [webservers]
@@ -300,29 +304,38 @@ bar.example.com
 one.example.com
 two.example.com
 three.example.com
-</code></pre><p>如果 SSH 不是標準 Port 的話，可以使用<code>:</code>來對應要使用的 Port。但在 SSH config 檔案所列出來的主機將不會與 paramiko 進行連線，但是會與 OpenSSH 進行連接使用。</p>
+</code></pre>
+<p>如果 SSH 不是標準 Port 的話，可以使用<code>:</code>來對應要使用的 Port。但在 SSH config 檔案所列出來的主機將不會與 paramiko 進行連線，但是會與 OpenSSH 進行連接使用。</p>
 <pre><code>badwolf.example.com:5309
-</code></pre><blockquote>
+</code></pre>
+<blockquote>
 <p>雖然可以使用以上方式達到不同 Port 連接，但是還是建議使用預設 Port。</p>
 </blockquote>
 <p>假設只有靜態 IP，但又希望透過一些別名（aliases）來表示主機，或透過不同 Port 連接的話，可以表示如以下：</p>
 <pre><code>jumper ansible_port=5555 ansible_host=192.168.1.50
-</code></pre><p>若要一次列出多個主機可以使用以下 Pattern：</p>
+</code></pre>
+<p>若要一次列出多個主機可以使用以下 Pattern：</p>
 <pre><code>[webservers]
 www[01:50].example.com
-</code></pre><p>在數字 Pattern，前導的 0 可以根據需求刪除或加入。不只可以定義數字型，還能定義英文字母範圍：</p>
+</code></pre>
+<p>在數字 Pattern，前導的 0 可以根據需求刪除或加入。不只可以定義數字型，還能定義英文字母範圍：</p>
 <pre><code>[databases]
 db-[a:f].example.com
-</code></pre><p>也可以為每台主機的設定基礎連線類型與使用者資訊：</p>
+</code></pre>
+<p>也可以為每台主機的設定基礎連線類型與使用者資訊：</p>
 <pre><code>[targets]
 localhost           ansible_connection=local
 other1.example.com  ansible_connection=ssh  ansible_user=mpdehaan
 other2.example.com  ansible_connection=ssh  ansible_user=mdehaan
-</code></pre><h3 id="Host-Variables"><a href="#Host-Variables" class="headerlink" title="Host Variables"></a>Host Variables</h3><p>如上述範例，我們可以很容易將變數分配給將在 Playbooks 使用的主機：</p>
+</code></pre>
+<h3><span id="host-variables">Host Variables</span></h3>
+<p>如上述範例，我們可以很容易將變數分配給將在 Playbooks 使用的主機：</p>
 <pre><code>[atlanta]
 host1   http_port=80    maxRequestsPerChild=808
 host2   http_port=303   maxRequestsPerChild=909
-</code></pre><h3 id="Group-Variables"><a href="#Group-Variables" class="headerlink" title="Group Variables"></a>Group Variables</h3><p>變數也能夠被應用到整個群組裡：</p>
+</code></pre>
+<h3><span id="group-variables">Group Variables</span></h3>
+<p>變數也能夠被應用到整個群組裡：</p>
 <pre><code>[atlanta]
 host1
 host2
@@ -330,7 +343,9 @@ host2
 [atlanta:vars]
 ntp_server=ntp.atlanta.example.com
 proxy=proxy.atlanta.example.com
-</code></pre><h3 id="Groups-of-Groups-and-Group-Variables"><a href="#Groups-of-Groups-and-Group-Variables" class="headerlink" title="Groups of Groups, and Group Variables"></a>Groups of Groups, and Group Variables</h3><p>另外，也可以用<code>:children</code> 來建立群組中的群組，並使用<code>:vars</code>來設定變數：</p>
+</code></pre>
+<h3><span id="groups-of-groups-and-group-variables">Groups of Groups, and Group Variables</span></h3>
+<p>另外，也可以用<code>:children</code> 來建立群組中的群組，並使用<code>:vars</code>來設定變數：</p>
 <pre><code>[atlanta]
 host1
 host2
@@ -354,13 +369,16 @@ southeast
 northeast
 southwest
 northwest
-</code></pre><h3 id="Splitting-Out-Host-and-Group-Specific-Data"><a href="#Splitting-Out-Host-and-Group-Specific-Data" class="headerlink" title="Splitting Out Host and Group Specific Data"></a>Splitting Out Host and Group Specific Data</h3><p>該部分說明想要儲存 list 與 hash table 資料，或者從 Inventory 檔案保持分離主機與群組的特定變數。在 Ansible 的第一優先作法實際上是不儲存變數於主 Inventort 檔案。</p>
+</code></pre>
+<h3><span id="splitting-out-host-and-group-specific-data">Splitting Out Host and Group Specific Data</span></h3>
+<p>該部分說明想要儲存 list 與 hash table 資料，或者從 Inventory 檔案保持分離主機與群組的特定變數。在 Ansible 的第一優先作法實際上是不儲存變數於主 Inventort 檔案。</p>
 <p>除了直接在 INI 檔案儲存變數外，主機與群組變數也可以儲存在個人相對的 Inventory 檔案。這些變數檔案格式為 YAML。有效的副檔名如<code>.yml</code>、<code>.yaml</code>，以及<code>.json</code>或<code>沒有副檔名</code>。</p>
 <p>一般當 remote host 數量不多時，把變數定義在 inventory 中是 ok 的；但若 remote host 的數量越來越多時，將變數的宣告定義在外部的檔案中會是比較好的方式。</p>
 <p>假設 Inventory 檔案路徑為：</p>
 <pre><code>/etc/ansible/hosts
-</code></pre><p>如果主機被命名為<code>foosball</code>以及在<code>raleigh</code>與<code>webservers</code>的群組，以下位置的 YAML 檔案變數將提供給主機使用：</p>
-<pre><code class="sh"># can optionally end in &#39;.yml&#39;, &#39;.yaml&#39;, or &#39;.json&#39;
+</code></pre>
+<p>如果主機被命名為<code>foosball</code>以及在<code>raleigh</code>與<code>webservers</code>的群組，以下位置的 YAML 檔案變數將提供給主機使用：</p>
+<pre><code class="language-sh"># can optionally end in '.yml', '.yaml', or '.json'
 /etc/ansible/group_vars/raleigh
 /etc/ansible/group_vars/webservers
 /etc/ansible/host_vars/foosball
@@ -374,7 +392,7 @@ northwest
 <li><strong>group_vars</strong>：/home/vagrant/ansible/playbooks/group_vars/production</li>
 </ul>
 <p>變數定義的方式有兩種方式：</p>
-<pre><code class="sh">db_primary_host: prod1.example.com.tw
+<pre><code class="language-sh">db_primary_host: prod1.example.com.tw
 db_replica_host: prod2.example.com.tw
 db_name: widget_production
 db_user: widgetuser
@@ -382,7 +400,7 @@ db_password: lastpassword
 redis_host: redis_stag.example.com.tw
 </code></pre>
 <p>也可以用 YAML 的方式定義：</p>
-<pre><code class="sh">---
+<pre><code class="language-sh">---
 db:
     user: widgetuser
     password: lastpassword
@@ -398,7 +416,7 @@ redis:
     port: 6379
 </code></pre>
 <p>甚至可以在繼續細分，定義檔案<code>../playbooks/group_vars/production/db</code>：</p>
-<pre><code class="sh">---
+<pre><code class="language-sh">---
 db:
     user: widgetuser
     password: lastpassword
@@ -410,8 +428,9 @@ db:
         host: prod2.example.com.tw
         port: 5432
 </code></pre>
-<h3 id="List-of-Behavioral-Inventory-Parameters"><a href="#List-of-Behavioral-Inventory-Parameters" class="headerlink" title="List of Behavioral Inventory Parameters"></a>List of Behavioral Inventory Parameters</h3><p>正如上述提到，設定以下變數可以定義 Ansible 該如何控制以及遠端主機。如主機連線：</p>
-<pre><code class="sh">ansible_connection
+<h3><span id="list-of-behavioral-inventory-parameters">List of Behavioral Inventory Parameters</span></h3>
+<p>正如上述提到，設定以下變數可以定義 Ansible 該如何控制以及遠端主機。如主機連線：</p>
+<pre><code class="language-sh">ansible_connection
   Connection type to the host. Candidates are local, smart, ssh or paramiko.  The default is smart.
 </code></pre>
 <p>SSH connection：</p>
@@ -424,7 +443,7 @@ ansible_user
 ansible_ssh_pass
   The ssh password to use (this is insecure, we strongly recommend using --ask-pass or SSH keys)
 ansible_ssh_private_key_file
-  Private key file used by ssh.  Useful if using multiple keys and you don&#39;t want to use SSH agent.
+  Private key file used by ssh.  Useful if using multiple keys and you don't want to use SSH agent.
 ansible_ssh_common_args
   This setting is always appended to the default command line for
   sftp, scp, and ssh. Useful to configure a ``ProxyCommand`` for a
@@ -438,7 +457,8 @@ ansible_ssh_extra_args
 ansible_ssh_pipelining
   Determines whether or not to use SSH pipelining. This can override the
   ``pipelining`` setting in ``ansible.cfg``.
-</code></pre><p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="noopener">Ansible Privilege Escalation</a>）：</p>
+</code></pre>
+<p>權限提升（可參閱<a href="http://docs.ansible.com/ansible/become.html" target="_blank" rel="noopener">Ansible Privilege Escalation</a>）：</p>
 <pre><code>ansible_become
   Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation
 ansible_become_method
@@ -447,24 +467,27 @@ ansible_become_user
   Equivalent to ansible_sudo_user or ansible_su_user, allows to set the user you become through privilege escalation
 ansible_become_pass
   Equivalent to ansible_sudo_pass or ansible_su_pass, allows you to set the privilege escalation password
-</code></pre><p>遠端主機環境參數：</p>
+</code></pre>
+<p>遠端主機環境參數：</p>
 <pre><code>ansible_shell_type
-  The shell type of the target system. Commands are formatted using &#39;sh&#39;-style syntax by default. Setting this to &#39;csh&#39; or &#39;fish&#39; will cause commands executed on target systems to follow those shell&#39;s syntax instead.
+  The shell type of the target system. Commands are formatted using 'sh'-style syntax by default. Setting this to 'csh' or 'fish' will cause commands executed on target systems to follow those shell's syntax instead.
 ansible_python_interpreter
   The target host python path. This is useful for systems with more
   than one Python or not located at &quot;/usr/bin/python&quot; such as \*BSD, or where /usr/bin/python
-  is not a 2.X series Python.  We do not use the &quot;/usr/bin/env&quot; mechanism as that requires the remote user&#39;s
+  is not a 2.X series Python.  We do not use the &quot;/usr/bin/env&quot; mechanism as that requires the remote user's
   path to be set right and also assumes the &quot;python&quot; executable is named python, where the executable might
   be named something like &quot;python26&quot;.
 ansible\_\*\_interpreter
   Works for anything such as ruby or perl and works just like ansible_python_interpreter.
   This replaces shebang of modules which will run on that host.
-</code></pre><p>一個主機檔案範例：</p>
+</code></pre>
+<p>一個主機檔案範例：</p>
 <pre><code>some_host         ansible_port=2222     ansible_user=manager
 aws_host          ansible_ssh_private_key_file=/home/example/.ssh/aws.pem
 freebsd_host      ansible_python_interpreter=/usr/local/bin/python
 ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
 </code></pre>
+
                 
 
                 <hr>
@@ -472,12 +495,12 @@ ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/02/17/devops/ansible/ansible-dynamic-inventory/" data-toggle="tooltip" data-placement="top" title="Ansible Dynamic Inventory">&larr; Previous Post</a>
+                            <a href="/2016/02/17/devops/ansible/ansible-adhoc/" data-toggle="tooltip" data-placement="top" title="Ansible Ad-Hoc 指令與 Modules">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2016/02/17/devops/ansible/ansible-adhoc/" data-toggle="tooltip" data-placement="top" title="Ansible Ad-Hoc 指令與 Modules">Next Post &rarr;</a>
+                            <a href="/2016/02/16/devops/ansible/ansible-basic/" data-toggle="tooltip" data-placement="top" title="Ansible 介紹與使用">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -507,7 +530,7 @@ ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Hosts-and-Groups"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Hosts and Groups</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Host-Variables"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Host Variables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Group-Variables"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Group Variables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Groups-of-Groups-and-Group-Variables"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Groups of Groups, and Group Variables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Splitting-Out-Host-and-Group-Specific-Data"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Splitting Out Host and Group Specific Data</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#List-of-Behavioral-Inventory-Parameters"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">List of Behavioral Inventory Parameters</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Hosts and Groups</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Host Variables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Group Variables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Groups of Groups, and Group Variables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Splitting Out Host and Group Specific Data</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">List of Behavioral Inventory Parameters</span></a></li></ol>
         
         </div>
       </aside>
@@ -538,6 +561,15 @@ ruby_module_host  ansible_ruby_interpreter=/usr/bin/ruby.1.9.3
                 
 
                 <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://kairen.github.io" target="_blank">KaiRen</a></li>
+                    
+                </ul>
                 
             </div>
         </div>
