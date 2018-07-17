@@ -146,14 +146,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -294,31 +294,29 @@
                 <p>Browser Solidity 是一個 Web-based 的 Solidity 編譯器與 IDE。本節將說明如何安裝於 Linux 與 Docker 中。</p>
 <p>這邊可以連結官方的 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="noopener">https://ethereum.github.io/browser-solidity</a> 來使用; 該網站會是該專案的最新版本預覽。</p>
 <a id="more"></a>
-<h3><span id="ubuntu-server-手動安裝">Ubuntu Server 手動安裝</span></h3>
-<p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y apache2 make g++ git
+<h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
+<pre><code class="sh">$ sudo apt-get install -y apache2 make g++ git
 </code></pre>
 <p>接著安裝 node.js 平台，來建置 App：</p>
-<pre><code class="language-sh">$ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+<pre><code class="sh">$ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 $ sudo apt-get install nodejs
 </code></pre>
 <p>然後透過 git 將專案抓到 local 端，並進入目錄：</p>
-<pre><code class="language-sh">$ git clone https://github.com/ethereum/browser-solidity.git
+<pre><code class="sh">$ git clone https://github.com/ethereum/browser-solidity.git
 $ cd browser-solidity
 </code></pre>
 <p>安裝相依套件與建置應用程式：</p>
-<pre><code class="language-sh">$ sudo npm install
+<pre><code class="sh">$ sudo npm install
 $ sudo npm run build
 </code></pre>
 <p>完成後，將所以有目錄的資料夾與檔案搬移到 Apache HTTP Server 的網頁根目錄：</p>
-<pre><code class="language-sh">$ sudo cp ./* /var/www/html/
+<pre><code class="sh">$ sudo cp ./* /var/www/html/
 </code></pre>
 <blockquote>
 <p>完成後就可以開啟網頁了。</p>
 </blockquote>
-<h3><span id="docker-快速安裝">Docker 快速安裝</span></h3>
-<p>目前 Browser Solidity 有提供 <a href="https://hub.docker.com/r/kairen/solidity/" target="_blank" rel="noopener">Docker Image</a> 下載。這邊只需要透過以下指令就能夠建立 Browser Solidity Dashboard 環境：</p>
-<pre><code class="language-sh">$ docker run -d \
+<h3 id="Docker-快速安裝"><a href="#Docker-快速安裝" class="headerlink" title="Docker 快速安裝"></a>Docker 快速安裝</h3><p>目前 Browser Solidity 有提供 <a href="https://hub.docker.com/r/kairen/solidity/" target="_blank" rel="noopener">Docker Image</a> 下載。這邊只需要透過以下指令就能夠建立 Browser Solidity Dashboard 環境：</p>
+<pre><code class="sh">$ docker run -d \
             -p 80:80 \
             --name solidity \
             kairen/solidity
@@ -366,7 +364,7 @@ $ sudo npm run build
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Ubuntu Server 手動安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Docker 快速安裝</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ubuntu-Server-手動安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Ubuntu Server 手動安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Docker-快速安裝"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Docker 快速安裝</span></a></li></ol>
         
         </div>
       </aside>

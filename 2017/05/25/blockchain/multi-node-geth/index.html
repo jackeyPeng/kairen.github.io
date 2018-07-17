@@ -90,8 +90,6 @@
                             
                               <a class="tag" href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
                             
-                              <a class="tag" href="/tags/#Go lang" title="Go lang">Go lang</a>
-                            
                         </div>
                         <h1>建立 Go Ethereum 私有網路鏈</h1>
                         <h2 class="subheading"></h2>
@@ -144,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -290,11 +288,10 @@
                 post-container">
 
                 <p>Ethereum 專案是以區塊鏈原理，並進一步增加容納值、儲存資料，並且能封裝程式碼來建立智能合約(Smart Contracts)，形成區塊鏈應用程式，來執行運算任務。類似於比特幣(Bitcoin)，Ethereum 也具有一種貨幣，它叫做<code>乙太幣(Ether)</code>。乙太幣是開採於儲存在共享一致性的區塊鏈前驗證交易節點。乙太幣可以在賬戶(公有金鑰, Pubilc keys)與智能合約(Smart Contracts)之間進行轉移。</p>
-<center>![ethereum-logo](/images/blockchain/ethereum-logo.png)</center>
+<p><img src="/images/blockchain/ethereum-logo.png" alt="ethereum-logo"></p>
 <p>本節將說明如何透過 Ubuntu 部署 Go Ethereum。並利用簡單的指令來進行 Demo。</p>
 <a id="more"></a>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>本次會使用到兩個節點來建立 Geth Instances，其規格如下：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>本次會使用到兩個節點來建立 Geth Instances，其規格如下：</p>
 <table>
 <thead>
 <tr>
@@ -320,12 +317,12 @@
 </tbody>
 </table>
 <p>首先在每個節點安裝 Ethereum 最新版本，可以依照官方透過以下方式快速安裝：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y software-properties-common
+<pre><code class="sh">$ sudo apt-get install -y software-properties-common
 $ sudo add-apt-repository -y ppa:ethereum/ethereum
 $ sudo apt-get update &amp;&amp; sudo apt-get install ethereum
 </code></pre>
 <p>在每個節點建立一個<code>private.json</code>檔案來定義起源區塊(Genesis Block)，內容如下：</p>
-<pre><code class="language-json">{
+<pre><code class="json">{
   &quot;coinbase&quot; : &quot;0x0000000000000000000000000000000000000000&quot;,
   &quot;difficulty&quot; : &quot;0x40000&quot;,
   &quot;extraData&quot; : &quot;Custem Ethereum Genesis Block&quot;,
@@ -335,19 +332,19 @@ $ sudo apt-get update &amp;&amp; sudo apt-get install ethereum
   &quot;parentHash&quot; : &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
   &quot;timestamp&quot; : &quot;0x00&quot;,
   &quot;config&quot;: {
-		&quot;chainId&quot;: 123,
-		&quot;homesteadBlock&quot;: 0,
-		&quot;eip155Block&quot;: 0,
-		&quot;eip158Block&quot;: 0
-	},
-	&quot;alloc&quot;: { }
+        &quot;chainId&quot;: 123,
+        &quot;homesteadBlock&quot;: 0,
+        &quot;eip155Block&quot;: 0,
+        &quot;eip158Block&quot;: 0
+    },
+    &quot;alloc&quot;: { }
 }
 </code></pre>
 <p>初始化創世區塊：</p>
-<pre><code class="language-sh">$ geth init --datadir=data/ private.json
+<pre><code class="sh">$ geth init --datadir=data/ private.json
 </code></pre>
 <p>在每個節點新增一名稱為<code>geth-private.sh</code>的腳本程式，將用於啟動 geth，並放置背景：</p>
-<pre><code class="language-sh">#!/bin/bash
+<pre><code class="sh">#!/bin/bash
 # Program:
 #       This program is a private geth runner.
 # History:
@@ -371,38 +368,33 @@ screen -dmS geth /usr/bin/geth \
 <p>更多的參數，請參考 <a href="https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options" target="_blank" rel="noopener">Command-Line-Options</a>。</p>
 </blockquote>
 <p>建立完成後，修改執行權限：</p>
-<pre><code class="language-sh">$ chmod u+x geth-private.sh
+<pre><code class="sh">$ chmod u+x geth-private.sh
 </code></pre>
-<h2><span id="建立-ethereum-環境">建立 Ethereum 環境</span></h2>
-<p>首先進入到<code>geth-1</code>節點透過以下方式來啟動：</p>
-<pre><code class="language-sh">$ ./geth-private.sh
+<h2 id="建立-Ethereum-環境"><a href="#建立-Ethereum-環境" class="headerlink" title="建立 Ethereum 環境"></a>建立 Ethereum 環境</h2><p>首先進入到<code>geth-1</code>節點透過以下方式來啟動：</p>
+<pre><code class="sh">$ ./geth-private.sh
 Starting private geth
 </code></pre>
 <blockquote>
 <p>這時候會透過 screen 執行於背景，我們可以透過<code>screen -x geth</code>來進行前景。若要回到背景則透過<code>[Ctrl-A] + [Ctrl-D]</code>來 detached。要關閉 screen 則透過 <code>[Ctrl-C]</code>。</p>
 </blockquote>
 <p>接著為了確認是否正確啟動，我們可以透過 geth 的 attach 指令來連接 console：</p>
-<pre><code class="language-sh">$ geth attach ipc:data/geth.ipc
+<pre><code class="sh">$ geth attach ipc:data/geth.ipc
 </code></pre>
 <blockquote>
-<p>也可以透過 HTTP 方式 attach，<code>geth attach http://localhost:8545</code>。</p>
-</blockquote>
-<blockquote>
-<p>若一開始建立沒有 RPC，但想要加入 RPC 可以 attach 後，輸入以下 function：</p>
-</blockquote>
-<pre><code class="language-sh">&gt; admin.startRPC(&quot;0.0.0.0&quot;, 8545, &quot;*&quot;, &quot;web3,db,net,eth&quot;)
+<p>也可以透過 HTTP 方式 attach，<code>geth attach http://localhost:8545</code>。<br>若一開始建立沒有 RPC，但想要加入 RPC 可以 attach 後，輸入以下 function：</p>
+<pre><code class="sh">admin.startRPC(&quot;0.0.0.0&quot;, 8545, &quot;*&quot;, &quot;web3,db,net,eth&quot;)
 </code></pre>
+</blockquote>
 <p>進入後透過 admin API 來取得節點的資訊：</p>
-<pre><code class="language-sh">&gt; admin.nodeInfo.enode
+<pre><code class="sh">&gt; admin.nodeInfo.enode
 &quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@[::]:30301?discport=0&quot;
 </code></pre>
 <blockquote>
 <p>這邊要取代<code>[::]</code>為主機 IP，如以下：</p>
-</blockquote>
 <pre><code>&quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@172.16.1.99:30301?discport=0&quot;
-</code></pre>
+</code></pre></blockquote>
 <p>上面沒問題後，接著進入到<code>geth-2</code>節點，然後透過以下指令開啟 console：</p>
-<pre><code class="language-sh">$ geth init --datadir=data/ private.json
+<pre><code class="sh">$ geth init --datadir=data/ private.json
 $ geth --datadir data/ \
        --networkid 123 \
        --nodiscover \
@@ -420,14 +412,14 @@ $ geth --datadir data/ \
 <p>也可以透過上一個節點的方式將服務放到背景，在 attach。</p>
 </blockquote>
 <p>完成上面指令會直接進入 console，接著透過以下方式來連接<code>geth-1</code>：</p>
-<pre><code class="language-sh">&gt; admin.addPeer(&quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@172.16.1.99:30301?discport=0&quot;)
+<pre><code class="sh">&gt; admin.addPeer(&quot;enode://e3dd0392a2971c4b0c4c43a01cd682e19f31aaa573c43a9b227685af7ffed5070217392ae5ada278968d5c4bfddd9c93547bcf4592852196a8facbcdad64d257@172.16.1.99:30301?discport=0&quot;)
 true
 
 I0525 12:56:40.623642 eth/downloader/downloader.go:239] Registering peer e3dd0392a2971c4b
 I0525 12:57:10.622920 p2p/server.go:467] &lt;-taskdone: wait for dial hist expire (29.99999387s)
 </code></pre>
 <p>接著透過 net API 進行查看連接狀態：</p>
-<pre><code class="language-sh">&gt; net.peerCount
+<pre><code class="sh">&gt; net.peerCount
 1
 
 &gt; admin.peers
@@ -448,9 +440,8 @@ I0525 12:57:10.622920 p2p/server.go:467] &lt;-taskdone: wait for dial hist expir
     }
 }]
 </code></pre>
-<h2><span id="驗證服務">驗證服務</span></h2>
-<p>這部分將透過幾個指令與流程來驗證服務，首先在<code>geth-1</code>透過 attach 進入，並建立一個賬戶與查看乙太幣：</p>
-<pre><code class="language-sh">$ geth attach http://localhost:8545
+<h2 id="驗證服務"><a href="#驗證服務" class="headerlink" title="驗證服務"></a>驗證服務</h2><p>這部分將透過幾個指令與流程來驗證服務，首先在<code>geth-1</code>透過 attach 進入，並建立一個賬戶與查看乙太幣：</p>
+<pre><code class="sh">$ geth attach http://localhost:8545
 
 &gt; kairen = personal.newAccount();
 Passphrase:
@@ -467,7 +458,7 @@ Repeat passphrase:
 <p>P.S. 若要移除帳號，可以刪除<code>data/keystore</code>底下的檔案。</p>
 </blockquote>
 <p>接著在<code>geth-2</code>透過以下指令建立一個賬戶與查看乙太幣：</p>
-<pre><code class="language-sh">&gt; pingyu = personal.newAccount();
+<pre><code class="sh">&gt; pingyu = personal.newAccount();
 Passphrase:
 Repeat passphrase:
 &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
@@ -479,47 +470,43 @@ Repeat passphrase:
 0
 </code></pre>
 <p>接著回到<code>geth-1</code>來賺取一些要交易的乙太幣：</p>
-<pre><code class="language-sh">&gt; miner.setEtherbase(kairen)
+<pre><code class="sh">&gt; miner.setEtherbase(kairen)
 true
 </code></pre>
 <p>當賬戶設定完成後，就可以執行以下指令進行採礦：</p>
-<pre><code class="language-sh">&gt; miner.start(1)
+<pre><code class="sh">&gt; miner.start(1)
 true
 </code></pre>
 <blockquote>
-<p>這邊需要一點時間產生 DAG，可以開一個新的命令列透過<code>screen -x geth</code>查看。</p>
-</blockquote>
-<blockquote>
-<p>經過一段時間後，當 DAG 完成並開始採擴時就可以<code>miner.stop()</code>。</p>
+<p>這邊需要一點時間產生 DAG，可以開一個新的命令列透過<code>screen -x geth</code>查看。<br>經過一段時間後，當 DAG 完成並開始採擴時就可以<code>miner.stop()</code>。</p>
 </blockquote>
 <p>接著在<code>geth-1</code>查看賬戶的乙太幣：</p>
-<pre><code class="language-sh">&gt; web3.fromWei(eth.getBalance(kairen), &quot;ether&quot;);
+<pre><code class="sh">&gt; web3.fromWei(eth.getBalance(kairen), &quot;ether&quot;);
 40.78125
 </code></pre>
 <p>當成開採區塊後，就可以查看<code>geth-1</code>共採集的 ether balance 的數值：</p>
 <pre><code>&gt; eth.getBalance(eth.coinbase).toNumber()
 40781250000000000000
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>即為<code>40.78125</code>乙太幣。</p>
 </blockquote>
 <p>接著我們要在將<code>geth-1</code>的賬戶乙太幣轉移到<code>geth-2</code>上，首先在<code>geth-1</code>上建立一個變數來存<code>geth-2</code>的賬戶位址：</p>
-<pre><code class="language-sh">&gt; consumer = &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
+<pre><code class="sh">&gt; consumer = &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
 &quot;0xf8c70df559cb9225f6e426d0f139fd6e8752c644&quot;
 </code></pre>
 <p>完成上述後，首先要將賬戶解鎖：</p>
-<pre><code class="language-sh">&gt; personal.unlockAccount(kairen)
+<pre><code class="sh">&gt; personal.unlockAccount(kairen)
 true
 </code></pre>
 <blockquote>
 <p>輸入當初建立賬戶的密碼。</p>
 </blockquote>
 <p>並透過 eth API 的交易函式還將 ether balance 數值轉移：</p>
-<pre><code class="language-sh">$ eth.sendTransaction({from: kairen, to: consumer, value: web3.toWei(10, &quot;ether&quot;)})
+<pre><code class="sh">$ eth.sendTransaction({from: kairen, to: consumer, value: web3.toWei(10, &quot;ether&quot;)})
 &quot;0x1aee9082a55751c59077a273e7b08acd028d5099a4986f002518b0c8919d9e36&quot;
 </code></pre>
 <p>若有在每一台 geth 節點上進入 debug 模式的話，會發現該交易資訊被存到一個區塊，這邊也可以透過 txpool 與 eth API 來查看：</p>
-<pre><code class="language-sh">&gt; txpool.status
+<pre><code class="sh">&gt; txpool.status
 {
   pending: 1,
   queued: 0
@@ -544,12 +531,12 @@ true
 <p>這邊的<code>pending</code>表示目前還沒有被驗證，因此我們需要一些節點來進行採礦驗證。這邊也可以發現該交易資訊被存在區塊編號<code>112</code>，可以提供往後查詢之用。</p>
 </blockquote>
 <p>接著回到<code>geth-2</code>節點，查看目前的數值變化：</p>
-<pre><code class="language-sh">&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
+<pre><code class="sh">&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
 0
 </code></pre>
 <p>這邊會發現沒有任何錢進來，Why? so sad。其實是因為該區塊還沒有被採集與認證，因此該交易不會被執行。</p>
 <p>因此我們需要在任一節點提供運算，這邊在<code>geth-1</code>執行以下指令來進行採礦，這樣就可以看到該交易被驗證與接受：</p>
-<pre><code class="language-sh">&gt; miner.start(1)
+<pre><code class="sh">&gt; miner.start(1)
 true
 
 TX(1aee9082a55751c59077a273e7b08acd028d5099a4986f002518b0c8919d9e36)
@@ -570,11 +557,11 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
 <p>當該區塊的交易確認沒問題被執行後，就可以透過<code>miner.stop()</code>停止採礦。</p>
 </blockquote>
 <p>這時再回到<code>geth-2</code>節點，查看目前的數值變化，會發現增加了 10 枚乙太幣：</p>
-<pre><code class="language-sh">&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
+<pre><code class="sh">&gt; web3.fromWei(eth.getBalance(pingyu), &quot;ether&quot;);
 10
 </code></pre>
 <p>之後可以在任一節點透過 eth web3 的 API 來查找指定區塊的交易資訊：</p>
-<pre><code class="language-sh">&gt; eth.getTransactionFromBlock(40)
+<pre><code class="sh">&gt; eth.getTransactionFromBlock(40)
 {
   blockHash: &quot;0xe839c1392657731417fc04b9aecf7a181dd339086d5f7cdea0bccc2b1483b885&quot;,
   blockNumber: 112,
@@ -589,8 +576,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
   value: 10000000000000000000
 }
 </code></pre>
-<h2><span id="簡單的-contract">簡單的 Contract</span></h2>
-<p>這邊將說明如何建立一個簡單的合約(Contract)來部署於區塊鏈上，首先複製以下內容：</p>
+<h2 id="簡單的-Contract"><a href="#簡單的-Contract" class="headerlink" title="簡單的 Contract"></a>簡單的 Contract</h2><p>這邊將說明如何建立一個簡單的合約(Contract)來部署於區塊鏈上，首先複製以下內容：</p>
 <pre><code>contract SimpleStorage {
     uint storedData;
     function set(uint x) {
@@ -600,14 +586,13 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
         return storedData;
     }
 }
-</code></pre>
-<p>接著將內容貼到 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="noopener">browser-solidity</a> 進行編譯成 JavaScript。如快照畫面所示。</p>
-<center>![](/images/blockchain/snapshot-contract.png)</center>
+</code></pre><p>接著將內容貼到 <a href="https://ethereum.github.io/browser-solidity" target="_blank" rel="noopener">browser-solidity</a> 進行編譯成 JavaScript。如快照畫面所示。</p>
+<p><img src="/images/blockchain/snapshot-contract.png" alt=""></p>
 <p>透過這個 IDE 可以將 Solidity 語言轉換成 web3 code(JavaScript)，複製 web3 code 的內容，並儲存成<code>SimpleStorage.js</code>檔案放置到<code>geth-1</code>上。接著 attach 進入 geth 執行以下指令：</p>
-<pre><code class="language-sh">&gt; loadScript('SimpleStorage.js');
+<pre><code class="sh">&gt; loadScript(&#39;SimpleStorage.js&#39;);
 </code></pre>
 <p>若有自行安裝<code>browser-solidity</code>的話，則可以使用如下圖一樣的方式連接。</p>
-<center>![](/images/blockchain/snapshot-dash-web3-provider.png)</center>
+<p><img src="/images/blockchain/snapshot-dash-web3-provider.png" alt=""></p>
 
                 
 
@@ -651,7 +636,7 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">建立 Ethereum 環境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">驗證服務</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">簡單的 Contract</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立-Ethereum-環境"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">建立 Ethereum 環境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證服務"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">驗證服務</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#簡單的-Contract"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">簡單的 Contract</span></a></li></ol>
         
         </div>
       </aside>
@@ -674,8 +659,6 @@ Hex:      f86d808504a817c80083015f9094f8c70df559cb9225f6e426d0f139fd6e8752c64488
                           <a class="tag" href="/tags/#Ethereum" title="Ethereum">Ethereum</a>
                         
                           <a class="tag" href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
-                        
-                          <a class="tag" href="/tags/#Go lang" title="Go lang">Go lang</a>
                         
                     </div>
                 </section>

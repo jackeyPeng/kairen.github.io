@@ -14,7 +14,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          整合 OpenLDAP 進行 Kubernetes 身份認證 - KaiRen&#39;s Blog
+          整合 Open LDAP 進行 Kubernetes 身份認證 - KaiRen&#39;s Blog
         
     </title>
 
@@ -91,7 +91,7 @@
                               <a class="tag" href="/tags/#LDAP" title="LDAP">LDAP</a>
                             
                         </div>
-                        <h1>整合 OpenLDAP 進行 Kubernetes 身份認證</h1>
+                        <h1>整合 Open LDAP 進行 Kubernetes 身份認證</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -289,8 +289,7 @@
 
                 <p>本文將說明如何整合 OpenLDAP 來提供給 Kubernetes 進行使用者認證。Kubernetes 官方並沒有提供針對 LDAP 與 AD 的整合，但是可以藉由 <a href="https://kubernetes.io/docs/admin/authentication/#webhook-token-authentication" target="_blank" rel="noopener">Webhook Token Authentication</a> 以及 <a href="https://kubernetes.io/docs/admin/authentication/#authenticating-proxy" target="_blank" rel="noopener">Authenticating Proxy</a> 來達到整合功能。概念是開發一個 HTTP Server 提供 POST Method 來塞入 Bearer Token，而該 HTTP Server 利用 LDAP library 檢索對應 Token 的 User 進行認證，成功後回傳該 User 的所有 Group 等資訊，而這時可以利用 Kubernetes 針對該 User 的 Group 設定對應的 RBAC role 進行權限控管。</p>
 <a id="more"></a>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
 <thead>
 <tr>
@@ -334,27 +333,23 @@
 <li>可以下載 <a href="https://kairen.github.io/files/k8s-ldap/Vagrantfile">Vagrantfile</a> 來建立 Virtualbox 虛擬機叢集。不過需要注意機器資源是否足夠。</li>
 </ul>
 </blockquote>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>開始安裝前需要確保以下條件已達成：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始安裝前需要確保以下條件已達成：</p>
 <ul>
 <li><code>所有節點</code>需要安裝 Docker CE 版本的容器引擎：</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 </code></pre>
 <blockquote>
-<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>
-CentOS 安裝完成後需要再執行以下指令：</p>
-</blockquote>
-<pre><code class="language-sh">$ systemctl enable docker &amp;&amp; systemctl start docker
+<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>CentOS 安裝完成後需要再執行以下指令：</p>
+<pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
 </code></pre>
+</blockquote>
 <ul>
 <li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
 </ul>
-<h2><span id="openldap-與-phpldapadmin">OpenLDAP 與 phpLDAPadmin</span></h2>
-<p>本節將說明如何部署、設定與操作 OpenLDAP。</p>
-<h3><span id="部署">部署</span></h3>
-<p>進入<code>ldap-server</code>節點透過 Docker 來進行部署：</p>
-<pre><code class="language-sh">$ docker run -d \
+<h2 id="OpenLDAP-與-phpLDAPadmin"><a href="#OpenLDAP-與-phpLDAPadmin" class="headerlink" title="OpenLDAP 與 phpLDAPadmin"></a>OpenLDAP 與 phpLDAPadmin</h2><p>本節將說明如何部署、設定與操作 OpenLDAP。</p>
+<h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>進入<code>ldap-server</code>節點透過 Docker 來進行部署：</p>
+<pre><code class="sh">$ docker run -d \
     -p 389:389 -p 636:636 \
     --env LDAP_ORGANISATION=&quot;Kubernetes LDAP&quot; \
     --env LDAP_DOMAIN=&quot;k8s.com&quot; \
@@ -372,25 +367,22 @@ $ docker run -d \
 <blockquote>
 <p>這邊為<code>cn=admin,dc=k8s,dc=com</code>為<code>admin</code> DN ，而<code>cn=admin,cn=config</code>為<code>config</code>。另外這邊僅做測試用，故不使用 Persistent Volumes，需要可以參考 <a href="https://github.com/osixia/docker-openldap" target="_blank" rel="noopener">Docker OpenLDAP</a>。</p>
 </blockquote>
-<p>完成後就可以透過瀏覽器來 <a href="https://192.16.35.20/" target="_blank" rel="noopener">phpLDAPadmin website</a>。這邊點選<code>Login</code>輸入 DN 與 Password。<br>
-<img src="/images/k8s-ldap/ldap-login.png" alt=""></p>
-<p>成功登入後畫面，這時可以自行新增其他資訊。<br>
-<img src="/images/k8s-ldap/ldap-logined.png" alt=""></p>
-<h3><span id="建立-kubenretes-token-schema">建立 Kubenretes Token Schema</span></h3>
-<p>進入<code>openldap-server 容器</code>，接著建立 Kubernetes token schema 物件的設定檔：</p>
-<pre><code class="language-sh">$ docker exec -ti openldap-server sh
+<p>完成後就可以透過瀏覽器來 <a href="https://192.16.35.20/" target="_blank" rel="noopener">phpLDAPadmin website</a>。這邊點選<code>Login</code>輸入 DN 與 Password。<br><img src="/images/k8s-ldap/ldap-login.png" alt=""></p>
+<p>成功登入後畫面，這時可以自行新增其他資訊。<br><img src="/images/k8s-ldap/ldap-logined.png" alt=""></p>
+<h3 id="建立-Kubenretes-Token-Schema"><a href="#建立-Kubenretes-Token-Schema" class="headerlink" title="建立 Kubenretes Token Schema"></a>建立 Kubenretes Token Schema</h3><p>進入<code>openldap-server 容器</code>，接著建立 Kubernetes token schema 物件的設定檔：</p>
+<pre><code class="sh">$ docker exec -ti openldap-server sh
 $ mkdir ~/kubernetes_tokens
 $ cat &lt;&lt;EOF &gt; ~/kubernetes_tokens/kubernetesToken.schema
 attributeType ( 1.3.6.1.4.1.18171.2.1.8
-        NAME 'kubernetesToken'
-        DESC 'Kubernetes authentication token'
+        NAME &#39;kubernetesToken&#39;
+        DESC &#39;Kubernetes authentication token&#39;
         EQUALITY caseExactIA5Match
         SUBSTR caseExactIA5SubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
 
 objectClass ( 1.3.6.1.4.1.18171.2.3
-        NAME 'kubernetesAuthenticationObject'
-        DESC 'Object that may authenticate to a Kubernetes cluster'
+        NAME &#39;kubernetesAuthenticationObject&#39;
+        DESC &#39;Object that may authenticate to a Kubernetes cluster&#39;
         AUXILIARY
         MUST kubernetesToken )
 EOF
@@ -400,21 +392,21 @@ $ slaptest -f ~/kubernetes_tokens/schema_convert.conf -F ~/kubernetes_tokens
 config file testing succeeded
 </code></pre>
 <p>修改以下檔案內容，如以下所示：</p>
-<pre><code class="language-sh">$ vim ~/kubernetes_tokens/cn=config/cn=schema/cn\=\{0\}kubernetestoken.ldif
+<pre><code class="sh">$ vim ~/kubernetes_tokens/cn=config/cn=schema/cn\=\{0\}kubernetestoken.ldif
 # AUTO-GENERATED FILE - DO NOT EDIT!! Use ldapmodify.
 # CRC32 e502306e
 dn: cn=kubernetestoken,cn=schema,cn=config
 objectClass: olcSchemaConfig
 cn: kubernetestoken
-olcAttributeTypes: {0}( 1.3.6.1.4.1.18171.2.1.8 NAME 'kubernetesToken' DESC
- 'Kubernetes authentication token' EQUALITY caseExactIA5Match SUBSTR caseExa
+olcAttributeTypes: {0}( 1.3.6.1.4.1.18171.2.1.8 NAME &#39;kubernetesToken&#39; DESC
+ &#39;Kubernetes authentication token&#39; EQUALITY caseExactIA5Match SUBSTR caseExa
  ctIA5SubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
-olcObjectClasses: {0}( 1.3.6.1.4.1.18171.2.3 NAME 'kubernetesAuthenticationO
- bject' DESC 'Object that may authenticate to a Kubernetes cluster' AUXILIAR
+olcObjectClasses: {0}( 1.3.6.1.4.1.18171.2.3 NAME &#39;kubernetesAuthenticationO
+ bject&#39; DESC &#39;Object that may authenticate to a Kubernetes cluster&#39; AUXILIAR
  Y MUST kubernetesToken )
 </code></pre>
 <p>新增 Schema 物件至 LDAP Server 中：</p>
-<pre><code class="language-sh">$ cd ~/kubernetes_tokens/cn=config/cn=schema
+<pre><code class="sh">$ cd ~/kubernetes_tokens/cn=config/cn=schema
 $ ldapadd -c -Y EXTERNAL -H ldapi:/// -f cn\=\{0\}kubernetestoken.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
@@ -422,15 +414,14 @@ SASL SSF: 0
 adding new entry &quot;cn=kubernetestoken,cn=schema,cn=config&quot;
 </code></pre>
 <p>完成後查詢是否成功新增 Entry：</p>
-<pre><code class="language-sh">$ ldapsearch -x -H ldap:/// -LLL -D &quot;cn=admin,cn=config&quot; -w password -b &quot;cn=schema,cn=config&quot; &quot;(objectClass=olcSchemaConfig)&quot; dn -Z
+<pre><code class="sh">$ ldapsearch -x -H ldap:/// -LLL -D &quot;cn=admin,cn=config&quot; -w password -b &quot;cn=schema,cn=config&quot; &quot;(objectClass=olcSchemaConfig)&quot; dn -Z
 Enter LDAP Password:
 dn: cn=schema,cn=config
 ...
 dn: cn={14}kubernetestoken,cn=schema,cn=config
 </code></pre>
-<h3><span id="新增測試用-ldap-groups-與-users">新增測試用 LDAP Groups 與 Users</span></h3>
-<p>當上面 Schema 建立完成後，這邊需要新增一些測試用 Groups：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; groups.ldif
+<h3 id="新增測試用-LDAP-Groups-與-Users"><a href="#新增測試用-LDAP-Groups-與-Users" class="headerlink" title="新增測試用 LDAP Groups 與 Users"></a>新增測試用 LDAP Groups 與 Users</h3><p>當上面 Schema 建立完成後，這邊需要新增一些測試用 Groups：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; groups.ldif
 dn: ou=People,dc=k8s,dc=com
 ou: People
 objectClass: top
@@ -460,7 +451,7 @@ adding new entry &quot;ou=Groups,dc=k8s,dc=com&quot;
 adding new entry &quot;cn=kubernetes,ou=Groups,dc=k8s,dc=com&quot;
 </code></pre>
 <p>Group 建立完成後再接著建立 User：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; users.ldif
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; users.ldif
 dn: uid=user1,ou=People,dc=k8s,dc=com
 cn: user1
 gidnumber: 100
@@ -499,10 +490,9 @@ adding new entry &quot;uid=user1,ou=People,dc=k8s,dc=com&quot;
 
 adding new entry &quot;uid=user2,ou=People,dc=k8s,dc=com&quot;
 </code></pre>
-<p>這邊可以登入 phpLDAPadmin 查看，結果如以下所示：<br>
-<img src="/images/k8s-ldap/ldap-entry.png" alt=""></p>
+<p>這邊可以登入 phpLDAPadmin 查看，結果如以下所示：<br><img src="/images/k8s-ldap/ldap-entry.png" alt=""></p>
 <p>確認沒問題後，將 User dump 至一個文字檔案中：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; users.txt
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; users.txt
 dn: uid=user1,ou=People,dc=k8s,dc=com
 dn: uid=user2,ou=People,dc=k8s,dc=com
 EOF
@@ -511,7 +501,7 @@ EOF
 <p>這邊偷懶直接用 cat。</p>
 </blockquote>
 <p>執行以下腳本來更新每個 LDAP User 的 kubernetesToken：</p>
-<pre><code class="language-sh">$ while read -r user; do
+<pre><code class="sh">$ while read -r user; do
 fname=$(echo $user | grep -E -o &quot;uid=[a-z0-9]+&quot; | cut -d&quot;=&quot; -f2)
 token=$(dd if=/dev/urandom bs=128 count=1 2&gt;/dev/null | base64 | tr -d &quot;=+/&quot; | dd bs=32 count=1 2&gt;/dev/null)
 cat &lt;&lt; EOF &gt; &quot;${fname}.ldif&quot;
@@ -534,40 +524,39 @@ modifying entry &quot;uid=user1,ou=Users,dc=k8s,dc=com&quot;
 Enter LDAP Password:
 modifying entry &quot;uid=user2,ou=Users,dc=k8s,dc=com&quot;
 </code></pre>
-<h2><span id="部署-kubernetes-ldap">部署 Kubernetes LDAP</span></h2>
-<p>當 Kubernetes 環境建立完成後，首先進入<code>k8s-m1</code>節點，透過 git 取得 kube-ldap-authn 原始碼專案：</p>
-<pre><code class="language-sh">$ git clone https://github.com/kairen/kube-ldap-authn.git
+<h2 id="部署-Kubernetes-LDAP"><a href="#部署-Kubernetes-LDAP" class="headerlink" title="部署 Kubernetes LDAP"></a>部署 Kubernetes LDAP</h2><p>當 Kubernetes 環境建立完成後，首先進入<code>k8s-m1</code>節點，透過 git 取得 kube-ldap-authn 原始碼專案：</p>
+<pre><code class="sh">$ git clone https://github.com/kairen/kube-ldap-authn.git
 $ cd kube-ldap-authn
 </code></pre>
 <blockquote>
 <p>若想使用 Go 語言實作的版本，可以參考 <a href="https://github.com/kairen/kube-ldap-webhook" target="_blank" rel="noopener">kube-ldap-webhook</a>.</p>
 </blockquote>
 <p>新增一個<code>config.py</code>檔案來提供相關設定內容：</p>
-<pre><code class="language-sh">LDAP_URL='ldap://192.16.35.20/ ldap://192.16.35.20'
+<pre><code class="sh">LDAP_URL=&#39;ldap://192.16.35.20/ ldap://192.16.35.20&#39;
 LDAP_START_TLS = False
-LDAP_BIND_DN = 'cn=admin,dc=k8s,dc=com'
-LDAP_BIND_PASSWORD = 'password'
-LDAP_USER_NAME_ATTRIBUTE = 'uid'
-LDAP_USER_UID_ATTRIBUTE = 'uidNumber'
-LDAP_USER_SEARCH_BASE = 'ou=People,dc=k8s,dc=com'
+LDAP_BIND_DN = &#39;cn=admin,dc=k8s,dc=com&#39;
+LDAP_BIND_PASSWORD = &#39;password&#39;
+LDAP_USER_NAME_ATTRIBUTE = &#39;uid&#39;
+LDAP_USER_UID_ATTRIBUTE = &#39;uidNumber&#39;
+LDAP_USER_SEARCH_BASE = &#39;ou=People,dc=k8s,dc=com&#39;
 LDAP_USER_SEARCH_FILTER = &quot;(&amp;(kubernetesToken={token}))&quot;
-LDAP_GROUP_NAME_ATTRIBUTE = 'cn'
-LDAP_GROUP_SEARCH_BASE = 'ou=Groups,dc=k8s,dc=com'
-LDAP_GROUP_SEARCH_FILTER = '(|(&amp;(objectClass=posixGroup)(memberUid={username}))(&amp;(member={dn})(objectClass=groupOfNames)))'
+LDAP_GROUP_NAME_ATTRIBUTE = &#39;cn&#39;
+LDAP_GROUP_SEARCH_BASE = &#39;ou=Groups,dc=k8s,dc=com&#39;
+LDAP_GROUP_SEARCH_FILTER = &#39;(|(&amp;(objectClass=posixGroup)(memberUid={username}))(&amp;(member={dn})(objectClass=groupOfNames)))&#39;
 </code></pre>
 <blockquote>
 <p>變數詳細說明可以參考 <a href="https://github.com/kairen/kube-ldap-authn/blob/master/config.py.example" target="_blank" rel="noopener">Config example</a></p>
 </blockquote>
 <p>建立 kube-ldap-authn secret 來提供給 pod 使用，並部署 kube-ldap-authn pod 到所有 master 節點上：</p>
-<pre><code class="language-sh">$ kubectl -n kube-system create secret generic ldap-authn-config --from-file=config.py=config.py
+<pre><code class="sh">$ kubectl -n kube-system create secret generic ldap-authn-config --from-file=config.py=config.py
 $ kubectl create -f daemonset.yaml
 $ kubectl -n kube-system get po -l app=kube-ldap-authn -o wide
 NAME                    READY     STATUS    RESTARTS   AGE       IP             NODE
 kube-ldap-authn-sx994   1/1       Running   0          13s       192.16.35.11   k8s-m1
 </code></pre>
 <p>這邊若成功部署的話，可以用 curl 進行測試：</p>
-<pre><code class="language-sh">$ curl -X POST -H &quot;Content-Type: application/json&quot; \
-    -d '{&quot;apiVersion&quot;: &quot;authentication.k8s.io/v1beta1&quot;, &quot;kind&quot;: &quot;TokenReview&quot;,  &quot;spec&quot;: {&quot;token&quot;: &quot;&lt;LDAP_K8S_TOKEN&gt;&quot;}}' \
+<pre><code class="sh">$ curl -X POST -H &quot;Content-Type: application/json&quot; \
+    -d &#39;{&quot;apiVersion&quot;: &quot;authentication.k8s.io/v1beta1&quot;, &quot;kind&quot;: &quot;TokenReview&quot;,  &quot;spec&quot;: {&quot;token&quot;: &quot;&lt;LDAP_K8S_TOKEN&gt;&quot;}}&#39; \
     http://localhost:8087/authn
 
 # output
@@ -587,7 +576,7 @@ kube-ldap-authn-sx994   1/1       Running   0          13s       192.16.35.11   
 }
 </code></pre>
 <p>在所有<code>master</code>節點上新增一個名稱為<code>/srv/kubernetes/webhook-authn</code>的檔案，並加入以下內容：</p>
-<pre><code class="language-sh">$ mkdir /srv/kubernetes
+<pre><code class="sh">$ mkdir /srv/kubernetes
 $ cat &lt;&lt;EOF &gt; /srv/kubernetes/webhook-authn
 clusters:
   - name: ldap-authn
@@ -604,7 +593,7 @@ contexts:
 EOF
 </code></pre>
 <p>修改所有<code>master</code>節點上的<code>kube-apiserver.yaml</code> Static Pod 檔案，該檔案會存在於<code>/etc/kubernetes/manifests</code>目錄中，請修改加入以下內容：</p>
-<pre><code class="language-yaml">...
+<pre><code class="yaml">...
 spec:
   containers:
   - command:
@@ -627,9 +616,8 @@ spec:
 <blockquote>
 <p>這邊<code>...</code>表示已存在的內容，請不要刪除與變更。這邊也可以用 kubeadmconfig 來設定，請參考 <a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/#config-file" target="_blank" rel="noopener">Using kubeadm init with a configuration file</a>。</p>
 </blockquote>
-<h2><span id="測試功能">測試功能</span></h2>
-<p>首先進入<code>k8s-m1</code>，建立一個綁定在 user1 namespace 的唯讀 Role 與 RoleBinding：</p>
-<pre><code class="language-sh">$ kubectl create ns user1
+<h2 id="測試功能"><a href="#測試功能" class="headerlink" title="測試功能"></a>測試功能</h2><p>首先進入<code>k8s-m1</code>，建立一個綁定在 user1 namespace 的唯讀 Role 與 RoleBinding：</p>
+<pre><code class="sh">$ kubectl create ns user1
 
 # 建立 Role
 $ cat &lt;&lt;EOF | kubectl create -f -
@@ -665,7 +653,7 @@ EOF
 <p>注意!!這邊的<code>Group</code>是 LDAP 中的 Group。</p>
 </blockquote>
 <p>在任意台 Kubernetes client 端設定 Kubeconfig 來存取叢集，這邊直接在<code>k8s-m1</code>進行：</p>
-<pre><code class="language-sh">$ cd
+<pre><code class="sh">$ cd
 $ kubectl config set-credentials user1 --kubeconfig=.kube/config --token=&lt;user-ldap-token&gt;
 $ kubectl config set-context user1-context \
     --kubeconfig=.kube/config \
@@ -673,7 +661,7 @@ $ kubectl config set-context user1-context \
     --namespace=user1 --user=user1
 </code></pre>
 <p>接著透過 kubeclt 來測試權限是否正確設定：</p>
-<pre><code class="language-sh">$ kubectl --context=user1-context get po
+<pre><code class="sh">$ kubectl --context=user1-context get po
 No resources found
 
 $ kubectl --context=user1-context run nginx --image nginx --port 80
@@ -682,8 +670,7 @@ Error from server (Forbidden): deployments.extensions is forbidden: User &quot;u
 $ kubectl --context=user1-context get po -n default
 Error from server (Forbidden): pods is forbidden: User &quot;user1&quot; cannot list pods in the namespace &quot;default&quot;
 </code></pre>
-<h2><span id="參考資料">參考資料</span></h2>
-<ul>
+<h2 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h2><ul>
 <li><a href="https://github.com/osixia/docker-openldap" target="_blank" rel="noopener">https://github.com/osixia/docker-openldap</a></li>
 <li><a href="https://icicimov.github.io/blog/virtualization/Kubernetes-LDAP-Authentication/" target="_blank" rel="noopener">https://icicimov.github.io/blog/virtualization/Kubernetes-LDAP-Authentication/</a></li>
 <li><a href="https://github.com/torchbox/kube-ldap-authn" target="_blank" rel="noopener">https://github.com/torchbox/kube-ldap-authn</a></li>
@@ -731,7 +718,7 @@ Error from server (Forbidden): pods is forbidden: User &quot;user1&quot; cannot 
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">OpenLDAP 與 phpLDAPadmin</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">部署</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">建立 Kubenretes Token Schema</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">新增測試用 LDAP Groups 與 Users</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">部署 Kubernetes LDAP</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">測試功能</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">參考資料</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#OpenLDAP-與-phpLDAPadmin"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">OpenLDAP 與 phpLDAPadmin</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部署"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">部署</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Kubenretes-Token-Schema"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">建立 Kubenretes Token Schema</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#新增測試用-LDAP-Groups-與-Users"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">新增測試用 LDAP Groups 與 Users</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Kubernetes-LDAP"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">部署 Kubernetes LDAP</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試功能"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">測試功能</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考資料"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">參考資料</span></a></li></ol>
         
         </div>
       </aside>

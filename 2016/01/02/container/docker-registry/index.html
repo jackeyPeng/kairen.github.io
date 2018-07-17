@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,8 +291,7 @@
 
                 <p>Docker Registry 是被用來儲存 Docker 所建立的映像檔的地方，我們可以把自己建立的映像檔透過上傳到 Registries 來分享給其他人。Registries 也被分為了公有與私有，一般公有的 Registries 是 <a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker Hub</a>、<a href="https://quay.io/" target="_blank" rel="noopener">QUAY</a> 與 <a href="https://console.cloud.google.com/gcr/images/google-containers/GLOBAL" target="_blank" rel="noopener">GCP registry</a>，提供了所有基礎的映像檔與全球使用者上傳的映像檔。私人的則是企業或者個人環境建置的，可參考 <a href="https://docs.docker.com/registry/deploying/" target="_blank" rel="noopener">Deploying a registry server</a>。</p>
 <a id="more"></a>
-<h2><span id="預先準備資訊">預先準備資訊</span></h2>
-<p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
+<h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
 <thead>
 <tr>
@@ -311,12 +310,11 @@
 </tr>
 </tbody>
 </table>
-<h3><span id="安裝">安裝</span></h3>
-<p>首先進入到<code>docker-registry</code>節點，安裝 Docker engine：</p>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<h3 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h3><p>首先進入到<code>docker-registry</code>節點，安裝 Docker engine：</p>
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 </code></pre>
 <p>完成安裝後，接著透過以下指令建立一個 Docker registry 容器：</p>
-<pre><code class="language-sh">$ docker run -d -p 5000:5000 --restart=always --name registry \
+<pre><code class="sh">$ docker run -d -p 5000:5000 --restart=always --name registry \
 -v $(pwd)/data:/var/lib/registry \
 registry:2
 </code></pre>
@@ -324,13 +322,13 @@ registry:2
 <p>-v 為 host 與 container 要進行同步的目錄，主要存放 docker images 資料</p>
 </blockquote>
 <p>接著為了方便檢視 Docker image，這邊另外部署 Docker registry UI：</p>
-<pre><code class="language-sh">$ docker run -d -p 5001:80 \
+<pre><code class="sh">$ docker run -d -p 5001:80 \
 -e ENV_DOCKER_REGISTRY_HOST=172.16.35.13 \
 -e ENV_DOCKER_REGISTRY_PORT=5000 \
 konradkleine/docker-registry-frontend:v2
 </code></pre>
 <p>完成後就可以透過瀏覽器進入 <a href="172.16.35.13:5001" target="_blank" rel="noopener">Docker registry UI</a> 查看資訊。也可以透過以下指令檢查是否部署成功：</p>
-<pre><code class="language-sh">$ docker pull ubuntu:14.04
+<pre><code class="sh">$ docker pull ubuntu:14.04
 $ docker tag ubuntu:14.04 localhost:5000/ubuntu:14.04
 $ docker push localhost:5000/ubuntu:14.04
 
@@ -391,7 +389,7 @@ df9a135a6949: Pushed
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">預先準備資訊</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">安裝</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#預先準備資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">預先準備資訊</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">安裝</span></a></li></ol></li></ol>
         
         </div>
       </aside>

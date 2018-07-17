@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -293,9 +293,8 @@
 <p>Aluxion 是一個記憶體虛擬分散式儲存系統，具有高效能、高容錯以及高可靠性的特色，它能夠統一資料的存取去串接機算框架和儲存系統的橋梁，像是同時可相容於 Hadoop MapReduce 和 Apache Spark 以及 Apache Flink 的計算框架和 Alibaba OSS、Amazon S3、OpenStack Swift,、GlusterFS 及 Ceph 的儲存系統</p>
 <p><img src="/images/spark/alluxio_architecture.jpg" alt=""></p>
 <a id="more"></a>
-<h2><span id="install-java7">Install Java7</span></h2>
-<p>首先安裝相關套件：</p>
-<pre><code class="language-sh">$ sudo apt-get purge openjdk*
+<h2 id="Install-Java7"><a href="#Install-Java7" class="headerlink" title="Install Java7"></a>Install Java7</h2><p>首先安裝相關套件：</p>
+<pre><code class="sh">$ sudo apt-get purge openjdk*
 $ sudo apt-get -y autoremove
 $ sudo add-apt-repository -y ppa:webupd8team/java
 $ sudo apt-get update
@@ -303,27 +302,26 @@ $ echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-se
 $ echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 $ sudo apt-get -y install oracle-java7-installer
 </code></pre>
-<h2><span id="download-alluxio-100">Download Alluxio 1.0.0</span></h2>
-<p>接著下載 Alluxio：</p>
-<pre><code class="language-sh">$ wget http://alluxio.org/downloads/files/1.0.0/alluxio-1.0.0-bin.tar.gz
+<h2 id="Download-Alluxio-1-0-0"><a href="#Download-Alluxio-1-0-0" class="headerlink" title="Download Alluxio 1.0.0"></a>Download Alluxio 1.0.0</h2><p>接著下載 Alluxio：</p>
+<pre><code class="sh">$ wget http://alluxio.org/downloads/files/1.0.0/alluxio-1.0.0-bin.tar.gz
 $ tar xvfz alluxio-1.0.0-bin.tar.gz
 $ cd alluxio-1.0.0
 </code></pre>
 <p>複製一個<code>conf/alluxio-env.sh</code>檔案</p>
-<pre><code class="language-sh">$ cp conf/alluxio-env.sh.template conf/alluxio-env.sh
+<pre><code class="sh">$ cp conf/alluxio-env.sh.template conf/alluxio-env.sh
 </code></pre>
 <p><code>conf/alluxio-env.sh</code>中加入<code>ALLUXIO_UNDERFS_ADDRESS</code>參數</p>
-<pre><code class="language-sh">export ALLUXIO_UNDERFS_ADDRESS=/tmp
+<pre><code class="sh">export ALLUXIO_UNDERFS_ADDRESS=/tmp
 </code></pre>
 <p>確認 <code>ssh localhost</code> 可成功</p>
-<pre><code class="language-sh">$ssh-copy-id localhsot
+<pre><code class="sh">$ssh-copy-id localhsot
 </code></pre>
 <p>格式化 Alluxio FileSystem 並開啟它</p>
-<pre><code class="language-sh">$ ./bin/alluxio format
+<pre><code class="sh">$ ./bin/alluxio format
 $ ./bin/alluxio-start.sh local
 </code></pre>
 <p>驗證 Alluxio 可於瀏覽器輸入<code>http://localhost:19999</code>，也可執行簡單的程式，如下:</p>
-<pre><code class="language-sh">$ ./bin/alluxio runTest Basic CACHE THROUGH
+<pre><code class="sh">$ ./bin/alluxio runTest Basic CACHE THROUGH
 </code></pre>
 <p>執行後，如下:</p>
 <pre><code>2015-11-20 08:32:22,271 INFO   (ClientBase.java:connect) - Alluxio client (version 1.0.0) is trying to connect with FileSystemMaster master @ localhost/127.0.0.1:19998
@@ -337,12 +335,11 @@ $ ./bin/alluxio-start.sh local
 2015-11-20 08:32:22,809 INFO   (LocalBlockOutStream.java:&lt;init&gt;) - LocalBlockOutStream created new file block, block path: /Volumes/ramdisk/alluxioworker/7226211928567857329/16777216
 2015-11-20 08:32:22,886 INFO   (BasicOperations.java:readFile) - readFile file /default_tests_files/BasicFile_CACHE_THROUGH took 187 ms.
 Passed the test!
-</code></pre>
-<p>執行更複雜的測試:</p>
-<pre><code class="language-sh">$ ./bin/alluxio runTests
+</code></pre><p>執行更複雜的測試:</p>
+<pre><code class="sh">$ ./bin/alluxio runTests
 </code></pre>
 <p>停止服務：</p>
-<pre><code class="language-sh">$ ./bin/alluxio-stop.sh all
+<pre><code class="sh">$ ./bin/alluxio-stop.sh all
 </code></pre>
 
                 
@@ -387,7 +384,7 @@ Passed the test!
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Install Java7</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Download Alluxio 1.0.0</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Install-Java7"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Install Java7</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Download-Alluxio-1-0-0"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Download Alluxio 1.0.0</span></a></li></ol>
         
         </div>
       </aside>

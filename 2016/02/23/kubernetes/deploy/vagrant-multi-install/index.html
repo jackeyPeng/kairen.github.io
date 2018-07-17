@@ -14,7 +14,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended) - KaiRen&#39;s Blog
+          Vagrant CoreOS 部署 Kubernetes 測試叢集 - KaiRen&#39;s Blog
         
     </title>
 
@@ -95,7 +95,7 @@
                               <a class="tag" href="/tags/#Vagrant" title="Vagrant">Vagrant</a>
                             
                         </div>
-                        <h1>Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)</h1>
+                        <h1>Vagrant CoreOS 部署 Kubernetes 測試叢集</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
@@ -146,14 +146,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -298,28 +298,26 @@
 <li>Kubernetes v1.5.4.</li>
 </ul>
 <a id="more"></a>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>首先必須在主機上安裝<code>Vagrant</code>工具，點選該 <a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">Vagrant downloads</a> 頁面抓取當前系統的版本，並完成安裝。</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先必須在主機上安裝<code>Vagrant</code>工具，點選該 <a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">Vagrant downloads</a> 頁面抓取當前系統的版本，並完成安裝。</p>
 <p>接著在主機上安裝<code>kubectl</code>，該程式是主要與 Kubernetes API 進行溝通的工具，透過 Curl 工具來下載。如果是 Linux 作業系統，請下載以下：</p>
-<pre><code class="language-sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/linux/amd64/kubectl&quot;
+<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/linux/amd64/kubectl&quot;
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
 <blockquote>
 <p>如果是 OS X，請取代 URL 為以下：</p>
-</blockquote>
-<pre><code class="language-sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/darwin/amd64/kubectl&quot;
+<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/darwin/amd64/kubectl&quot;
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
-<h2><span id="安裝-kubernetes">安裝 Kubernetes</span></h2>
-<p>首先透過 Git 工具來下載 CoreOS 的 Kubernetes 專案，裡面包含了描述 Vagrant 要建立的檔案：</p>
-<pre><code class="language-sh">$ git clone https://github.com/coreos/coreos-kubernetes.git
+</blockquote>
+<h2 id="安裝-Kubernetes"><a href="#安裝-Kubernetes" class="headerlink" title="安裝 Kubernetes"></a>安裝 Kubernetes</h2><p>首先透過 Git 工具來下載 CoreOS 的 Kubernetes 專案，裡面包含了描述 Vagrant 要建立的檔案：</p>
+<pre><code class="sh">$ git clone https://github.com/coreos/coreos-kubernetes.git
 $ cd coreos-kubernetes/multi-node/vagrant
 </code></pre>
 <p>接著複製<code>config.rb.sample</code>並改成<code>config.rb</code>檔案：</p>
-<pre><code class="language-sh">$ cp config.rb.sample config.rb
+<pre><code class="sh">$ cp config.rb.sample config.rb
 </code></pre>
 <p>編輯<code>config.rb</code>設定檔，並修改成以下內容：</p>
-<pre><code class="language-ruby">$update_channel=&quot;alpha&quot;
+<pre><code class="ruby">$update_channel=&quot;alpha&quot;
 
 $controller_count=1
 $controller_vm_memory=1024
@@ -331,41 +329,37 @@ $etcd_count=1
 $etcd_vm_memory=512
 </code></pre>
 <p>(Option)若 CNI 想使用 Calico 網路與安裝不同版本 Kubernetes 的話，需要修改<code>../generic/controller-install.sh</code>與<code>./generic/worker-install.sh</code>檔案以下內容：</p>
-<pre><code class="language-sh">export K8S_VER=v1.5.4_coreos.0
+<pre><code class="sh">export K8S_VER=v1.5.4_coreos.0
 export USE_CALICO=true
 </code></pre>
 <p>設定好後，即可透過以下指令來建立 SSL CA Key 與更新 Box 資訊：</p>
-<pre><code class="language-sh">$ sudo ln -sf /usr/local/bin/openssl /opt/vagrant/embedded/bin/openssl
+<pre><code class="sh">$ sudo ln -sf /usr/local/bin/openssl /opt/vagrant/embedded/bin/openssl
 $ vagrant box update
 </code></pre>
 <p>確認完成後，執行以下指令開始建立叢集：</p>
-<pre><code class="language-sh">$ vagrant up
+<pre><code class="sh">$ vagrant up
 </code></pre>
 <blockquote>
 <p>P.S. 這邊建置起來裡面虛擬機還要下載一些東西，要等一下子才會真正完成。</p>
 </blockquote>
-<h2><span id="設定-kubernetes-config">設定 Kubernetes Config</span></h2>
-<p>當完成部署後，需要配置 kubectl 連接 API，這邊可以選擇以下兩種的其中一種進行：</p>
-<h3><span id="使用一個-custom-kubernetes-config">使用一個 Custom Kubernetes Config</span></h3>
-<pre><code class="language-sh">$ export KUBECONFIG=&quot;${KUBECONFIG}:$(pwd)/kubeconfig&quot;
+<h2 id="設定-Kubernetes-Config"><a href="#設定-Kubernetes-Config" class="headerlink" title="設定 Kubernetes Config"></a>設定 Kubernetes Config</h2><p>當完成部署後，需要配置 kubectl 連接 API，這邊可以選擇以下兩種的其中一種進行：</p>
+<h3 id="使用一個-Custom-Kubernetes-Config"><a href="#使用一個-Custom-Kubernetes-Config" class="headerlink" title="使用一個 Custom Kubernetes Config"></a>使用一個 Custom Kubernetes Config</h3><pre><code class="sh">$ export KUBECONFIG=&quot;${KUBECONFIG}:$(pwd)/kubeconfig&quot;
 $ kubectl config use-context vagrant-multi
 </code></pre>
-<h3><span id="更新與使用本地的-config">更新與使用本地的 Config</span></h3>
-<pre><code class="language-sh">$ kubectl config set-cluster vagrant-multi-cluster --server=&quot;https://172.17.4.101:443&quot; --certificate-authority=${PWD}/ssl/ca.pem
+<h3 id="更新與使用本地的-Config"><a href="#更新與使用本地的-Config" class="headerlink" title="更新與使用本地的 Config"></a>更新與使用本地的 Config</h3><pre><code class="sh">$ kubectl config set-cluster vagrant-multi-cluster --server=&quot;https://172.17.4.101:443&quot; --certificate-authority=${PWD}/ssl/ca.pem
 $ kubectl config set-credentials vagrant-multi-admin --certificate-authority=${PWD}/ssl/ca.pem --client-key=${PWD}/ssl/admin-key.pem --client-certificate=${PWD}/ssl/admin.pem
 $ kubectl config set-context vagrant-multi --cluster=vagrant-multi-cluster --user=vagrant-multi-admin
 $ kubectl config use-context vagrant-multi
 </code></pre>
-<h2><span id="kubernetes-系統驗證">Kubernetes 系統驗證</span></h2>
-<p>完成設定後，即可使用 kubectl 來查看節點資訊：</p>
-<pre><code class="language-sh">$ kubectl get nodes
+<h2 id="Kubernetes-系統驗證"><a href="#Kubernetes-系統驗證" class="headerlink" title="Kubernetes 系統驗證"></a>Kubernetes 系統驗證</h2><p>完成設定後，即可使用 kubectl 來查看節點資訊：</p>
+<pre><code class="sh">$ kubectl get nodes
 NAME           STATUS                     AGE
 172.17.4.101   Ready,SchedulingDisabled   3m
 172.17.4.201   Ready                      3m
 172.17.4.202   Ready                      3m
 </code></pre>
 <p>查看系統命名空間的 pod 與 svc 資訊：</p>
-<pre><code class="language-sh">$ kubectl get po --all-namespaces
+<pre><code class="sh">$ kubectl get po --all-namespaces
 NAMESPACE     NAME                                    READY     STATUS    RESTARTS   AGE
 kube-system   heapster-v1.2.0-4088228293-4vv12        2/2       Running   0          28m
 kube-system   kube-apiserver-172.17.4.101             1/1       Running   0          29m
@@ -386,7 +380,7 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/02/24/kubernetes/deploy/official-ansible/" data-toggle="tooltip" data-placement="top" title="透過官方 Ansible 部署 Kubernetes(Unrecommended)">&larr; Previous Post</a>
+                            <a href="/2016/02/24/kubernetes/deploy/official-ansible/" data-toggle="tooltip" data-placement="top" title="透過官方 Ansible 部署 Kubernetes">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -421,7 +415,7 @@ kube-system   kubernetes-dashboard-3543765157-vk0mt   1/1       Running   0     
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝 Kubernetes</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">設定 Kubernetes Config</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">使用一個 Custom Kubernetes Config</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">更新與使用本地的 Config</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Kubernetes 系統驗證</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Kubernetes"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝 Kubernetes</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#設定-Kubernetes-Config"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">設定 Kubernetes Config</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#使用一個-Custom-Kubernetes-Config"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">使用一個 Custom Kubernetes Config</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#更新與使用本地的-Config"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">更新與使用本地的 Config</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-系統驗證"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Kubernetes 系統驗證</span></a></li></ol>
         
         </div>
       </aside>

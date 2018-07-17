@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -293,10 +293,9 @@
         </h3>
         <div class="post-content-preview">
             Ceph FS 底層的部分同樣是由 RADOS(OSDs + Monitors + MDSs) 提供，在上一層同樣與 librados 溝通，最上層則是有不同的 library 將其轉換成標準的 POSIX 檔案系統供使用。
-![](/images/ceph/cephfs.png)
 
-建立一個 Ceph File System
-首先將一個叢集建立完成，並提供 Metadata Server ......
+
+建立一個 Ceph File System首先將一個叢集建立完成，並提供 Metadata Server Node 與 Client，建立 Client 可以透過以......
         </div>
     </a>
     
@@ -330,9 +329,8 @@
         <div class="post-content-preview">
             本節將介紹如何透過 ceph-deploy 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台Monitor與三台OSD。而 MDS 則是當使用到 CephFS 的時候才需要部署。
 
-環境準備
-在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：
-            ......
+環境準備在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：
+             ......
         </div>
     </a>
     
@@ -492,10 +490,9 @@ Kubernetes 在 Docker 叢集管理中是很重要的一員，其實作了許多�
         <div class="post-content-preview">
             Apache2 是一套經過測試與用於生產環境的 HTTP 伺服器，在許多網頁伺服器中被廣泛的採用，Apache2 除了本身能力強大外，其也整合了許多的額外模組來提供更多的擴展功能。
 
-Apache2 安裝與設定
-要安裝 Apache 伺服器很簡單，只需要透過 APT 進行安裝即可：
+Apache2 安裝與設定要安裝 Apache 伺服器很簡單，只需要透過 APT 進行安裝即可：
 $ sudo apt-get update
-$ sudo apt-get install -y libapac......
+$ sudo apt-get install -y libapach......
         </div>
     </a>
     
@@ -508,6 +505,71 @@ $ sudo apt-get install -y libapac......
               <a href="/tags/#Linux" title="Linux">Linux</a>
             
               <a href="/tags/#HTTP Server" title="HTTP Server">HTTP Server</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2015/11/04/linux/ubuntu/ubuntu-maas-install/">
+        <h2 class="post-title">
+            Ubuntu Metal as a Service 安裝
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Ubuntu MAAS 提供了裸機服務，將雲端的語言帶到物理伺服器中，其功能可以讓企業一次大量部署伺服器硬體環境的作業系統與基本設定等功能。
+
+安裝與設定首先為了方便系統操作，將sudo設置為不需要密碼：
+$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2015-11-04
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+              <a href="/tags/#PXE" title="PXE">PXE</a>
+            
+              <a href="/tags/#Bare Metal" title="Bare Metal">Bare Metal</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2015/10/29/linux/ubuntu/keepalived/">
+        <h2 class="post-title">
+            利用 Keepalived 提供 VIP
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Keepalived 是一種基於 VRRP 協定實現的高可靠 Web 服務方案，用於防止單點故障問題。因此一個 Web 服務運作至少會擁有兩台伺服器執行 Keepalived，一台作為 master，一台作為 backup，並提供一個虛擬 IP（VIP），master 會定期發送特定訊息給 backup 伺服器，當 backup 沒收到 master 訊息時，表示 master 已故障，這時......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2015-10-29
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+              <a href="/tags/#High Availability" title="High Availability">High Availability</a>
             
         </div>
     
@@ -543,77 +605,6 @@ Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
               <a href="/tags/#Kafka" title="Kafka">Kafka</a>
             
               <a href="/tags/#Message Queue" title="Message Queue">Message Queue</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2015/10/12/data-engineer/spark-mesos/">
-        <h2 class="post-title">
-            Spark on Mesos 多節點部署
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Spark + Mesos 叢集是由多個主節點與工作節點組合而成，它實作了兩層的排程（Scheduler）來提供粗/細粒度的排程。在 Mesos 中主節點（Master）主要負責資料的分配與排程，然而從節點（Slave）則是主要執行任務負載的角色。Mesos 也提供了高可靠的部署模式，可利用多個主節點的 ZooKeeper 來做服務發現。
-
-![](/images/spark/mesos.p......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2015-10-12
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Spark" title="Spark">Spark</a>
-            
-              <a href="/tags/#Mesos" title="Mesos">Mesos</a>
-            
-              <a href="/tags/#HDFS" title="HDFS">HDFS</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/">
-        <h2 class="post-title">
-            Ubuntu PXE 安裝與設定
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。
-
-
-PXE 伺服器必須要提供至少含有 DHCP 以及 TFTP :
-
-DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知用......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2015-10-11
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-              <a href="/tags/#PXE" title="PXE">PXE</a>
-            
-              <a href="/tags/#Bare Metal" title="Bare Metal">Bare Metal</a>
             
         </div>
     
@@ -727,6 +718,10 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -742,10 +737,6 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -757,8 +748,6 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -786,6 +775,10 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -827,8 +820,6 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -843,7 +834,9 @@ DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

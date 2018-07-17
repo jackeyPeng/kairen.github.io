@@ -69,7 +69,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('undefined')
+            background-image: url('/images/kube/bg.png')
             /*post*/
         
     }
@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -300,8 +300,7 @@
 </ul>
 <a id="more"></a>
 <p><img src="/images/kube/kubernetes-aa-ha.png" alt=""></p>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
 <thead>
 <tr>
@@ -353,18 +352,17 @@
 <p>另外由所有 master 節點提供一組 VIP <code>192.16.35.10</code>。</p>
 <blockquote>
 <ul>
-<li>這邊<code>m</code>為主要控制節點，<code>n</code>為應用程式工作節點。</li>
+<li>這邊<code>m</code>為 K8s Master 節點，<code>n</code>為 K8s Node 節點。</li>
 <li>所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。</li>
 <li>可以下載 <a href="https://kairen.github.io/files/manual-v1.10/Vagrantfile">Vagrantfile</a> 來建立 Virtualbox 虛擬機叢集。不過需要注意機器資源是否足夠。</li>
 </ul>
 </blockquote>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>開始安裝前需要確保以下條件已達成：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始安裝前需要確保以下條件已達成：</p>
 <ul>
 <li><code>所有節點</code>彼此網路互通，並且<code>k8s-m1</code> SSH 登入其他節點為 passwdless。</li>
 <li>所有防火牆與 SELinux 已關閉。如 CentOS：</li>
 </ul>
-<pre><code class="language-sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
+<pre><code class="sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
 $ setenforce 0
 $ vim /etc/selinux/config
 SELINUX=disabled
@@ -379,22 +377,20 @@ SELINUX=disabled
 192.16.35.14 k8s-n1
 192.16.35.15 k8s-n2
 192.16.35.16 k8s-n3
-</code></pre>
-<ul>
+</code></pre><ul>
 <li><code>所有節點</code>需要安裝 Docker CE 版本的容器引擎：</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 </code></pre>
 <blockquote>
-<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>
-CentOS 安裝完成後，需要再執行以下指令：</p>
-</blockquote>
-<pre><code class="language-sh">$ systemctl enable docker &amp;&amp; systemctl start docker
+<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>CentOS 安裝完成後，需要再執行以下指令：</p>
+<pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
 </code></pre>
+</blockquote>
 <ul>
 <li><code>所有節點</code>需要設定<code>/etc/sysctl.d/k8s.conf</code>的系統參數。</li>
 </ul>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; /etc/sysctl.d/k8s.conf
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -405,7 +401,7 @@ $ sysctl -p /etc/sysctl.d/k8s.conf
 <ul>
 <li>Kubernetes v1.8+ 要求關閉系統 Swap，若不關閉則需要修改 kubelet 設定參數，在<code>所有節點</code>利用以下指令關閉：</li>
 </ul>
-<pre><code class="language-sh">$ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
+<pre><code class="sh">$ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0
 </code></pre>
 <blockquote>
 <p>記得<code>/etc/fstab</code>也要註解掉<code>SWAP</code>掛載。</p>
@@ -413,7 +409,7 @@ $ sysctl -p /etc/sysctl.d/k8s.conf
 <ul>
 <li>在<code>所有節點</code>下載 Kubernetes 二進制執行檔：</li>
 </ul>
-<pre><code class="language-sh">$ export KUBE_URL=&quot;https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64&quot;
+<pre><code class="sh">$ export KUBE_URL=&quot;https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64&quot;
 $ wget &quot;${KUBE_URL}/kubelet&quot; -O /usr/local/bin/kubelet
 $ chmod +x /usr/local/bin/kubelet
 
@@ -424,34 +420,32 @@ $ chmod +x /usr/local/bin/kubectl
 <ul>
 <li>在<code>所有節點</code>下載 Kubernetes CNI 二進制檔案：</li>
 </ul>
-<pre><code class="language-sh">$ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
+<pre><code class="sh">$ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin
 $ export CNI_URL=&quot;https://github.com/containernetworking/plugins/releases/download&quot;
 $ wget -qO- --show-progress &quot;${CNI_URL}/v0.6.0/cni-plugins-amd64-v0.6.0.tgz&quot; | tar -zx
 </code></pre>
 <ul>
 <li>在<code>k8s-m1</code>需要安裝<code>CFSSL</code>工具，這將會用來建立 TLS Certificates。</li>
 </ul>
-<pre><code class="language-sh">$ export CFSSL_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
+<pre><code class="sh">$ export CFSSL_URL=&quot;https://pkg.cfssl.org/R1.2&quot;
 $ wget &quot;${CFSSL_URL}/cfssl_linux-amd64&quot; -O /usr/local/bin/cfssl
 $ wget &quot;${CFSSL_URL}/cfssljson_linux-amd64&quot; -O /usr/local/bin/cfssljson
 $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson
 </code></pre>
-<h2><span id="建立叢集-ca-keys-與-certificates">建立叢集 CA keys 與 Certificates</span></h2>
-<p>在這個部分，將需要產生多個元件的 Certificates，這包含 Etcd、Kubernetes 元件等，並且每個叢集都會有一個根數位憑證認證機構(Root Certificate Authority)被用在認證 API Server 與 Kubelet 端的憑證。</p>
+<h2 id="建立叢集-CA-keys-與-Certificates"><a href="#建立叢集-CA-keys-與-Certificates" class="headerlink" title="建立叢集 CA keys 與 Certificates"></a>建立叢集 CA keys 與 Certificates</h2><p>在這個部分，將需要產生多個元件的 Certificates，這包含 Etcd、Kubernetes 元件等，並且每個叢集都會有一個根數位憑證認證機構(Root Certificate Authority)被用在認證 API Server 與 Kubelet 端的憑證。</p>
 <blockquote>
 <p>P.S. 這邊要注意 CA JSON 檔的<code>CN(Common Name)</code>與<code>O(Organization)</code>等內容是會影響 Kubernetes 元件認證的。</p>
 </blockquote>
-<h3><span id="etcd">Etcd</span></h3>
-<p>首先在<code>k8s-m1</code>建立<code>/etc/etcd/ssl</code>資料夾，然後進入目錄完成以下操作。</p>
-<pre><code class="language-sh">$ mkdir -p /etc/etcd/ssl &amp;&amp; cd /etc/etcd/ssl
+<h3 id="Etcd"><a href="#Etcd" class="headerlink" title="Etcd"></a>Etcd</h3><p>首先在<code>k8s-m1</code>建立<code>/etc/etcd/ssl</code>資料夾，然後進入目錄完成以下操作。</p>
+<pre><code class="sh">$ mkdir -p /etc/etcd/ssl &amp;&amp; cd /etc/etcd/ssl
 $ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.10/pki&quot;
 </code></pre>
 <p>下載<code>ca-config.json</code>與<code>etcd-ca-csr.json</code>檔案，並從 CSR json 產生 CA keys 與 Certificate：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/etcd-ca-csr.json&quot;
+<pre><code class="sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/etcd-ca-csr.json&quot;
 $ cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
 </code></pre>
 <p>下載<code>etcd-csr.json</code>檔案，並產生 Etcd 證書：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/etcd-csr.json&quot;
+<pre><code class="sh">$ wget &quot;${PKI_URL}/etcd-csr.json&quot;
 $ cfssl gencert \
   -ca=etcd-ca.pem \
   -ca-key=etcd-ca-key.pem \
@@ -464,14 +458,14 @@ $ cfssl gencert \
 <p><code>-hostname</code>需修改成所有 masters 節點。</p>
 </blockquote>
 <p>完成後刪除不必要檔案：</p>
-<pre><code class="language-sh">$ rm -rf *.json *.csr
+<pre><code class="sh">$ rm -rf *.json *.csr
 </code></pre>
 <p>確認<code>/etc/etcd/ssl</code>有以下檔案：</p>
-<pre><code class="language-sh">$ ls /etc/etcd/ssl
+<pre><code class="sh">$ ls /etc/etcd/ssl
 etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pem
 </code></pre>
 <p>複製相關檔案至其他 Etcd 節點，這邊為所有<code>master</code>節點：</p>
-<pre><code class="language-sh">$ for NODE in k8s-m2 k8s-m3; do
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
     echo &quot;--- $NODE ---&quot;
     ssh ${NODE} &quot;mkdir -p /etc/etcd/ssl&quot;
     for FILE in etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pem; do
@@ -479,21 +473,19 @@ etcd-ca-key.pem  etcd-ca.pem  etcd-key.pem  etcd.pem
     done
   done
 </code></pre>
-<h3><span id="kubernetes">Kubernetes</span></h3>
-<p>在<code>k8s-m1</code>建立<code>pki</code>資料夾，然後進入目錄完成以下章節操作。</p>
-<pre><code class="language-sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
+<h3 id="Kubernetes"><a href="#Kubernetes" class="headerlink" title="Kubernetes"></a>Kubernetes</h3><p>在<code>k8s-m1</code>建立<code>pki</code>資料夾，然後進入目錄完成以下章節操作。</p>
+<pre><code class="sh">$ mkdir -p /etc/kubernetes/pki &amp;&amp; cd /etc/kubernetes/pki
 $ export PKI_URL=&quot;https://kairen.github.io/files/manual-v1.10/pki&quot;
 $ export KUBE_APISERVER=&quot;https://192.16.35.10:6443&quot;
 </code></pre>
 <p>下載<code>ca-config.json</code>與<code>ca-csr.json</code>檔案，並產生 CA 金鑰：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/ca-csr.json&quot;
+<pre><code class="sh">$ wget &quot;${PKI_URL}/ca-config.json&quot; &quot;${PKI_URL}/ca-csr.json&quot;
 $ cfssl gencert -initca ca-csr.json | cfssljson -bare ca
 $ ls ca*.pem
 ca-key.pem  ca.pem
 </code></pre>
-<h4><span id="api-server-certificate">API Server Certificate</span></h4>
-<p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver 憑證：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/apiserver-csr.json&quot;
+<h4 id="API-Server-Certificate"><a href="#API-Server-Certificate" class="headerlink" title="API Server Certificate"></a>API Server Certificate</h4><p>下載<code>apiserver-csr.json</code>檔案，並產生 kube-apiserver 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/apiserver-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -512,9 +504,8 @@ apiserver-key.pem  apiserver.pem
 <li><code>kubernetes.default</code>為 Kubernetes DN。</li>
 </ul>
 </blockquote>
-<h4><span id="front-proxy-certificate">Front Proxy Certificate</span></h4>
-<p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front Proxy CA 金鑰，Front Proxy 主要是用在 API aggregator 上:</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/front-proxy-ca-csr.json&quot;
+<h4 id="Front-Proxy-Certificate"><a href="#Front-Proxy-Certificate" class="headerlink" title="Front Proxy Certificate"></a>Front Proxy Certificate</h4><p>下載<code>front-proxy-ca-csr.json</code>檔案，並產生 Front Proxy CA 金鑰，Front Proxy 主要是用在 API aggregator 上:</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-ca-csr.json&quot;
 $ cfssl gencert \
   -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
 
@@ -522,7 +513,7 @@ $ ls front-proxy-ca*.pem
 front-proxy-ca-key.pem  front-proxy-ca.pem
 </code></pre>
 <p>下載<code>front-proxy-client-csr.json</code>檔案，並產生 front-proxy-client 證書：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/front-proxy-client-csr.json&quot;
+<pre><code class="sh">$ wget &quot;${PKI_URL}/front-proxy-client-csr.json&quot;
 $ cfssl gencert \
   -ca=front-proxy-ca.pem \
   -ca-key=front-proxy-ca-key.pem \
@@ -533,9 +524,8 @@ $ cfssl gencert \
 $ ls front-proxy-client*.pem
 front-proxy-client-key.pem  front-proxy-client.pem
 </code></pre>
-<h4><span id="admin-certificate">Admin Certificate</span></h4>
-<p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 憑證：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
+<h4 id="Admin-Certificate"><a href="#Admin-Certificate" class="headerlink" title="Admin Certificate"></a>Admin Certificate</h4><p>下載<code>admin-csr.json</code>檔案，並產生 admin certificate 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/admin-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -547,7 +537,7 @@ $ ls admin*.pem
 admin-key.pem  admin.pem
 </code></pre>
 <p>接著透過以下指令產生名稱為 <code>admin.conf</code> 的 kubeconfig 檔：</p>
-<pre><code class="language-sh"># admin set cluster
+<pre><code class="sh"># admin set cluster
 $ kubectl config set-cluster kubernetes \
     --certificate-authority=ca.pem \
     --embed-certs=true \
@@ -571,9 +561,8 @@ $ kubectl config set-context kubernetes-admin@kubernetes \
 $ kubectl config use-context kubernetes-admin@kubernetes \
     --kubeconfig=../admin.conf
 </code></pre>
-<h4><span id="controller-manager-certificate">Controller Manager Certificate</span></h4>
-<p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 憑證：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/manager-csr.json&quot;
+<h4 id="Controller-Manager-Certificate"><a href="#Controller-Manager-Certificate" class="headerlink" title="Controller Manager Certificate"></a>Controller Manager Certificate</h4><p>下載<code>manager-csr.json</code>檔案，並產生 kube-controller-manager certificate 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/manager-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -588,7 +577,7 @@ controller-manager-key.pem  controller-manager.pem
 <p>若節點 IP 不同，需要修改<code>manager-csr.json</code>的<code>hosts</code>。</p>
 </blockquote>
 <p>接著透過以下指令產生名稱為<code>controller-manager.conf</code>的 kubeconfig 檔：</p>
-<pre><code class="language-sh"># controller-manager set cluster
+<pre><code class="sh"># controller-manager set cluster
 $ kubectl config set-cluster kubernetes \
     --certificate-authority=ca.pem \
     --embed-certs=true \
@@ -612,9 +601,8 @@ $ kubectl config set-context system:kube-controller-manager@kubernetes \
 $ kubectl config use-context system:kube-controller-manager@kubernetes \
     --kubeconfig=../controller-manager.conf
 </code></pre>
-<h4><span id="scheduler-certificate">Scheduler Certificate</span></h4>
-<p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 憑證：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/scheduler-csr.json&quot;
+<h4 id="Scheduler-Certificate"><a href="#Scheduler-Certificate" class="headerlink" title="Scheduler Certificate"></a>Scheduler Certificate</h4><p>下載<code>scheduler-csr.json</code>檔案，並產生 kube-scheduler certificate 憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/scheduler-csr.json&quot;
 $ cfssl gencert \
   -ca=ca.pem \
   -ca-key=ca-key.pem \
@@ -629,7 +617,7 @@ scheduler-key.pem  scheduler.pem
 <p>若節點 IP 不同，需要修改<code>scheduler-csr.json</code>的<code>hosts</code>。</p>
 </blockquote>
 <p>接著透過以下指令產生名稱為 <code>scheduler.conf</code> 的 kubeconfig 檔：</p>
-<pre><code class="language-sh"># scheduler set cluster
+<pre><code class="sh"># scheduler set cluster
 $ kubectl config set-cluster kubernetes \
     --certificate-authority=ca.pem \
     --embed-certs=true \
@@ -653,9 +641,8 @@ $ kubectl config set-context system:kube-scheduler@kubernetes \
 $ kubectl config use-context system:kube-scheduler@kubernetes \
     --kubeconfig=../scheduler.conf
 </code></pre>
-<h4><span id="master-kubelet-certificate">Master Kubelet Certificate</span></h4>
-<p>接著在<code>k8s-m1</code>節點下載<code>kubelet-csr.json</code>檔案，並產生所有<code>master</code>節點的憑證：</p>
-<pre><code class="language-sh">$ wget &quot;${PKI_URL}/kubelet-csr.json&quot;
+<h4 id="Master-Kubelet-Certificate"><a href="#Master-Kubelet-Certificate" class="headerlink" title="Master Kubelet Certificate"></a>Master Kubelet Certificate</h4><p>接著在<code>k8s-m1</code>節點下載<code>kubelet-csr.json</code>檔案，並產生所有<code>master</code>節點的憑證：</p>
+<pre><code class="sh">$ wget &quot;${PKI_URL}/kubelet-csr.json&quot;
 $ for NODE in k8s-m1 k8s-m2 k8s-m3; do
     echo &quot;--- $NODE ---&quot;
     cp kubelet-csr.json kubelet-$NODE-csr.json;
@@ -676,7 +663,7 @@ kubelet-k8s-m1-key.pem  kubelet-k8s-m1.pem  kubelet-k8s-m2-key.pem  kubelet-k8s-
 <p>這邊需要依據節點修改<code>-hostname</code>與<code>$NODE</code>。</p>
 </blockquote>
 <p>完成後複製 kubelet 憑證至其他<code>master</code>節點：</p>
-<pre><code class="language-sh">$ for NODE in k8s-m2 k8s-m3; do
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
     echo &quot;--- $NODE ---&quot;
     ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki&quot;
     for FILE in kubelet-$NODE-key.pem kubelet-$NODE.pem ca.pem; do
@@ -685,7 +672,7 @@ kubelet-k8s-m1-key.pem  kubelet-k8s-m1.pem  kubelet-k8s-m2-key.pem  kubelet-k8s-
   done
 </code></pre>
 <p>接著執行以下指令產生名稱為<code>kubelet.conf</code>的 kubeconfig 檔：</p>
-<pre><code class="language-sh">$ for NODE in k8s-m1 k8s-m2 k8s-m3; do
+<pre><code class="sh">$ for NODE in k8s-m1 k8s-m2 k8s-m3; do
     echo &quot;--- $NODE ---&quot;
     ssh ${NODE} &quot;cd /etc/kubernetes/pki &amp;&amp; \
       kubectl config set-cluster kubernetes \
@@ -707,20 +694,17 @@ kubelet-k8s-m1-key.pem  kubelet-k8s-m1.pem  kubelet-k8s-m2-key.pem  kubelet-k8s-
       rm kubelet-${NODE}.pem kubelet-${NODE}-key.pem&quot;
   done
 </code></pre>
-<h4><span id="service-account-key">Service Account Key</span></h4>
-<p>Service account 不是透過 CA 進行認證，因此不要透過 CA 來做 Service account key 的檢查，這邊建立一組 Private 與 Public 金鑰提供給 Service account key 使用：</p>
-<pre><code class="language-sh">$ openssl genrsa -out sa.key 2048
+<h4 id="Service-Account-Key"><a href="#Service-Account-Key" class="headerlink" title="Service Account Key"></a>Service Account Key</h4><p>Service account 不是透過 CA 進行認證，因此不要透過 CA 來做 Service account key 的檢查，這邊建立一組 Private 與 Public 金鑰提供給 Service account key 使用：</p>
+<pre><code class="sh">$ openssl genrsa -out sa.key 2048
 $ openssl rsa -in sa.key -pubout -out sa.pub
 $ ls sa.*
 sa.key  sa.pub
 </code></pre>
-<h4><span id="刪除不必要檔案">刪除不必要檔案</span></h4>
-<p>所有資訊準備完成後，就可以將一些不必要檔案刪除：</p>
-<pre><code class="language-sh">$ rm -rf *.json *.csr scheduler*.pem controller-manager*.pem admin*.pem kubelet*.pem
+<h4 id="刪除不必要檔案"><a href="#刪除不必要檔案" class="headerlink" title="刪除不必要檔案"></a>刪除不必要檔案</h4><p>所有資訊準備完成後，就可以將一些不必要檔案刪除：</p>
+<pre><code class="sh">$ rm -rf *.json *.csr scheduler*.pem controller-manager*.pem admin*.pem kubelet*.pem
 </code></pre>
-<h4><span id="複製檔案至其他節點">複製檔案至其他節點</span></h4>
-<p>複製憑證檔案至其他<code>master</code>節點：</p>
-<pre><code class="language-sh">$ for NODE in k8s-m2 k8s-m3; do
+<h4 id="複製檔案至其他節點"><a href="#複製檔案至其他節點" class="headerlink" title="複製檔案至其他節點"></a>複製檔案至其他節點</h4><p>複製憑證檔案至其他<code>master</code>節點：</p>
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
     echo &quot;--- $NODE ---&quot;
     for FILE in $(ls /etc/kubernetes/pki/); do
       scp /etc/kubernetes/pki/${FILE} ${NODE}:/etc/kubernetes/pki/${FILE}
@@ -728,15 +712,14 @@ sa.key  sa.pub
   done
 </code></pre>
 <p>複製 Kubernetes config 檔案至其他<code>master</code>節點：</p>
-<pre><code class="language-sh">$ for NODE in k8s-m2 k8s-m3; do
+<pre><code class="sh">$ for NODE in k8s-m2 k8s-m3; do
     echo &quot;--- $NODE ---&quot;
     for FILE in admin.conf controller-manager.conf scheduler.conf; do
       scp /etc/kubernetes/${FILE} ${NODE}:/etc/kubernetes/${FILE}
     done
   done
 </code></pre>
-<h2><span id="kubernetes-masters">Kubernetes Masters</span></h2>
-<p>本部分將說明如何建立與設定 Kubernetes Master 角色，過程中會部署以下元件：</p>
+<h2 id="Kubernetes-Masters"><a href="#Kubernetes-Masters" class="headerlink" title="Kubernetes Masters"></a>Kubernetes Masters</h2><p>本部分將說明如何建立與設定 Kubernetes Master 角色，過程中會部署以下元件：</p>
 <ul>
 <li><strong>kube-apiserver</strong>：提供 REST APIs，包含授權、認證與狀態儲存等。</li>
 <li><strong>kube-controller-manager</strong>：負責維護叢集的狀態，如自動擴展，滾動更新等。</li>
@@ -745,9 +728,8 @@ sa.key  sa.pub
 <li><strong>HAProxy</strong>：提供負載平衡器。</li>
 <li><strong>Keepalived</strong>：提供虛擬網路位址(VIP)。</li>
 </ul>
-<h3><span id="部署與設定">部署與設定</span></h3>
-<p>首先在<code>所有 master 節點</code>下載部署元件的 YAML 檔案，這邊不採用二進制執行檔與 Systemd 來管理這些元件，全部採用 <a href="https://kubernetes.io/docs/tasks/administer-cluster/static-pod/" target="_blank" rel="noopener">Static Pod</a> 來達成。這邊將檔案下載至<code>/etc/kubernetes/manifests</code>目錄：</p>
-<pre><code class="language-sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.10/master&quot;
+<h3 id="部署與設定"><a href="#部署與設定" class="headerlink" title="部署與設定"></a>部署與設定</h3><p>首先在<code>所有 master 節點</code>下載部署元件的 YAML 檔案，這邊不採用二進制執行檔與 Systemd 來管理這些元件，全部採用 <a href="https://kubernetes.io/docs/tasks/administer-cluster/static-pod/" target="_blank" rel="noopener">Static Pod</a> 來達成。這邊將檔案下載至<code>/etc/kubernetes/manifests</code>目錄：</p>
+<pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.10/master&quot;
 $ mkdir -p /etc/kubernetes/manifests &amp;&amp; cd /etc/kubernetes/manifests
 $ for FILE in kube-apiserver kube-controller-manager kube-scheduler haproxy keepalived etcd etcd.config; do
     wget &quot;${CORE_URL}/${FILE}.yml.conf&quot; -O ${FILE}.yml
@@ -768,14 +750,14 @@ etcd.yml  haproxy.yml  keepalived.yml  kube-apiserver.yml  kube-controller-manag
 </ul>
 </blockquote>
 <p>產生一個用來加密 Etcd 的 Key：</p>
-<pre><code class="language-sh">$ head -c 32 /dev/urandom | base64
+<pre><code class="sh">$ head -c 32 /dev/urandom | base64
 SUpbL4juUYyvxj3/gonV5xVEx8j769/99TSAf8YT/sQ=
 </code></pre>
 <blockquote>
 <p>注意每台<code>master</code>節點需要用一樣的 Key。</p>
 </blockquote>
 <p>在<code>/etc/kubernetes/</code>目錄下，建立<code>encryption.yml</code>的加密 YAML 檔案：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/encryption.yml
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/encryption.yml
 kind: EncryptionConfig
 apiVersion: v1
 resources:
@@ -793,7 +775,7 @@ EOF
 <p>Etcd 資料加密可參考這篇 <a href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/" target="_blank" rel="noopener">Encrypting data at rest</a>。</p>
 </blockquote>
 <p>在<code>/etc/kubernetes/</code>目錄下，建立<code>audit-policy.yml</code>的進階稽核策略 YAML 檔：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; /etc/kubernetes/audit-policy.yml
 apiVersion: audit.k8s.io/v1beta1
 kind: Policy
 rules:
@@ -804,14 +786,14 @@ EOF
 <p>Audit Policy 請參考這篇 <a href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/" target="_blank" rel="noopener">Auditing</a>。</p>
 </blockquote>
 <p>下載<code>haproxy.cfg</code>檔案來提供給 HAProxy 容器使用：</p>
-<pre><code class="language-sh">$ mkdir -p /etc/haproxy/
+<pre><code class="sh">$ mkdir -p /etc/haproxy/
 $ wget &quot;${CORE_URL}/haproxy.cfg&quot; -O /etc/haproxy/haproxy.cfg
 </code></pre>
 <blockquote>
 <p>若與本教學 IP 不同的話，請記得修改設定檔。</p>
 </blockquote>
 <p>下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
-<pre><code class="language-sh">$ mkdir -p /etc/systemd/system/kubelet.service.d
+<pre><code class="sh">$ mkdir -p /etc/systemd/system/kubelet.service.d
 $ wget &quot;${CORE_URL}/kubelet.service&quot; -O /lib/systemd/system/kubelet.service
 $ wget &quot;${CORE_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet.service.d/10-kubelet.conf
 </code></pre>
@@ -819,11 +801,11 @@ $ wget &quot;${CORE_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet.se
 <p>若 cluster <code>dns</code>或<code>domain</code>有改變的話，需要修改<code>10-kubelet.conf</code>。</p>
 </blockquote>
 <p>最後建立 var 存放資訊，然後啟動 kubelet 服務:</p>
-<pre><code class="language-sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes /var/lib/etcd
+<pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes /var/lib/etcd
 $ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 </code></pre>
 <p>完成後會需要一段時間來下載映像檔與啟動元件，可以利用該指令來監看：</p>
-<pre><code class="language-sh">$ watch netstat -ntlp
+<pre><code class="sh">$ watch netstat -ntlp
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
 tcp        0      0 127.0.0.1:10248         0.0.0.0:*               LISTEN      10344/kubelet
@@ -839,9 +821,8 @@ tcp6       0      0 :::5443                 :::*                    LISTEN      
 <blockquote>
 <p>若看到以上資訊表示服務正常啟動，若發生問題可以用<code>docker</code>指令來查看。</p>
 </blockquote>
-<h3><span id="驗證叢集">驗證叢集</span></h3>
-<p>完成後，在任意一台<code>master</code>節點複製 admin kubeconfig 檔案，並透過簡單指令驗證：</p>
-<pre><code class="language-sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
+<h3 id="驗證叢集"><a href="#驗證叢集" class="headerlink" title="驗證叢集"></a>驗證叢集</h3><p>完成後，在任意一台<code>master</code>節點複製 admin kubeconfig 檔案，並透過簡單指令驗證：</p>
+<pre><code class="sh">$ cp /etc/kubernetes/admin.conf ~/.kube/config
 $ kubectl get cs
 NAME                 STATUS    MESSAGE              ERROR
 controller-manager   Healthy   ok
@@ -864,14 +845,14 @@ haproxy-k8s-m3                   1/1       Running   0          1m
 ...
 </code></pre>
 <p>接著確認服務能夠執行 logs 等指令：</p>
-<pre><code class="language-sh">$ kubectl -n kube-system logs -f kube-scheduler-k8s-m2
+<pre><code class="sh">$ kubectl -n kube-system logs -f kube-scheduler-k8s-m2
 Error from server (Forbidden): Forbidden (user=kube-apiserver, verb=get, resource=nodes, subresource=proxy) ( pods/log kube-scheduler-k8s-m2)
 </code></pre>
 <blockquote>
 <p>這邊會發現出現 403 Forbidden 問題，這是因為 <code>kube-apiserver</code> user 並沒有 nodes 的資源存取權限，屬於正常。</p>
 </blockquote>
 <p>由於上述權限問題，必需建立一個<code>apiserver-to-kubelet-rbac.yml</code>來定義權限，以供對 Nodes 容器執行 logs、exec 等指令。在任意一台<code>master</code>節點執行以下指令：</p>
-<pre><code class="language-sh">$ kubectl apply -f &quot;${CORE_URL}/apiserver-to-kubelet-rbac.yml.conf&quot;
+<pre><code class="sh">$ kubectl apply -f &quot;${CORE_URL}/apiserver-to-kubelet-rbac.yml.conf&quot;
 clusterrole.rbac.authorization.k8s.io &quot;system:kube-apiserver-to-kubelet&quot; configured
 clusterrolebinding.rbac.authorization.k8s.io &quot;system:kube-apiserver&quot; configured
 
@@ -882,7 +863,7 @@ I0403 02:30:36.375935       1 server.go:555] Version: v1.10.0
 I0403 02:30:36.378208       1 server.go:574] starting healthz server on 127.0.0.1:10251
 </code></pre>
 <p>設定<code>master</code>節點允許 Taint：</p>
-<pre><code class="language-sh">$ kubectl taint nodes node-role.kubernetes.io/master=&quot;&quot;:NoSchedule --all
+<pre><code class="sh">$ kubectl taint nodes node-role.kubernetes.io/master=&quot;&quot;:NoSchedule --all
 node &quot;k8s-m1&quot; tainted
 node &quot;k8s-m2&quot; tainted
 node &quot;k8s-m3&quot; tainted
@@ -890,10 +871,9 @@ node &quot;k8s-m3&quot; tainted
 <blockquote>
 <p><a href="https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/" target="_blank" rel="noopener">Taints and Tolerations</a>。</p>
 </blockquote>
-<h3><span id="建立-tls-bootstrapping-rbac-與-secret">建立 TLS Bootstrapping RBAC 與 Secret</span></h3>
-<p>由於本次安裝啟用了 TLS 認證，因此每個節點的 kubelet 都必須使用 kube-apiserver 的 CA 的憑證後，才能與 kube-apiserver 進行溝通，而該過程需要手動針對每台節點單獨簽署憑證是一件繁瑣的事情，且一旦節點增加會延伸出管理不易問題; 而 TLS bootstrapping 目標就是解決該問題，透過讓 kubelet 先使用一個預定低權限使用者連接到 kube-apiserver，然後在對 kube-apiserver 申請憑證簽署，當授權 Token 一致時，Node 節點的 kubelet 憑證將由 kube-apiserver 動態簽署提供。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="noopener">TLS Bootstrapping</a> 與 <a href="https://kubernetes.io/docs/admin/bootstrap-tokens/" target="_blank" rel="noopener">Authenticating with Bootstrap Tokens</a>。</p>
+<h3 id="建立-TLS-Bootstrapping-RBAC-與-Secret"><a href="#建立-TLS-Bootstrapping-RBAC-與-Secret" class="headerlink" title="建立 TLS Bootstrapping RBAC 與 Secret"></a>建立 TLS Bootstrapping RBAC 與 Secret</h3><p>由於本次安裝啟用了 TLS 認證，因此每個節點的 kubelet 都必須使用 kube-apiserver 的 CA 的憑證後，才能與 kube-apiserver 進行溝通，而該過程需要手動針對每台節點單獨簽署憑證是一件繁瑣的事情，且一旦節點增加會延伸出管理不易問題; 而 TLS bootstrapping 目標就是解決該問題，透過讓 kubelet 先使用一個預定低權限使用者連接到 kube-apiserver，然後在對 kube-apiserver 申請憑證簽署，當授權 Token 一致時，Node 節點的 kubelet 憑證將由 kube-apiserver 動態簽署提供。具體作法可以參考 <a href="https://kubernetes.io/docs/admin/kubelet-tls-bootstrapping/" target="_blank" rel="noopener">TLS Bootstrapping</a> 與 <a href="https://kubernetes.io/docs/admin/bootstrap-tokens/" target="_blank" rel="noopener">Authenticating with Bootstrap Tokens</a>。</p>
 <p>首先在<code>k8s-m1</code>建立一個變數來產生<code>BOOTSTRAP_TOKEN</code>，並建立<code>bootstrap-kubelet.conf</code>的 Kubernetes config 檔：</p>
-<pre><code class="language-sh">$ cd /etc/kubernetes/pki
+<pre><code class="sh">$ cd /etc/kubernetes/pki
 $ export TOKEN_ID=$(openssl rand 3 -hex)
 $ export TOKEN_SECRET=$(openssl rand 8 -hex)
 $ export BOOTSTRAP_TOKEN=${TOKEN_ID}.${TOKEN_SECRET}
@@ -925,7 +905,7 @@ $ kubectl config use-context tls-bootstrap-token-user@kubernetes \
 <p>若想要用手動簽署憑證來進行授權的話，可以參考 <a href="https://kubernetes.io/docs/concepts/cluster-administration/certificates/" target="_blank" rel="noopener">Certificate</a>。</p>
 </blockquote>
 <p>接著在<code>k8s-m1</code>建立 TLS bootstrap secret 來提供自動簽證使用：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF | kubectl create -f -
+<pre><code class="sh">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: v1
 kind: Secret
 metadata:
@@ -943,15 +923,14 @@ EOF
 secret &quot;bootstrap-token-65a3a9&quot; created
 </code></pre>
 <p>在<code>k8s-m1</code>建立 TLS Bootstrap Autoapprove RBAC：</p>
-<pre><code class="language-sh">$ kubectl apply -f &quot;${CORE_URL}/kubelet-bootstrap-rbac.yml.conf&quot;
+<pre><code class="sh">$ kubectl apply -f &quot;${CORE_URL}/kubelet-bootstrap-rbac.yml.conf&quot;
 clusterrolebinding.rbac.authorization.k8s.io &quot;kubelet-bootstrap&quot; created
 clusterrolebinding.rbac.authorization.k8s.io &quot;node-autoapprove-bootstrap&quot; created
 clusterrolebinding.rbac.authorization.k8s.io &quot;node-autoapprove-certificate-rotation&quot; created
 </code></pre>
-<h2><span id="kubernetes-nodes">Kubernetes Nodes</span></h2>
-<p>本部分將說明如何建立與設定 Kubernetes Node 角色，Node 是主要執行容器實例(Pod)的工作節點。</p>
+<h2 id="Kubernetes-Nodes"><a href="#Kubernetes-Nodes" class="headerlink" title="Kubernetes Nodes"></a>Kubernetes Nodes</h2><p>本部分將說明如何建立與設定 Kubernetes Node 角色，Node 是主要執行容器實例(Pod)的工作節點。</p>
 <p>在開始部署前，先在<code>k8-m1</code>將需要用到的檔案複製到所有<code>node</code>節點上：</p>
-<pre><code class="language-sh">$ cd /etc/kubernetes/pki
+<pre><code class="sh">$ cd /etc/kubernetes/pki
 $ for NODE in k8s-n1 k8s-n2 k8s-n3; do
     echo &quot;--- $NODE ---&quot;
     ssh ${NODE} &quot;mkdir -p /etc/kubernetes/pki/&quot;
@@ -966,9 +945,8 @@ $ for NODE in k8s-n1 k8s-n2 k8s-n3; do
     done
   done
 </code></pre>
-<h3><span id="部署與設定">部署與設定</span></h3>
-<p>在每台<code>node</code>節點下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
-<pre><code class="language-sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.10/node&quot;
+<h3 id="部署與設定-1"><a href="#部署與設定-1" class="headerlink" title="部署與設定"></a>部署與設定</h3><p>在每台<code>node</code>節點下載<code>kubelet.service</code>相關檔案來管理 kubelet：</p>
+<pre><code class="sh">$ export CORE_URL=&quot;https://kairen.github.io/files/manual-v1.10/node&quot;
 $ mkdir -p /etc/systemd/system/kubelet.service.d
 $ wget &quot;${CORE_URL}/kubelet.service&quot; -O /lib/systemd/system/kubelet.service
 $ wget &quot;${CORE_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet.service.d/10-kubelet.conf
@@ -977,12 +955,11 @@ $ wget &quot;${CORE_URL}/10-kubelet.conf&quot; -O /etc/systemd/system/kubelet.se
 <p>若 cluster <code>dns</code>或<code>domain</code>有改變的話，需要修改<code>10-kubelet.conf</code>。</p>
 </blockquote>
 <p>最後建立 var 存放資訊，然後啟動 kubelet 服務:</p>
-<pre><code class="language-sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes
+<pre><code class="sh">$ mkdir -p /var/lib/kubelet /var/log/kubernetes
 $ systemctl enable kubelet.service &amp;&amp; systemctl start kubelet.service
 </code></pre>
-<h3><span id="驗證叢集">驗證叢集</span></h3>
-<p>完成後，在任意一台<code>master</code>節點並透過簡單指令驗證：</p>
-<pre><code class="language-sh">$ kubectl get csr
+<h3 id="驗證叢集-1"><a href="#驗證叢集-1" class="headerlink" title="驗證叢集"></a>驗證叢集</h3><p>完成後，在任意一台<code>master</code>節點並透過簡單指令驗證：</p>
+<pre><code class="sh">$ kubectl get csr
 NAME                                                   AGE       REQUESTOR                 CONDITION
 csr-bvz9l                                              11m       system:node:k8s-m1        Approved,Issued
 csr-jwr8k                                              11m       system:node:k8s-m2        Approved,Issued
@@ -1000,12 +977,10 @@ k8s-n1    NotReady   node      32s       v1.10.0
 k8s-n2    NotReady   node      31s       v1.10.0
 k8s-n3    NotReady   node      29s       v1.10.0
 </code></pre>
-<h2><span id="kubernetes-core-addons-部署">Kubernetes Core Addons 部署</span></h2>
-<p>當完成上面所有步驟後，接著需要部署一些插件，其中如<code>Kubernetes DNS</code>與<code>Kubernetes Proxy</code>等這種 Addons 是非常重要的。</p>
-<h3><span id="kubernetes-proxy">Kubernetes Proxy</span></h3>
-<p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="noopener">Kube-proxy</a> 是實現 Service 的關鍵插件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。</p>
+<h2 id="Kubernetes-Core-Addons-部署"><a href="#Kubernetes-Core-Addons-部署" class="headerlink" title="Kubernetes Core Addons 部署"></a>Kubernetes Core Addons 部署</h2><p>當完成上面所有步驟後，接著需要部署一些插件，其中如<code>Kubernetes DNS</code>與<code>Kubernetes Proxy</code>等這種 Addons 是非常重要的。</p>
+<h3 id="Kubernetes-Proxy"><a href="#Kubernetes-Proxy" class="headerlink" title="Kubernetes Proxy"></a>Kubernetes Proxy</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="noopener">Kube-proxy</a> 是實現 Service 的關鍵插件，kube-proxy 會在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的改變，然後來依據變化執行 iptables 來實現網路的轉發。</p>
 <p>在<code>k8s-m1</code>下載<code>kube-proxy.yml</code>來建立 Kubernetes Proxy Addon：</p>
-<pre><code class="language-sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-proxy.yml.conf&quot;
+<pre><code class="sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-proxy.yml.conf&quot;
 serviceaccount &quot;kube-proxy&quot; created
 clusterrolebinding.rbac.authorization.k8s.io &quot;system:kube-proxy&quot; created
 configmap &quot;kube-proxy&quot; created
@@ -1018,10 +993,9 @@ kube-proxy-c4zvt   1/1       Running   0          29s       192.16.35.11   k8s-m
 kube-proxy-clpl6   1/1       Running   0          29s       192.16.35.12   k8s-m2
 ...
 </code></pre>
-<h3><span id="kubernetes-dns">Kubernetes DNS</span></h3>
-<p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="noopener">Kube DNS</a> 是 Kubernetes 叢集內部 Pod 之間互相溝通的重要 Addon，它允許 Pod 可以透過 Domain Name 方式來連接 Service，其主要由 Kube DNS 與 Sky DNS 組合而成，透過 Kube DNS 監聽 Service 與 Endpoint 變化，來提供給 Sky DNS 資訊，已更新解析位址。</p>
+<h3 id="Kubernetes-DNS"><a href="#Kubernetes-DNS" class="headerlink" title="Kubernetes DNS"></a>Kubernetes DNS</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="noopener">Kube DNS</a> 是 Kubernetes 叢集內部 Pod 之間互相溝通的重要 Addon，它允許 Pod 可以透過 Domain Name 方式來連接 Service，其主要由 Kube DNS 與 Sky DNS 組合而成，透過 Kube DNS 監聽 Service 與 Endpoint 變化，來提供給 Sky DNS 資訊，已更新解析位址。</p>
 <p>在<code>k8s-m1</code>下載<code>kube-proxy.yml</code>來建立 Kubernetes Proxy Addon：</p>
-<pre><code class="language-sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-dns.yml.conf&quot;
+<pre><code class="sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-dns.yml.conf&quot;
 serviceaccount &quot;kube-dns&quot; created
 service &quot;kube-dns&quot; created
 deployment.extensions &quot;kube-dns&quot; created
@@ -1031,13 +1005,12 @@ NAME                        READY     STATUS    RESTARTS   AGE
 kube-dns-654684d656-zq5t8   0/3       Pending   0          1m
 </code></pre>
 <p>這邊會發現處於<code>Pending</code>狀態，是由於 Kubernetes Pod Network 還未建立完成，因此所有節點會處於<code>NotReady</code>狀態，而造成 Pod 無法被排程分配到指定節點上啟動，由於為了解決該問題，下節將說明如何建立 Pod Network。</p>
-<h2><span id="calico-network-安裝與設定">Calico Network 安裝與設定</span></h2>
-<p>Calico 是一款純 Layer 3 的資料中心網路方案(不需要 Overlay 網路)，Calico 好處是它整合了各種雲原生平台，且 Calico 在每一個節點利用 Linux Kernel 實現高效的 vRouter 來負責資料的轉發，而當資料中心複雜度增加時，可以用 BGP route reflector 來達成。</p>
+<h2 id="Calico-Network-安裝與設定"><a href="#Calico-Network-安裝與設定" class="headerlink" title="Calico Network 安裝與設定"></a>Calico Network 安裝與設定</h2><p>Calico 是一款純 Layer 3 的資料中心網路方案(不需要 Overlay 網路)，Calico 好處是它整合了各種雲原生平台，且 Calico 在每一個節點利用 Linux Kernel 實現高效的 vRouter 來負責資料的轉發，而當資料中心複雜度增加時，可以用 BGP route reflector 來達成。</p>
 <blockquote>
 <p>本次不採用手動方式來建立 Calico 網路，若想了解可以參考 <a href="https://docs.projectcalico.org/v3.0/getting-started/kubernetes/installation/integration" target="_blank" rel="noopener">Integration Guide</a>。</p>
 </blockquote>
 <p>在<code>k8s-m1</code>下載<code>calico.yaml</code>來建立 Calico Network：</p>
-<pre><code class="language-sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/network/calico.yml.conf&quot;
+<pre><code class="sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/network/calico.yml.conf&quot;
 configmap &quot;calico-config&quot; created
 daemonset &quot;calico-node&quot; created
 deployment &quot;calico-kube-controllers&quot; created
@@ -1061,7 +1034,7 @@ calico-node-zfx4n   2/2       Running   0          1m        192.16.35.16   k8s-
 <p>這邊若節點 IP 與網卡不同的話，請修改<code>calico.yml</code>檔案。</p>
 </blockquote>
 <p>在<code>k8s-m1</code>下載 Calico CLI 來查看 Calico nodes:</p>
-<pre><code class="language-sh">$ wget https://github.com/projectcalico/calicoctl/releases/download/v3.1.0/calicoctl -O /usr/local/bin/calicoctl
+<pre><code class="sh">$ wget https://github.com/projectcalico/calicoctl/releases/download/v3.1.0/calicoctl -O /usr/local/bin/calicoctl
 $ chmod u+x /usr/local/bin/calicoctl
 $ cat &lt;&lt;EOF &gt; ~/calico-rc
 export ETCD_ENDPOINTS=&quot;https://192.16.35.11:2379,https://192.16.35.12:2379,https://192.16.35.13:2379&quot;
@@ -1087,17 +1060,15 @@ IPv4 BGP status
 ...
 </code></pre>
 <p>查看 pending 的 pod 是否已執行：</p>
-<pre><code class="language-sh">$ kubectl -n kube-system get po -l k8s-app=kube-dns
+<pre><code class="sh">$ kubectl -n kube-system get po -l k8s-app=kube-dns
 kubectl -n kube-system get po -l k8s-app=kube-dns
 NAME                        READY     STATUS    RESTARTS   AGE
 kube-dns-654684d656-j8xzx   3/3       Running   0          10m
 </code></pre>
-<h2><span id="kubernetes-extra-addons-部署">Kubernetes Extra Addons 部署</span></h2>
-<p>本節說明如何部署一些官方常用的 Addons，如 Dashboard、Heapster 等。</p>
-<h3><span id="dashboard">Dashboard</span></h3>
-<p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
+<h2 id="Kubernetes-Extra-Addons-部署"><a href="#Kubernetes-Extra-Addons-部署" class="headerlink" title="Kubernetes Extra Addons 部署"></a>Kubernetes Extra Addons 部署</h2><p>本節說明如何部署一些官方常用的 Addons，如 Dashboard、Heapster 等。</p>
+<h3 id="Dashboard"><a href="#Dashboard" class="headerlink" title="Dashboard"></a>Dashboard</h3><p><a href="https://github.com/kubernetes/dashboard" target="_blank" rel="noopener">Dashboard</a> 是 Kubernetes 社區官方開發的儀表板，有了儀表板後管理者就能夠透過 Web-based 方式來管理 Kubernetes 叢集，除了提升管理方便，也讓資源視覺化，讓人更直覺看見系統資訊的呈現結果。</p>
 <p>在<code>k8s-m1</code>透過 kubectl 來建立 kubernetes dashboard 即可：</p>
-<pre><code class="language-sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+<pre><code class="sh">$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 $ kubectl -n kube-system get po,svc -l k8s-app=kubernetes-dashboard
 NAME                                    READY     STATUS    RESTARTS   AGE
 kubernetes-dashboard-7d5dcdb6d9-j492l   1/1       Running   0          12s
@@ -1106,7 +1077,7 @@ NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
 kubernetes-dashboard   ClusterIP   10.111.22.111   &lt;none&gt;        443/TCP   12s
 </code></pre>
 <p>這邊會額外建立一個名稱為<code>open-api</code> Cluster Role Binding，這僅作為方便測試時使用，在一般情況下不要開啟，不然就會直接被存取所有 API:</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF | kubectl create -f -
+<pre><code class="sh">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -1127,20 +1098,19 @@ EOF
 </blockquote>
 <p>完成後，就可以透過瀏覽器存取 <a href="https://192.16.35.10:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
 <p>在 1.7 版本以後的 Dashboard 將不再提供所有權限，因此需要建立一個 service account 來綁定 cluster-admin role：</p>
-<pre><code class="language-sh">$ kubectl -n kube-system create sa dashboard
+<pre><code class="sh">$ kubectl -n kube-system create sa dashboard
 $ kubectl create clusterrolebinding dashboard --clusterrole cluster-admin --serviceaccount=kube-system:dashboard
-$ SECRET=$(kubectl -n kube-system get sa dashboard -o yaml | awk '/dashboard-token/ {print $3}')
-$ kubectl -n kube-system describe secrets ${SECRET} | awk '/token:/{print $2}'
+$ SECRET=$(kubectl -n kube-system get sa dashboard -o yaml | awk &#39;/dashboard-token/ {print $3}&#39;)
+$ kubectl -n kube-system describe secrets ${SECRET} | awk &#39;/token:/{print $2}&#39;
 eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtdG9rZW4tdzVocmgiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYWJmMTFjYzMtZjRlYi0xMWU3LTgzYWUtMDgwMDI3NjdkOWI5Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZCJ9.Xuyq34ci7Mk8bI97o4IldDyKySOOqRXRsxVWIJkPNiVUxKT4wpQZtikNJe2mfUBBD-JvoXTzwqyeSSTsAy2CiKQhekW8QgPLYelkBPBibySjBhJpiCD38J1u7yru4P0Pww2ZQJDjIxY4vqT46ywBklReGVqY3ogtUQg-eXueBmz-o7lJYMjw8L14692OJuhBjzTRSaKW8U2MPluBVnD7M2SOekDff7KpSxgOwXHsLVQoMrVNbspUCvtIiEI1EiXkyCNRGwfnd2my3uzUABIHFhm0_RZSmGwExPbxflr8Fc6bxmuz-_jSdOtUidYkFIzvEWw2vRovPgs3MXTv59RwUw
 </code></pre>
 <blockquote>
 <p>複製<code>token</code>，然後貼到 Kubernetes dashboard。注意這邊一般來說要針對不同 User 開啟特定存取權限。</p>
 </blockquote>
 <p><img src="/images/kube/kubernetes-dashboard.png" alt=""></p>
-<h3><span id="heapster">Heapster</span></h3>
-<p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="noopener">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
+<h3 id="Heapster"><a href="#Heapster" class="headerlink" title="Heapster"></a>Heapster</h3><p><a href="https://github.com/kubernetes/heapster" target="_blank" rel="noopener">Heapster</a> 是 Kubernetes 社區維護的容器叢集監控與效能分析工具。Heapster 會從 Kubernetes apiserver 取得所有 Node 資訊，然後再透過這些 Node 來取得 kubelet 上的資料，最後再將所有收集到資料送到 Heapster 的後台儲存 InfluxDB，最後利用 Grafana 來抓取 InfluxDB 的資料源來進行視覺化。</p>
 <p>在<code>k8s-m1</code>透過 kubectl 來建立 kubernetes monitor  即可：</p>
-<pre><code class="language-sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-monitor.yml.conf&quot;
+<pre><code class="sh">$ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/kube-monitor.yml.conf&quot;
 $ kubectl -n kube-system get po,svc
 NAME                                           READY     STATUS    RESTARTS   AGE
 ...
@@ -1156,10 +1126,9 @@ svc/monitoring-influxdb    ClusterIP   10.109.245.142   &lt;none&gt;        8083
 </code></pre>
 <p>完成後，就可以透過瀏覽器存取 <a href="https://192.16.35.10:6443/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy/" target="_blank" rel="noopener">Grafana Dashboard</a>。</p>
 <p><img src="/images/kube/monitoring-grafana.png" alt=""></p>
-<h3><span id="ingress-controller">Ingress Controller</span></h3>
-<p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>是利用 Nginx 或 HAProxy 等負載平衡器來曝露叢集內服務的元件，Ingress 主要透過設定 Ingress 規則來定義 Domain Name 映射 Kubernetes 內部 Service，這種方式可以避免掉使用過多的 NodePort 問題。</p>
+<h3 id="Ingress-Controller"><a href="#Ingress-Controller" class="headerlink" title="Ingress Controller"></a>Ingress Controller</h3><p><a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>是利用 Nginx 或 HAProxy 等負載平衡器來曝露叢集內服務的元件，Ingress 主要透過設定 Ingress 規則來定義 Domain Name 映射 Kubernetes 內部 Service，這種方式可以避免掉使用過多的 NodePort 問題。</p>
 <p>在<code>k8s-m1</code>透過 kubectl 來建立 Ingress Controller 即可：</p>
-<pre><code class="language-sh">$ kubectl create ns ingress-nginx
+<pre><code class="sh">$ kubectl create ns ingress-nginx
 $ kubectl apply -f &quot;https://kairen.github.io/files/manual-v1.10/addon/ingress-controller.yml.conf&quot;
 $ kubectl -n ingress-nginx get po
 NAME                                       READY     STATUS    RESTARTS   AGE
@@ -1169,9 +1138,8 @@ nginx-ingress-controller-699cdf846-982n4   1/1       Running   0          7m
 <blockquote>
 <p>這裡也可以選擇 <a href="https://github.com/containous/traefik" target="_blank" rel="noopener">Traefik</a> 的 Ingress Controller。</p>
 </blockquote>
-<h4><span id="測試-ingress-功能">測試 Ingress 功能</span></h4>
-<p>這邊先建立一個 Nginx HTTP server Deployment 與 Service：</p>
-<pre><code class="language-sh">$ kubectl run nginx-dp --image nginx --port 80
+<h4 id="測試-Ingress-功能"><a href="#測試-Ingress-功能" class="headerlink" title="測試 Ingress 功能"></a>測試 Ingress 功能</h4><p>這邊先建立一個 Nginx HTTP server Deployment 與 Service：</p>
+<pre><code class="sh">$ kubectl run nginx-dp --image nginx --port 80
 $ kubectl expose deploy nginx-dp --port 80
 $ kubectl get po,svc
 $ cat &lt;&lt;EOF | kubectl create -f -
@@ -1193,7 +1161,7 @@ spec:
 EOF
 </code></pre>
 <p>透過 curl 來進行測試：</p>
-<pre><code class="language-sh">$ curl 192.16.35.10 -H 'Host: test.nginx.com'
+<pre><code class="sh">$ curl 192.16.35.10 -H &#39;Host: test.nginx.com&#39;
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -1201,20 +1169,19 @@ EOF
 ...
 
 # 測試其他 domain name 是否會回傳 404
-$ curl 192.16.35.10 -H 'Host: test.nginx.com1'
+$ curl 192.16.35.10 -H &#39;Host: test.nginx.com1&#39;
 default backend - 404
 </code></pre>
-<h3><span id="helm-tiller-server">Helm Tiller Server</span></h3>
-<p><a href="https://github.com/kubernetes/helm" target="_blank" rel="noopener">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。其中<code>Tiller Server</code>主要負責接收來至 Client 的指令，並透過 kube-apiserver 與 Kubernetes 叢集做溝通，根據 Chart 定義的內容，來產生與管理各種對應 API 物件的 Kubernetes 部署檔案(又稱為 <code>Release</code>)。</p>
+<h3 id="Helm-Tiller-Server"><a href="#Helm-Tiller-Server" class="headerlink" title="Helm Tiller Server"></a>Helm Tiller Server</h3><p><a href="https://github.com/kubernetes/helm" target="_blank" rel="noopener">Helm</a> 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。其中<code>Tiller Server</code>主要負責接收來至 Client 的指令，並透過 kube-apiserver 與 Kubernetes 叢集做溝通，根據 Chart 定義的內容，來產生與管理各種對應 API 物件的 Kubernetes 部署檔案(又稱為 <code>Release</code>)。</p>
 <p>首先在<code>k8s-m1</code>安裝 Helm tool：</p>
-<pre><code class="language-sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zx
+<pre><code class="sh">$ wget -qO- https://kubernetes-helm.storage.googleapis.com/helm-v2.8.1-linux-amd64.tar.gz | tar -zx
 $ sudo mv linux-amd64/helm /usr/local/bin/
 </code></pre>
 <p>另外在所有<code>node</code>節點安裝 socat：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y socat
+<pre><code class="sh">$ sudo apt-get install -y socat
 </code></pre>
 <p>接著初始化 Helm(這邊會安裝 Tiller Server)：</p>
-<pre><code class="language-sh">$ kubectl -n kube-system create sa tiller
+<pre><code class="sh">$ kubectl -n kube-system create sa tiller
 $ kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
 $ helm init --service-account tiller
 ...
@@ -1229,9 +1196,8 @@ $ helm version
 Client: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
 Server: &amp;version.Version{SemVer:&quot;v2.8.1&quot;, GitCommit:&quot;6af75a8fd72e2aa18a2b278cfe5c7a1c5feca7f2&quot;, GitTreeState:&quot;clean&quot;}
 </code></pre>
-<h4><span id="測試-helm-功能">測試 Helm 功能</span></h4>
-<p>這邊部署簡單 Jenkins 來進行功能測試：</p>
-<pre><code class="language-sh">$ helm install --name demo --set Persistence.Enabled=false stable/jenkins
+<h4 id="測試-Helm-功能"><a href="#測試-Helm-功能" class="headerlink" title="測試 Helm 功能"></a>測試 Helm 功能</h4><p>這邊部署簡單 Jenkins 來進行功能測試：</p>
+<pre><code class="sh">$ helm install --name demo --set Persistence.Enabled=false stable/jenkins
 $ kubectl get po,svc  -l app=demo-jenkins
 NAME                           READY     STATUS    RESTARTS   AGE
 demo-jenkins-7bf4bfcff-q74nt   1/1       Running   0          2m
@@ -1247,20 +1213,19 @@ r6y9FMuF2u
 <p>完成後，就可以透過瀏覽器存取 <a href="http://192.16.35.10:31161" target="_blank" rel="noopener">Jenkins Web</a>。</p>
 <p><img src="/images/kube/helm-jenkins-v1.10.png" alt=""></p>
 <p>測試完成後，即可刪除：</p>
-<pre><code class="language-sh">$ helm ls
-NAME	REVISION	UPDATED                 	STATUS  	CHART         	NAMESPACE
-demo	1       	Tue Apr 10 07:29:51 2018	DEPLOYED	jenkins-0.14.4	default
+<pre><code class="sh">$ helm ls
+NAME    REVISION    UPDATED                     STATUS      CHART             NAMESPACE
+demo    1           Tue Apr 10 07:29:51 2018    DEPLOYED    jenkins-0.14.4    default
 
 $ helm delete demo --purge
 release &quot;demo&quot; deleted
 </code></pre>
 <p>更多 Helm Apps 可以到 <a href="https://hub.kubeapps.com/" target="_blank" rel="noopener">Kubeapps Hub</a> 尋找。</p>
-<h2><span id="測試叢集">測試叢集</span></h2>
-<p>SSH 進入<code>k8s-m1</code>節點，然後關閉該節點：</p>
-<pre><code class="language-sh">$ sudo poweroff
+<h2 id="測試叢集"><a href="#測試叢集" class="headerlink" title="測試叢集"></a>測試叢集</h2><p>SSH 進入<code>k8s-m1</code>節點，然後關閉該節點：</p>
+<pre><code class="sh">$ sudo poweroff
 </code></pre>
 <p>接著進入到<code>k8s-m2</code>節點，透過 kubectl 來檢查叢集是否能夠正常執行：</p>
-<pre><code class="language-sh"># 先檢查 etcd 狀態，可以發現 etcd-0 因為關機而中斷
+<pre><code class="sh"># 先檢查 etcd 狀態，可以發現 etcd-0 因為關機而中斷
 $ kubectl get cs
 NAME                 STATUS      MESSAGE                                                                                                                                          ERROR
 scheduler            Healthy     ok
@@ -1283,7 +1248,7 @@ nginx     1/1       Running   0          22s
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/" data-toggle="tooltip" data-placement="top" title="整合 OpenLDAP 進行 Kubernetes 身份認證">&larr; Previous Post</a>
+                            <a href="/2018/04/15/kubernetes/k8s-integration-ldap/" data-toggle="tooltip" data-placement="top" title="整合 Open LDAP 進行 Kubernetes 身份認證">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -1318,7 +1283,7 @@ nginx     1/1       Running   0          22s
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">建立叢集 CA keys 與 Certificates</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Etcd</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Kubernetes</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.1.</span> <span class="toc-nav-text">API Server Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.2.</span> <span class="toc-nav-text">Front Proxy Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.3.</span> <span class="toc-nav-text">Admin Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.4.</span> <span class="toc-nav-text">Controller Manager Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.5.</span> <span class="toc-nav-text">Scheduler Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.6.</span> <span class="toc-nav-text">Master Kubelet Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.7.</span> <span class="toc-nav-text">Service Account Key</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.8.</span> <span class="toc-nav-text">刪除不必要檔案</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.9.</span> <span class="toc-nav-text">複製檔案至其他節點</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Kubernetes Masters</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">部署與設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">驗證叢集</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">建立 TLS Bootstrapping RBAC 與 Secret</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Kubernetes Nodes</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">部署與設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">驗證叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Kubernetes Core Addons 部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Kubernetes Proxy</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">Kubernetes DNS</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Calico Network 安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">Kubernetes Extra Addons 部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.1.</span> <span class="toc-nav-text">Dashboard</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.2.</span> <span class="toc-nav-text">Heapster</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.3.</span> <span class="toc-nav-text">Ingress Controller</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.3.1.</span> <span class="toc-nav-text">測試 Ingress 功能</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.4.</span> <span class="toc-nav-text">Helm Tiller Server</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.4.1.</span> <span class="toc-nav-text">測試 Helm 功能</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">測試叢集</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立叢集-CA-keys-與-Certificates"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">建立叢集 CA keys 與 Certificates</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Etcd"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">Etcd</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Kubernetes"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">Kubernetes</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#API-Server-Certificate"><span class="toc-nav-number">3.2.1.</span> <span class="toc-nav-text">API Server Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Front-Proxy-Certificate"><span class="toc-nav-number">3.2.2.</span> <span class="toc-nav-text">Front Proxy Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Admin-Certificate"><span class="toc-nav-number">3.2.3.</span> <span class="toc-nav-text">Admin Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Controller-Manager-Certificate"><span class="toc-nav-number">3.2.4.</span> <span class="toc-nav-text">Controller Manager Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Scheduler-Certificate"><span class="toc-nav-number">3.2.5.</span> <span class="toc-nav-text">Scheduler Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Master-Kubelet-Certificate"><span class="toc-nav-number">3.2.6.</span> <span class="toc-nav-text">Master Kubelet Certificate</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Service-Account-Key"><span class="toc-nav-number">3.2.7.</span> <span class="toc-nav-text">Service Account Key</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#刪除不必要檔案"><span class="toc-nav-number">3.2.8.</span> <span class="toc-nav-text">刪除不必要檔案</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#複製檔案至其他節點"><span class="toc-nav-number">3.2.9.</span> <span class="toc-nav-text">複製檔案至其他節點</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-Masters"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Kubernetes Masters</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部署與設定"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">部署與設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#驗證叢集"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">驗證叢集</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-TLS-Bootstrapping-RBAC-與-Secret"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">建立 TLS Bootstrapping RBAC 與 Secret</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-Nodes"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Kubernetes Nodes</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部署與設定-1"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">部署與設定</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#驗證叢集-1"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">驗證叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-Core-Addons-部署"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">Kubernetes Core Addons 部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Kubernetes-Proxy"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">Kubernetes Proxy</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Kubernetes-DNS"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">Kubernetes DNS</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Calico-Network-安裝與設定"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">Calico Network 安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-Extra-Addons-部署"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">Kubernetes Extra Addons 部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Dashboard"><span class="toc-nav-number">8.1.</span> <span class="toc-nav-text">Dashboard</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Heapster"><span class="toc-nav-number">8.2.</span> <span class="toc-nav-text">Heapster</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ingress-Controller"><span class="toc-nav-number">8.3.</span> <span class="toc-nav-text">Ingress Controller</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#測試-Ingress-功能"><span class="toc-nav-number">8.3.1.</span> <span class="toc-nav-text">測試 Ingress 功能</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Helm-Tiller-Server"><span class="toc-nav-number">8.4.</span> <span class="toc-nav-text">Helm Tiller Server</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#測試-Helm-功能"><span class="toc-nav-number">8.4.1.</span> <span class="toc-nav-text">測試 Helm 功能</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試叢集"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">測試叢集</span></a></li></ol>
         
         </div>
       </aside>

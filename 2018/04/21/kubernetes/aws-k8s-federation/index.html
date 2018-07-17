@@ -146,14 +146,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -300,8 +300,7 @@
 <li>kops v1.9.0</li>
 <li>kubefed v1.10</li>
 </ul>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>測試環境為 AWS EC2 虛擬機器，共有三組叢集：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>測試環境為 AWS EC2 虛擬機器，共有三組叢集：</p>
 <p>US West(Oregon) 叢集，也是 Federation 控制平面叢集：</p>
 <table>
 <thead>
@@ -383,30 +382,29 @@
 </tr>
 </tbody>
 </table>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>開始前，需要先安裝下列工具到操作機器上來提供使用：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始前，需要先安裝下列工具到操作機器上來提供使用：</p>
 <ul>
 <li><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank" rel="noopener">kubectl</a>：用來操作部署完成的 Kubernetes 叢集。</li>
 <li><a href="https://github.com/kubernetes/kops" target="_blank" rel="noopener">kops</a>：用來部署與管理公有雲上的 Kubernetes 叢集。</li>
 </ul>
 <p>Mac OS X：</p>
-<pre><code class="language-sh">$ brew update &amp;&amp; brew install kops
+<pre><code class="sh">$ brew update &amp;&amp; brew install kops
 </code></pre>
 <p>Linux distro：</p>
-<pre><code class="language-sh">$ curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '&quot;' -f 4)/kops-linux-amd64
+<pre><code class="sh">$ curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d &#39;&quot;&#39; -f 4)/kops-linux-amd64
 $ chmod +x kops-linux-amd64 &amp;&amp; sudo mv kops-linux-amd64 /usr/local/bin/kops
 </code></pre>
 <ul>
 <li><a href="https://github.com/kubernetes/federation" target="_blank" rel="noopener">kubefed</a>：用來建立 Federation 控制平面與管理 Federation 叢集的工具。</li>
 </ul>
 <p>Mac OS X：</p>
-<pre><code class="language-sh">$ git clone https://github.com/kubernetes/federation.git $GOPATH/src/k8s.io/federation
+<pre><code class="sh">$ git clone https://github.com/kubernetes/federation.git $GOPATH/src/k8s.io/federation
 $ cd $GOPATH/src/k8s.io/federation
 $ make quick-release
 $ cp _output/dockerized/bin/linux/amd64/kubefed /usr/local/bin/kubefed
 </code></pre>
 <p>Linux distro：</p>
-<pre><code class="language-sh">$ wget https://storage.googleapis.com/kubernetes-federation-release/release/v1.9.0-alpha.3/federation-client-linux-amd64.tar.gz
+<pre><code class="sh">$ wget https://storage.googleapis.com/kubernetes-federation-release/release/v1.9.0-alpha.3/federation-client-linux-amd64.tar.gz
 $ tar xvf federation-client-linux-amd64.tar.gz
 $ cp federation/client/bin/kubefed /usr/local/bin/
 $ kubefed version
@@ -416,15 +414,13 @@ Server Version: version.Info{Major:&quot;1&quot;, Minor:&quot;9&quot;, GitVersio
 <ul>
 <li><a href="https://aws.amazon.com/cli/?nc1=h_ls" target="_blank" rel="noopener">AWS CLI</a>：用來操作 AWS 服務的工具。</li>
 </ul>
-<pre><code class="language-sh">$ sudo pip install awscli
+<pre><code class="sh">$ sudo pip install awscli
 $ aws --version
 aws-cli/1.15.4
 </code></pre>
 <p>上述工具完成後，我們還要準備一下資訊：</p>
 <ul>
-<li>申請 AWS 帳號，並在 IAM 服務新增一個 User 設定存取所有服務(AdministratorAccess)。另外這邊要記住 AccessKey 與 SecretKey。</li>
-</ul>
-<blockquote>
+<li>申請 AWS 帳號，並在 IAM 服務新增一個 User 設定存取所有服務(AdministratorAccess)。另外這邊要記住 AccessKey 與 SecretKey。<blockquote>
 <p>一般來說只需開啟 S3、Route53、EC2、EBS、ELB 與 VPC 就好，但由於偷懶就全開。以下為各 AWS 服務在本次安裝的用意：</p>
 <ul>
 <li>IAM: 提供身份認證與存取管理。</li>
@@ -435,18 +431,19 @@ aws-cli/1.15.4
 <li>VPC: 提供 Kubernetes 與 EC2 的網路環境。</li>
 </ul>
 </blockquote>
+</li>
+</ul>
 <p><img src="/images/kops/iam-user2.png" alt=""></p>
 <ul>
 <li>擁有自己的 Domain Name，這邊可以在 AWS Route53 註冊，或者是到 GoDaddy 購買。</li>
 </ul>
-<h2><span id="部署-kubernetes-federation-叢集">部署 Kubernetes Federation 叢集</span></h2>
-<p>本節將說明如何利用自己撰寫好的腳本 <a href="https://github.com/kairen/aws-k8s-federation" target="_blank" rel="noopener">aws-k8s-federation</a> 來部署 Kubernetes 叢集與 Federation 叢集。首先在操作節點下載：</p>
-<pre><code class="language-sh">$ git clone https://github.com/kairen/aws-k8s-federation
+<h2 id="部署-Kubernetes-Federation-叢集"><a href="#部署-Kubernetes-Federation-叢集" class="headerlink" title="部署 Kubernetes Federation 叢集"></a>部署 Kubernetes Federation 叢集</h2><p>本節將說明如何利用自己撰寫好的腳本 <a href="https://github.com/kairen/aws-k8s-federation" target="_blank" rel="noopener">aws-k8s-federation</a> 來部署 Kubernetes 叢集與 Federation 叢集。首先在操作節點下載：</p>
+<pre><code class="sh">$ git clone https://github.com/kairen/aws-k8s-federation
 $ cd aws-k8s-federation
 $ cp .env.sample .env
 </code></pre>
 <p>編輯<code>.env</code>檔案來提供後續腳本的環境變數：</p>
-<pre><code class="language-sh"># 你的 Domain Name(這邊為 &lt;hoste_dzone_name&gt;.&lt;domain_name&gt;)
+<pre><code class="sh"># 你的 Domain Name(這邊為 &lt;hoste_dzone_name&gt;.&lt;domain_name&gt;)
 export DOMAIN_NAME=&quot;k8s.example.com&quot;
 
 # Regions and zones
@@ -468,8 +465,8 @@ export AP_NORTHEAST_BUCKET_NAME=&quot;ap-northeast-k8s&quot;
 
 # Get domain name id
 export HOSTED_ZONE_ID=$(aws route53 list-hosted-zones \
-       | jq -r '.HostedZones[] | select(.Name==&quot;'${DOMAIN_NAME}'.&quot;) | .Id' \
-       | sed 's/\/hostedzone\///')
+       | jq -r &#39;.HostedZones[] | select(.Name==&quot;&#39;${DOMAIN_NAME}&#39;.&quot;) | .Id&#39; \
+       | sed &#39;s/\/hostedzone\///&#39;)
 
 # Kubernetes master and node size, and node count.
 export MASTER_SIZE=&quot;t2.micro&quot;
@@ -480,9 +477,8 @@ export NODE_COUNT=&quot;2&quot;
 export DNS_RECORD_PREFIX=&quot;nginx&quot;
 export SERVICE_NAME=&quot;nginx&quot;
 </code></pre>
-<h3><span id="建立-route53-hosted-zone">建立 Route53 Hosted Zone</span></h3>
-<p>首先透過 aws 工具進行設定使用指定 AccessKey 與 SecretKey：</p>
-<pre><code class="language-sh">$ aws configure
+<h3 id="建立-Route53-Hosted-Zone"><a href="#建立-Route53-Hosted-Zone" class="headerlink" title="建立 Route53 Hosted Zone"></a>建立 Route53 Hosted Zone</h3><p>首先透過 aws 工具進行設定使用指定 AccessKey 與 SecretKey：</p>
+<pre><code class="sh">$ aws configure
 AWS Access Key ID [****************QGEA]:
 AWS Secret Access Key [****************zJ+w]:
 Default region name [None]:
@@ -492,7 +488,7 @@ Default output format [None]:
 <p>設定的 Keys 可以在<code>~/.aws/credentials</code>找到。</p>
 </blockquote>
 <p>接著需要在 Route53 建立一個 Hosted Zone，並在 Domain Name 供應商上設定 <code>NameServers</code>：</p>
-<pre><code class="language-sh">$ ./0-create-hosted-domain.sh
+<pre><code class="sh">$ ./0-create-hosted-domain.sh
 # output
 ...
 {
@@ -523,9 +519,8 @@ Default output format [None]:
 </code></pre>
 <p>之後將上述<code>NameServers</code>新增至自己的 Domain name 的 record 中，如 Godaddy：</p>
 <p><img src="/images/kops-fed/godday-ns.png" alt=""></p>
-<h3><span id="在每個-region-建立-kubernetes-叢集">在每個 Region 建立 Kubernetes 叢集</span></h3>
-<p>當 Hosted Zone 建立完成後，就可以接著建立每個 Region 的 Kubernetes 叢集，這邊腳本已包含建立叢集與 S3 Bucket 指令，因此只需要執行以下腳本即可：</p>
-<pre><code class="language-sh">$ ./1-create-clusters.sh
+<h3 id="在每個-Region-建立-Kubernetes-叢集"><a href="#在每個-Region-建立-Kubernetes-叢集" class="headerlink" title="在每個 Region 建立 Kubernetes 叢集"></a>在每個 Region 建立 Kubernetes 叢集</h3><p>當 Hosted Zone 建立完成後，就可以接著建立每個 Region 的 Kubernetes 叢集，這邊腳本已包含建立叢集與 S3 Bucket 指令，因此只需要執行以下腳本即可：</p>
+<pre><code class="sh">$ ./1-create-clusters.sh
 ....
 Cluster is starting.  It should be ready in a few minutes.
 ...
@@ -534,7 +529,7 @@ Cluster is starting.  It should be ready in a few minutes.
 <p>這邊會需要等待一點時間進行初始化與部署，也可以到 AWS Console 查看狀態。</p>
 </blockquote>
 <p>完成後，即可透過 kubectl 來操作叢集：</p>
-<pre><code class="language-sh">$ ./us-east/kc get no
+<pre><code class="sh">$ ./us-east/kc get no
 + kubectl --context=us-east.k8s.example.com get no
 NAME                                          STATUS    ROLES     AGE       VERSION
 ip-172-20-43-26.us-east-2.compute.internal    Ready     node      1m        v1.9.3
@@ -555,9 +550,8 @@ ip-172-20-33-22.us-west-2.compute.internal    Ready     node      1m        v1.9
 ip-172-20-55-237.us-west-2.compute.internal   Ready     master    2m        v1.9.3
 ip-172-20-63-77.us-west-2.compute.internal    Ready     node      35s       v1.9.3
 </code></pre>
-<h3><span id="建立-kubernetes-federation-叢集">建立 Kubernetes Federation 叢集</span></h3>
-<p>當三個地區的叢集建立完成後，接著要在 US West 的叢集上部署 Federation 控制平面元件：</p>
-<pre><code class="language-sh">$ ./2-init-federation.sh
+<h3 id="建立-Kubernetes-Federation-叢集"><a href="#建立-Kubernetes-Federation-叢集" class="headerlink" title="建立 Kubernetes Federation 叢集"></a>建立 Kubernetes Federation 叢集</h3><p>當三個地區的叢集建立完成後，接著要在 US West 的叢集上部署 Federation 控制平面元件：</p>
+<pre><code class="sh">$ ./2-init-federation.sh
 ...
 Federation API server is running at: abba6864f490111e8b4bd028106a7a79-793027324.us-west-2.elb.amazonaws.com
 
@@ -568,7 +562,7 @@ apiserver-5d46898995-tmzvl            2/2       Running   0          1m
 controller-manager-6cc78c68d5-2pbg5   0/1       Error     3          1m
 </code></pre>
 <p>這邊會發現<code>controller-manager</code>會一直掛掉，這是因為它需要取得 AWS 相關權限，因此需要透過 Patch 方式來把 AccessKey 與 SecretKey 注入到 Deployment 中：</p>
-<pre><code class="language-sh">$ ./3-path-federation.sh
+<pre><code class="sh">$ ./3-path-federation.sh
 Switched to context &quot;us-west.k8s.example.com&quot;.
 deployment &quot;controller-manager&quot; patched
 
@@ -579,7 +573,7 @@ apiserver-5d46898995-tmzvl            2/2       Running       0          3m
 controller-manager-769bd95fbc-dkssr   1/1       Running       0          21s
 </code></pre>
 <p>確認上述沒問題後，透過 kubectl 確認 contexts：</p>
-<pre><code class="language-sh">$ kubectl config get-contexts
+<pre><code class="sh">$ kubectl config get-contexts
 CURRENT   NAME                           CLUSTER                        AUTHINFO                       NAMESPACE
           ap-northeast.k8s.example.com   ap-northeast.k8s.example.com   ap-northeast.k8s.example.com
           aws-fed                        aws-fed                        aws-fed
@@ -587,28 +581,28 @@ CURRENT   NAME                           CLUSTER                        AUTHINFO
 *         us-west.k8s.example.com        us-west.k8s.example.com        us-west.k8s.example.com
 </code></pre>
 <p>接著透過以下腳本來加入<code>us-west</code>叢集至 aws-fed 的 Federation 中：</p>
-<pre><code class="language-sh">$ ./4-join-us-west.sh
+<pre><code class="sh">$ ./4-join-us-west.sh
 + kubectl config use-context aws-fed
 Switched to context &quot;aws-fed&quot;.
 + kubefed join us-west --host-cluster-context=us-west.k8s.example.com --cluster-context=us-west.k8s.example.com
 cluster &quot;us-west&quot; created
 </code></pre>
 <p>加入<code>ap-northeast</code>叢集至 aws-fed 的 Federation 中：</p>
-<pre><code class="language-sh">$ ./5-join-ap-northeast.sh
+<pre><code class="sh">$ ./5-join-ap-northeast.sh
 + kubectl config use-context aws-fed
 Switched to context &quot;aws-fed&quot;.
 + kubefed join ap-northeast --host-cluster-context=us-west.k8s.example.com --cluster-context=ap-northeast.k8s.example.com
 cluster &quot;ap-northeast&quot; created
 </code></pre>
 <p>加入<code>us-east</code>叢集至 aws-fed 的 Federation 中：</p>
-<pre><code class="language-sh">$ ./6-join-us-east.sh
+<pre><code class="sh">$ ./6-join-us-east.sh
 + kubectl config use-context aws-fed
 Switched to context &quot;aws-fed&quot;.
 + kubefed join us-east --host-cluster-context=us-west.k8s.example.com --cluster-context=us-east.k8s.example.com
 cluster &quot;us-east&quot; created
 </code></pre>
 <p>完成後，在 Federation 建立 Federated Namespace，並列出叢集：</p>
-<pre><code class="language-sh">$ ./7-create-fed-ns.sh
+<pre><code class="sh">$ ./7-create-fed-ns.sh
 + kubectl --context=aws-fed create namespace default
 namespace &quot;default&quot; created
 + kubectl --context=aws-fed get clusters
@@ -618,9 +612,8 @@ us-east        1m
 us-west        2m
 </code></pre>
 <p>完成這些過程表示你已經建立了一套 Kubernetes Federation 叢集了，接下來就可以進行測試。</p>
-<h2><span id="測試叢集">測試叢集</span></h2>
-<p>首先建立一個簡單的 Nginx 來提供服務的測試，這邊可以透過以下腳本達成：</p>
-<pre><code class="language-sh">$ ./8-deploy-fed-nginx.sh
+<h2 id="測試叢集"><a href="#測試叢集" class="headerlink" title="測試叢集"></a>測試叢集</h2><p>首先建立一個簡單的 Nginx 來提供服務的測試，這邊可以透過以下腳本達成：</p>
+<pre><code class="sh">$ ./8-deploy-fed-nginx.sh
 + cat
 + kubectl --context=aws-fed apply -f -
 deployment &quot;nginx&quot; created
@@ -637,8 +630,7 @@ svc/nginx   LoadBalancer   &lt;none&gt;       a4d86547a4903...   80/TCP    2m
 </code></pre>
 <blockquote>
 <p>這裡的 nginx deployment 有設定<code>deployment-preferences</code>，因此在 scale 時會依據下面資訊來分配：</p>
-</blockquote>
-<pre><code class="language-sh">{
+<pre><code class="sh">{
        &quot;rebalance&quot;: true,
        &quot;clusters&quot;: {
          &quot;us-west&quot;: {
@@ -659,8 +651,9 @@ svc/nginx   LoadBalancer   &lt;none&gt;       a4d86547a4903...   80/TCP    2m
        }
      }
 </code></pre>
+</blockquote>
 <p>檢查每個叢集的 Pod：</p>
-<pre><code class="language-sh"># us-west context(這邊策略為 2 - 10)
+<pre><code class="sh"># us-west context(這邊策略為 2 - 10)
 $ ./us-west/kc get po
 + kubectl --context=us-west.k8s.example.com get po
 NAME                     READY     STATUS    RESTARTS   AGE
@@ -679,7 +672,7 @@ NAME                     READY     STATUS    RESTARTS   AGE
 nginx-679dc9c764-hmwzq   1/1       Running   0          4m
 </code></pre>
 <p>透過擴展副本數來查看分配狀況：</p>
-<pre><code class="language-sh">$ ./9-scale-fed-nginx.sh
+<pre><code class="sh">$ ./9-scale-fed-nginx.sh
 + kubectl --context=aws-fed scale deploy nginx --replicas=10
 deployment &quot;nginx&quot; scaled
 
@@ -688,7 +681,7 @@ NAME      DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 nginx     10        10        10           10          8m
 </code></pre>
 <p>再次檢查每個叢集的 Pod：</p>
-<pre><code class="language-sh"># us-west context(這邊策略為 2 - 10)
+<pre><code class="sh"># us-west context(這邊策略為 2 - 10)
 $ ./us-west/kc get po
 + kubectl --context=us-west.k8s.example.com get po
 NAME                     READY     STATUS    RESTARTS   AGE
@@ -717,16 +710,16 @@ nginx-679dc9c764-vj7hb   1/1       Running   0          1m
 <p>可以看到結果符合我們預期範圍內。</p>
 </blockquote>
 <p>最後因為服務是透過 ELB 來提供，為了統一透過 Domain name 存取相同服務，這邊更新 Hosted Zone Record 來轉發：</p>
-<pre><code class="language-sh">$ ./10-update-fed-nginx-record.sh
+<pre><code class="sh">$ ./10-update-fed-nginx-record.sh
 </code></pre>
 <p>完成後透過 cURL 工作來測試：</p>
-<pre><code class="language-sh">$ curl nginx.k8s.example.com
+<pre><code class="sh">$ curl nginx.k8s.example.com
 ...
 &lt;title&gt;Welcome to nginx!&lt;/title&gt;
 ...
 </code></pre>
 <p>最後透過該腳本來清楚叢集與 AWS 服務上建立的東西：</p>
-<pre><code class="language-sh">$ ./99-purge.sh
+<pre><code class="sh">$ ./99-purge.sh
 </code></pre>
 
                 
@@ -771,7 +764,7 @@ nginx-679dc9c764-vj7hb   1/1       Running   0          1m
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes Federation 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Route53 Hosted Zone</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">在每個 Region 建立 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">建立 Kubernetes Federation 叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">測試叢集</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Kubernetes-Federation-叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes Federation 叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Route53-Hosted-Zone"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Route53 Hosted Zone</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#在每個-Region-建立-Kubernetes-叢集"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">在每個 Region 建立 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Kubernetes-Federation-叢集"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">建立 Kubernetes Federation 叢集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試叢集"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">測試叢集</span></a></li></ol>
         
         </div>
       </aside>

@@ -14,7 +14,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          hyperkube 建立多節點 Kubernetes(Unrecommended) - KaiRen&#39;s Blog
+          hyperkube 建立多節點 Kubernetes - KaiRen&#39;s Blog
         
     </title>
 
@@ -91,7 +91,7 @@
                               <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
                             
                         </div>
-                        <h1>hyperkube 建立多節點 Kubernetes(Unrecommended)</h1>
+                        <h1>hyperkube 建立多節點 Kubernetes</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -295,8 +295,7 @@
 <li>Docker v17.03.0-ce</li>
 </ul>
 <a id="more"></a>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt 或 Vbox：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為 Vagrant with Libvirt 或 Vbox：</p>
 <table>
 <thead>
 <tr>
@@ -330,29 +329,26 @@
 <blockquote>
 <p>這邊 master 為主要控制節點，node 為應用程式工作節點。</p>
 </blockquote>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>安裝前需要確認叢集滿足以下幾點：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
 <ul>
 <li>所有節點需要安裝<code>Docker</code>或<code>rtk</code>引擎。安裝方式為以下：</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 $ sudo iptables -P FORWARD ACCEPT
 </code></pre>
-<h2><span id="kubernetes-部署">Kubernetes 部署</span></h2>
-<p>這邊將分別部署 Master 與 Node(Worker) 節點。</p>
-<h3><span id="建立-master-節點">建立 Master 節點</span></h3>
-<p>首先下載官方 Release 的原始碼程式：</p>
-<pre><code class="language-sh">$ git clone &quot;https://github.com/kubernetes/kube-deploy&quot;
+<h2 id="Kubernetes-部署"><a href="#Kubernetes-部署" class="headerlink" title="Kubernetes 部署"></a>Kubernetes 部署</h2><p>這邊將分別部署 Master 與 Node(Worker) 節點。</p>
+<h3 id="建立-Master-節點"><a href="#建立-Master-節點" class="headerlink" title="建立 Master 節點"></a>建立 Master 節點</h3><p>首先下載官方 Release 的原始碼程式：</p>
+<pre><code class="sh">$ git clone &quot;https://github.com/kubernetes/kube-deploy&quot;
 </code></pre>
 <p>接著進入部署目錄來進行部署動作，Master 執行以下指令：</p>
-<pre><code class="language-sh">$ export IP_ADDRESS=&quot;172.16.35.12&quot;
+<pre><code class="sh">$ export IP_ADDRESS=&quot;172.16.35.12&quot;
 $ cd kube-deploy/docker-multinode
 $ ./master.sh
 ...
 Master done!
 </code></pre>
 <p>執行後，透過 Docker 指令查看是否成功：</p>
-<pre><code class="language-sh">$ docker ps
+<pre><code class="sh">$ docker ps
 CONTAINER ID        IMAGE                                                    COMMAND                  CREATED              STATUS              PORTS               NAMES
 bfb6461499fb        gcr.io/google_containers/hyperkube-amd64:v1.5.5          &quot;/hyperkube kubele...&quot;   4 minutes ago        Up 4 minutes                            kubelet
 ...
@@ -361,60 +357,58 @@ bfb6461499fb        gcr.io/google_containers/hyperkube-amd64:v1.5.5          &qu
 <p>這邊會隨時間開啟其他 Component 的 Docker Container。</p>
 </blockquote>
 <p>確認完成後，就可以下載 kubectl 來透過 API 管理叢集：</p>
-<pre><code class="language-sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.5/bin/linux/amd64/kubectl&quot;
+<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v1.5.5/bin/linux/amd64/kubectl&quot;
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
 <p>安裝好 kubectl 後就可以透過以下指令來查看資訊：</p>
-<pre><code class="language-sh">$ kubectl get nodes
+<pre><code class="sh">$ kubectl get nodes
 NAME           STATUS    AGE
 172.16.35.12   Ready     11s
 </code></pre>
 <p>查看系統命名空間的 pod 與 svc 資訊：</p>
-<pre><code class="language-sh">$ kubectl get po --all-namespaces
+<pre><code class="sh">$ kubectl get po --all-namespaces
 NAMESPACE     NAME                                    READY     STATUS    RESTARTS   AGE
 kube-system   k8s-proxy-v1-bfdml                      1/1       Running   0          1m
 kube-system   kube-dns-4101612645-fb1rn               4/4       Running   0          1m
 kube-system   kubernetes-dashboard-3543765157-999p2   1/1       Running   0          1m
 </code></pre>
-<h3><span id="建立-nodeworker-節點">建立 Node(Worker) 節點</span></h3>
-<p>首先下載官方 Release 的原始碼程式：</p>
-<pre><code class="language-sh">$ git clone &quot;https://github.com/kubernetes/kube-deploy&quot;
+<h3 id="建立-Node-Worker-節點"><a href="#建立-Node-Worker-節點" class="headerlink" title="建立 Node(Worker) 節點"></a>建立 Node(Worker) 節點</h3><p>首先下載官方 Release 的原始碼程式：</p>
+<pre><code class="sh">$ git clone &quot;https://github.com/kubernetes/kube-deploy&quot;
 </code></pre>
 <p>接著進入部署目錄來進行部署動作，Node 執行以下指令：</p>
-<pre><code class="language-sh">$ export MASTER_IP=&quot;172.16.35.12&quot;; export IP_ADDRESS=&quot;172.16.35.11&quot;
+<pre><code class="sh">$ export MASTER_IP=&quot;172.16.35.12&quot;; export IP_ADDRESS=&quot;172.16.35.11&quot;
 $ cd kube-deploy/docker-multinode
 $ ./worker.sh
 ...
 +++ [0324 07:23:06] Done. After about a minute the node should be ready
 </code></pre>
-<h2><span id="驗證安裝">驗證安裝</span></h2>
-<p>完成後可以查看所有節點狀態，執行以下指令：</p>
-<pre><code class="language-sh">$ kubectl get nodes
+<h2 id="驗證安裝"><a href="#驗證安裝" class="headerlink" title="驗證安裝"></a>驗證安裝</h2><p>完成後可以查看所有節點狀態，執行以下指令：</p>
+<pre><code class="sh">$ kubectl get nodes
 NAME           STATUS    AGE
 172.16.35.10   Ready     3m
 172.16.35.11   Ready     4m
 172.16.35.12   Ready     1m
 </code></pre>
 <p>接著我們透過部署簡單的 Nginx 應用程式來驗證系統是否正常：</p>
-<pre><code class="language-sh">$ kubectl run nginx --image=nginx --port=80
+<pre><code class="sh">$ kubectl run nginx --image=nginx --port=80
 deployment &quot;nginx&quot; created
 
 $ kubectl expose deploy nginx --port=80
 service &quot;nginx&quot; exposed
 </code></pre>
 <p>透過指令檢查 Pods：</p>
-<pre><code class="language-sh">$ kubectl get po -o wide
+<pre><code class="sh">$ kubectl get po -o wide
 NAME                     READY     STATUS    RESTARTS   AGE       IP         NODE
 nginx-3449338310-ttqp2   1/1       Running   0          32s       10.1.1.2   172.16.35.11
 </code></pre>
 <p>透過指令檢查 Service：</p>
-<pre><code class="language-sh">$ kubectl get svc -o wide
+<pre><code class="sh">$ kubectl get svc -o wide
 NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE       SELECTOR
 kubernetes   10.0.0.1     &lt;none&gt;        443/TCP   47m       &lt;none&gt;
 nginx        10.0.0.149   &lt;none&gt;        80/TCP    37s       run=nginx
 </code></pre>
 <p>取得應用程式的 Service ip，並存取服務：</p>
-<pre><code class="language-sh">$ IP=$(kubectl get svc nginx --template={{.spec.clusterIP}})
+<pre><code class="sh">$ IP=$(kubectl get svc nginx --template={{.spec.clusterIP}})
 $ curl ${IP}
 </code></pre>
 
@@ -430,7 +424,7 @@ $ curl ${IP}
                     
                     
                         <li class="next">
-                            <a href="/2016/01/13/kubernetes/deploy/docker-singal/" data-toggle="tooltip" data-placement="top" title="hyperkube 建立單機 Kubernetes(Unrecommended)">Next Post &rarr;</a>
+                            <a href="/2016/01/13/kubernetes/deploy/docker-singal/" data-toggle="tooltip" data-placement="top" title="hyperkube 建立單機 Kubernetes">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -460,7 +454,7 @@ $ curl ${IP}
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Kubernetes 部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Master 節點</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">建立 Node(Worker) 節點</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證安裝</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Kubernetes-部署"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Kubernetes 部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Master-節點"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Master 節點</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Node-Worker-節點"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">建立 Node(Worker) 節點</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證安裝"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證安裝</span></a></li></ol>
         
         </div>
       </aside>

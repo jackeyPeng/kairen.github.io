@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -284,6 +284,58 @@
 
 <div class="post-preview">
 
+    <a href="/2016/10/01/tensorflow/tensorflow-docker/">
+        <h2 class="post-title">
+            TensorFlow on Docker
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇主要整理使用 Docker 來執行 TensorFlow 的一些問題，這邊 Google 官方已經提供了相關的映像檔提供使用，因此會簡單說明安裝過程與需求。
+
+
+
+環境準備環境採用 Ubuntu 16.04 Desktop 作業系統，然後顯卡是撿朋友不要的來使用，環境硬體資源如下：
+
+
+
+名稱
+描述
+
+
+
+
+CPU
+i7-4790 CPU @ 3.60GHz
+
+
+Memory
+32GB
+......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-10-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#TensorFlow" title="TensorFlow">TensorFlow</a>
+            
+              <a href="/tags/#Machine Learning" title="Machine Learning">Machine Learning</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/09/29/kubernetes/deploy/kubeadm/">
         <h2 class="post-title">
             只要用 kubeadm 小朋友都能部署 Kubernetes
@@ -328,8 +380,7 @@
         <div class="post-content-preview">
             Go 語言是 Google 開發的該世代 C 語言，延續 C 語言的一些優點，是一種靜態強刑別、編譯型，且具有並行機制與垃圾回收功能的語言。由於其並行機制讓 Go 在撰寫多執行緒與網路程式都非常容易。值得一提的是 Go 語言的設計者也包含過去設計 C 語言的 Ken Thompson。目前 Go 語言基於 1.x 每半年發布一個版本。
 
-Go 語言安裝
-Go 語言安裝非常容易，目前已支援多個......
+Go 語言安裝Go 語言安裝非常容易，目前已支援多個平......
         </div>
     </a>
     
@@ -364,8 +415,7 @@ Go 語言安裝非常容易，目前已支援多個......
             DC/OS(Data Center Operating System，資料中心作業系統)是 Mesosphere 公司開源的系統，該平台提供了諸多巨量資料處理框架與系統的建置，並以分散式系統 Mesos 作為核心，提供系統資源的隔離與調度，使用者可以根據需求與策略來應用系統資源。
 而本篇將說明如何透過 UI 與 CLI 進行安裝 DC/OS。
 
-節點配置
-DC/OS 最低需求要四台主機，以下......
+節點配置DC/OS 最低需求要四台主機，以下為......
         </div>
     </a>
     
@@ -399,8 +449,7 @@ DC/OS 最低需求要四台主機，以下......
         <div class="post-content-preview">
             Kolla 提供 OpenStack 生產環境就緒的容器與部署工具，其具備快速、擴展、可靠等特性，並提供社群版本的最佳本版升級實現。
 
-節點配置
-本安裝將使用三台實體主機與一台虛擬機器來進行簡單叢集部署，主機規格如以下所示：
+節點配置本安裝將使用三台實體主機與一台虛擬機器來進行簡單叢集部署，主機規格如以下所示：
 
 
 
@@ -420,7 +469,7 @@ controller1
 10.0.0.11
 
 
-netwo......
+networ......
         </div>
     </a>
     
@@ -435,6 +484,48 @@ netwo......
               <a href="/tags/#OpenStack" title="OpenStack">OpenStack</a>
             
               <a href="/tags/#Ansible" title="Ansible">Ansible</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/07/17/data-engineer/spark-perf/">
+        <h2 class="post-title">
+            Databricks spark-perf Benchmark
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本範例為利用 spark-perf 針對SparkStreaming進行效能測試
+系統需求:
+
+Ubuntu 14.04
+Hadoop2.6.0
+Spark1.5.2 + Mesos 安裝
+
+設定 Spark-perf首先透過 Git 下載 Sparo-perf 專案：
+$ git clone https://github.com/databricks/spark-perf
+
+完成後，進入s......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-07-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Spark" title="Spark">Spark</a>
+            
+              <a href="/tags/#Mesos" title="Mesos">Mesos</a>
+            
+              <a href="/tags/#Benchmark" title="Benchmark">Benchmark</a>
             
         </div>
     
@@ -486,11 +577,10 @@ netwo......
         <div class="post-content-preview">
             本節將說明如何透過 mvn 與 sbt 來建置 Spark 最新版的相關檔案，透過提供最新版本來觀看 API 的變動。
 
-事前準備
-首先準備一台裝有 Ubuntu 14.04 LTS Server 的主機或 Docker 容器，然後在裡面安裝相依套件：
+事前準備首先準備一台裝有 Ubuntu 14.04 LTS Server 的主機或 Docker 容器，然後在裡面安裝相依套件：
 sudo apt-get purge openjdk*
 sudo apt-get -y autoremove
-sudo apt-get in......
+sudo apt-get ins......
         </div>
     </a>
     
@@ -523,12 +613,11 @@ sudo apt-get in......
             Kuryr 是 Docker network plugin 之一，主要是使用 Neutron 來提供網路服務給不同主機的 Docker 容器使用，目前也提供了容器化的 Neutron plugin 容器映像檔。
 本篇說明如何透過 CentOS 來部署簡單的 Kuryr 與 Docker 串接。
 
-節點配置
-OpenStack Kuryr 我們使用到三台節點，以下為本次安裝的規格：
+節點配置OpenStack Kuryr 我們使用到三台節點，以下為本次安裝的規格：
 
 
 
-Ro......
+Rol......
         </div>
     </a>
     
@@ -560,8 +649,7 @@ Ro......
         <div class="post-content-preview">
             Flashcache 是 Facebook 的一個開源專案，主要被用於資料庫加速。基本結構為在硬碟（HDD）前面加了一層快取，即採用固態硬碟（SSD）裝置，把熱資料保存於快取中，寫入的過程也是先寫到 SSD，然後由 SSD 同步到傳統硬碟，最後的資料將保存於硬碟中，這樣可以不用擔心 SSD 損壞造成資料遺失問題，同時又可以有大容量、高效能的儲存。
 
-安裝
-本教學採用 Ubuntu 14.04......
+安裝本教學採用 Ubuntu 14.04 ......
         </div>
     </a>
     
@@ -576,88 +664,6 @@ Ro......
               <a href="/tags/#Linux" title="Linux">Linux</a>
             
               <a href="/tags/#SSD" title="SSD">SSD</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/05/26/linux/ubuntu/corosync-pacemaker/">
-        <h2 class="post-title">
-            Pacemaker + Corosync 做服務 HA
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Pacemaker 與 Corosync 是 Linux 中現今較常用的高可靠性叢集系統組合。Pacemaker 自身提供了很多常用的應用管理功能，不過若要使用 Pacemaker 來管理自己實作的服務，或是一些特別的東西時，就必須要自己實作管理資源。
-
-節點配置
-本安裝將使用三台實體主機與一台虛擬機器，主機規格如以下所示：
-
-
-
-Role
-IP Address
-
-
-
-
-pacemaker1......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-05-26
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-              <a href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
-            
-              <a href="/tags/#High Availability" title="High Availability">High Availability</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/05/15/ceph/rados-java/">
-        <h2 class="post-title">
-            利用 rados-java 存取 Ceph
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            rados-java 透過 JNA 來綁定 librados © 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。
-
-環境準備
-在開始進行之前，需要滿足以下幾項要求：
-
-需要部署一個 Ceph 叢集，可以參考 C......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-05-15
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#Java" title="Java">Java</a>
             
         </div>
     
@@ -771,6 +777,10 @@ pacemaker1......
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -786,10 +796,6 @@ pacemaker1......
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -801,8 +807,6 @@ pacemaker1......
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -830,6 +834,10 @@ pacemaker1......
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -871,8 +879,6 @@ pacemaker1......
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -887,7 +893,9 @@ pacemaker1......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

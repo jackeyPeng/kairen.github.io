@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -290,8 +290,7 @@
                 <p>Kuryr 是 Docker network plugin 之一，主要是使用 Neutron 來提供網路服務給不同主機的 Docker 容器使用，目前也提供了容器化的 Neutron plugin 容器映像檔。</p>
 <p>本篇說明如何透過 CentOS 來部署簡單的 Kuryr 與 Docker 串接。</p>
 <a id="more"></a>
-<h2><span id="節點配置">節點配置</span></h2>
-<p>OpenStack Kuryr 我們使用到三台節點，以下為本次安裝的規格：</p>
+<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>OpenStack Kuryr 我們使用到三台節點，以下為本次安裝的規格：</p>
 <table>
 <thead>
 <tr>
@@ -327,7 +326,7 @@
 </tbody>
 </table>
 <p>請以上節點都分別安裝 RHEL 或者 CentOS 作業系統。並且設定 IP 為靜態固定，編輯<code>/etc/sysconfig/network-scripts/ifcfg-&lt;name&gt;</code>檔案，加入以下內容：</p>
-<pre><code class="language-sh">ONBOOT=&quot;yes&quot;
+<pre><code class="sh">ONBOOT=&quot;yes&quot;
 IPADDR=&quot;10.0.0.104&quot;
 PREFIX=&quot;24&quot;
 GATEWAY=&quot;10.0.0.1&quot;
@@ -337,34 +336,33 @@ DNS2=&quot;8.8.8.4&quot;
 <blockquote>
 <p><font color="red">P.S.</font> 若是虛擬機則不需要設定。</p>
 </blockquote>
-<h2><span id="安裝前準備">安裝前準備</span></h2>
-<p>在開始安裝以前，首先需要在每一台節點將基本環境的軟體更新：</p>
-<pre><code class="language-sh">$ sudo yum update -y
+<h2 id="安裝前準備"><a href="#安裝前準備" class="headerlink" title="安裝前準備"></a>安裝前準備</h2><p>在開始安裝以前，首先需要在每一台節點將基本環境的軟體更新：</p>
+<pre><code class="sh">$ sudo yum update -y
 </code></pre>
 <blockquote>
-<p>完成後檢查是否是最新版本，可以透過以下方式查看 Kernel：</p>
-</blockquote>
-<pre><code class="language-sh">$ uname -r
+<ul>
+<li>完成後檢查是否是最新版本，可以透過以下方式查看 Kernel：<pre><code class="sh">$ uname -r
 3.10.0-327.13.1.el7.x86_64
 </code></pre>
-<blockquote>
-<p>如果不是以上版本，請執行以下指令：</p>
-</blockquote>
-<pre><code class="language-sh">$ sudo yum upgrade --assumeyes --tolerant
+</li>
+<li>如果不是以上版本，請執行以下指令：<pre><code class="sh">$ sudo yum upgrade --assumeyes --tolerant
 $ sudo yum update --assumeyes
 </code></pre>
+</li>
+</ul>
+</blockquote>
 <p>由於在 CentOS 與 RHEL 預設會開啟防火牆，故要關閉防火牆與開機時自動啟動：</p>
-<pre><code class="language-sh">$ sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
+<pre><code class="sh">$ sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
 </code></pre>
 <p>設定關閉 SELinux 與設定一些資訊，並重新啟動：</p>
-<pre><code class="language-sh">$ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config &amp;&amp;
+<pre><code class="sh">$ sudo sed -i s/SELINUX=enforcing/SELINUX=permissive/g /etc/selinux/config &amp;&amp;
 sudo groupadd nogroup &amp;&amp;
 sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1 &amp;&amp;
 sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1 &amp;&amp;
 sudo reboot
 </code></pre>
 <p>完成重新啟動後，在所有<code>Network</code>節點安裝 Docker，首先要取得 repos，設定以下來讓 yum 可以抓取：</p>
-<pre><code class="language-sh">$ sudo tee /etc/yum.repos.d/docker.repo &lt;&lt;-'EOF'
+<pre><code class="sh">$ sudo tee /etc/yum.repos.d/docker.repo &lt;&lt;-&#39;EOF&#39;
 [dockerrepo]
 name=Docker Repository
 baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
@@ -374,24 +372,23 @@ gpgkey=https://yum.dockerproject.org/gpg
 EOF
 </code></pre>
 <p>在<code>Network</code>節點安裝 Docker engine，並啟動 docker 與設定開機啟動：</p>
-<pre><code class="language-sh">$ sudo yum install --assumeyes --tolerant docker-engine
+<pre><code class="sh">$ sudo yum install --assumeyes --tolerant docker-engine
 $ sudo systemctl start docker
 $ sudo systemctl enable docker
 </code></pre>
 <p>在<code>所有</code>節點安裝一些基本工具軟體：</p>
-<pre><code class="language-sh">$ sudo yum install -y tar xz unzip curl ipset vim wget git python-pip
+<pre><code class="sh">$ sudo yum install -y tar xz unzip curl ipset vim wget git python-pip
 $ sudo pip install --upgrade pip
 </code></pre>
 <p>在<code>Controller</code>節點，進入<code>root</code>使用者，並建置 ssh keys：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ cat .ssh/id_rsa.pub &gt;&gt; .ssh/authorized_keys
 </code></pre>
 <p>複製<code>Controller</code>節點的<code>.ssh/id_rsa.pub</code>內容，並貼到<code>Network</code>節點的<code>root</code>使用者的<code>.ssh/authorized_keys</code>。並驗證 ssh 是否可以無密碼登入：</p>
-<pre><code class="language-sh">$ ssh 172.16.1.118
+<pre><code class="sh">$ ssh 172.16.1.118
 </code></pre>
-<h3><span id="安裝-openstack">安裝 OpenStack</span></h3>
-<p>這邊使用 RDO 進行安裝。由於只需要 Neutron 與 Keystone 服務，所以可以修改部署的<code>answer-file</code>設定檔。由於這邊使用的是虛擬機，因此 Neutron 網路採用 VXLAN 方式進行安裝。進入到<code>Controller</code>節點，並且進入到<code>root</code>使用者安裝 PackStack：</p>
-<pre><code class="language-sh">$ yum install -y centos-release-openstack-mitaka.noarch
+<h3 id="安裝-OpenStack"><a href="#安裝-OpenStack" class="headerlink" title="安裝 OpenStack"></a>安裝 OpenStack</h3><p>這邊使用 RDO 進行安裝。由於只需要 Neutron 與 Keystone 服務，所以可以修改部署的<code>answer-file</code>設定檔。由於這邊使用的是虛擬機，因此 Neutron 網路採用 VXLAN 方式進行安裝。進入到<code>Controller</code>節點，並且進入到<code>root</code>使用者安裝 PackStack：</p>
+<pre><code class="sh">$ yum install -y centos-release-openstack-mitaka.noarch
 $ yum install -y openstack-packstack
 $ wget https://gist.githubusercontent.com/kairen/637c707b960e188d32aba9044e652c0b/raw/6724a5177ca82ced555554635c6b0893e8c398ab/answer-file
 </code></pre>
@@ -406,9 +403,8 @@ CONFIG_STORAGE_HOST=172.16.1.115
 CONFIG_AMQP_HOST=172.16.1.115
 CONFIG_MARIADB_HOST=172.16.1.115
 CONFIG_KEYSTONE_LDAP_URL=ldap://172.16.1.115
-</code></pre>
-<p>設定檔都確認無誤後，透過以下指令進行安裝：</p>
-<pre><code class="language-sh">$ packstack --answer-file=answer-file
+</code></pre><p>設定檔都確認無誤後，透過以下指令進行安裝：</p>
+<pre><code class="sh">$ packstack --answer-file=answer-file
 ...
 **** Installation completed successfully ******
 * To access the OpenStack Dashboard browse to http://172.16.1.115/dashboard .
@@ -417,7 +413,7 @@ CONFIG_KEYSTONE_LDAP_URL=ldap://172.16.1.115
 <p>中途若發生安裝套件失敗問題，請直接重新執行一次。</p>
 </blockquote>
 <p>當成功安裝完成後，透過簡單的 OpenStack 指令來確認：</p>
-<pre><code class="language-sh">$ . keystonerc_admin
+<pre><code class="sh">$ . keystonerc_admin
 $ openstack user list
 +----------------------------------+---------+
 | ID                               | Name    |
@@ -426,14 +422,13 @@ $ openstack user list
 | 9600aaa2447940e789e548b2f5515690 | neutron |
 +----------------------------------+---------+
 </code></pre>
-<h3><span id="安裝-kuryr">安裝 Kuryr</span></h3>
-<p>進入<code>Network</code>節點，並且進入到<code>root</code>使用者，下載 Kuryr 最新的專案：</p>
-<pre><code class="language-sh">$ git clone https://github.com/openstack/kuryr.git
+<h3 id="安裝-Kuryr"><a href="#安裝-Kuryr" class="headerlink" title="安裝 Kuryr"></a>安裝 Kuryr</h3><p>進入<code>Network</code>節點，並且進入到<code>root</code>使用者，下載 Kuryr 最新的專案：</p>
+<pre><code class="sh">$ git clone https://github.com/openstack/kuryr.git
 $ pip install -r requirements.txt
 $ python setup.py install
 </code></pre>
 <p>建立 Kuryr 設定檔與 Log 目錄：</p>
-<pre><code class="language-sh">$ mkdir -p /var/log/kuryr /etc/kuryr
+<pre><code class="sh">$ mkdir -p /var/log/kuryr /etc/kuryr
 $ wget https://gist.githubusercontent.com/kairen/637c707b960e188d32aba9044e652c0b/raw/6724a5177ca82ced555554635c6b0893e8c398ab/kuryr.conf -O /etc/kuryr/kuryr.conf
 </code></pre>
 <p>編輯<code>/etc/kuryr/kuryr.conf</code>設定檔，修改一下內容：</p>
@@ -442,14 +437,12 @@ auth_uri = http://172.16.1.115:35357/v2.0
 
 [neutron_client]
 neutron_uri = http://172.16.1.115:9696
-</code></pre>
-<p>接著啟動 Kuryr 服務：</p>
-<pre><code class="language-sh">$ ./scripts/run_kuryr.sh &amp;
+</code></pre><p>接著啟動 Kuryr 服務：</p>
+<pre><code class="sh">$ ./scripts/run_kuryr.sh &amp;
 2016-06-02 03:51:33.578 4758 INFO werkzeug [-]  * Running on http://0.0.0.0:2377/ (Press CTRL+C to quit)
 </code></pre>
-<h3><span id="服務驗證">服務驗證</span></h3>
-<p>當所有<code>Network</code>節點都完成 Kuryr 安裝後，就可以透過以下方式來驗證，首先在<code>network-1</code>建立網路：</p>
-<pre><code class="language-sh">$ docker network create --driver=kuryr \
+<h3 id="服務驗證"><a href="#服務驗證" class="headerlink" title="服務驗證"></a>服務驗證</h3><p>當所有<code>Network</code>節點都完成 Kuryr 安裝後，就可以透過以下方式來驗證，首先在<code>network-1</code>建立網路：</p>
+<pre><code class="sh">$ docker network create --driver=kuryr \
 --ipam-driver=kuryr \
 --subnet 10.0.0.0/16 \
 --gateway 10.0.0.1 \
@@ -459,7 +452,7 @@ neutron_uri = http://172.16.1.115:9696
 821d6cd53af6c656969c1c96063a60c695a0313c9a119e44d4325ce2a9f2f935
 </code></pre>
 <p>透過 docker 指令來查看網路：</p>
-<pre><code class="language-sh">$ docker network inspect kuryr
+<pre><code class="sh">$ docker network inspect kuryr
 [
     {
         &quot;Name&quot;: &quot;kuryr&quot;,
@@ -501,7 +494,7 @@ neutron_uri = http://172.16.1.115:9696
 ]
 </code></pre>
 <p>接著建立一個 container 來取得 IP：</p>
-<pre><code class="language-sh">$ docker run -it -d --net kuryr --privileged=true ubuntu:14.04
+<pre><code class="sh">$ docker run -it -d --net kuryr --privileged=true ubuntu:14.04
 $ docker exec -ti $(docker ps -lq) bash
 root@367763a677ad$ ip -4 a
 1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default
@@ -512,7 +505,7 @@ root@367763a677ad$ ip -4 a
        valid_lft forever preferred_lft forever
 </code></pre>
 <p>接著進入到<code>network-2</code>節點，透過 docker 指令建立網路，這邊採用跟上一個同樣的網路：</p>
-<pre><code class="language-sh">$ docker network create --driver=kuryr \
+<pre><code class="sh">$ docker network create --driver=kuryr \
 --ipam-driver=kuryr \
 --subnet 10.0.0.0/16 \
 --gateway 10.0.0.1 \
@@ -521,12 +514,12 @@ root@367763a677ad$ ip -4 a
 </code></pre>
 <blockquote>
 <p>這邊<code>neutron.net.uuid</code>可以透過以下在<code>Controller</code>方式取得：</p>
-</blockquote>
-<pre><code class="language-sh">$ neutron net-list | awk '/kuryr/ {print $2}'
+<pre><code class="sh">$ neutron net-list | awk &#39;/kuryr/ {print $2}&#39;
 8c069d2c-772c-47ae-90bb-d22148f37dc8
 </code></pre>
+</blockquote>
 <p>接著一樣建立一個 container 來取得 IP：</p>
-<pre><code class="language-sh">$ docker run -it -d --net kuryr --privileged=true ubuntu:14.04
+<pre><code class="sh">$ docker run -it -d --net kuryr --privileged=true ubuntu:14.04
 $ docker exec -ti $(docker ps -lq) bash
 root@f2b48a802e92$ ip -4 a
 1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default
@@ -537,7 +530,7 @@ root@f2b48a802e92$ ip -4 a
        valid_lft forever preferred_lft forever
 </code></pre>
 <p>透過 ping 來驗證網路是否有連接：</p>
-<pre><code class="language-sh">root@f2b48a802e92$ ping -c 3 10.0.0.3
+<pre><code class="sh">root@f2b48a802e92$ ping -c 3 10.0.0.3
 PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
 64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=1.71 ms
 64 bytes from 10.0.0.3: icmp_seq=2 ttl=64 time=1.37 ms
@@ -586,7 +579,7 @@ PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝前準備</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">安裝 OpenStack</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">安裝 Kuryr</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">服務驗證</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點配置"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">安裝前準備</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝-OpenStack"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">安裝 OpenStack</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝-Kuryr"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">安裝 Kuryr</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#服務驗證"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">服務驗證</span></a></li></ol></li></ol>
         
         </div>
       </aside>

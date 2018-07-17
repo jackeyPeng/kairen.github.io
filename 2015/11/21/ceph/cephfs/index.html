@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -290,60 +290,58 @@
                 post-container">
 
                 <p>Ceph FS 底層的部分同樣是由 RADOS(OSDs + Monitors + MDSs) 提供，在上一層同樣與 librados 溝通，最上層則是有不同的 library 將其轉換成標準的 POSIX 檔案系統供使用。</p>
-<center>![](/images/ceph/cephfs.png)</center>
+<p><img src="/images/ceph/cephfs.png" alt=""></p>
 <a id="more"></a>
-<h2><span id="建立一個-ceph-file-system">建立一個 Ceph File System</span></h2>
-<p>首先將一個叢集建立完成，並提供 Metadata Server Node 與 Client，建立 Client 可以透過以下指令：</p>
-<pre><code class="language-sh">$ ceph-deploy install &lt;myceph-client&gt;
+<h2 id="建立一個-Ceph-File-System"><a href="#建立一個-Ceph-File-System" class="headerlink" title="建立一個 Ceph File System"></a>建立一個 Ceph File System</h2><p>首先將一個叢集建立完成，並提供 Metadata Server Node 與 Client，建立 Client 可以透過以下指令：</p>
+<pre><code class="sh">$ ceph-deploy install &lt;myceph-client&gt;
 </code></pre>
 <p>建立 MDS 節點可以透過以下指令：</p>
-<pre><code class="language-sh">$ ceph-deploy mds create mds-node
+<pre><code class="sh">$ ceph-deploy mds create mds-node
 </code></pre>
 <p>當 Ceph 叢集已經提供了MDS後，可以建立 Data Pool 與 Metadata Pool：</p>
-<pre><code class="language-sh">$ ceph osd pool create cephfs_data 128
+<pre><code class="sh">$ ceph osd pool create cephfs_data 128
 $ ceph osd pool create cephfs_metadata 128
 </code></pre>
 <blockquote>
 <p><strong>How to judge PG number</strong>：</p>
-</blockquote>
 <ul>
 <li>Less than 5 OSDs set pg_num to 128</li>
 <li>Between 5 and 10 OSDs set pg_num to 512</li>
 <li>Between 10 and 50 OSDs set pg_num to 4096</li>
 <li>If you have more than 50 OSDs, you need to understand the tradeoffs and how to calculate the pg_num value by yourself</li>
 </ul>
+</blockquote>
 <p>完成 Pool 建立後，我們將儲存池拿來給 File System 使用，並建立檔案系統：</p>
-<pre><code class="language-sh">$ ceph fs new cephfs cephfs_metadata cephfs_data
+<pre><code class="sh">$ ceph fs new cephfs cephfs_metadata cephfs_data
 </code></pre>
 <p>取得 Client 驗證金鑰：</p>
-<pre><code class="language-sh">$ cat /etc/ceph/ceph.client.admin.keyring
+<pre><code class="sh">$ cat /etc/ceph/ceph.client.admin.keyring
 [client.admin]
-	key = AQC/mo9VxqsXDBAAQ/LQtTmR+GTPs65KBsEPrw==
+    key = AQC/mo9VxqsXDBAAQ/LQtTmR+GTPs65KBsEPrw==
 </code></pre>
 <p>建立，並儲存到檔案<code>admin.secret</code>：</p>
-<pre><code class="language-sh">AQC/mo9VxqsXDBAAQ/LQtTmR+GTPs65KBsEPrw==
+<pre><code class="sh">AQC/mo9VxqsXDBAAQ/LQtTmR+GTPs65KBsEPrw==
 </code></pre>
 <p>檢查 MDS 與 FS：</p>
-<pre><code class="language-sh">$ ceph fs ls
+<pre><code class="sh">$ ceph fs ls
 $ ceph mds stat
 </code></pre>
 <p>建立 Mount 用目錄，並且 Mount File System：</p>
-<pre><code class="language-sh">$ sudo mkdir /mnt/mycephfs
+<pre><code class="sh">$ sudo mkdir /mnt/mycephfs
 $ sudo mount -t ceph {ip-address-of-monitor}:6789:/ /mnt/mycephfs/ -o name=admin,secretfile=admin.secret
 </code></pre>
 <p>檢查系統 DF 與 Mount 結果：</p>
-<pre><code class="language-sh">$ sudo df -l
+<pre><code class="sh">$ sudo df -l
 $ sudo mount
 </code></pre>
 <blockquote>
 <p>使用CEPH檔案系統時，要注意是否安裝了元資料伺服器(Metadata Server)。且請確認CEPH版本為是<code>0.84</code>之後的版本。</p>
 </blockquote>
-<h2><span id="ceph-filesystem-fuse-file-system-in-user-space">Ceph Filesystem FUSE (File System in User Space)</span></h2>
-<p>首先在MDS節點上安裝ceph-fuse 套件：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y ceph-fuse
+<h2 id="Ceph-Filesystem-FUSE-File-System-in-User-Space"><a href="#Ceph-Filesystem-FUSE-File-System-in-User-Space" class="headerlink" title="Ceph Filesystem FUSE (File System in User Space)"></a>Ceph Filesystem FUSE (File System in User Space)</h2><p>首先在MDS節點上安裝ceph-fuse 套件：</p>
+<pre><code class="sh">$ sudo apt-get install -y ceph-fuse
 </code></pre>
 <p>完成後，我們就可以Mount起來使用：</p>
-<pre><code class="language-sh">$ sudo mkdir /mnt/myceph-fuse
+<pre><code class="sh">$ sudo mkdir /mnt/myceph-fuse
 $ sudo ceph-fuse -m {ip-address-of-monitor}:6789 /mnt/myceph-fuse
 </code></pre>
 <p>當 Mount 成功後，就可以到該目錄檢查檔案。</p>
@@ -393,7 +391,7 @@ $ sudo ceph-fuse -m {ip-address-of-monitor}:6789 /mnt/myceph-fuse
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">建立一個 Ceph File System</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Ceph Filesystem FUSE (File System in User Space)</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立一個-Ceph-File-System"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">建立一個 Ceph File System</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Ceph-Filesystem-FUSE-File-System-in-User-Space"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Ceph Filesystem FUSE (File System in User Space)</span></a></li></ol>
         
         </div>
       </aside>

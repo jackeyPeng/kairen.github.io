@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -293,8 +293,7 @@
 <blockquote>
 <p>P.S. 目前 Stackube 已經不再維護，僅作為測試與研究程式碼使用。</p>
 </blockquote>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體機器：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體機器：</p>
 <table>
 <thead>
 <tr>
@@ -313,29 +312,27 @@
 </tr>
 </tbody>
 </table>
-<h2><span id="部署-stackube">部署 Stackube</span></h2>
-<p>首先新增 Devstack 使用的 User：</p>
-<pre><code class="language-sh">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+<h2 id="部署-Stackube"><a href="#部署-Stackube" class="headerlink" title="部署 Stackube"></a>部署 Stackube</h2><p>首先新增 Devstack 使用的 User：</p>
+<pre><code class="sh">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
 $ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
 $ sudo su - stack
 </code></pre>
 <p>透過 Git 取得 Ocata 版本的 Devstack：</p>
-<pre><code class="language-sh">$ git clone https://git.openstack.org/openstack-dev/devstack -b stable/ocata
+<pre><code class="sh">$ git clone https://git.openstack.org/openstack-dev/devstack -b stable/ocata
 $ cd devstack
 </code></pre>
 <p>取得單節範例設定檔：</p>
-<pre><code class="language-sh">$ curl -sSL https://raw.githubusercontent.com/kairen/stackube/master/devstack/local.conf.sample -o local.conf
+<pre><code class="sh">$ curl -sSL https://raw.githubusercontent.com/kairen/stackube/master/devstack/local.conf.sample -o local.conf
 </code></pre>
 <p>完成後即可進行安裝：</p>
-<pre><code class="language-sh">$ ./stack.sh
+<pre><code class="sh">$ ./stack.sh
 </code></pre>
-<h2><span id="測試基本功能">測試基本功能</span></h2>
-<p>完成後，就可以透過以下指令來引入 Kubernetes 與 OpenStack client 需要的環境變數：</p>
-<pre><code class="language-sh">$ export KUBECONFIG=/opt/stack/admin.conf
+<h2 id="測試基本功能"><a href="#測試基本功能" class="headerlink" title="測試基本功能"></a>測試基本功能</h2><p>完成後，就可以透過以下指令來引入 Kubernetes 與 OpenStack client 需要的環境變數：</p>
+<pre><code class="sh">$ export KUBECONFIG=/opt/stack/admin.conf
 $ source /opt/stack/devstack/openrc admin admin
 </code></pre>
 <p>Stackube 透過 CRD 新增了一個新抽象物件 Tenant，可以直接透過 Kubernetes API 來建立一個租戶，並將該租戶與 Kubernettes namespace 做綁定：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF | kubectl create -f -
+<pre><code class="sh">$ cat &lt;&lt;EOF | kubectl create -f -
 apiVersion: &quot;stackube.kubernetes.io/v1&quot;
 kind: Tenant
 metadata:
@@ -369,7 +366,7 @@ status:
   state: Active
 </code></pre>
 <p>檢查 Neutron 網路狀況：</p>
-<pre><code class="language-sh">$ neutron net-list
+<pre><code class="sh">$ neutron net-list
 +--------------------------------------+----------------------+----------------------------------+----------------------------------------------------------+
 | id                                   | name                 | tenant_id                        | subnets                                                  |
 +--------------------------------------+----------------------+----------------------------------+----------------------------------------------------------+
@@ -421,7 +418,7 @@ status:
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">部署 Stackube</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">測試基本功能</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Stackube"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">部署 Stackube</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試基本功能"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">測試基本功能</span></a></li></ol>
         
         </div>
       </aside>

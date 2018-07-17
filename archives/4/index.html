@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -284,6 +284,43 @@
 
 <div class="post-preview">
 
+    <a href="/2017/03/25/kubernetes/helm-quickstart/">
+        <h2 class="post-title">
+            Kuberentes Helm 介紹
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Helm 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：
+
+查詢與使用熱門的 Kubernetes Chart 軟體套件。
+以 Kuberntes Chart 來分享自己的應用程式。
+可利用 Chart 來重複建立應用程式。
+智能地管理 Kubernetes manifes......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2017-03-25
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+              <a href="/tags/#Helm" title="Helm">Helm</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2017/03/17/kubernetes/deploy/kubespray-baremetal/">
         <h2 class="post-title">
             Kubespray 部署實體機 Kubernetes v1.6 叢集
@@ -359,7 +396,7 @@ CU......
 
 <div class="post-preview">
 
-    <a href="/2017/02/19/kubernetes/deploy/kube-ansible-metal/">
+    <a href="/2017/02/19/kubernetes/deploy/kube-ansible-baremetal/">
         <h2 class="post-title">
             kube-ansible 快速部署實體機 HA 叢集
         </h2>
@@ -376,8 +413,8 @@ Docker v1.13.0+
 
 
 而在 OS 部分以支援Ubuntu 16.x及CentOS 7.x的虛擬機與實體機部署。
-節點資訊
-本次安裝作業系統採用Ubuntu 16.04 Server，測試環境為實體主機：......
+節點資訊本次安裝作業系統採用Ubuntu 16.04 Server，測試環境為實體主機：
+......
         </div>
     </a>
     
@@ -401,7 +438,7 @@ Docker v1.13.0+
 
 <div class="post-preview">
 
-    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/">
+    <a href="/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/">
         <h2 class="post-title">
             kube-ansible 快速部署 HA 測試環境
         </h2>
@@ -521,8 +558,7 @@ $ git clo......
         <div class="post-content-preview">
             本篇說明如何安裝 Kraken 版本的 Ceph，並將 objectstore backend 修改成 Bluestore，過程包含建立 RBD 等操作。
 
-硬體規格說明
-本安裝由於實體機器數量受到限制，故只進行一台 MON 與兩台 OSD，而 OSD 數量則總共兩顆，硬體規格如下所示：
+硬體規格說明本安裝由於實體機器數量受到限制，故只進行一台 MON 與兩台 OSD，而 OSD 數量則總共兩顆，硬體規格如下所示：
 
 
 
@@ -536,7 +572,7 @@ IP Address
 
 
 mon1(deploy)
-4 ......
+4 G......
         </div>
     </a>
     
@@ -606,10 +642,9 @@ Minikube v0.22.3
 Kubernetes v1.7.5
 
 
-事前準備
-安裝前需要確認叢集滿足以下幾點：
+事前準備安裝前需要確認叢集滿足以下幾點：
 
-安裝 xhyve driver, VirtualBox 或 VMwar......
+安裝 xhyve driver, VirtualBox 或 VMware......
         </div>
     </a>
     
@@ -622,54 +657,6 @@ Kubernetes v1.7.5
               <a href="/tags/#Docker" title="Docker">Docker</a>
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/10/01/tensorflow/tensorflow-docker/">
-        <h2 class="post-title">
-            TensorFlow on Docker
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本篇主要整理使用 Docker 來執行 TensorFlow 的一些問題，這邊 Google 官方已經提供了相關的映像檔提供使用，因此會簡單說明安裝過程與需求。
-![](/images/tf/docker-tf.png)
-
-
-## 環境準備
-環境採用 Ubuntu 16.04 Desktop 作業系統，然後顯卡是撿朋友不要的來使用，環境硬體資源如下：
-
-
-
-名稱
-描述
-
-
-
-
-CPU
-i7-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-10-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#TensorFlow" title="TensorFlow">TensorFlow</a>
-            
-              <a href="/tags/#Machine Learning" title="Machine Learning">Machine Learning</a>
             
         </div>
     
@@ -783,6 +770,10 @@ i7-......
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -798,10 +789,6 @@ i7-......
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -813,8 +800,6 @@ i7-......
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -842,6 +827,10 @@ i7-......
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -883,8 +872,6 @@ i7-......
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -899,7 +886,9 @@ i7-......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

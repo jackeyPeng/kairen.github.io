@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -298,8 +298,7 @@
 <li>Docker v1.13.1</li>
 </ul>
 <a id="more"></a>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本次安裝作業系統採用<code>Ubuntu 14.04 Server</code>，測試環境為 OpenStack VM 與實體主機：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 14.04 Server</code>，測試環境為 OpenStack VM 與實體主機：</p>
 <table>
 <thead>
 <tr>
@@ -333,23 +332,21 @@
 <blockquote>
 <p>這邊 master 為主要控制節點，node 為應用程式工作節點。</p>
 </blockquote>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>安裝前需要確認叢集滿足以下幾點：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
 <ul>
 <li>目前官方只測試過 <code>Ubuntu 14.04</code>，官方說法是 15.x 也沒問題，但 16.04 上我測試無法自動完成，要自己補上各種服務的 Systemd 腳本。</li>
 <li>部署節點可以透過 SSH 與其他節點溝通，並且是無密碼登入，以及有 Sudoer 權限。</li>
 <li>所有節點需要安裝<code>Docker</code>或<code>rtk</code>引擎。安裝方式為以下：</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 $ sudo iptables -P FORWARD ACCEPT
 </code></pre>
-<h2><span id="部署-kubernetes-叢集">部署 Kubernetes 叢集</span></h2>
-<p>首先下載官方 Release 的原始碼程式：</p>
-<pre><code class="language-sh">$ curl -sSL &quot;https://github.com/kubernetes/kubernetes/archive/v1.5.4.tar.gz&quot; | tar zx
+<h2 id="部署-Kubernetes-叢集"><a href="#部署-Kubernetes-叢集" class="headerlink" title="部署 Kubernetes 叢集"></a>部署 Kubernetes 叢集</h2><p>首先下載官方 Release 的原始碼程式：</p>
+<pre><code class="sh">$ curl -sSL &quot;https://github.com/kubernetes/kubernetes/archive/v1.5.4.tar.gz&quot; | tar zx
 $ mv kubernetes-1.5.4 kubernetes
 </code></pre>
 <p>接著編輯<code>kubernetes/cluster/ubuntu/config-default.sh</code>設定檔，修改以下內容：</p>
-<pre><code class="language-sh">export nodes=${nodes:-&quot;ubuntu@172.16.35.12 ubuntu@172.16.35.10 ubuntu@172.16.35.11&quot;}
+<pre><code class="sh">export nodes=${nodes:-&quot;ubuntu@172.16.35.12 ubuntu@172.16.35.10 ubuntu@172.16.35.11&quot;}
 export role=&quot;ai i i&quot;
 export NUM_NODES=${NUM_NODES:-3}
 export SERVICE_CLUSTER_IP_RANGE=192.168.3.0/24
@@ -357,13 +354,13 @@ export FLANNEL_NET=172.16.0.0/16
 SERVICE_NODE_PORT_RANGE=${SERVICE_NODE_PORT_RANGE:-&quot;30000-32767&quot;}
 </code></pre>
 <p>設定要部署的 Kubernetes 版本環境參數：</p>
-<pre><code class="language-sh">export KUBE_VERSION=1.5.4
+<pre><code class="sh">export KUBE_VERSION=1.5.4
 export FLANNEL_VERSION=0.5.5
 export ETCD_VERSION=2.3.0
 export KUBERNETES_PROVIDER=ubuntu
 </code></pre>
 <p>然後進入到<code>kubernetes/cluster</code>目錄，並執行以下指令：</p>
-<pre><code class="language-sh">$ sudo sed -i 's/verify-kube-binaries//g' kube-up.sh
+<pre><code class="sh">$ sudo sed -i &#39;s/verify-kube-binaries//g&#39; kube-up.sh
 $ ./kube-up.sh
 ...
 Cluster validation succeeded
@@ -372,19 +369,18 @@ Done, listing cluster services:
 Kubernetes master is running at http://172.16.35.12:8080
 </code></pre>
 <p>當看到上述資訊即表示成功部署，這時候進入到<code>cluster/ubuntu/binaries</code>目錄複製 kubectl 工具：</p>
-<pre><code class="language-sh">$ sudo cp kubectl /usr/local/bin/
+<pre><code class="sh">$ sudo cp kubectl /usr/local/bin/
 </code></pre>
 <p>最後透過 kubectl 工具來查看叢集節點是否成功加入：</p>
-<pre><code class="language-sh">$ kubectl get nodes
+<pre><code class="sh">$ kubectl get nodes
 
 NAME           STATUS    AGE
 172.16.35.12   Ready     2m
 172.16.35.10   Ready     2m
 172.16.35.11   Ready     2m
 </code></pre>
-<h2><span id="option部署-add-ons">(Option)部署 Add-ons</span></h2>
-<p>若要部署 kubernetes Dashboard 與 DNS 等額外服務的話，要修改<code>kubernetes/cluster/ubuntu/config-default.sh</code>設定檔，修改一下內容：</p>
-<pre><code class="language-sh">ENABLE_CLUSTER_MONITORING=&quot;${KUBE_ENABLE_CLUSTER_MONITORING:-true}&quot;
+<h2 id="Option-部署-Add-ons"><a href="#Option-部署-Add-ons" class="headerlink" title="(Option)部署 Add-ons"></a>(Option)部署 Add-ons</h2><p>若要部署 kubernetes Dashboard 與 DNS 等額外服務的話，要修改<code>kubernetes/cluster/ubuntu/config-default.sh</code>設定檔，修改一下內容：</p>
+<pre><code class="sh">ENABLE_CLUSTER_MONITORING=&quot;${KUBE_ENABLE_CLUSTER_MONITORING:-true}&quot;
 ENABLE_CLUSTER_UI=&quot;${KUBE_ENABLE_CLUSTER_UI:-true}&quot;
 ENABLE_CLUSTER_DNS=&quot;${KUBE_ENABLE_CLUSTER_DNS:-true}&quot;
 DNS_SERVER_IP=${DNS_SERVER_IP:-&quot;192.168.3.10&quot;}
@@ -394,28 +390,26 @@ DNS_DOMAIN=${DNS_DOMAIN:-&quot;cluster.local&quot;}
 <p>通常基本款大概為 Dashboard、DNS、Monitoring 與 Logging，。</p>
 </blockquote>
 <p>修改完成後，進入到<code>kubernetes/cluster/ubuntu</code>目錄，並執行以下指令：</p>
-<pre><code class="language-sh">$ KUBERNETES_PROVIDER=ubuntu ./deployAddons.sh
+<pre><code class="sh">$ KUBERNETES_PROVIDER=ubuntu ./deployAddons.sh
 </code></pre>
 <p>透過 kubectl 查看資訊，這邊服務屬於系統的，所以預設會被分到<code>kube-system</code>命名空間：</p>
-<pre><code class="language-sh">$ kubectl get pods --namespace=kube-system
+<pre><code class="sh">$ kubectl get pods --namespace=kube-system
 </code></pre>
 <p>最後就可以透過瀏覽器查看 <a href="http://172.16.35.12:8080/ui" target="_blank" rel="noopener">Dashboard</a>。</p>
-<h2><span id="建立-nginx-應用程式">建立 Nginx 應用程式</span></h2>
-<p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將使用兩種方式建立一個簡單的 Nginx 服務。</p>
-<h3><span id="利用-ad-hoc-指令建立">利用 ad-hoc 指令建立</span></h3>
-<p>kubectl 提供了 run 指令來快速建立應用程式部署，如下建立 Nginx 應用程式：</p>
-<pre><code class="language-sh">$ kubectl run nginx --image=nginx
+<h2 id="建立-Nginx-應用程式"><a href="#建立-Nginx-應用程式" class="headerlink" title="建立 Nginx 應用程式"></a>建立 Nginx 應用程式</h2><p>Kubernetes 可以選擇使用指令直接建立應用程式與服務，或者撰寫 YAML 與 JSON 檔案來描述部署應用程式的配置，以下將使用兩種方式建立一個簡單的 Nginx 服務。</p>
+<h3 id="利用-ad-hoc-指令建立"><a href="#利用-ad-hoc-指令建立" class="headerlink" title="利用 ad-hoc 指令建立"></a>利用 ad-hoc 指令建立</h3><p>kubectl 提供了 run 指令來快速建立應用程式部署，如下建立 Nginx 應用程式：</p>
+<pre><code class="sh">$ kubectl run nginx --image=nginx
 $ kubectl get pods -o wide
 
 NAME                    READY     STATUS    RESTARTS   AGE       IP            NODE
 nginx-701339712-w5wlq   1/1       Running   0          26m       172.16.86.2   172.16.35.11
 </code></pre>
 <p>而當應用程式(deploy)被建立後，我們還需要透過 Kubernetes Service 來提供給外部網路存取應用程式，如下指令：</p>
-<pre><code class="language-sh">$ kubectl expose deploy nginx --port 80 --type NodePort
+<pre><code class="sh">$ kubectl expose deploy nginx --port 80 --type NodePort
 $ kubectl get svc -o wide
 </code></pre>
 <p>完成後要接著建立 svc（Service）來提供外部網路存取應用程式，使用以下指令建立：</p>
-<pre><code class="language-sh">$ kubectl expose rc nginx --port=80 --type=NodePort
+<pre><code class="sh">$ kubectl expose rc nginx --port=80 --type=NodePort
 $ kubectl get svc
 
 NAME         CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
@@ -426,11 +420,10 @@ nginx        192.168.3.199   &lt;nodes&gt;       80:31764/TCP   30m
 <p>這邊採用<code>NodePort</code>，即表示任何節點 IP 位址的<code>31764</code> Port 都會 Forward 到 Nginx container 的<code>80</code> Port。</p>
 </blockquote>
 <p>若想刪除應用程式與服務的話，可以透過以下指令：</p>
-<pre><code class="language-sh">$ kubectl delete deploy nginx
+<pre><code class="sh">$ kubectl delete deploy nginx
 $ kubectl delete svc nginx
 </code></pre>
-<h3><span id="撰寫-yaml-檔案建立">撰寫 YAML 檔案建立</span></h3>
-<p>Kubernetes 支援了 JSON 與 YAML 來描述要部署的應用程式資訊，這邊撰寫<code>nginx-dp.yaml</code>來部署 Nginx 應用：</p>
+<h3 id="撰寫-YAML-檔案建立"><a href="#撰寫-YAML-檔案建立" class="headerlink" title="撰寫 YAML 檔案建立"></a>撰寫 YAML 檔案建立</h3><p>Kubernetes 支援了 JSON 與 YAML 來描述要部署的應用程式資訊，這邊撰寫<code>nginx-dp.yaml</code>來部署 Nginx 應用：</p>
 <pre><code>apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -447,8 +440,7 @@ spec:
         image: nginx:1.7.9
         ports:
         - containerPort: 80
-</code></pre>
-<p>接著建立 Service 來提供存取服務，這邊撰寫<code>nginx-svc.yaml</code>來建立服務：</p>
+</code></pre><p>接著建立 Service 來提供存取服務，這邊撰寫<code>nginx-svc.yaml</code>來建立服務：</p>
 <pre><code>apiVersion: v1
 kind: Service
 metadata:
@@ -462,16 +454,15 @@ spec:
     nodePort: 30000
   selector:
     app: nginx
-</code></pre>
-<p>然後透過 kubectl 指令來指定檔案建立：</p>
-<pre><code class="language-sh">$ kubectl create -f nginx-dp.yaml
+</code></pre><p>然後透過 kubectl 指令來指定檔案建立：</p>
+<pre><code class="sh">$ kubectl create -f nginx-dp.yaml
 deployment &quot;nginx&quot; created
 
 $ kubectl create -f nginx-svc.yaml
 service &quot;nginx-service&quot; created
 </code></pre>
 <p>完成後，可以查看一下資訊：</p>
-<pre><code class="language-sh">$ kubectl get svc,pods,rc -o wide
+<pre><code class="sh">$ kubectl get svc,pods,rc -o wide
 
 NAME                CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE       SELECTOR
 svc/kubernetes      192.168.3.1     &lt;none&gt;        443/TCP        51m       &lt;none&gt;
@@ -481,11 +472,10 @@ NAME                        READY     STATUS    RESTARTS   AGE       IP         
 po/nginx-4087004473-0wrbs   1/1       Running   0          2m        172.16.101.2   172.16.35.10
 </code></pre>
 <p>最後要刪除的話，直接將 create 改成使用<code>delete</code>即可：</p>
-<pre><code class="language-sh">$ kubectl delete -f nginx-dp.yaml
+<pre><code class="sh">$ kubectl delete -f nginx-dp.yaml
 $ kubectl delete -f nginx-svc.yaml
 </code></pre>
-<h2><span id="其他-kubernetes-網路技術">其他 Kubernetes 網路技術</span></h2>
-<p>Kubernetes 支援多種網路整合，若 Flannel 用不爽可以改以下幾種：</p>
+<h2 id="其他-Kubernetes-網路技術"><a href="#其他-Kubernetes-網路技術" class="headerlink" title="其他 Kubernetes 網路技術"></a>其他 Kubernetes 網路技術</h2><p>Kubernetes 支援多種網路整合，若 Flannel 用不爽可以改以下幾種：</p>
 <ul>
 <li><a href="https://github.com/kubernetes/kubernetes/blob/master/docs/admin/ovs-networking.md" target="_blank" rel="noopener">OpenVSwitch with GRE/VxLAN</a></li>
 <li><a href="http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/" target="_blank" rel="noopener">Linux Bridge L2 networks</a></li>
@@ -505,7 +495,7 @@ $ kubectl delete -f nginx-svc.yaml
                     
                     
                         <li class="next">
-                            <a href="/2016/01/14/kubernetes/deploy/docker-multi/" data-toggle="tooltip" data-placement="top" title="hyperkube 建立多節點 Kubernetes(Unrecommended)">Next Post &rarr;</a>
+                            <a href="/2016/01/14/kubernetes/deploy/docker-multi/" data-toggle="tooltip" data-placement="top" title="hyperkube 建立多節點 Kubernetes">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -535,7 +525,7 @@ $ kubectl delete -f nginx-svc.yaml
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">(Option)部署 Add-ons</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">建立 Nginx 應用程式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">利用 ad-hoc 指令建立</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">撰寫 YAML 檔案建立</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">其他 Kubernetes 網路技術</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Kubernetes-叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Option-部署-Add-ons"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">(Option)部署 Add-ons</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立-Nginx-應用程式"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">建立 Nginx 應用程式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#利用-ad-hoc-指令建立"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">利用 ad-hoc 指令建立</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#撰寫-YAML-檔案建立"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">撰寫 YAML 檔案建立</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#其他-Kubernetes-網路技術"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">其他 Kubernetes 網路技術</span></a></li></ol>
         
         </div>
       </aside>

@@ -7,20 +7,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/TensorFlow/</loc>
-        <lastmod>2018-07-09T17:15:32.914Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/categories/OpenStack/</loc>
-        <lastmod>2018-07-09T17:15:43.230Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/categories/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -35,41 +21,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Linux/</loc>
-        <lastmod>2018-07-09T17:16:22.189Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/categories/Blockchain/</loc>
-        <lastmod>2018-07-09T17:16:44.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/categories/Container/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/categories/Spark/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/categories/Ceph/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/categories/Golang/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -77,15 +28,64 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/DevOps/</loc>
-        <lastmod>2018-07-09T17:17:05.521Z</lastmod>
+        <loc>https://kairen.github.io/categories/Blockchain/</loc>
+        <lastmod>2018-07-17T07:58:01.028Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/Ceph/</loc>
+        <lastmod>2018-07-17T08:06:21.600Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/categories/Kubernetes/</loc>
-        <lastmod>2018-07-11T16:26:51.812Z</lastmod>
+        <lastmod>2018-07-17T13:07:57.872Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/TensorFlow/</loc>
+        <lastmod>2018-07-17T13:10:29.227Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/Container/</loc>
+        <lastmod>2018-07-17T13:11:42.050Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/OpenStack/</loc>
+        <lastmod>2018-07-17T13:19:14.536Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/Linux/</loc>
+        <lastmod>2018-07-17T13:20:26.574Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/Spark/</loc>
+        <lastmod>2018-07-17T13:21:51.862Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/DevOps/</loc>
+        <lastmod>2018-07-17T13:25:45.961Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

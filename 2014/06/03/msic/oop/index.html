@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -296,8 +296,7 @@
 <li>真正被用來處理問題的是 Object，而 Class 決定了 Object 的行為。</li>
 </ul>
 <a id="more"></a>
-<h2><span id="類別">類別</span></h2>
-<p>類別（Class）定義了一件事物的<strong>抽象</strong>特點。類別定義了事物的屬性與可做到的行為。Ex:「人」包含了一切的基本特徵與行為，頭髮、樣貌等等，類別可以為程式提供模版和結構。一個類別的方法和屬性被稱為「<strong>成員</strong>」。如以下：</p>
+<h2 id="類別"><a href="#類別" class="headerlink" title="類別"></a>類別</h2><p>類別（Class）定義了一件事物的<strong>抽象</strong>特點。類別定義了事物的屬性與可做到的行為。Ex:「人」包含了一切的基本特徵與行為，頭髮、樣貌等等，類別可以為程式提供模版和結構。一個類別的方法和屬性被稱為「<strong>成員</strong>」。如以下：</p>
 <pre><code>類別 人 : {
  公有成員：
     走();
@@ -307,10 +306,8 @@
     頭髮顏色;
     身體膚色;
 }
-</code></pre>
-<p>這邊解釋了一個人的類別，其中公有(public)與私有(private)會在<strong>封裝性</strong>提到。</p>
-<h2><span id="物件">物件</span></h2>
-<p>物件 (Object)是類別的例項(instance)。Ex:「人」類別列舉出人的特點，這個類別定義了世界上所有的人。而<strong>台灣人</strong>這個物件則是一種具體的人種，他的屬性也是具體的。人有皮膚顏色，而台灣人的皮膚顏色是白-黃之間。因此，台灣人就是人這個類別的一個例項(或稱<strong>實例</strong>)。</p>
+</code></pre><p>這邊解釋了一個人的類別，其中公有(public)與私有(private)會在<strong>封裝性</strong>提到。</p>
+<h2 id="物件"><a href="#物件" class="headerlink" title="物件"></a>物件</h2><p>物件 (Object)是類別的例項(instance)。Ex:「人」類別列舉出人的特點，這個類別定義了世界上所有的人。而<strong>台灣人</strong>這個物件則是一種具體的人種，他的屬性也是具體的。人有皮膚顏色，而台灣人的皮膚顏色是白-黃之間。因此，台灣人就是人這個類別的一個例項(或稱<strong>實例</strong>)。</p>
 <ul>
 <li>系統給物件分配記憶體空間，而不會給類別分配記憶體空間。這很好理解，類別是抽象的系統不可能給抽象的東西分配空間，而物件則是具體的。</li>
 <li>我們無法讓人這個類別去走動，但是我們可以讓物件「台灣人」去走動，正如人可以走動一樣，但沒有具體的人就無法動作。</li>
@@ -318,12 +315,9 @@
 <pre><code>宣告或定義：台灣人是一種人
 台灣人.走();
 台灣人.身體顏色() = 白;
-</code></pre>
-<h2><span id="訊息傳遞">訊息傳遞</span></h2>
-<p>物件通過<strong>接受訊息</strong>、<strong>處理訊息</strong>、<strong>傳出訊息</strong>或<strong>使用其他類別的方法來實作一定功能</strong>，就叫訊息傳遞機制(Message Passing)。</p>
-<p>如：台灣人可以通過&quot;講話&quot;與其他人的溝通，從而導致一系列的事發生。</p>
-<h2><span id="繼承">繼承</span></h2>
-<p>繼承性(Inheritance)是指，在某種情況下，一個類別會有「子類別」。子類別會比原本的類別(稱為父類別)要更加具體化。Ex:人有分台灣人、日本人等。在這種情況柯p可能就是<strong>台灣人的例項</strong>，並包含柯p自己的特性與行為。繼承的好處在於可以將相同事情做一次歸類，便可讓子類別擁有該屬性與行為。如下：</p>
+</code></pre><h2 id="訊息傳遞"><a href="#訊息傳遞" class="headerlink" title="訊息傳遞"></a>訊息傳遞</h2><p>物件通過<strong>接受訊息</strong>、<strong>處理訊息</strong>、<strong>傳出訊息</strong>或<strong>使用其他類別的方法來實作一定功能</strong>，就叫訊息傳遞機制(Message Passing)。</p>
+<p>如：台灣人可以通過”講話”與其他人的溝通，從而導致一系列的事發生。</p>
+<h2 id="繼承"><a href="#繼承" class="headerlink" title="繼承"></a>繼承</h2><p>繼承性(Inheritance)是指，在某種情況下，一個類別會有「子類別」。子類別會比原本的類別(稱為父類別)要更加具體化。Ex:人有分台灣人、日本人等。在這種情況柯p可能就是<strong>台灣人的例項</strong>，並包含柯p自己的特性與行為。繼承的好處在於可以將相同事情做一次歸類，便可讓子類別擁有該屬性與行為。如下：</p>
 <pre><code>類別 台灣人:繼承於人 {
     公有成員：
         早餐專吃牛排();
@@ -332,29 +326,24 @@
 定義阿文是台灣人
 阿文.講話();
 阿文.早餐專吃牛排();
-</code></pre>
-<p>當一個類別從多個父類別繼承時，我們稱之為「<strong>多重繼承</strong>」。好比混血兒從分別兩個人種繼承而來。但多重繼承有時矛盾，讓人無法理解，且有些程式也不支援。</p>
-<h2><span id="封裝性">封裝性</span></h2>
-<p>具備封裝性（Encapsulation）的物件導向程式設計隱藏了某一方法的具體執行步驟，取而代之的是通過<strong>訊息傳遞機制</strong>傳送訊息給它。好比一個人&quot;吃飯&quot;，吃飯的這個人才知道具體吃下了什麼，而其他人並不知道，例如。</p>
+</code></pre><p>當一個類別從多個父類別繼承時，我們稱之為「<strong>多重繼承</strong>」。好比混血兒從分別兩個人種繼承而來。但多重繼承有時矛盾，讓人無法理解，且有些程式也不支援。</p>
+<h2 id="封裝性"><a href="#封裝性" class="headerlink" title="封裝性"></a>封裝性</h2><p>具備封裝性（Encapsulation）的物件導向程式設計隱藏了某一方法的具體執行步驟，取而代之的是通過<strong>訊息傳遞機制</strong>傳送訊息給它。好比一個人”吃飯”，吃飯的這個人才知道具體吃下了什麼，而其他人並不知道，例如。</p>
 <p>一個程序導向如下：</p>
 <pre><code>定義柯p
 柯p.拆除違建();
 柯p.講話()
-</code></pre>
-<p>一個物件導向如下：</p>
+</code></pre><p>一個物件導向如下：</p>
 <pre><code>定義小文是人
 小文.吃飯()
 小文.吃飯()
 小文.吃飯()
-</code></pre>
-<p>封裝是通過限制只有特定類別的物件可以存取這一特定類別的成員，而它們通常利用介面實作訊息的傳入傳出。通常來說，成員會依它們的存取許可權被分為3種：<strong>公有成員</strong>、<strong>私有成員</strong>以及<strong>保護成員</strong></p>
+</code></pre><p>封裝是通過限制只有特定類別的物件可以存取這一特定類別的成員，而它們通常利用介面實作訊息的傳入傳出。通常來說，成員會依它們的存取許可權被分為3種：<strong>公有成員</strong>、<strong>私有成員</strong>以及<strong>保護成員</strong></p>
 <ul>
 <li>公有成員(public)：任何例項成員都可以被其他人使用。</li>
 <li>私有成員(private)：只有類別本身可以使用。</li>
 <li>保護成員(protected)：只有繼承的子類別與類別本身可以使用。</li>
 </ul>
-<h2><span id="多型">多型</span></h2>
-<p>多型（Polymorphism）是指由繼承而產生的相關的不同的類別，其物件對同一訊息會做出不同的響應。好比『台灣人』與『美國人』都有&quot;講話&quot;的行為，但實際卻用不同語言講話。如下：</p>
+<h2 id="多型"><a href="#多型" class="headerlink" title="多型"></a>多型</h2><p>多型（Polymorphism）是指由繼承而產生的相關的不同的類別，其物件對同一訊息會做出不同的響應。好比『台灣人』與『美國人』都有”講話”的行為，但實際卻用不同語言講話。如下：</p>
 <pre><code>類別 台灣人 : {
     公有成員：
         講話();
@@ -369,17 +358,13 @@
 定義 馬陰酒 是台灣人
 歐罵馬.講話(); // 講美語
 馬陰酒.講話(); // 講國語
-</code></pre>
-<p>多型性的概念也可以用在**運算子過載(overload)**上。<br>
-多型是建立在繼承的基礎之上的，沒有繼承，就不會有多型。繼承的目的有兩種：</p>
+</code></pre><p>多型性的概念也可以用在<strong>運算子過載(overload)</strong>上。<br>多型是建立在繼承的基礎之上的，沒有繼承，就不會有多型。繼承的目的有兩種：</p>
 <ul>
 <li>繼承程式碼：達到程式碼再用性（reuse）</li>
 <li>繼承介面（interface）。達到介面再用性（reuse），為多型預作準備</li>
 </ul>
-<h2><span id="抽象性">抽象性</span></h2>
-<p>抽象(Abstraction)是<strong>簡化複雜</strong>的現實問題的途徑，它可以為具體問題找到最恰當的類別定義，並且可以在最恰當的繼承級別解釋問題。Ex:柯p在一般時候都被當作一個人，但是如果想要讓他做柯p做的事，你可以呼叫柯p的方法。如果台灣人類別還有人的父類別，那麼你完全可以視柯p為一個人。</p>
-<h2><span id="參考">參考</span></h2>
-<ul>
+<h2 id="抽象性"><a href="#抽象性" class="headerlink" title="抽象性"></a>抽象性</h2><p>抽象(Abstraction)是<strong>簡化複雜</strong>的現實問題的途徑，它可以為具體問題找到最恰當的類別定義，並且可以在最恰當的繼承級別解釋問題。Ex:柯p在一般時候都被當作一個人，但是如果想要讓他做柯p做的事，你可以呼叫柯p的方法。如果台灣人類別還有人的父類別，那麼你完全可以視柯p為一個人。</p>
+<h2 id="參考"><a href="#參考" class="headerlink" title="參考"></a>參考</h2><ul>
 <li><a href="http://en.wikipedia.org/wiki/Object-oriented_programming" target="_blank" rel="noopener">Wiki OOP</a></li>
 <li><a href="http://www.oreilly.com.tw/column_sleepless.php?id=j022" target="_blank" rel="noopener">Oreilly</a></li>
 </ul>
@@ -426,7 +411,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">類別</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">物件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">訊息傳遞</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">繼承</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">封裝性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">多型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">抽象性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">參考</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#類別"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">類別</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#物件"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">物件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#訊息傳遞"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">訊息傳遞</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#繼承"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">繼承</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#封裝性"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">封裝性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#多型"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">多型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#抽象性"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">抽象性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">參考</span></a></li></ol>
         
         </div>
       </aside>

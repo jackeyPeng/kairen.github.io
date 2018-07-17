@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          kube-ansible 快速部署實體機 HA 叢集 - KaiRen&#39;s Blog
+          利用 HAProxy 建立服務負載平衡 - KaiRen&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://kairen.github.io/2017/02/19/kubernetes/deploy/kube-ansible-metal/">
+    <link rel="canonical" href="https://kairen.github.io/2015/11/28/linux/ubuntu/haproxy/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -86,18 +86,16 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                              <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
                             
-                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-                            
-                              <a class="tag" href="/tags/#Ansible" title="Ansible">Ansible</a>
+                              <a class="tag" href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
                             
                         </div>
-                        <h1>kube-ansible 快速部署實體機 HA 叢集</h1>
+                        <h1>利用 HAProxy 建立服務負載平衡</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
-                            2017-02-19
+                            2015-11-28
                         </span>
                     </div>
                 
@@ -144,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -289,221 +287,111 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>本篇說明如何透過 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 部署多節點實體機 Kubernetes 叢集。</p>
-<p>本安裝各軟體版本如下：</p>
+                <p>HAProxy 提供了高可靠性、負載平衡（Load Balancing）、基於 TCP 以及 HTTP 的應用程式代理，更支援了虛擬機的使用。HAProxy 是一個開放式原始碼，免費、快速以及非常可靠，根據官方測試結果，該軟體最高能夠支援到 10G 的並行傳輸，因此特別適合使用在負載很大的 Web 伺服器，且這些伺服器通常需要保持 Session 或者 Layer 7 網路的處理，但這些都可以使用 HAProxy 來完成。</p>
+<p>HAProxy 具有以下幾個優點：</p>
 <ul>
-<li>Kubernetes v1.8.3</li>
-<li>Etcd v3.2.9</li>
-<li>Docker v1.13.0+</li>
+<li>開放式原始碼，因此免費，且穩定性高</li>
+<li>能夠負荷 10G 網路的並行傳輸</li>
+<li>支援連線拒絕功能</li>
+<li>支援全透明化的代理</li>
+<li>擁有內建的監控狀態儀表板</li>
+<li>支援虛擬機的使用</li>
 </ul>
 <a id="more"></a>
-<p>而在 OS 部分以支援<code>Ubuntu 16.x</code>及<code>CentOS 7.x</code>的虛擬機與實體機部署。</p>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
+<h3 id="HAProxy-安裝"><a href="#HAProxy-安裝" class="headerlink" title="HAProxy 安裝"></a>HAProxy 安裝</h3><p>本教學會使用到一台 Proxy 節點與兩台 Web 節點，如下：</p>
 <table>
 <thead>
 <tr>
 <th>IP Address</th>
 <th>Role</th>
-<th>CPU</th>
-<th>Memory</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>172.20.3.90</td>
-<td>VIP</td>
-<td></td>
-<td></td>
+<td>172.17.0.2</td>
+<td>proxy</td>
 </tr>
 <tr>
-<td>172.20.3.91</td>
-<td>master1</td>
-<td>2</td>
-<td>4G</td>
+<td>172.17.0.3</td>
+<td>web-1</td>
 </tr>
 <tr>
-<td>172.20.3.92</td>
-<td>master2</td>
-<td>2</td>
-<td>4G</td>
-</tr>
-<tr>
-<td>172.20.3.93</td>
-<td>master3</td>
-<td>2</td>
-<td>4G</td>
-</tr>
-<tr>
-<td>172.20.3.94</td>
-<td>node1</td>
-<td>4</td>
-<td>8G</td>
-</tr>
-<tr>
-<td>172.20.3.95</td>
-<td>node2</td>
-<td>4</td>
-<td>8G</td>
-</tr>
-<tr>
-<td>172.20.3.96</td>
-<td>node3</td>
-<td>4</td>
-<td>8G</td>
-</tr>
-<tr>
-<td>172.20.3.97</td>
-<td>node4</td>
-<td>4</td>
-<td>8G</td>
-</tr>
-<tr>
-<td>172.20.3.98</td>
-<td>node5</td>
-<td>4</td>
-<td>8G</td>
+<td>172.17.0.4</td>
+<td>web-2</td>
 </tr>
 </tbody>
 </table>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>安裝前需要確認以下幾個項目：</p>
-<ul>
-<li>所有節點的網路之間可以互相溝通。</li>
-<li><code>部署節點(這邊為 master1)</code>對其他節點不需要 SSH 密碼即可登入。</li>
-<li>所有節點都擁有 Sudoer 權限，並且不需要輸入密碼。</li>
-<li>所有節點需要安裝 <code>Python</code>。</li>
-<li>所有節點需要設定<code>/etc/host</code>解析到所有主機。</li>
-<li><code>部署節點(這邊為 master1)</code>需要安裝 Ansible。</li>
-</ul>
-<p>Ubuntu 16.04 安裝 Ansible:</p>
-<pre><code class="language-sh">$ sudo apt-get install -y software-properties-common git cowsay
-$ sudo apt-add-repository -y ppa:ansible/ansible
-$ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible
-</code></pre>
-<p>CentOS 7 安裝 Ansible：</p>
-<pre><code class="language-sh">$ sudo yum install -y epel-release
-$ sudo yum -y install ansible cowsay
-</code></pre>
-<h2><span id="部署-kubernetes-叢集">部署 Kubernetes 叢集</span></h2>
-<p>首先透過 Git 取得 HA Kubernetes Ansible 的專案：</p>
-<pre><code class="language-sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
-$ cd kube-ansible
-</code></pre>
-<p>然後編輯<code>inventory</code>檔案，來加入要部署的節點角色：</p>
-<pre><code>[etcds]
-172.20.3.[91:93]
-
-[masters]
-172.20.3.[91:93]
-
-[nodes]
-172.20.3.[94:98]
-
-[kube-cluster:children]
-masters
-nodes
-
-[kube-addon:children]
-masters
-</code></pre>
-<p>完成後接著編輯<code>group_vars/all.yml</code>，來根據需求設定參數，範例如下：</p>
-<pre><code class="language-yml"># Kubenrtes version, only support 1.8.0+.
-kube_version: 1.8.3
-
-# CRI plugin,
-# Supported runtime: docker, containerd.
-cri_plugin: docker
-
-# CNI plugin,
-# Supported network: flannel, calico, canal, weave or router.
-network: calico
-pod_network_cidr: 10.244.0.0/16
-
-# Kubernetes cluster network
-cluster_subnet: 10.96.0
-kubernetes_service_ip: &quot;{{ cluster_subnet }}.1&quot;
-service_ip_range: &quot;{{ cluster_subnet }}.0/12&quot;
-service_node_port_range: 30000-32767
-
-# apiserver lb 與 vip
-lb_vip_address: 172.20.3.90
-lb_secure_port: 6443
-lb_api_url: &quot;https://{{ lb_vip_address }}:{{ lb_secure_port }}&quot;
-
-# 若有內部 registry 則需要設定
-insecure_registrys:
-# - &quot;gcr.io&quot;
-
-# Core addons (Strongly recommend)
-kube_dns: true
-dns_name: cluster.local # cluster dns name
-dns_ip: &quot;{{ cluster_subnet }}.10&quot;
-
-kube_proxy: true
-kube_proxy_mode: iptables # &quot;ipvs(1.8+)&quot;, &quot;iptables&quot; or &quot;userspace&quot;.
-
-# Extra addons
-kube_dashboard: true # Kubenetes dasobhard console.
-kube_logging: false # EFK stack for Kubernetes
-kube_monitoring: true # Grafana + Infuxdb + Heapster monitoring
-
-# Ingress controller
-ingress: true
-ingress_type: nginx # 'nginx', 'haproxy', 'traefik'
-</code></pre>
-<p>確認<code>group_vars/all.yml</code>完成後，透過 ansible ping 來檢查叢集狀態：</p>
-<pre><code class="language-sh">$ ansible all -m ping
-172.20.3.91 | SUCCESS =&gt; {
-    &quot;changed&quot;: false,
-    &quot;ping&quot;: &quot;pong&quot;
-}
-...
-</code></pre>
-<p>接著就可以透過以下指令進行部署叢集：</p>
-<pre><code class="language-sh">$ ansible-playbook cluster.yml
-</code></pre>
-<p>執行後需要等一點時間，當完成後就可以進入任何一台 Master 進行操作：</p>
-<pre><code class="language-sh">$ kubectl get node
-NAME      STATUS            AGE
-master1   Ready,master      3m
-master2   Ready,master      3m
-master3   Ready,master      3m
-node1     Ready             1m
-node2     Ready             1m
-node3     Ready             1m
-node4     Ready             1m
-node5     Ready             1m
-</code></pre>
-<p>接著就可以部署 Addons 了，透過以下方式進行：</p>
-<pre><code class="language-sh">$ ansible-playbook addons.yml
-</code></pre>
-<h2><span id="驗證叢集">驗證叢集</span></h2>
-<p>當完成上述步驟後，就可以在任一台<code>master</code>節點進行操作 Kubernetes：</p>
-<pre><code class="language-sh">$ kubectl get po -n kube-system
-NAME                                    READY     STATUS    RESTARTS   AGE
-...
-kubernetes-dashboard-1765530275-rxbkw   1/1       Running   0          1m
+<p>本篇採用 Ubuntu 作業系統，因此可透過 apt 直接安裝，以下範例是在 Ubuntu Server 環境中操作：</p>
+<pre><code class="sh">$ sudo apt-get install software-properties-common python-software-properties
+$ sudo apt-add-repository ppa:vbernat/haproxy-1.5
+$ sudo apt-get update
+$ sudo apt-get install haproxy
 </code></pre>
 <blockquote>
-<p>確認都是<code>Running</code>後，就可以進入 <a href="https://172.20.3.90:6443/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/" target="_blank" rel="noopener">Dashboard</a>。</p>
-</blockquote>
-<p>接著透過 Etcd 來查看目前 Leader 狀態：</p>
-<pre><code class="language-sh">$ export CA=&quot;/etc/etcd/ssl&quot;
-$ ETCDCTL_API=3 etcdctl \
-    --cacert=${CA}/etcd-ca.pem \
-    --cert=${CA}/etcd.pem \
-    --key=${CA}/etcd-key.pem \
-    --endpoints=&quot;https://172.20.3.91:2379&quot; \
-    etcdctl member list
-
-2de3b0eee054a36f: name=master1 peerURLs=http://172.20.3.91:2380 clientURLs=http://172.20.3.91:2379 isLeader=false
-75809e2ee8d8d4b4: name=master2 peerURLs=http://172.20.3.92:2380 clientURLs=http://172.20.3.92:2379 isLeader=false
-af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http://172.20.3.93:2379 isLeader=true
+<p>若要安裝其他版本，可以修改成以下：</p>
+<pre><code class="sh">sudo apt-add-repository ppa:vbernat/haproxy-1.6
 </code></pre>
-<h2><span id="重置叢集">重置叢集</span></h2>
-<p>若想要將整個叢集進行重置的話，可以使用以下方式：</p>
-<pre><code class="language-sh">$ ansible-playbook reset.yml
+</blockquote>
+<h3 id="HAProxy-設定"><a href="#HAProxy-設定" class="headerlink" title="HAProxy 設定"></a>HAProxy 設定</h3><p>完成安裝後，要透過編輯<code>/etc/haproxy/haproxy.cfg</code>設定檔來配置 Proxy：</p>
+<pre><code class="sh">global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+        maxconn 1024
+
+    ca-base /etc/ssl/certs
+    crt-base /etc/ssl/private
+
+    ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+    ssl-default-bind-options no-sslv3
+
+defaults
+    log    global
+    mode    http
+    option    httplog
+    option    dontlognull
+        timeout connect 5000
+        timeout client  50000
+        timeout server  50000
+    errorfile 400 /etc/haproxy/errors/400.http
+    errorfile 403 /etc/haproxy/errors/403.http
+    errorfile 408 /etc/haproxy/errors/408.http
+    errorfile 500 /etc/haproxy/errors/500.http
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
+frontend nginxs_proxy
+    bind 172.17.0.2:80
+    mode http
+    default_backend nginx_servers
+
+backend nginx_servers
+    mode http
+    balance roundrobin
+    option forwardfor
+    http-request set-header X-Forwarded-Port %[dst_port]
+    http-request add-header X-Forwarded-Proto https if { ssl_fc }
+    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+    server web1 172.17.0.3:80 check cookie s1
+    server web2 172.17.0.4:80 check cookie s2
+
+listen haproxy_stats
+    bind 0.0.0.0:8080
+    stats enable
+    stats hide-version
+    stats refresh 30s
+    stats show-node
+    stats auth username:password
+    stats uri  /stats
+</code></pre>
+<p>完成設定後，需重啟服務：</p>
+<pre><code class="sh">$ sudo service haproxy restart
 </code></pre>
 
                 
@@ -513,12 +401,12 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2017/03/12/tensorflow/install-source/" data-toggle="tooltip" data-placement="top" title="Ubuntu 16.04 安裝 TensorFlow GPU GTX 1060">&larr; Previous Post</a>
+                            <a href="/2015/12/06/container/docker-machine-driver/" data-toggle="tooltip" data-placement="top" title="Docker Machine Driver 使用">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2017/02/17/kubernetes/deploy/kube-ansible-test/" data-toggle="tooltip" data-placement="top" title="kube-ansible 快速部署 HA 測試環境">Next Post &rarr;</a>
+                            <a href="/2015/11/24/linux/ubuntu/nfs/" data-toggle="tooltip" data-placement="top" title="NFS 簡單安裝與使用">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -548,7 +436,7 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Kubernetes 叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">重置叢集</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#HAProxy-安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">HAProxy 安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#HAProxy-設定"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">HAProxy 設定</span></a></li></ol>
         
         </div>
       </aside>
@@ -568,11 +456,9 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                          <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
                         
-                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-                        
-                          <a class="tag" href="/tags/#Ansible" title="Ansible">Ansible</a>
+                          <a class="tag" href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
                         
                     </div>
                 </section>
@@ -601,8 +487,8 @@ af31edd02fc70872: name=master3 peerURLs=http://172.20.3.93:2380 clientURLs=http:
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "k2r2bai";
-    var disqus_identifier = "https://kairen.github.io/2017/02/19/kubernetes/deploy/kube-ansible-metal/";
-    var disqus_url = "https://kairen.github.io/2017/02/19/kubernetes/deploy/kube-ansible-metal/";
+    var disqus_identifier = "https://kairen.github.io/2015/11/28/linux/ubuntu/haproxy/";
+    var disqus_url = "https://kairen.github.io/2015/11/28/linux/ubuntu/haproxy/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

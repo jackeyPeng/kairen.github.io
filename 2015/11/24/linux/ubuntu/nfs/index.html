@@ -146,14 +146,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -293,32 +293,29 @@
 
                 <p>網路檔案系統(Network FileSystem，NFS)是早期由 SUN 公司所開發出來的<code>分散式檔案系統</code>協定。主要透過 RPC Service 使檔案能夠共享於網路中，NFS 的好處是它支援了不同系統與機器的溝通能力，使資料能夠很輕易透過網路共享給別人。</p>
 <a id="more"></a>
-<h2><span id="安裝與設定">安裝與設定</span></h2>
-<p>首先在 NFS 節點安裝以下套件：</p>
-<pre><code class="language-sh">$ sudo apt-get -y install nfs-kernel-server
+<h2 id="安裝與設定"><a href="#安裝與設定" class="headerlink" title="安裝與設定"></a>安裝與設定</h2><p>首先在 NFS 節點安裝以下套件：</p>
+<pre><code class="sh">$ sudo apt-get -y install nfs-kernel-server
 </code></pre>
 <p>編輯<code>/etc/idmapd.conf</code>設定檔，然後設定 Domain：</p>
 <pre><code>Domain = kyle.bai.example
-</code></pre>
-<p>接著編輯<code>/etc/exports</code>檔案，加入以下內容：</p>
-<pre><code class="language-sh">/var/nfs/images 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check)
+</code></pre><p>接著編輯<code>/etc/exports</code>檔案，加入以下內容：</p>
+<pre><code class="sh">/var/nfs/images 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check)
 /var/nfs/vms 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check)
 /var/nfs/volumes 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check)
 </code></pre>
 <p>然後重新啟動 NFS Server，如以下指令：</p>
-<pre><code class="language-sh">$ sudo /etc/init.d/nfs-kernel-server restart
+<pre><code class="sh">$ sudo /etc/init.d/nfs-kernel-server restart
 </code></pre>
 <p>接著到 Client 端，安裝 NFS 工具：</p>
-<pre><code class="language-sh">$ sudo apt-get -y install nfs-common
+<pre><code class="sh">$ sudo apt-get -y install nfs-common
 </code></pre>
 <p>編輯<code>/etc/idmapd.conf</code>設定檔，然後設定 Domain：</p>
 <pre><code>Domain = kyle.bai.example
-</code></pre>
-<p>然後透過以下指令來掛載使用：</p>
-<pre><code class="language-sh">$ sudo mount -t nfs kyle.bai.example:/var/nfs/images /var/nfs/images
+</code></pre><p>然後透過以下指令來掛載使用：</p>
+<pre><code class="sh">$ sudo mount -t nfs kyle.bai.example:/var/nfs/images /var/nfs/images
 </code></pre>
 <p>完成後，透過以下指令來檢查：</p>
-<pre><code class="language-sh">$ df -hT
+<pre><code class="sh">$ df -hT
 Filesystem                Type      Size  Used Avail Use% Mounted on
 udev                      devtmpfs  7.9G  8.0K  7.9G   1% /dev
 tmpfs                     tmpfs     1.6G  776K  1.6G   1% /run
@@ -331,28 +328,25 @@ none                      tmpfs     100M     0  100M   0% /run/user
 </code></pre>
 <p>編輯<code>/etc/fstab</code>檔案來提供開機掛載：</p>
 <pre><code>10.0.0.61:/var/nfs/vms /var/lib/nova/instances nfs defaults 0 0
-</code></pre>
-<p>也可以安裝自動掛載工具，透過以下指令安裝：</p>
-<pre><code class="language-sh">$ sudo apt-get -y install autofs
+</code></pre><p>也可以安裝自動掛載工具，透過以下指令安裝：</p>
+<pre><code class="sh">$ sudo apt-get -y install autofs
 </code></pre>
 <p>編輯<code>/etc/auto.master</code>檔案，加入以下內容到最後面：</p>
 <pre><code>/-    /etc/auto.mount
-</code></pre>
-<p>然後編輯<code>/etc/auto.mount</code>檔案，設定以下內容：</p>
-<pre><code class="language-sh"># create new : [mount point] [option] [location]
+</code></pre><p>然後編輯<code>/etc/auto.mount</code>檔案，設定以下內容：</p>
+<pre><code class="sh"># create new : [mount point] [option] [location]
  /mntdir -fstype=nfs,rw  kyle.bai.example:/home
 </code></pre>
 <p>建立掛載用目錄：</p>
-<pre><code class="language-sh">$ sudo mkdir /mntdir
+<pre><code class="sh">$ sudo mkdir /mntdir
 </code></pre>
 <p>啟動 auto-mount 服務：</p>
-<pre><code class="language-sh">$ sudo initctl restart autofs
+<pre><code class="sh">$ sudo initctl restart autofs
 </code></pre>
 <p>完成後透過以下方式檢查：</p>
-<pre><code class="language-sh">$ cat /proc/mounts | grep mntdir
+<pre><code class="sh">$ cat /proc/mounts | grep mntdir
 </code></pre>
-<h2><span id="cinder-使用-nfs">Cinder 使用 NFS</span></h2>
-<p>OpenStack Cinder 也支援了 NFS 的驅動，因此只需要在<code>/etc/cinder/cinder.conf</code>設定以下即可：</p>
+<h2 id="Cinder-使用-NFS"><a href="#Cinder-使用-NFS" class="headerlink" title="Cinder 使用 NFS"></a>Cinder 使用 NFS</h2><p>OpenStack Cinder 也支援了 NFS 的驅動，因此只需要在<code>/etc/cinder/cinder.conf</code>設定以下即可：</p>
 <pre><code>[DEFAULT]
 ...
 enabled_backends = nfs
@@ -362,12 +356,10 @@ nfs_shares_config = /etc/cinder/nfs_shares
 volume_driver = cinder.volume.drivers.nfs.NfsDriver
 volume_backend_name = nfs-backend
 nfs_sparsed_volumes = True
-</code></pre>
-<p>建立 Cinder backend 來提供不同的 Backend 的使用：</p>
+</code></pre><p>建立 Cinder backend 來提供不同的 Backend 的使用：</p>
 <pre><code>$ cinder type-create TYPE
 $ cinder type-key TYPE set volume_backend_name=BACKEND
 </code></pre>
-
                 
 
                 <hr>
@@ -375,7 +367,7 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/" data-toggle="tooltip" data-placement="top" title="Ubuntu Metal as a Service 安裝">&larr; Previous Post</a>
+                            <a href="/2015/11/28/linux/ubuntu/haproxy/" data-toggle="tooltip" data-placement="top" title="利用 HAProxy 建立服務負載平衡">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -410,7 +402,7 @@ $ cinder type-key TYPE set volume_backend_name=BACKEND
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Cinder 使用 NFS</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝與設定"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Cinder-使用-NFS"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Cinder 使用 NFS</span></a></li></ol>
         
         </div>
       </aside>

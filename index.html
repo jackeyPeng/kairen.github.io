@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -281,6 +281,40 @@
             
                 <!-- Main Content -->
 
+
+<div class="post-preview">
+
+    <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">
+        <h2 class="post-title">
+            利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇將說明如何透過 Kubeadm 來部署 Kubernetes v1.11 版本的 High Availability 叢集，而本安裝主要是參考官方文件中的 Creating Highly Available Clusters with kubeadm 內容來進行，這邊將透過 HAProxy 與 Keepalived 的結合來實現控制面的 Load Balancer 與 VIP。
+
+Kub......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-07-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+              <a href="/tags/#kubeadm" title="kubeadm">kubeadm</a>
+            
+              <a href="/tags/#Calico" title="Calico">Calico</a>
+            
+        </div>
+    
+
+</div>
+<hr>
 
 <div class="post-preview">
 
@@ -506,9 +540,8 @@ Kubernetes v1.9.3
 kops v1.9.0
 kubefed v1.10
 
-節點資訊
-測試環境為 AWS EC2 虛擬機器，共有三組叢集：
-US West(Oregon) 叢集，也是 Federati......
+節點資訊測試環境為 AWS EC2 虛擬機器，共有三組叢集：
+US West(Oregon) 叢集，也是 Federatio......
         </div>
     </a>
     
@@ -566,7 +599,7 @@ US West(Oregon) 叢集，也是 Federati......
 
     <a href="/2018/04/15/kubernetes/k8s-integration-ldap/">
         <h2 class="post-title">
-            整合 OpenLDAP 進行 Kubernetes 身份認證
+            整合 Open LDAP 進行 Kubernetes 身份認證
         </h2>
         <h3 class="post-subtitle">
             
@@ -585,43 +618,6 @@ US West(Oregon) 叢集，也是 Federati......
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
               <a href="/tags/#LDAP" title="LDAP">LDAP</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">
-        <h2 class="post-title">
-            Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本篇延續過往手動安裝方式來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 Picking the Right Solution 來選擇自己最喜歡的方式。
-本次安裝的軟體版本：
-
-Kubernetes v1.10.0
-CNI v0.6.0
-Etcd v3.1......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2018-04-05
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Calico" title="Calico">Calico</a>
             
         </div>
     
@@ -731,6 +727,10 @@ Etcd v3.1......
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -746,10 +746,6 @@ Etcd v3.1......
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -761,8 +757,6 @@ Etcd v3.1......
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -790,6 +784,10 @@ Etcd v3.1......
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -831,8 +829,6 @@ Etcd v3.1......
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -847,7 +843,9 @@ Etcd v3.1......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

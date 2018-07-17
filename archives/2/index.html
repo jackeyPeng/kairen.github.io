@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -284,6 +284,43 @@
 
 <div class="post-preview">
 
+    <a href="/2018/04/05/kubernetes/deploy/manual-v1.10/">
+        <h2 class="post-title">
+            Kubernetes v1.10.x HA 全手動苦工安裝教學(TL;DR)
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇延續過往手動安裝方式來部署 Kubernetes v1.10.x 版本的 High Availability 叢集，主要目的是學習 Kubernetes 安裝的一些元件關析與流程。若不想這麼累的話，可以參考 Picking the Right Solution 來選擇自己最喜歡的方式。
+本次安裝的軟體版本：
+
+Kubernetes v1.10.0
+CNI v0.6.0
+Etcd v3.1......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-04-05
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+              <a href="/tags/#Calico" title="Calico">Calico</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2018/03/21/kubernetes/k8s-federation/">
         <h2 class="post-title">
             使用 kubefed 建立 Kubernetes Federation(On-premises)
@@ -323,7 +360,10 @@
         </h3>
         <div class="post-content-preview">
             Kubeflow 是 Google 開源的機器學習工具，目標是簡化在 Kubernetes 上運行機器學習的過程，使之更簡單、可攜帶與可擴展。Kubeflow 目標不是在於重建其他服務，而是提供一個最佳開發系統來部署到各種基礎設施架構中，另外由於使用 Kubernetes 來做為基礎，因此只要有 Kubernetes 的地方，都能夠執行 Kubeflow。
-![](/images/kubef......
+
+
+該工具能夠建立以下幾項功能：
+......
         </div>
     </a>
     
@@ -387,7 +427,7 @@
             
         </h3>
         <div class="post-content-preview">
-            本篇主要介紹如何使用 NVIDIA Docker v2 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 --runtime 來選擇......
+            本篇主要介紹如何使用 NVIDIA Docker v2 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使......
         </div>
     </a>
     
@@ -451,8 +491,7 @@
         <div class="post-content-preview">
             這邊說明如何建立不同 Service account user，以及 RBAC 來定義存取規則，並綁定於指定 Service account ，以對指定 Namespace 中資源進行存取權限控制。
 
-Service account
-Service account 一般使用情境方便是 Pod 中的行程呼叫 Kubernetes API 或者其他服務設計而成，這可能會跟 Kubernetes ......
+Service accountService account 一般使用情境方便是 Pod 中的行程呼叫 Kubernetes API 或者其他服務設計而成，這可能會跟 Kubernetes u......
         </div>
     </a>
     
@@ -518,12 +557,12 @@ Service account 一般使用情境方便是 Pod 中的行程呼叫 Kubernetes AP
 
 
 而本篇文章將說明如何建置多節點的 OpenStack Helm 環境來進行功能驗證。
-節點與安裝版本
-以下為各節點的硬體資訊。
+節點與安裝版本以下為各節點的硬體資訊。
 
 
 
-IP Address......
+IP Address
+......
         </div>
     </a>
     
@@ -575,38 +614,6 @@ Etcd v3.2.......
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
               <a href="/tags/#Calico" title="Calico">Calico</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2017/08/29/openstack/kuryr-kubernetes/">
-        <h2 class="post-title">
-            利用 Kuryr 整合 OpenStack 與 Kubernetes 網路
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Kubernetes Kuryr 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2017-08-29
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#OpenStack" title="OpenStack">OpenStack</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -720,6 +727,10 @@ Etcd v3.2.......
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -735,10 +746,6 @@ Etcd v3.2.......
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -750,8 +757,6 @@ Etcd v3.2.......
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -779,6 +784,10 @@ Etcd v3.2.......
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -820,8 +829,6 @@ Etcd v3.2.......
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -836,7 +843,9 @@ Etcd v3.2.......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

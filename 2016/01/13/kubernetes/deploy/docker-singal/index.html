@@ -14,7 +14,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          hyperkube 建立單機 Kubernetes(Unrecommended) - KaiRen&#39;s Blog
+          hyperkube 建立單機 Kubernetes - KaiRen&#39;s Blog
         
     </title>
 
@@ -91,7 +91,7 @@
                               <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
                             
                         </div>
-                        <h1>hyperkube 建立單機 Kubernetes(Unrecommended)</h1>
+                        <h1>hyperkube 建立單機 Kubernetes</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -290,22 +290,20 @@
                 <p>本篇將說明如何透過 Docker 來部署一個單機的 kubernetes。其架構圖如下所示：</p>
 <p><img src="/images/kube/singlenode-docker.png" alt=""></p>
 <a id="more"></a>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>在開始安裝前，我們必須在部署的主機或虛擬機安裝與完成以下兩點：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>在開始安裝前，我們必須在部署的主機或虛擬機安裝與完成以下兩點：</p>
 <ul>
 <li>確認安裝 Docker Engine 於主機作業系統。</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 $ sudo iptables -P FORWARD ACCEPT
 </code></pre>
 <ul>
 <li>定義要使用的 Kubernetes 版本，目前支援 1.2.0+ 版本。</li>
 </ul>
-<pre><code class="language-sh">$ export K8S_VERSION=&quot;1.5.4&quot;
+<pre><code class="sh">$ export K8S_VERSION=&quot;1.5.4&quot;
 </code></pre>
-<h2><span id="部署-kuberentes-元件">部署 Kuberentes 元件</span></h2>
-<p>完成上述後，透過執行以下指令進行部署：</p>
-<pre><code class="language-sh">$ sudo docker run -d \
+<h2 id="部署-Kuberentes-元件"><a href="#部署-Kuberentes-元件" class="headerlink" title="部署 Kuberentes 元件"></a>部署 Kuberentes 元件</h2><p>完成上述後，透過執行以下指令進行部署：</p>
+<pre><code class="sh">$ sudo docker run -d \
 --volume=/:/rootfs:ro \
 --volume=/sys:/sys:ro \
 --volume=/var/lib/docker/:/var/lib/docker:rw \
@@ -326,7 +324,7 @@ gcr.io/google_containers/hyperkube-amd64:v${K8S_VERSION} \
 --allow-privileged=true --v=2
 </code></pre>
 <p>執行後，透過 Docker 指令查看是否成功：</p>
-<pre><code class="language-sh">$ docker ps
+<pre><code class="sh">$ docker ps
 CONTAINER ID        IMAGE                                                    COMMAND                  CREATED              STATUS              PORTS               NAMES
 bfb6461499fb        gcr.io/google_containers/hyperkube-amd64:v1.5.4          &quot;/hyperkube kubele...&quot;   4 minutes ago        Up 4 minutes                            kubelet
 ...
@@ -335,22 +333,21 @@ bfb6461499fb        gcr.io/google_containers/hyperkube-amd64:v1.5.4          &qu
 <p>這邊會隨時間開啟其他 Component 的 Docker Container。</p>
 </blockquote>
 <p>確認完成後，就可以下載 kubectl 來透過 API 管理叢集：</p>
-<pre><code class="language-sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl&quot;
+<pre><code class="sh">$ curl -O &quot;https://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl&quot;
 $ chmod +x kubectl &amp;&amp; sudo mv kubectl /usr/local/bin/
 </code></pre>
 <p>接著設定 kubectl config 來使用測試叢集：</p>
-<pre><code class="language-sh">$ kubectl config set-cluster test-doc --server=http://localhost:8080
+<pre><code class="sh">$ kubectl config set-cluster test-doc --server=http://localhost:8080
 $ kubectl config set-context test-doc --cluster=test-doc
 $ kubectl config use-context test-doc
 </code></pre>
-<h2><span id="驗證安裝">驗證安裝</span></h2>
-<p>當完成所有步驟後，就可以檢查節點狀態：</p>
-<pre><code class="language-sh">$ kubectl get nodes
+<h2 id="驗證安裝"><a href="#驗證安裝" class="headerlink" title="驗證安裝"></a>驗證安裝</h2><p>當完成所有步驟後，就可以檢查節點狀態：</p>
+<pre><code class="sh">$ kubectl get nodes
 NAME        STATUS    AGE
 127.0.0.1   Ready     6m
 </code></pre>
 <p>查看系統命名空間的 pod 與 svc 資訊：</p>
-<pre><code class="language-sh">$ kubectl get po --all-namespaces
+<pre><code class="sh">$ kubectl get po --all-namespaces
 kubectl get po --all-namespaces
 NAMESPACE     NAME                                    READY     STATUS             RESTARTS   AGE
 kube-system   k8s-etcd-127.0.0.1                      1/1       Running            0          15m
@@ -359,25 +356,25 @@ kube-system   k8s-proxy-127.0.0.1                     1/1       Running         
 kube-system   kube-addon-manager-127.0.0.1            2/2       Running            0          15m
 </code></pre>
 <p>接著我們透過部署簡單的 Nginx 應用程式來驗證系統是否正常：</p>
-<pre><code class="language-sh">$ kubectl run nginx --image=nginx --port=80
+<pre><code class="sh">$ kubectl run nginx --image=nginx --port=80
 deployment &quot;nginx&quot; created
 
 $ kubectl expose deploy nginx --port=80
 service &quot;nginx&quot; exposed
 </code></pre>
 <p>透過指令檢查 Pods：</p>
-<pre><code class="language-sh">$ kubectl get po -o wide
+<pre><code class="sh">$ kubectl get po -o wide
 NAME                    READY     STATUS    RESTARTS   AGE       NODE
 nginx-198147104-u9lt6   1/1       Running   0          3m        127.0.0.1
 </code></pre>
 <p>透過指令檢查 Service：</p>
-<pre><code class="language-sh">$ kubectl get svc -o wide
+<pre><code class="sh">$ kubectl get svc -o wide
 NAME         CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE       SELECTOR
 kubernetes   10.0.0.1     &lt;none&gt;        443/TCP   11m       &lt;none&gt;
 nginx        10.0.0.133   &lt;none&gt;        80/TCP    3m        run=nginx
 </code></pre>
 <p>取得應用程式的 Service ip，並存取服務：</p>
-<pre><code class="language-sh">$ IP=$(kubectl get svc nginx --template={{.spec.clusterIP}})
+<pre><code class="sh">$ IP=$(kubectl get svc nginx --template={{.spec.clusterIP}})
 $ curl ${IP}
 </code></pre>
 
@@ -388,7 +385,7 @@ $ curl ${IP}
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/01/14/kubernetes/deploy/docker-multi/" data-toggle="tooltip" data-placement="top" title="hyperkube 建立多節點 Kubernetes(Unrecommended)">&larr; Previous Post</a>
+                            <a href="/2016/01/14/kubernetes/deploy/docker-multi/" data-toggle="tooltip" data-placement="top" title="hyperkube 建立多節點 Kubernetes">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -423,7 +420,7 @@ $ curl ${IP}
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">部署 Kuberentes 元件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">驗證安裝</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Kuberentes-元件"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">部署 Kuberentes 元件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證安裝"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">驗證安裝</span></a></li></ol>
         
         </div>
       </aside>

@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -294,10 +294,9 @@
 <a id="more"></a>
 <p>Playbooks 被設計成易懂與基於 Text Language 的二次開發，有許多方式可以組合 Playbooks 與其附屬的檔案。建議在閱讀 Playbooks 時，同步閱讀 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">Example Playbooks</a>。</p>
 <p>Playbooks 與 ad-hoc 相比是一種完全不同的 Ansible 應用方式，該方式也是 Ansible 強大之處。簡單來說 Playbooks 是一種組態管理系統與多機器部署系統基礎，與現有系統不同之處在於非常適合複雜的部署。若想參考範例，可以參閱 <a href="https://github.com/ansible/ansible-examples" target="_blank" rel="noopener">ansible-examples repository</a>。</p>
-<h3><span id="playbook-language-example">Playbook Language Example</span></h3>
-<p>Playbook 採用 <a href="http://ansible-tran.readthedocs.org/en/latest/docs/YAMLSyntax.html" target="_blank" rel="noopener">YAML 語法</a>來表示。playbook 由一或多個<code>plays</code>組成的內容為元素的列表。在<code>play</code>中一組機器會被映射成定義好的角色，在 Ansible 中<code>play</code>內容也被稱為<code>tasks</code>。</p>
+<h3 id="Playbook-Language-Example"><a href="#Playbook-Language-Example" class="headerlink" title="Playbook Language Example"></a>Playbook Language Example</h3><p>Playbook 採用 <a href="http://ansible-tran.readthedocs.org/en/latest/docs/YAMLSyntax.html" target="_blank" rel="noopener">YAML 語法</a>來表示。playbook 由一或多個<code>plays</code>組成的內容為元素的列表。在<code>play</code>中一組機器會被映射成定義好的角色，在 Ansible 中<code>play</code>內容也被稱為<code>tasks</code>。</p>
 <p>以下是一個簡單的範例：</p>
-<pre><code class="language-txt">---
+<pre><code class="txt">---
 - name: Configure cluster with apache
   hosts: cluster
   sudo: yes
@@ -334,7 +333,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/" data-toggle="tooltip" data-placement="top" title="Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)">&larr; Previous Post</a>
+                            <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/" data-toggle="tooltip" data-placement="top" title="Vagrant CoreOS 部署 Kubernetes 測試叢集">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -369,7 +368,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Playbook Language Example</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Playbook-Language-Example"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Playbook Language Example</span></a></li></ol>
         
         </div>
       </aside>

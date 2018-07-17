@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,21 +291,18 @@
 
                 <p>這邊說明如何建立不同 Service account user，以及 RBAC 來定義存取規則，並綁定於指定 Service account ，以對指定 Namespace 中資源進行存取權限控制。</p>
 <a id="more"></a>
-<h2><span id="service-account">Service account</span></h2>
-<p>Service account 一般使用情境方便是 Pod 中的行程呼叫 Kubernetes API 或者其他服務設計而成，這可能會跟 Kubernetes user account 有所混肴，但是由於 Service account 有別於 User account 是可以針對 Namespace 進行建立，因此這邊嘗試拿 Service account 來提供資訊給 kubectl 使用，並利用 RBAC 來設定存取規則，以限制該 Account 存取 API 的資源。</p>
-<h2><span id="rbac">RBAC</span></h2>
-<p>RBAC(Role-Based Access Control)是從 Kubernetes 1.6 開始支援的存取控制機制，叢集管理者能夠對 User 或 Service account 的角色設定指定資源存取權限，在 RBAC 中，權限與角色相互關聯，其透過成為適當的角色成員，以獲取這些角色的存取權限，這比起過去 ABAC 來的方便使用、更簡化等好處。</p>
-<h2><span id="簡單範例">簡單範例</span></h2>
-<p>首先建立一個 Namespace 與 Service account：</p>
-<pre><code class="language-sh">$ kubectl create ns dev
+<h2 id="Service-account"><a href="#Service-account" class="headerlink" title="Service account"></a>Service account</h2><p>Service account 一般使用情境方便是 Pod 中的行程呼叫 Kubernetes API 或者其他服務設計而成，這可能會跟 Kubernetes user account 有所混肴，但是由於 Service account 有別於 User account 是可以針對 Namespace 進行建立，因此這邊嘗試拿 Service account 來提供資訊給 kubectl 使用，並利用 RBAC 來設定存取規則，以限制該 Account 存取 API 的資源。</p>
+<h2 id="RBAC"><a href="#RBAC" class="headerlink" title="RBAC"></a>RBAC</h2><p>RBAC(Role-Based Access Control)是從 Kubernetes 1.6 開始支援的存取控制機制，叢集管理者能夠對 User 或 Service account 的角色設定指定資源存取權限，在 RBAC 中，權限與角色相互關聯，其透過成為適當的角色成員，以獲取這些角色的存取權限，這比起過去 ABAC 來的方便使用、更簡化等好處。</p>
+<h2 id="簡單範例"><a href="#簡單範例" class="headerlink" title="簡單範例"></a>簡單範例</h2><p>首先建立一個 Namespace 與 Service account：</p>
+<pre><code class="sh">$ kubectl create ns dev
 $ kubectl -n dev create sa dev
 
 # 取得 secret 資訊
-$ SECRET=$(kubectl -n dev get sa dev -o go-template='{{range .secrets}}{{.name}}{{end}}')
+$ SECRET=$(kubectl -n dev get sa dev -o go-template=&#39;{{range .secrets}}{{.name}}{{end}}&#39;)
 </code></pre>
 <p>建立一個 dev.conf 設定檔，添加以下內容：</p>
-<pre><code class="language-sh">$ API_SERVER=&quot;https://172.22.132.51:6443&quot;
-$ CA_CERT=$(kubectl -n dev get secret ${SECRET} -o yaml | awk '/ca.crt:/{print $2}')
+<pre><code class="sh">$ API_SERVER=&quot;https://172.22.132.51:6443&quot;
+$ CA_CERT=$(kubectl -n dev get secret ${SECRET} -o yaml | awk &#39;/ca.crt:/{print $2}&#39;)
 $ cat &lt;&lt;EOF &gt; dev.conf
 apiVersion: v1
 kind: Config
@@ -316,7 +313,7 @@ clusters:
   name: cluster
 EOF
 
-$ TOKEN=$(kubectl -n dev get secret ${SECRET} -o go-template='{{.data.token}}')
+$ TOKEN=$(kubectl -n dev get secret ${SECRET} -o go-template=&#39;{{.data.token}}&#39;)
 $ kubectl config set-credentials dev-user \
     --token=`echo ${TOKEN} | base64 -d` \
     --kubeconfig=dev.conf
@@ -335,7 +332,7 @@ $ kubectl config use-context default \
 </ul>
 </blockquote>
 <p>新增 RBAC role 來限制 dev-user 存取權限:</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; dev-user-role.yml
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; dev-user-role.yml
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -354,13 +351,13 @@ $ kubectl create rolebinding dev-view-pod \
 </code></pre>
 <blockquote>
 <ul>
-<li>apiGroups 為不同 API 的群組，如 <a href="http://rbac.authorization.k8s.io" target="_blank" rel="noopener">rbac.authorization.k8s.io</a>，[&quot;*&quot;] 為允許存取全部。</li>
-<li>resources 為 API 存取資源，如 pods、pods/log、pod/exec，[&quot;*&quot;] 為允許存取全部。</li>
-<li>verbs 為 API 存取方法，如 get、list、watch、create、update、 delete、proxy，[&quot;*&quot;] 為允許存取全部。</li>
+<li>apiGroups 為不同 API 的群組，如 rbac.authorization.k8s.io，[“*”] 為允許存取全部。</li>
+<li>resources 為 API 存取資源，如 pods、pods/log、pod/exec，[“*”] 為允許存取全部。</li>
+<li>verbs 為 API 存取方法，如 get、list、watch、create、update、 delete、proxy，[“*”] 為允許存取全部。</li>
 </ul>
 </blockquote>
 <p>透過 kubectl 確認權限設定沒問題：</p>
-<pre><code class="language-shell=">$ kubectl --kubeconfig=dev.conf get po
+<pre><code class="shell=">$ kubectl --kubeconfig=dev.conf get po
 Error from server (Forbidden): pods is forbidden: User &quot;system:serviceaccount:dev:dev&quot; cannot list pods in the namespace &quot;default&quot;
 
 $ kubectl -n dev --kubeconfig=dev.conf run nginx --image nginx --port 80 --restart=Never
@@ -422,7 +419,7 @@ Error from server (Forbidden): pods &quot;nginx&quot; is forbidden: User &quot;s
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Service account</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">RBAC</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">簡單範例</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Service-account"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Service account</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#RBAC"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">RBAC</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#簡單範例"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">簡單範例</span></a></li></ol>
         
         </div>
       </aside>

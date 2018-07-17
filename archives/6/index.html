@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -284,6 +284,87 @@
 
 <div class="post-preview">
 
+    <a href="/2016/05/26/linux/ubuntu/corosync-pacemaker/">
+        <h2 class="post-title">
+            Pacemaker + Corosync 做服務 HA
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pacemaker 與 Corosync 是 Linux 中現今較常用的高可靠性叢集系統組合。Pacemaker 自身提供了很多常用的應用管理功能，不過若要使用 Pacemaker 來管理自己實作的服務，或是一些特別的東西時，就必須要自己實作管理資源。
+
+節點配置本安裝將使用三台實體主機與一台虛擬機器，主機規格如以下所示：
+
+
+
+Role
+IP Address
+
+
+
+
+pacemaker1
+......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-05-26
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+              <a href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
+            
+              <a href="/tags/#High Availability" title="High Availability">High Availability</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/05/15/ceph/rados-java/">
+        <h2 class="post-title">
+            利用 rados-java 存取 Ceph
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            rados-java 透過 JNA 來綁定 librados (C) 的 API 來提供給 Java 使用，並且實作了 RADOS 與 RBD 的 API，由於透過 JNA 的關析，故不用建構任何的 Header 檔案(.h)。因此我們可以在擁有 JNA 與 librados 的系統上使用本函式庫。
+
+環境準備在開始進行之前，需要滿足以下幾項要求：
+
+需要部署一個 Ceph 叢集，可以參考 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-05-15
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#Java" title="Java">Java</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/05/06/data-engineer/alluxio/">
         <h2 class="post-title">
             Alluxio 分散式虛擬儲存系統
@@ -327,9 +408,8 @@ Aluxion 是一個記憶體虛擬分散式儲存系統，具有高效能、高容
         <div class="post-content-preview">
             DM-cache 是一種利用高速的儲存裝置給低速儲存裝置當作快取的技術，透過此一技術使儲存系統兼容容量與效能之間的平衡。DM-cache 目前是 Linunx 核心的一部份，透過裝置映射(Device Mapper)機制允許管理者建立混合的磁區(Volume)。
 
-快取建立流程
-DM-cache 在比較新版本的 Linux Kernel 已經整合，以下為建置流程：
-$ sudo blockd......
+快取建立流程DM-cache 在比較新版本的 Linux Kernel 已經整合，以下為建置流程：
+$ sudo blockde......
         </div>
     </a>
     
@@ -361,8 +441,7 @@ $ sudo blockd......
             
         </h3>
         <div class="post-content-preview">
-            Akka
-Akka 是基於 Actor 模型以 Scala 程式語言開發而成的開源工具，被用在建置可擴展、彈性、高度並行、分散式與快速響應的 JVM 應用程式平台。現在許多高度並行（Concurrent） JVM 應用程式被廣泛應用，尤其以巨量資料處理框架為甚，諸如：Spark、Storm等，甚至可以基於 Akka 建置高平行的 Web 框架，更能建置分散式系統。Akka 最主要的目是要解決......
+            AkkaAkka 是基於 Actor 模型以 Scala 程式語言開發而成的開源工具，被用在建置可擴展、彈性、高度並行、分散式與快速響應的 JVM 應用程式平台。現在許多高度並行（Concurrent） JVM 應用程式被廣泛應用，尤其以巨量資料處理框架為甚，諸如：Spark、Storm等，甚至可以基於 Akka 建置高平行的 Web 框架，更能建置分散式系統。Akka 最主要的目是要解決同......
         </div>
     </a>
     
@@ -416,40 +495,6 @@ Akka 是基於 Actor 模型以 Scala 程式語言開發而成的開源工具，�
 
 <div class="post-preview">
 
-    <a href="/2016/04/01/linux/ubuntu/drbd/">
-        <h2 class="post-title">
-            DRBD 進行跨節點的區塊儲存備份
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            DRBD（Distributed Replicated Block
-Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。
-
-安裝 DRBD
-本教學將使用以......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-04-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/2016/04/01/openstack/how-to-contribute/">
         <h2 class="post-title">
             OpenStack 貢獻基本流程
@@ -460,14 +505,13 @@ Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組�
         <div class="post-content-preview">
             本部分將說明如何貢獻程式碼到 OpenStack 社群上。
 
-申請 OpenStack 帳號流程
-首先註冊 Launchpad.net 帳號：
+申請 OpenStack 帳號流程首先註冊 Launchpad.net 帳號：
 
 到 Launchpad 註冊一個帳號，使用 inwinStack 信箱
 完成申請後，進入 inwinSTACK Org 點選加入請求
 確認自己出現在 inwinSTACK Menber List
 
-之後註冊 OpenStack Foundation......
+之後註冊 OpenStack Foundation ......
         </div>
     </a>
     
@@ -491,57 +535,29 @@ Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組�
 
 <div class="post-preview">
 
-    <a href="/2016/03/29/linux/ubuntu/keepalived/">
+    <a href="/2016/04/01/linux/ubuntu/drbd/">
         <h2 class="post-title">
-            利用 Keepalived 提供 VIP
+            DRBD 進行跨節點的區塊儲存備份
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Keepalived 是一種基於 VRRP 協定實現的高可靠 Web 服務方案，用於防止單點故障問題。因此一個 Web 服務運作至少會擁有兩台伺服器執行 Keepalived，一台作為 master，一台作為 backup，並提供一個虛擬 IP（VIP），master 會定期發送特定訊息給 backup 伺服器，當 backup 沒收到 master 訊息時，表示 master 已故障，這時......
+            DRBD（Distributed Replicated BlockDevice）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。
+
+安裝 DRBD本教學將使用以下主......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by Kyle Bai on
-            2016-03-29
+            2016-04-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-              <a href="/tags/#High Availability" title="High Availability">High Availability</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/03/28/linux/ubuntu/haproxy/">
-        <h2 class="post-title">
-            使用 HAProxy 進行負載平衡
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            HAProxy 提供了高可靠性、負載平衡（Load Balancing）、基於 TCP 以及 HTTP 的應用程式代理，更支援了虛擬機的使用。HAProxy 是一個開放式原始碼，免費、快速以及非常可靠，根據官方測試結果，該軟體最高能夠支援到 10G 的並行傳輸，因此特別適合使用在負載很大的 Web 伺服器，且這些伺服器通常需要保持 Session 或者 Layer 7 網路的處理，但這些都可......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-03-28
-        </p>
-        <div class="tags">
+              <a href="/tags/#Storage" title="Storage">Storage</a>
             
               <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-              <a href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
             
         </div>
     
@@ -553,14 +569,17 @@ Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組�
 
     <a href="/2016/02/24/kubernetes/deploy/official-ansible/">
         <h2 class="post-title">
-            透過官方 Ansible 部署 Kubernetes(Unrecommended)
+            透過官方 Ansible 部署 Kubernetes
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 Creating a Kubernetes Cluster。
-![](/images/kube/kub......
+
+本次安裝版本為：
+
+Kubernete......
         </div>
     </a>
     
@@ -586,7 +605,7 @@ Device）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組�
 
     <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">
         <h2 class="post-title">
-            Vagrant CoreOS 部署 Kubernetes 測試叢集(Unrecommended)
+            Vagrant CoreOS 部署 Kubernetes 測試叢集
         </h2>
         <h3 class="post-subtitle">
             
@@ -599,9 +618,8 @@ CoreOS alpha.
 Kubernetes v1.5.4.
 
 
-事前準備
-首先必須在主機上安裝Vagrant工具，點選該 Vagrant downloads 頁面抓取當前系統的版本，並完成安裝。
-接著在......
+事前準備首先必須在主機上安裝Vagrant工具，點選該 Vagrant downloads 頁面抓取當前系統的版本，並完成安裝。
+接著在主......
         </div>
     </a>
     
@@ -731,6 +749,10 @@ Kubernetes v1.5.4.
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -746,10 +768,6 @@ Kubernetes v1.5.4.
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -761,8 +779,6 @@ Kubernetes v1.5.4.
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -790,6 +806,10 @@ Kubernetes v1.5.4.
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -831,8 +851,6 @@ Kubernetes v1.5.4.
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -847,7 +865,9 @@ Kubernetes v1.5.4.
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

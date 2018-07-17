@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -289,14 +289,12 @@
 
                 <p>Apache2 是一套經過測試與用於生產環境的 HTTP 伺服器，在許多網頁伺服器中被廣泛的採用，Apache2 除了本身能力強大外，其也整合了許多的額外模組來提供更多的擴展功能。</p>
 <a id="more"></a>
-<h2><span id="apache2-安裝與設定">Apache2 安裝與設定</span></h2>
-<p>要安裝 Apache 伺服器很簡單，只需要透過 APT 進行安裝即可：</p>
-<pre><code class="language-sh">$ sudo apt-get update
+<h2 id="Apache2-安裝與設定"><a href="#Apache2-安裝與設定" class="headerlink" title="Apache2 安裝與設定"></a>Apache2 安裝與設定</h2><p>要安裝 Apache 伺服器很簡單，只需要透過 APT 進行安裝即可：</p>
+<pre><code class="sh">$ sudo apt-get update
 $ sudo apt-get install -y libapache2-mod-proxy-html libxml2-dev apache2 build-essential
 </code></pre>
-<h3><span id="啟用-proxy-modules">啟用 Proxy Modules</span></h3>
-<p>這邊可以透過以下指令來逐一啟動模組：</p>
-<pre><code class="language-sh">a2enmod proxy
+<h3 id="啟用-Proxy-Modules"><a href="#啟用-Proxy-Modules" class="headerlink" title="啟用 Proxy Modules"></a>啟用 Proxy Modules</h3><p>這邊可以透過以下指令來逐一啟動模組：</p>
+<pre><code class="sh">a2enmod proxy
 a2enmod proxy_http
 a2enmod proxy_ajp
 a2enmod rewrite
@@ -306,9 +304,8 @@ a2enmod proxy_balancer
 a2enmod proxy_connect
 a2enmod proxy_html
 </code></pre>
-<h3><span id="設定-default-conf-來啟用">設定 Default conf 來啟用</span></h3>
-<p>編輯<code>/etc/apache2/sites-available/000-default.conf</code>設定檔，加入 Proxy 與 VirtualHost 資訊：</p>
-<pre><code class="language-sh"># 簡單 Proxypass 範例
+<h3 id="設定-Default-conf-來啟用"><a href="#設定-Default-conf-來啟用" class="headerlink" title="設定 Default conf 來啟用"></a>設定 Default conf 來啟用</h3><p>編輯<code>/etc/apache2/sites-available/000-default.conf</code>設定檔，加入 Proxy 與 VirtualHost 資訊：</p>
+<pre><code class="sh"># 簡單 Proxypass 範例
 &lt;VirtualHost *:80&gt;
         ErrorLog ${APACHE_LOG_DIR}/laravel-error.log
         CustomLog ${APACHE_LOG_DIR}/laravel-access.log combined
@@ -333,10 +330,9 @@ a2enmod proxy_html
 &lt;/VirtualHost&gt;
 </code></pre>
 <p>完成後重新啟動服務即可：</p>
-<pre><code class="language-sh">$ sudo service apache2 restart
+<pre><code class="sh">$ sudo service apache2 restart
 </code></pre>
-<h3><span id="使用-ssl-reverse-proxy">使用 SSL Reverse-Proxy</span></h3>
-<p>如果需要設定 SSL 連線與認證的話，可以透過以下設定方式來提供：</p>
+<h3 id="使用-SSL-Reverse-Proxy"><a href="#使用-SSL-Reverse-Proxy" class="headerlink" title="使用 SSL Reverse-Proxy"></a>使用 SSL Reverse-Proxy</h3><p>如果需要設定 SSL 連線與認證的話，可以透過以下設定方式來提供：</p>
 <pre><code>Listen 443
 NameVirtualHost *:443
 &lt;VirtualHost *:443&gt;
@@ -345,9 +341,8 @@ NameVirtualHost *:443
     ProxyPass / http://192.168.20.11:8080/
     ProxyPassReverse / http://192.168.20.11:8080/
 &lt;/VirtualHost&gt;
-</code></pre>
-<p>完成後重新啟動服務即可：</p>
-<pre><code class="language-sh">$ sudo service apache2 restart
+</code></pre><p>完成後重新啟動服務即可：</p>
+<pre><code class="sh">$ sudo service apache2 restart
 </code></pre>
 
                 
@@ -362,7 +357,7 @@ NameVirtualHost *:443
                     
                     
                         <li class="next">
-                            <a href="/2015/10/13/data-engineer/kafka-install/" data-toggle="tooltip" data-placement="top" title="Apache Kafka 叢集">Next Post &rarr;</a>
+                            <a href="/2015/11/04/linux/ubuntu/ubuntu-maas-install/" data-toggle="tooltip" data-placement="top" title="Ubuntu Metal as a Service 安裝">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -392,7 +387,7 @@ NameVirtualHost *:443
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Apache2 安裝與設定</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">啟用 Proxy Modules</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">設定 Default conf 來啟用</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">使用 SSL Reverse-Proxy</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Apache2-安裝與設定"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Apache2 安裝與設定</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#啟用-Proxy-Modules"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">啟用 Proxy Modules</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#設定-Default-conf-來啟用"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">設定 Default conf 來啟用</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#使用-SSL-Reverse-Proxy"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">使用 SSL Reverse-Proxy</span></a></li></ol></li></ol>
         
         </div>
       </aside>

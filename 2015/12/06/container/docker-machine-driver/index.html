@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,9 +291,8 @@
 
                 <p>Docker machine 是 Docker 早期提供 Windows 與 Mac OS X 建立 Docker 環境的工具，其採用 VirtualBox 來提供一個 Container OS，再利用 Docker client 來進行操作。然而 Docker Machine 除了使用 VirtualBox 外，還可以使用<code>Generic Driver</code>與<code>OpenStack Driver</code>來建立雲端平台上的 Docker 環境。</p>
 <a id="more"></a>
-<h2><span id="使用-generic-driver">使用 Generic Driver</span></h2>
-<p>以下範例使用 Generic Driver 來連接一個已存在的 OpenStack instance：</p>
-<pre><code class="language-sh">$ docker-machine create --driver generic \
+<h2 id="使用-Generic-Driver"><a href="#使用-Generic-Driver" class="headerlink" title="使用 Generic Driver"></a>使用 Generic Driver</h2><p>以下範例使用 Generic Driver 來連接一個已存在的 OpenStack instance：</p>
+<pre><code class="sh">$ docker-machine create --driver generic \
 --generic-ssh-user ubuntu \
 --generic-ssh-key ~/.ssh/id_rsa \
 --generic-ip-address 10.26.1.82 \
@@ -306,9 +305,8 @@ docker-engine-1
 <li><code>--generic-ip-address</code>為要使用的虛擬機 IP。</li>
 </ul>
 </blockquote>
-<h2><span id="使用-openstack-driver">使用 OpenStack Driver</span></h2>
-<p>Docker Machine 提供了使用者可以建立 Docker 容器於 OpenStack 虛擬機。以下範例是使用 OpenStack Driver 來連接 OpenStack 並建立虛擬機：</p>
-<pre><code class="language-sh">$ docker-machine create --driver openstack \
+<h2 id="使用-OpenStack-Driver"><a href="#使用-OpenStack-Driver" class="headerlink" title="使用 OpenStack Driver"></a>使用 OpenStack Driver</h2><p>Docker Machine 提供了使用者可以建立 Docker 容器於 OpenStack 虛擬機。以下範例是使用 OpenStack Driver 來連接 OpenStack 並建立虛擬機：</p>
+<pre><code class="sh">$ docker-machine create --driver openstack \
 --openstack-username &quot;&lt;KEYSTONE_USERNAME&gt;&quot; \
 --openstack-password &quot;&lt;KEYSTONE_PASSWD&gt;&quot; \
 --openstack-tenant-name &quot;&lt;KEYSTONE_PROJECT_NAME&gt;&quot; \
@@ -350,7 +348,7 @@ openstack-docker
                     
                     
                         <li class="next">
-                            <a href="/2015/12/04/linux/ubuntu/ubuntu-maas-install/" data-toggle="tooltip" data-placement="top" title="Ubuntu Metal as a Service 安裝">Next Post &rarr;</a>
+                            <a href="/2015/11/28/linux/ubuntu/haproxy/" data-toggle="tooltip" data-placement="top" title="利用 HAProxy 建立服務負載平衡">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -380,7 +378,7 @@ openstack-docker
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">使用 Generic Driver</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">使用 OpenStack Driver</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#使用-Generic-Driver"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">使用 Generic Driver</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#使用-OpenStack-Driver"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">使用 OpenStack Driver</span></a></li></ol>
         
         </div>
       </aside>

@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -296,12 +296,10 @@
 <li><strong>Tensor</strong>：是中文翻譯是<code>張量</code>，其實就是一個<code>n</code>維度的陣列或列表。如一維 Tensor 就是向量，二維 Tensor 就是矩陣等等.</li>
 <li><strong>Flow</strong>：是指 Graph 運算過程中的資料流.</li>
 </ul>
-<center>![](/images/tf/tf-logo.png)</center>
-<h2><span id="data-flow-graphs">Data Flow Graphs</span></h2>
-<p>資料流圖(Data Flow Graphs)是一種有向圖的節點(Node)與邊(Edge)來描述計算過程。圖中的節點表示數學操作，亦表示資料 I/O 端點; 而邊則表示節點之間的關析，用來傳遞操作之間互相使用的多維陣列(Tensors)，而 Tensor 是在圖中流動的資料表示。一旦節點相連的邊傳來資料流，這時節點就會被分配到運算裝置上異步(節點之間)或同步(節點之內)的執行。</p>
-<center>![](https://www.tensorflow.org/images/tensors_flowing.gif)</center>
-<h2><span id="tensorflow-基本使用">TensorFlow 基本使用</span></h2>
-<p>在開始進行 TensorFlow 之前，需要了解幾個觀念：</p>
+<p><img src="/images/tf/tf-logo.png" alt=""></p>
+<h2 id="Data-Flow-Graphs"><a href="#Data-Flow-Graphs" class="headerlink" title="Data Flow Graphs"></a>Data Flow Graphs</h2><p>資料流圖(Data Flow Graphs)是一種有向圖的節點(Node)與邊(Edge)來描述計算過程。圖中的節點表示數學操作，亦表示資料 I/O 端點; 而邊則表示節點之間的關析，用來傳遞操作之間互相使用的多維陣列(Tensors)，而 Tensor 是在圖中流動的資料表示。一旦節點相連的邊傳來資料流，這時節點就會被分配到運算裝置上異步(節點之間)或同步(節點之內)的執行。</p>
+<p><img src="https://www.tensorflow.org/images/tensors_flowing.gif" alt=""></p>
+<h2 id="TensorFlow-基本使用"><a href="#TensorFlow-基本使用" class="headerlink" title="TensorFlow 基本使用"></a>TensorFlow 基本使用</h2><p>在開始進行 TensorFlow 之前，需要了解幾個觀念：</p>
 <ul>
 <li>使用 <a href="https://www.tensorflow.org/api_docs/python/tf/Graph" target="_blank" rel="noopener">tf.Graph</a> 來表示計算任務.</li>
 <li>採用<code>tensorflow::Session</code>的上下文(Context)來執行圖.</li>
@@ -320,7 +318,7 @@
 <li>建立 Session(包含一個 Graph)來執行運算.</li>
 </ol>
 <p>以下是一個簡單範例，說明如何建立運算：</p>
-<pre><code class="language-py"># coding=utf-8
+<pre><code class="py"># coding=utf-8
 import tensorflow as tf
 
 a = tf.constant(1)
@@ -335,13 +333,12 @@ output = tf.add(add1, mul1)
 with tf.Session() as sess:
     print sess.run(output)
 </code></pre>
-<p>執行流程如下圖：<br>
-<img src="https://github.com/lienhua34/notes/raw/master/tensorflow/asserts/graph_compute_flow.jpg?_=5998853" alt=""></p>
+<p>執行流程如下圖：<br><img src="https://github.com/lienhua34/notes/raw/master/tensorflow/asserts/graph_compute_flow.jpg?_=5998853" alt=""></p>
 <p>以下是一個簡單範例，說明如何建立多個 Graph：</p>
-<pre><code class="language-python="># coding=utf-8
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 
-logs_path = './basic_tmp'
+logs_path = &#39;./basic_tmp&#39;
 
 # 建立一個 graph，並建立兩個常數 op ，這些 op 稱為節點
 g1 = tf.Graph()
@@ -373,7 +370,7 @@ it_sess = tf.InteractiveSession()
 x = tf.Variable([1.0, 2.0])
 a = tf.constant([3.0, 3.0])
 
-# 使用初始器 initializer op 的 run() 方法初始化 'x'
+# 使用初始器 initializer op 的 run() 方法初始化 &#39;x&#39;
 x.initializer.run()
 sub = tf.subtract(x, a)
 
@@ -389,7 +386,7 @@ it_sess.close()
 </blockquote>
 <p>上面範例可以看到建立了一個 Graph 的計算過程<code>c</code>，而當直接執行到<code>c</code>時，並不會真的執行運算，而是在<code>sess</code>會話建立後，並透過<code>sess</code>執行分配給 CPU 或 GPU 之類設備進行運算後，才會回傳一個節點的 Tensor，在 Python 中 Tensor 是一個 Numpy 的 ndarry 物件。</p>
 <p>TensorFlow 也可以透過變數來維護 Graph 的執行過程狀態，這邊提供一個簡單的累加器：</p>
-<pre><code class="language-python="># coding=utf-8
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 
 # 建立一個變數 counter，並初始化為 0
@@ -416,7 +413,7 @@ with tf.Session() as sess:
 <p>更多細節可以查看 <a href="https://www.tensorflow.org/programmers_guide/variables" target="_blank" rel="noopener">Variables</a>。</p>
 </blockquote>
 <p>另外可以利用 Fetch 方式來一次取得多個節點的 Tensor，範例如下：</p>
-<pre><code class="language-python="># coding=utf-8
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 
 input1 = tf.constant(3.0)
@@ -431,7 +428,7 @@ with tf.Session() as sess:
   print result
 </code></pre>
 <p>而當我們想要在執行 Session 時，臨時替換 Tensor 內容的話，就可以利用 TensorFlow 內建的 Feed 方法來解決：</p>
-<pre><code class="language-python="># coding=utf-8
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 
 input1 = tf.placeholder(tf.float32)
@@ -443,12 +440,9 @@ with tf.Session() as sess:
   print sess.run([output], feed_dict={input1:[7.], input2:[2.]})
   print sess.run([output])
 </code></pre>
-<h2><span id="tensorflow-分散式運算">TensorFlow 分散式運算</span></h2>
-<p>本節將以 TensorFlow 分散式深度學習為例。</p>
-<h3><span id="grpc">gRPC</span></h3>
-<p>gRPC(google Remote Procedure Call) 是 Google 開發的基於 HTTP/2 和 Protocol Buffer 3 的 RPC 框架，該框架有各種常見語言的實作，如 C、Java 與 Go 等語言，提供輕鬆跨語言的呼叫。</p>
-<h3><span id="概念">概念</span></h3>
-<p>說明客戶端(Client)、叢集(Cluster)、工作(Job)、任務(Task)、TensorFlow 伺服器、Master 與 Worker 服務。</p>
+<h2 id="TensorFlow-分散式運算"><a href="#TensorFlow-分散式運算" class="headerlink" title="TensorFlow 分散式運算"></a>TensorFlow 分散式運算</h2><p>本節將以 TensorFlow 分散式深度學習為例。</p>
+<h3 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h3><p>gRPC(google Remote Procedure Call) 是 Google 開發的基於 HTTP/2 和 Protocol Buffer 3 的 RPC 框架，該框架有各種常見語言的實作，如 C、Java 與 Go 等語言，提供輕鬆跨語言的呼叫。</p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>說明客戶端(Client)、叢集(Cluster)、工作(Job)、任務(Task)、TensorFlow 伺服器、Master 與 Worker 服務。</p>
 <p><img src="http://www.pittnuts.com/wp-content/uploads/2016/08/TFramework.png" alt=""></p>
 <p>如圖所示，幾個流程說明如下：</p>
 <ul>
@@ -485,19 +479,15 @@ with tf.Session() as sess:
 </blockquote>
 <p>一般對於<code>小型規模訓練</code>，這種資料與參數量不多時，可以用一個 CPU 來同時執行兩種任務。而<code>中型規模訓練</code>，資料量較大，但參數量不多時，計算梯度的工作負載較高，而參數更新負載較低，所以計算梯度交給若干個 CPU 或 GPU 去執行，而更新參數則交給一個 CPU 即可。對於<code>大型規模訓練</code>，資料與參數量多時，不僅計算梯度需要部署多個 CPU 或 GPU，連更新參數也要不說到多個 CPU 中。</p>
 <p>然而單一節點能夠裝載的 CPU 與 GPU 是有限的，所以在大量訓練時就需要多台機器來提供運算能力的擴展。</p>
-<h3><span id="分散式變數伺服器parameter-server">分散式變數伺服器(Parameter Server)</span></h3>
-<p>當在較大規模的訓練時，隨著模型的變數越來越多，很可能造成單一節點因為效能問題，而無法負荷模型變數儲存與更新時，這時候就需要將變數分開到不同機器來做儲存與更新。而 TensorFlow 提供了變數伺服器的邏輯實現，並可以用多台機器來組成叢集，類似分散式儲存結構，主要用來解決變數的儲存與更新效能問題。</p>
-<h3><span id="撰寫分散式程式注意概念">撰寫分散式程式注意概念</span></h3>
-<p>當我們在寫分散式程式時，需要知道使用的副本與訓練模式。</p>
+<h3 id="分散式變數伺服器-Parameter-Server"><a href="#分散式變數伺服器-Parameter-Server" class="headerlink" title="分散式變數伺服器(Parameter Server)"></a>分散式變數伺服器(Parameter Server)</h3><p>當在較大規模的訓練時，隨著模型的變數越來越多，很可能造成單一節點因為效能問題，而無法負荷模型變數儲存與更新時，這時候就需要將變數分開到不同機器來做儲存與更新。而 TensorFlow 提供了變數伺服器的邏輯實現，並可以用多台機器來組成叢集，類似分散式儲存結構，主要用來解決變數的儲存與更新效能問題。</p>
+<h3 id="撰寫分散式程式注意概念"><a href="#撰寫分散式程式注意概念" class="headerlink" title="撰寫分散式程式注意概念"></a>撰寫分散式程式注意概念</h3><p>當我們在寫分散式程式時，需要知道使用的副本與訓練模式。</p>
 <p><img src="https://camo.githubusercontent.com/0b7a1232bd3f8861dfbccab568a30591588384dc/68747470733a2f2f7777772e74656e736f72666c6f772e6f72672f696d616765732f74656e736f72666c6f775f666967757265372e706e67" alt=""></p>
-<h4><span id="in-graph-與-between-graph-副本模式">In-graph 與 Between-graph 副本模式</span></h4>
-<p>下圖顯示兩者差異，而這邊也在進行描述。</p>
+<h4 id="In-graph-與-Between-graph-副本模式"><a href="#In-graph-與-Between-graph-副本模式" class="headerlink" title="In-graph 與 Between-graph 副本模式"></a>In-graph 與 Between-graph 副本模式</h4><p>下圖顯示兩者差異，而這邊也在進行描述。</p>
 <ul>
 <li><strong>In-graph</strong>：只有一個 Clinet(主要呼叫<code>tf::Session</code>行程)，並將裡面變數與 op 指定給對應的 Job 完成，因此資料分發只由一個 Client 完成。這種方式設定簡單，其他節點只需要 join 操作，並提供一個 gRPC 位址來等待任務。但是訓練資料只在單一節點，因此要把資料分發到不同機器時，會影響平行訓練效能。可理解成所有 op 都在同一個 Graph 中，伺服器只需要做<code>join()</code>功能.</li>
 <li><strong>Between-graph</strong>：多個獨立 Client 建立相同 Graph(包含變數)，並透過<code>tf.train.replica_device_setter</code>將這些參數映射到 ps 上，即訓練的變數儲存在 Parameter Server，而資料不用分發，資料分片(Shards)會存在個計算節點，因此個節點自己算自己的，算完後，把要更新變數告知 Parameter Server 進行更新。適合在 TB 級別的資料量使用，節省大量資料傳輸時間，也是深度學習推薦模式。</li>
 </ul>
-<h4><span id="同步synchronous訓練與非同步asynchronous訓鍊">同步(Synchronous)訓練與非同步(Asynchronous)訓鍊</span></h4>
-<p>TensorFlow 的副本擁有 in-graph 和 between-graph 模式，這兩者都支援了同步與非同步更新。本節將說明同步與非同步兩者的差異為何。</p>
+<h4 id="同步-Synchronous-訓練與非同步-Asynchronous-訓鍊"><a href="#同步-Synchronous-訓練與非同步-Asynchronous-訓鍊" class="headerlink" title="同步(Synchronous)訓練與非同步(Asynchronous)訓鍊"></a>同步(Synchronous)訓練與非同步(Asynchronous)訓鍊</h4><p>TensorFlow 的副本擁有 in-graph 和 between-graph 模式，這兩者都支援了同步與非同步更新。本節將說明同步與非同步兩者的差異為何。</p>
 <ul>
 <li><strong>Synchronous</strong>：每個 Graph 的副本讀取相同 Parameter 的值，然後平行計算梯度(gradients)，將所有計算完的梯度放在一起處理，當每次更新梯度時，需要等所以分發的資料計算完成，並回傳結果來把梯度累加計算平均，在進行更新變數。好處在於使用 loss 的下降時比較穩定，壞處就是要等最慢的分片計算時間。</li>
 </ul>
@@ -509,9 +499,8 @@ with tf.Session() as sess:
 </ul>
 <p><img src="http://img.blog.csdn.net/20161114005141032" alt=""></p>
 <p>一般在資料量小，且各節點計算能力平均下，適合使用同步模式; 反之在資料量大與各節點效能差異不同時，適合用非同步。</p>
-<h3><span id="簡單分散式訓練程式">簡單分散式訓練程式</span></h3>
-<p>TensorFlow 提供建立 Server 函式來進行測試使用，以下是建立一個分散式訓練 Server 程式<code>server.py</code>：</p>
-<pre><code class="language-python="># coding=utf-8
+<h3 id="簡單分散式訓練程式"><a href="#簡單分散式訓練程式" class="headerlink" title="簡單分散式訓練程式"></a>簡單分散式訓練程式</h3><p>TensorFlow 提供建立 Server 函式來進行測試使用，以下是建立一個分散式訓練 Server 程式<code>server.py</code>：</p>
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 
 # 定義 Cluster
@@ -525,24 +514,24 @@ server.join()
 <p>也可以透過<code>tf.train.Server.create_local_server()</code> 來建立 Local Server</p>
 </blockquote>
 <p>當確認程式沒有任何問題後，就可以透過以下方式啟動：</p>
-<pre><code class="language-shell=">$ python server.py
+<pre><code class="shell=">$ python server.py
 2017-04-10 18:19:41.953448: I tensorflow/core/common_runtime/gpu/gpu_device.cc:977] Creating TensorFlow device (/gpu:0) -&gt; (device: 0, name: GeForce GTX 650, pci bus id: 0000:01:00.0)
 2017-04-10 18:19:41.983913: I tensorflow/core/distributed_runtime/rpc/grpc_channel.cc:200] Initialize GrpcChannelCache for job local -&gt; {0 -&gt; localhost:2222}
 2017-04-10 18:19:41.984946: I tensorflow/core/distributed_runtime/rpc/grpc_server_lib.cc:240] Started server with target: grpc://localhost:2222
 </code></pre>
 <p>接著我們要撰寫 Client 端來進行定義 Graph 運算的程式<code>client.py</code>：</p>
-<pre><code class="language-python="># coding=utf-8
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 
 # 執行目標 Session
 server_target = &quot;grpc://localhost:2222&quot;
-logs_path = './basic_tmp'
+logs_path = &#39;./basic_tmp&#39;
 
 # 指定 worker task 0 使用 CPU 運算
 with tf.device(&quot;/job:worker/task:0&quot;):
     with tf.device(&quot;/cpu:0&quot;):
-        a = tf.constant([1.5, 6.0], name='a')
-        b = tf.Variable([1.5, 3.2], name='b')
+        a = tf.constant([1.5, 6.0], name=&#39;a&#39;)
+        b = tf.Variable([1.5, 3.2], name=&#39;b&#39;)
         c = (a * b) + (a / b)
         d = c * a
         y = tf.assign(b, d)
@@ -554,19 +543,18 @@ with tf.Session(server_target) as sess:
     print(sess.run(y))
 </code></pre>
 <p>完成後即可透過以下指令測試：</p>
-<pre><code class="language-python=">$ python client.py
+<pre><code class="python=">$ python client.py
 [   4.875       126.45000458]
 </code></pre>
-<h3><span id="線性迴歸訓練程式">線性迴歸訓練程式</span></h3>
-<p>上面範例提供了很簡單的 Client 與 Server 運算操作。而這邊建立一個 Between-graph 執行程式<code>bg_dist.py</code>：</p>
-<pre><code class="language-python="># coding=utf-8
+<h3 id="線性迴歸訓練程式"><a href="#線性迴歸訓練程式" class="headerlink" title="線性迴歸訓練程式"></a>線性迴歸訓練程式</h3><p>上面範例提供了很簡單的 Client 與 Server 運算操作。而這邊建立一個 Between-graph 執行程式<code>bg_dist.py</code>：</p>
+<pre><code class="python="># coding=utf-8
 import tensorflow as tf
 import numpy as np
 
 parameter_servers = [&quot;localhost:2222&quot;]
 workers = [&quot;localhost:2223&quot;, &quot;localhost:2224&quot;]
 
-tf.app.flags.DEFINE_string(&quot;job_name&quot;, &quot;&quot;, &quot;輸入 'ps' 或是 'worker'&quot;)
+tf.app.flags.DEFINE_string(&quot;job_name&quot;, &quot;&quot;, &quot;輸入 &#39;ps&#39; 或是 &#39;worker&#39;&quot;)
 tf.app.flags.DEFINE_integer(&quot;task_index&quot;, 0, &quot;Job 的任務 index&quot;)
 FLAGS = tf.app.flags.FLAGS
 
@@ -633,15 +621,16 @@ if __name__ == &quot;__main__&quot;:
     tf.app.run()
 </code></pre>
 <blockquote>
-<p><code>tf.train.replica_device_setter(ps_tasks=0, ps_device='/job:ps', worker_device='/job:worker', merge_devices=True, cluster=None, ps_ops=None)</code> 指定方式。</p>
+<p>若想指定 Device 可以用以下方式：</p>
+<pre><code class="python">tf.train.replica_device_setter(ps_tasks=0, ps_device=&#39;/job:ps&#39;, worker_device=&#39;/job:worker&#39;, merge_devices=True, cluster=None, ps_ops=None)
+</code></pre>
 </blockquote>
 <p>撰寫完成後，透過以下指令來進行測試：</p>
-<pre><code class="language-shell=">$ python liner_dist.py --job_name=ps --task_index=0
+<pre><code class="shell=">$ python liner_dist.py --job_name=ps --task_index=0
 $ python liner_dist.py --job_name=worker --task_index=0
 $ python liner_dist.py --job_name=worker --task_index=1
 </code></pre>
-<h2><span id="tensorboard-視覺化工具">Tensorboard 視覺化工具</span></h2>
-<p>Tensorboard 是 TensorFlow 內建的視覺化工具，我們可以透過讀取事件紀錄結構化的資料，來顯示以下幾個項目來提供視覺化：</p>
+<h2 id="Tensorboard-視覺化工具"><a href="#Tensorboard-視覺化工具" class="headerlink" title="Tensorboard 視覺化工具"></a>Tensorboard 視覺化工具</h2><p>Tensorboard 是 TensorFlow 內建的視覺化工具，我們可以透過讀取事件紀錄結構化的資料，來顯示以下幾個項目來提供視覺化：</p>
 <ul>
 <li><strong>Event</strong>：訓練過程中統計資料(平均值等)變化狀態.</li>
 <li><strong>Image</strong>：訓練過程中紀錄的 Graph.</li>
@@ -649,16 +638,16 @@ $ python liner_dist.py --job_name=worker --task_index=1
 <li><strong>Histogram</strong>：順練過程中紀錄的資料分散圖</li>
 </ul>
 <p>一個範例程式如下所示：</p>
-<pre><code class="language-python"># coding=utf-8
+<pre><code class="python"># coding=utf-8
 import tensorflow as tf
 
-logs_path = './tmp/1'
+logs_path = &#39;./tmp/1&#39;
 
 # 建立一個 graph，並建立兩個常數 op ，這些 op 稱為節點
 g1 = tf.Graph()
 with g1.as_default():
-    a = tf.constant([1.5, 6.0], name='a')
-    b = tf.Variable([1.5, 3.2], name='b')
+    a = tf.constant([1.5, 6.0], name=&#39;a&#39;)
+    b = tf.Variable([1.5, 3.2], name=&#39;b&#39;)
     c = (a * b) + (a / b)
     d = c * a
     y = tf.assign(b, d)
@@ -673,7 +662,7 @@ with tf.Session(graph=g1) as sess_cpu:
 
 </code></pre>
 <p>執行後會看到當前目錄產生<code>tmp_mnist</code> logs 檔案，這時候就可以透過 thensorboard 來視覺化訓練結果：</p>
-<pre><code class="language-shell=">$ tensorboard --logdir=run1:./tmp/1 --port=6006
+<pre><code class="shell=">$ tensorboard --logdir=run1:./tmp/1 --port=6006
 </code></pre>
 <blockquote>
 <p>run1 是當有多次 log 被載入時做為區別用。</p>
@@ -721,7 +710,7 @@ with tf.Session(graph=g1) as sess_cpu:
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Data Flow Graphs</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">TensorFlow 基本使用</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">TensorFlow 分散式運算</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">gRPC</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">概念</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">分散式變數伺服器(Parameter Server)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">撰寫分散式程式注意概念</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.4.1.</span> <span class="toc-nav-text">In-graph 與 Between-graph 副本模式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.4.2.</span> <span class="toc-nav-text">同步(Synchronous)訓練與非同步(Asynchronous)訓鍊</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">簡單分散式訓練程式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">線性迴歸訓練程式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Tensorboard 視覺化工具</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Data-Flow-Graphs"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Data Flow Graphs</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#TensorFlow-基本使用"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">TensorFlow 基本使用</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#TensorFlow-分散式運算"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">TensorFlow 分散式運算</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#gRPC"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">gRPC</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#概念"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">概念</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#分散式變數伺服器-Parameter-Server"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">分散式變數伺服器(Parameter Server)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#撰寫分散式程式注意概念"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">撰寫分散式程式注意概念</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#In-graph-與-Between-graph-副本模式"><span class="toc-nav-number">3.4.1.</span> <span class="toc-nav-text">In-graph 與 Between-graph 副本模式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#同步-Synchronous-訓練與非同步-Asynchronous-訓鍊"><span class="toc-nav-number">3.4.2.</span> <span class="toc-nav-text">同步(Synchronous)訓練與非同步(Asynchronous)訓鍊</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#簡單分散式訓練程式"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">簡單分散式訓練程式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#線性迴歸訓練程式"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">線性迴歸訓練程式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Tensorboard-視覺化工具"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Tensorboard 視覺化工具</span></a></li></ol>
         
         </div>
       </aside>

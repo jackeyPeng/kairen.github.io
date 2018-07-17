@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,8 +291,7 @@
 
                 <p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-ansible" target="_blank" rel="noopener">ceph-ansible</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要<code>一台 Monitor</code>與<code>三台 OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
 <a id="more"></a>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本安裝將使用四台虛擬機器作為部署主機，虛擬機器採用 OpenStack，其規格為以下：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本安裝將使用四台虛擬機器作為部署主機，虛擬機器採用 OpenStack，其規格為以下：</p>
 <table>
 <thead>
 <tr>
@@ -361,9 +360,8 @@
 </tr>
 </tbody>
 </table>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>首先在<code>mon</code>節點設定 SSH 到其他節點不需要密碼，請依照以下執行：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先在<code>mon</code>節點設定 SSH 到其他節點不需要密碼，請依照以下執行：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ ssh-copy-id osd1
 ...
 </code></pre>
@@ -371,7 +369,7 @@ $ ssh-copy-id osd1
 <p>若虛擬機的話，建立金鑰後可以直接上傳<code>公有金鑰</code>提供給其他節點。</p>
 </blockquote>
 <p>接著在每一個節點設定 sudo 不需要密碼：</p>
-<pre><code class="language-sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu
+<pre><code class="sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu
 </code></pre>
 <blockquote>
 <p>一般虛擬機映像檔預設就有設定。</p>
@@ -384,9 +382,8 @@ $ ssh-copy-id osd1
 172.16.1.201 osd1
 172.16.1.202 osd2
 172.16.1.203 osd3
-</code></pre>
-<p>回到<code>mon</code>節點安裝部署將使用到的 ansible 工具：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y software-properties-common git cowsay
+</code></pre><p>回到<code>mon</code>節點安裝部署將使用到的 ansible 工具：</p>
+<pre><code class="sh">$ sudo apt-get install -y software-properties-common git cowsay
 $ sudo apt-add-repository -y ppa:ansible/ansible
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible
 </code></pre>
@@ -396,24 +393,22 @@ mon
 
 [osds]
 osd[1:3]
-</code></pre>
-<p>(option)若要安裝 rgw 與 mds 的話，可再添加以下：</p>
-<pre><code class="language-sh">[rgws]
+</code></pre><p>(option)若要安裝 rgw 與 mds 的話，可再添加以下：</p>
+<pre><code class="sh">[rgws]
 mon
 [mdss]
 mon
 </code></pre>
 <p>完成後透過以下指令檢查節點是否可以溝通：</p>
-<pre><code class="language-sh">$ ansible all -m ping
+<pre><code class="sh">$ ansible all -m ping
 172.16.1.200 | success &gt;&gt; {
     &quot;changed&quot;: false,
     &quot;ping&quot;: &quot;pong&quot;
 }
 ...
 </code></pre>
-<h2><span id="部署-ansible-ceph-叢集">部署 Ansible Ceph 叢集</span></h2>
-<p>首先在<code>mon</code>節點透過 git 來下載 ceph-ansible 專案：</p>
-<pre><code class="language-sh">$ git clone &quot;https://github.com/ceph/ceph-ansible.git&quot;
+<h2 id="部署-Ansible-Ceph-叢集"><a href="#部署-Ansible-Ceph-叢集" class="headerlink" title="部署 Ansible Ceph 叢集"></a>部署 Ansible Ceph 叢集</h2><p>首先在<code>mon</code>節點透過 git 來下載 ceph-ansible 專案：</p>
+<pre><code class="sh">$ git clone &quot;https://github.com/ceph/ceph-ansible.git&quot;
 $ cd ceph-ansible
 $ cp site.yml.sample site.yml
 $ cp group_vars/all.sample group_vars/all
@@ -422,12 +417,12 @@ $ cp group_vars/osds.sample group_vars/osds
 </code></pre>
 <blockquote>
 <p>若要部署 rgw 與 mds 的話，需再執行以下指令：</p>
-</blockquote>
-<pre><code class="language-sh">$ cp group_vars/mdss.sample group_vars/mdss
+<pre><code class="sh">$ cp group_vars/mdss.sample group_vars/mdss
 $ cp group_vars/rgws.sample group_vars/rgws
 </code></pre>
+</blockquote>
 <p>接著編輯<code>group_vars/all</code>檔案，修改以下內容：</p>
-<pre><code class="language-yaml">ceph_origin: 'upstream'
+<pre><code class="yaml">ceph_origin: &#39;upstream&#39;
 ceph_stable: true
 monitor_interface: eth0
 journal_size: 5000
@@ -437,7 +432,7 @@ public_network: 172.16.1.0/24
 <p>其他版本可以參考官方的說明 <a href="https://github.com/ceph/ceph-ansible" target="_blank" rel="noopener">ceph-ansible</a>。</p>
 </blockquote>
 <p>完成後再編輯<code>group_vars/osds</code>檔案，修改以下內容：</p>
-<pre><code class="language-yaml">journal_collocation: true
+<pre><code class="yaml">journal_collocation: true
 devices:
   - /dev/vdb
 </code></pre>
@@ -445,7 +440,7 @@ devices:
 <p>這邊使用 journal，也可以選擇其他使用。若有多顆 OSD則修改<code>devices</code>。</p>
 </blockquote>
 <p>上述都確認無誤後，編輯<code>site.yml</code>檔案，並修改一下內容：</p>
-<pre><code class="language-yaml">---
+<pre><code class="yaml">---
 - hosts: mons
   become: True
   roles:
@@ -457,7 +452,7 @@ devices:
   - ceph-osd
 </code></pre>
 <p>(option)若要部署 rgw 與 mds 的話，需再加入以下內容：</p>
-<pre><code class="language-yaml">- hosts: mdss
+<pre><code class="yaml">- hosts: mdss
   become: True
   roles:
   - ceph-mds
@@ -468,7 +463,7 @@ devices:
   - ceph-rgw
 </code></pre>
 <p>完成後就可以透過以下指令來進行部署：</p>
-<pre><code class="language-sh">$ ansible-playbook site.yml
+<pre><code class="sh">$ ansible-playbook site.yml
 </code></pre>
 
                 
@@ -513,7 +508,7 @@ devices:
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Ansible Ceph 叢集</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Ansible-Ceph-叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Ansible Ceph 叢集</span></a></li></ol>
         
         </div>
       </aside>

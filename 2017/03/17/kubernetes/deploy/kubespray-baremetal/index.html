@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -304,8 +304,7 @@
 <li>Docker v17.04.0-ce</li>
 </ul>
 <a id="more"></a>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本次安裝測試環境的作業系統採用<code>Ubuntu 16.04 Server</code>，其他細節內容如下：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝測試環境的作業系統採用<code>Ubuntu 16.04 Server</code>，其他細節內容如下：</p>
 <table>
 <thead>
 <tr>
@@ -345,44 +344,32 @@
 <blockquote>
 <p>這邊 master 為主要控制節點，node 為應用程式工作節點。</p>
 </blockquote>
-<h2><span id="預先準備資訊">預先準備資訊</span></h2>
-<ul>
-<li>
-<p>所有節點的網路之間可以互相溝通。</p>
+<h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><ul>
+<li>所有節點的網路之間可以互相溝通。</li>
+<li><code>部署節點(這邊為 master1)</code>對其他節點不需要 SSH 密碼即可登入。</li>
+<li>所有節點都擁有 Sudoer 權限，並且不需要輸入密碼。</li>
+<li>所有節點需要安裝 <code>Python</code>。</li>
+<li><p>所有節點需要設定<code>/etc/host</code>解析到所有主機。</p>
 </li>
-<li>
-<p><code>部署節點(這邊為 master1)</code>對其他節點不需要 SSH 密碼即可登入。</p>
-</li>
-<li>
-<p>所有節點都擁有 Sudoer 權限，並且不需要輸入密碼。</p>
-</li>
-<li>
-<p>所有節點需要安裝 <code>Python</code>。</p>
-</li>
-<li>
-<p>所有節點需要設定<code>/etc/host</code>解析到所有主機。</p>
-</li>
-<li>
-<p>修改所有節點<code>/etc/resolv.conf</code>：</p>
+<li><p>修改所有節點<code>/etc/resolv.conf</code>：</p>
 </li>
 </ul>
-<pre><code class="language-sh">$ echo &quot;nameserver 8.8.8.8&quot; | sudo tee /etc/resolv.conf
+<pre><code class="sh">$ echo &quot;nameserver 8.8.8.8&quot; | sudo tee /etc/resolv.conf
 </code></pre>
 <ul>
 <li><code>部署節點(這邊為 master1)</code>需要安裝 Ansible &gt; 2.3.0。</li>
 </ul>
 <p>Ubuntu 16.04 安裝最新版 Ansible:</p>
-<pre><code class="language-sh">$ sudo sed -i 's/us.archive.ubuntu.com/tw.archive.ubuntu.com/g' /etc/apt/sources.list
+<pre><code class="sh">$ sudo sed -i &#39;s/us.archive.ubuntu.com/tw.archive.ubuntu.com/g&#39; /etc/apt/sources.list
 $ sudo apt-get install -y software-properties-common
 $ sudo apt-add-repository -y ppa:ansible/ansible
 $ sudo apt-get update &amp;&amp; sudo apt-get install -y ansible git cowsay python-pip python-netaddr libssl-dev
 </code></pre>
-<h2><span id="安裝-kubespray-與準備部署資訊">安裝 Kubespray 與準備部署資訊</span></h2>
-<p>首先透過 pypi 安裝 kubespray-cli，雖然官方說已經改成 Go 語言版本的工具，但是根本沒在更新，所以目前暫時用 pypi 版本：</p>
-<pre><code class="language-sh">$ sudo pip install -U kubespray
+<h2 id="安裝-Kubespray-與準備部署資訊"><a href="#安裝-Kubespray-與準備部署資訊" class="headerlink" title="安裝 Kubespray 與準備部署資訊"></a>安裝 Kubespray 與準備部署資訊</h2><p>首先透過 pypi 安裝 kubespray-cli，雖然官方說已經改成 Go 語言版本的工具，但是根本沒在更新，所以目前暫時用 pypi 版本：</p>
+<pre><code class="sh">$ sudo pip install -U kubespray
 </code></pre>
 <p>安裝完成後，新增設定檔<code>~/.kubespray.yml</code>，並加入以下內容：</p>
-<pre><code class="language-sh">$ mkdir /etc/kubespray
+<pre><code class="sh">$ mkdir /etc/kubespray
 $ cat &lt;&lt;EOF &gt; ~/.kubespray.yml
 kubespray_git_repo: &quot;https://github.com/kubernetes-incubator/kubespray.git&quot;
 # Logging options
@@ -390,14 +377,14 @@ loglevel: &quot;info&quot;
 EOF
 </code></pre>
 <p>接著用 kubespray cli 來產生 inventory 檔案：</p>
-<pre><code class="language-sh">$ kubespray prepare --masters master1 --etcds master1 --nodes node1 node2 node3
+<pre><code class="sh">$ kubespray prepare --masters master1 --etcds master1 --nodes node1 node2 node3
 $ cat ~/.kubespray/inventory/inventory.cfg
 </code></pre>
 <blockquote>
 <p>也可以自己建立<code>inventory</code>來描述部署節點。</p>
 </blockquote>
 <p>完成後就可以透過以下指令進行部署 Kubernetes 叢集：</p>
-<pre><code class="language-sh">$ time kubespray deploy --verbose -u root -k .ssh/id_rsa -n flannel
+<pre><code class="sh">$ time kubespray deploy --verbose -u root -k .ssh/id_rsa -n flannel
 Run kubernetes cluster deployment with the above command ? [Y/n]y
 ...
 master1                    : ok=368  changed=89   unreachable=0    failed=0
@@ -410,14 +397,13 @@ Kubernetes deployed successfuly
 <blockquote>
 <p>其中<code>-n</code>為部署的網路插件類型，目前支援 calico、flannel、weave 與 canal。</p>
 </blockquote>
-<h2><span id="驗證叢集">驗證叢集</span></h2>
-<p>當 Ansible 執行完成後，若沒發生錯誤就可以開始進行操作 Kubernetes，如取得版本資訊：</p>
-<pre><code class="language-sh">$ kubectl version
+<h2 id="驗證叢集"><a href="#驗證叢集" class="headerlink" title="驗證叢集"></a>驗證叢集</h2><p>當 Ansible 執行完成後，若沒發生錯誤就可以開始進行操作 Kubernetes，如取得版本資訊：</p>
+<pre><code class="sh">$ kubectl version
 Client Version: version.Info{Major:&quot;1&quot;, Minor:&quot;6&quot;, GitVersion:&quot;v1.6.4+coreos.0&quot;, GitCommit:&quot;9212f77ed8c169a0afa02e58dce87913c6387b3e&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2017-04-04T00:32:53Z&quot;, GoVersion:&quot;go1.7.5&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/amd64&quot;}
 Server Version: version.Info{Major:&quot;1&quot;, Minor:&quot;6&quot;, GitVersion:&quot;v1.6.4+coreos.0&quot;, GitCommit:&quot;9212f77ed8c169a0afa02e58dce87913c6387b3e&quot;, GitTreeState:&quot;clean&quot;, BuildDate:&quot;2017-04-04T00:32:53Z&quot;, GoVersion:&quot;go1.7.5&quot;, Compiler:&quot;gc&quot;, Platform:&quot;linux/amd64&quot;}
 </code></pre>
 <p>取得目前節點狀態：</p>
-<pre><code class="language-sh">$ kubectl get node
+<pre><code class="sh">$ kubectl get node
 NAME      STATUS                     AGE       VERSION
 master1   Ready,SchedulingDisabled   11m       v1.6.4+coreos.0
 node1     Ready                      11m       v1.6.4+coreos.0
@@ -425,7 +411,7 @@ node2     Ready                      11m       v1.6.4+coreos.0
 node3     Ready                      11m       v1.6.4+coreos.0
 </code></pre>
 <p>查看目前系統 Pod 狀態：</p>
-<pre><code class="language-sh">$ kubectl get po -n kube-system
+<pre><code class="sh">$ kubectl get po -n kube-system
 NAME                                  READY     STATUS    RESTARTS   AGE
 dnsmasq-975202658-6jj3n               1/1       Running   0          14m
 dnsmasq-975202658-h4rn9               1/1       Running   0          14m
@@ -490,7 +476,7 @@ nginx-proxy-node3                     1/1       Running   1          14m
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">預先準備資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝 Kubespray 與準備部署資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證叢集</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#預先準備資訊"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">預先準備資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Kubespray-與準備部署資訊"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝 Kubespray 與準備部署資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證叢集"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">驗證叢集</span></a></li></ol>
         
         </div>
       </aside>

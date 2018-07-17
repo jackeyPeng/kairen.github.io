@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          利用 Keepalived 提供 VIP - KaiRen&#39;s Blog
+          Ubuntu Metal as a Service 安裝 - KaiRen&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://kairen.github.io/2016/03/29/linux/ubuntu/keepalived/">
+    <link rel="canonical" href="https://kairen.github.io/2015/11/04/linux/ubuntu/ubuntu-maas-install/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -88,14 +88,16 @@
                             
                               <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
                             
-                              <a class="tag" href="/tags/#High Availability" title="High Availability">High Availability</a>
+                              <a class="tag" href="/tags/#PXE" title="PXE">PXE</a>
+                            
+                              <a class="tag" href="/tags/#Bare Metal" title="Bare Metal">Bare Metal</a>
                             
                         </div>
-                        <h1>利用 Keepalived 提供 VIP</h1>
+                        <h1>Ubuntu Metal as a Service 安裝</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
-                            2016-03-29
+                            2015-11-04
                         </span>
                     </div>
                 
@@ -142,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -287,127 +289,61 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>Keepalived 是一種基於 VRRP 協定實現的高可靠 Web 服務方案，用於防止單點故障問題。因此一個 Web 服務運作至少會擁有兩台伺服器執行 Keepalived，一台作為 master，一台作為 backup，並提供一個虛擬 IP（VIP），master 會定期發送特定訊息給 backup 伺服器，當 backup 沒收到 master 訊息時，表示 master 已故障，這時候 backup 會接管 VIP，繼續提供服務，來確保服務的高可靠性。</p>
+                <p>Ubuntu MAAS 提供了裸機服務，將雲端的語言帶到物理伺服器中，其功能可以讓企業一次大量部署伺服器硬體環境的作業系統與基本設定等功能。</p>
 <a id="more"></a>
-<h3><span id="vrrp">VRRP</span></h3>
-<p>VRRP（Virtual Router Redundancy Protocol，虛擬路由器備援協定），是一個提供備援路由器來解決單點故障問題的協定，該協定有兩個重要概念：</p>
-<ul>
-<li>
-<p><strong>VRRP 路由器與虛擬路由器</strong>：VRRP 路由器是表示運作 VRRP 的路由器，是一個實體裝置，而虛擬路由器是指由 VRRP 建立的邏輯路由器。一組 VRRP 路由器協同運作，並一起構成一台虛擬路由器，該虛擬路由對外提供一個唯一固定的 IP 與 MAC 位址的邏輯路由器。</p>
-</li>
-<li>
-<p><strong>主控制路由器（master）與備援路由器（backup）</strong>：主要是在一組 VRRP 中的兩種互斥角色。一個 VRRP 群組中只能擁有一台是 master，但可以有多個 backup 路由器。</p>
-</li>
-</ul>
-<p>VRRP 協定使用選擇策略從路由器群組挑選一台作為 master 來負責 ARP 與轉送 IP 封包，群組中其他路由器則作為 backup 的角色處理等待狀態。當由於某種原因造成 master 故障時，backup 會在幾秒內成為 master 繼續提供服務，該階段不用改變任何 IP 與 MAC 位址。</p>
-<h3><span id="keepalived-節點配置">Keepalived 節點配置</span></h3>
-<p>本教學將使用以下主機數量與角色：</p>
-<table>
-<thead>
-<tr>
-<th>IP Address</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>172.16.1.101</td>
-<td>vip</td>
-</tr>
-<tr>
-<td>172.16.1.102</td>
-<td>master</td>
-</tr>
-<tr>
-<td>172.16.1.103</td>
-<td>backup</td>
-</tr>
-</tbody>
-</table>
-<h3><span id="安裝與設定">安裝與設定</span></h3>
-<p>這 ubuntu 14.04 LTS Server 中已經內建了 Keepalived 可以透過 apt-get 來安裝：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y keepalived
+<h2 id="安裝與設定"><a href="#安裝與設定" class="headerlink" title="安裝與設定"></a>安裝與設定</h2><p>首先為了方便系統操作，將<code>sudo</code>設置為不需要密碼：</p>
+<pre><code class="sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu
 </code></pre>
 <blockquote>
-<p>也可以透過 source code 進行安裝，流程如下：</p>
+<p><code>ubuntu</code> 為 User Name。</p>
 </blockquote>
-<pre><code class="language-sh">$ sudo apt-get install build-essential libssl-dev
-$ wget http://www.keepalived.org/software/keepalived-1.2.2.tar.gz
-$ tar -zxvf keepalived-1.2.2.tar.gz
-$ cd keepalived-1.2.2
-$ ./configure --prefix=/usr/local/keepalived
-$ make &amp;&amp; make install
+<p>安裝相關套件：</p>
+<pre><code class="sh">$ sudo apt-get install software-properties-common
 </code></pre>
-<p>完成後，要將需要的設定檔進行複製到<code>/etc/</code>:</p>
-<pre><code>$ cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/keepalived
-$ cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
-$ cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
-$ mkdir -p /etc/keepalived/
-$ cp /usr/local/etc/keepalived/keepalived.conf /etc/keepalived/keepalived.conf
+<p>新增 MAAS 與 JuJu 的資源庫：</p>
+<pre><code class="sh">sudo add-apt-repository -y ppa:juju/stable
+sudo add-apt-repository -y ppa:maas/stable
+sudo add-apt-repository -y ppa:cloud-installer/stable
+sudo apt-get update
 </code></pre>
-<p>安裝完成後編輯<code>/etc/keepalived/keepalived.conf</code>檔案進行設定，在<code>master</code>節點加入以下內容：</p>
-<pre><code class="language-sh">global_defs {
-   notification_email {
-      user@example.com
-   }
-
-   notification_email_from mail@example.org
-   smtp_server 172.16.1.100
-   smtp_connect_timeout 30
-   router_id LVS_DEVEL
-}
-
-vrrp_instance VI_1 {
-    state MASTER # Tag 為 MASTER
-    interface eth0
-    virtual_router_id 51
-    priority 101   # MASTER 權重高於 BACKUP
-    advert_int 1
-    mcast_src_ip 172.16.1.102 # VRRP 實體主機的 IP
-
-    authentication {
-        auth_type PASS # Master 驗證方式
-        auth_pass 1111
-    }
-
-    #VIP
-    virtual_ipaddress {
-        172.16.1.101 # 虛擬 IP
-    }
-}
+<h3 id="安裝-MAAS"><a href="#安裝-MAAS" class="headerlink" title="安裝 MAAS"></a>安裝 MAAS</h3><p>接著安裝 MAAS：</p>
+<pre><code class="sh">$ sudo apt-get install -y maas
 </code></pre>
-<p>Master 完成後，接著編輯<code>backup</code>節點的<code>/etc/keepalived/keepalived.conf</code>，加入以下內容：</p>
-<pre><code class="language-sh">global_defs {
-   notification_email {
-       user@example.com
-   }
-
-   notification_email_from mail@example.org
-   smtp_server 172.16.1.100
-   smtp_connect_timeout 30
-   router_id LVS_DEVEL
-}
-
-vrrp_instance VI_1 {
-
-    state BACKUP # Tag 為 BACKUP
-    interface eth0
-    virtual_router_id 51
-    priority 100  # 權重要低於 MASTER
-    advert_int 1
-    mcast_src_ip 172.16.1.103 # vrrp 實體主機 IP
-
-    authentication {
-        auth_type PASS
-        auth_pass 1111
-    }
-
-    # VIP
-    virtual_ipaddress {
-        172.16.1.101 # 提供的 VIP
-    }
-}
+<p>安裝完成後，建立一個 admin 使用者帳號：</p>
+<pre><code class="sh">$ sudo maas-region createadmin
 </code></pre>
+<blockquote>
+<p>這時候就可以登入 <a href="http://&lt;maas.ip&gt;/MAAS/" target="_blank" rel="noopener">MAAS</a>。</p>
+</blockquote>
+<p>登入後，需要設定 PXE 網路與下載 Image。當完成後就可以開其他主機來測試 PXE-boot。</p>
+<h3 id="安裝-JuJu"><a href="#安裝-JuJu" class="headerlink" title="安裝 JuJu"></a>安裝 JuJu</h3><p>安裝 JuJu quick start：</p>
+<pre><code class="sh">$ sudo apt-get update &amp;&amp; sudo apt-get install juju-quickstart
+</code></pre>
+<p>完成後，透過以下指令來部署 JuJu GUI：</p>
+<pre><code class="sh">$ juju-quickstart --gui-port 4242
+</code></pre>
+<h3 id="上傳客製化-Images"><a href="#上傳客製化-Images" class="headerlink" title="上傳客製化 Images"></a>上傳客製化 Images</h3><p>首先安裝 Maas Image Builder 來建立映像檔：</p>
+<pre><code class="sh">$ sudo add-apt-repository -y ppa:blake-rouse/mib-daily
+$ sudo apt-get install maas-image-builder
+</code></pre>
+<p>安裝完成後，我們可以使用以下指令建立映像檔，如以下為建立一個<code>CentOS 7</code>的映像檔：</p>
+<pre><code class="sh">$ sudo maas-image-builder -a amd64 -o centos7-amd64-root-tgz centos --edition 7
+</code></pre>
+<blockquote>
+<p>目前 CentOS 支援了<code>6.5</code>與<code>7.0</code>版本。</p>
+</blockquote>
+<p>當映像檔建立完成後，就可以上傳到 MAAS 了，在這之前需要登入 MAAS，才有權限上傳：</p>
+<pre><code class="sh">$ maas login &lt;user_name&gt; &lt;maas_url&gt; &lt;api_key&gt;
+</code></pre>
+<blockquote>
+<p><code>user_name&gt;</code>為使用者帳號名稱。<br><code>&lt;maas_url&gt;</code>為 MAAS 網址，如 <a href="http://192.168.1.2/MAAS" target="_blank" rel="noopener">http://192.168.1.2/MAAS</a><br><code>&lt;api_key&gt;</code>為帳號 API Key。r00tme</p>
+</blockquote>
+<p>登入後，就可以使用以下指令進行上傳客製化的映像檔了：</p>
+<pre><code class="sh">$ maas &lt;user_name&gt; boot-resources create name=centos/centos7 architecture=amd64/generic content@=centos7-amd64-root-tgz
+</code></pre>
+<blockquote>
+<p>登入時，要輸入指令需加<code>&lt;user_name&gt;</code>。</p>
+</blockquote>
 
                 
 
@@ -416,12 +352,12 @@ vrrp_instance VI_1 {
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/04/01/openstack/how-to-contribute/" data-toggle="tooltip" data-placement="top" title="OpenStack 貢獻基本流程">&larr; Previous Post</a>
+                            <a href="/2015/11/04/linux/ubuntu/apache2-proxy/" data-toggle="tooltip" data-placement="top" title="簡單設定 Apache2 Proxy 與 VirtualHost">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2016/03/28/linux/ubuntu/haproxy/" data-toggle="tooltip" data-placement="top" title="使用 HAProxy 進行負載平衡">Next Post &rarr;</a>
+                            <a href="/2015/10/29/linux/ubuntu/keepalived/" data-toggle="tooltip" data-placement="top" title="利用 Keepalived 提供 VIP">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -451,7 +387,7 @@ vrrp_instance VI_1 {
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">VRRP</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Keepalived 節點配置</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝與設定</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝與設定"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝與設定</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝-MAAS"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">安裝 MAAS</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安裝-JuJu"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">安裝 JuJu</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#上傳客製化-Images"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">上傳客製化 Images</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -473,7 +409,9 @@ vrrp_instance VI_1 {
                        
                           <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
                         
-                          <a class="tag" href="/tags/#High Availability" title="High Availability">High Availability</a>
+                          <a class="tag" href="/tags/#PXE" title="PXE">PXE</a>
+                        
+                          <a class="tag" href="/tags/#Bare Metal" title="Bare Metal">Bare Metal</a>
                         
                     </div>
                 </section>
@@ -502,8 +440,8 @@ vrrp_instance VI_1 {
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "k2r2bai";
-    var disqus_identifier = "https://kairen.github.io/2016/03/29/linux/ubuntu/keepalived/";
-    var disqus_url = "https://kairen.github.io/2016/03/29/linux/ubuntu/keepalived/";
+    var disqus_identifier = "https://kairen.github.io/2015/11/04/linux/ubuntu/ubuntu-maas-install/";
+    var disqus_url = "https://kairen.github.io/2015/11/04/linux/ubuntu/ubuntu-maas-install/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

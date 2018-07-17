@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -284,6 +284,78 @@
 
 <div class="post-preview">
 
+    <a href="/2015/10/12/data-engineer/spark-mesos/">
+        <h2 class="post-title">
+            Spark on Mesos 多節點部署
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Spark + Mesos 叢集是由多個主節點與工作節點組合而成，它實作了兩層的排程（Scheduler）來提供粗/細粒度的排程。在 Mesos 中主節點（Master）主要負責資料的分配與排程，然而從節點（Slave）則是主要執行任務負載的角色。Mesos 也提供了高可靠的部署模式，可利用多個主節點的 ZooKeeper 來做服務發現。
+
+
+在 Mesos 上所執行的應用程式都被稱為框架（......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2015-10-12
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Spark" title="Spark">Spark</a>
+            
+              <a href="/tags/#Mesos" title="Mesos">Mesos</a>
+            
+              <a href="/tags/#HDFS" title="HDFS">HDFS</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2015/10/11/linux/ubuntu/ubuntu-pxe/">
+        <h2 class="post-title">
+            Ubuntu PXE 安裝與設定
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。
+
+
+PXE 伺服器必須要提供至少含有 DHCP 以及 TFTP :
+
+DHCP 服務必須要能夠提供用戶端的網路參數之外，還得要告知用......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2015-10-11
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+              <a href="/tags/#PXE" title="PXE">PXE</a>
+            
+              <a href="/tags/#Bare Metal" title="Bare Metal">Bare Metal</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2015/10/03/linux/centos/centos-pxe/">
         <h2 class="post-title">
             CentOS 6.5 PXE 安裝與設定
@@ -295,9 +367,8 @@
             預啟動執行環境（Preboot eXecution Environment，PXE，也被稱為預執行環境)提供了一種使用網路介面（Network Interface）啟動電腦的機制。這種機制讓電腦的啟動可以不依賴本地資料儲存裝置（如硬碟）或本地已安裝的作業系統。
 
 安裝環境
-
 CentOS 6.5 Minimal Install
-Intel® Core™2 Quad CPU Q8400  @ ......
+Intel(R) Core(TM)2 Quad CPU Q8400......
         </div>
     </a>
     
@@ -331,11 +402,11 @@ Intel® Core™2 Quad CPU Q8400  @ ......
         <div class="post-content-preview">
             本教學為安裝 Spark on Hadoop YARN 的 all-in-one 版本，將 Spark 應用程式執行於 YARN 上，來讓應用程式執行於不同的工作節點上。
 
-事前準備
-首先我們要先安裝 ssh-server 與 Java JDK，並配置需要的相關環境：
+事前準備首先我們要先安裝 ssh-server 與 Java JDK，並配置需要的相關環境：
 $ sudo apt-get install openssh-server
 
-設定(hadoop)不用需打 sudo 密碼：......
+設定(hadoop)不用需打 sudo 密碼：
+......
         </div>
     </a>
     
@@ -367,12 +438,11 @@ $ sudo apt-get install openssh-server
         <div class="post-content-preview">
             本教學為安裝 Spark Standalone 的叢集版本，將 Spark 應用程式執行於自己的分散式機制與各台機器連結上，來讓應用程式執行於不同的工作節點上。
 
-事前準備
-首先我們要在各節點先安裝 ssh-server 與 Java JDK，並配置需要的相關環境：
+事前準備首先我們要在各節點先安裝 ssh-server 與 Java JDK，並配置需要的相關環境：
 $ sudo apt-get install openssh-server
 
 設定(hadoop)不用需打 sudo 密碼：
-......
+$......
         </div>
     </a>
     
@@ -437,8 +507,7 @@ Object 是 Class 的 Instance。
             Objective-C 程式規範，參考於紐約時報所規範之程式風格。
 
 
-點語法
-始终使用點語法來存取屬性，存取其他實例時應用中括號[]。
+點語法 始终使用點語法來存取屬性，存取其他實例時應用中括號[]。
 建議：
 view.backgroundColor = [UIColor orangeColor];
 [UIApplication sharedApplication].delegate;
@@ -566,6 +635,10 @@ view.backgroundColor = [UIColor orangeColor];
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -581,10 +654,6 @@ view.backgroundColor = [UIColor orangeColor];
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -596,8 +665,6 @@ view.backgroundColor = [UIColor orangeColor];
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -625,6 +692,10 @@ view.backgroundColor = [UIColor orangeColor];
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -666,8 +737,6 @@ view.backgroundColor = [UIColor orangeColor];
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -682,7 +751,9 @@ view.backgroundColor = [UIColor orangeColor];
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

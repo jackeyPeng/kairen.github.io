@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,8 +291,7 @@
 
                 <p>Kolla 提供 OpenStack 生產環境就緒的容器與部署工具，其具備快速、擴展、可靠等特性，並提供社群版本的最佳本版升級實現。</p>
 <a id="more"></a>
-<h2><span id="節點配置">節點配置</span></h2>
-<p>本安裝將使用三台實體主機與一台虛擬機器來進行簡單叢集部署，主機規格如以下所示：</p>
+<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>本安裝將使用三台實體主機與一台虛擬機器來進行簡單叢集部署，主機規格如以下所示：</p>
 <table>
 <thead>
 <tr>
@@ -371,12 +370,11 @@
 <p>網卡若是實體主機，請設定為固定 IP，如以下：</p>
 <pre><code>auto eth0
 iface eth0 inet static
-       	address 10.0.0.11
-       	netmask	255.255.255.0
-       	gateway	10.0.0.1
-       	dns-nameservers 8.8.8.8
-</code></pre>
-<blockquote>
+           address 10.0.0.11
+           netmask    255.255.255.0
+           gateway    10.0.0.1
+           dns-nameservers 8.8.8.8
+</code></pre><blockquote>
 <p>若想修改主機的網卡名稱，可以編輯<code>/etc/udev/rules.d/70-persistent-net.rules</code>。</p>
 </blockquote>
 <p>其中<code>network</code>節點的 Public 需設定網卡為以下：</p>
@@ -384,26 +382,23 @@ iface eth0 inet static
 iface &lt;ethx&gt; inet manual
         up ip link set dev $IFACE up
         down ip link set dev $IFACE down
-</code></pre>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>在開始部署 OpenStack 之前，我們需要先將一些相依軟體與函式庫安裝完成，並且需要部署一用於存取映像檔的倉庫(Docker registry)。</p>
-<h3><span id="部署-docker-registry">部署 Docker Registry</span></h3>
-<p>首先進入到 <code>docker-registry</code> 節點，本教學採用一台虛擬機作為部署使用，並安裝 Docker engine：</p>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+</code></pre><h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>在開始部署 OpenStack 之前，我們需要先將一些相依軟體與函式庫安裝完成，並且需要部署一用於存取映像檔的倉庫(Docker registry)。</p>
+<h3 id="部署-Docker-Registry"><a href="#部署-Docker-Registry" class="headerlink" title="部署 Docker Registry"></a>部署 Docker Registry</h3><p>首先進入到 <code>docker-registry</code> 節點，本教學採用一台虛擬機作為部署使用，並安裝 Docker engine：</p>
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 </code></pre>
 <p>安裝完成 Docker engine 後，透過以下指令建置 Docker registry：</p>
-<pre><code class="language-sh">$ docker run -d -p 5000:5000 --restart=always --name registry \
+<pre><code class="sh">$ docker run -d -p 5000:5000 --restart=always --name registry \
 -v $(pwd)/data:/var/lib/registry \
 registry:2
 </code></pre>
 <p>接著為了方便檢視 Docker image，這邊另外部署 Docker registry UI：</p>
-<pre><code class="language-sh">$ docker run -d -p 8080:80 \
+<pre><code class="sh">$ docker run -d -p 8080:80 \
 -e ENV_DOCKER_REGISTRY_HOST=10.26.1.49 \
 -e ENV_DOCKER_REGISTRY_PORT=5000 \
 konradkleine/docker-registry-frontend:v2
 </code></pre>
 <p>完成以上即可透過瀏覽器查看該主機 <code>8080</code> Port。也可以透過以下指令檢查是否部署成功：</p>
-<pre><code class="language-sh">$ docker pull ubuntu:14.04
+<pre><code class="sh">$ docker pull ubuntu:14.04
 $ docker tag ubuntu:14.04 localhost:5000/ubuntu:14.04
 $ docker push localhost:5000/ubuntu:14.04
 
@@ -420,50 +415,44 @@ df9a135a6949: Pushed
 <li><a href="https://docs.rancher.com/os/configuration/private-registries/" target="_blank" rel="noopener">Private Registries in RancherOS</a></li>
 </ul>
 </blockquote>
-<h3><span id="部署節點準備">部署節點準備</span></h3>
-<p>當完成上述後，即可進行部署節點的相依軟體安裝，首先在<code>每台節點</code>透過以下指令更新與安裝一些套件：</p>
-<pre><code class="language-sh">$ sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y
+<h3 id="部署節點準備"><a href="#部署節點準備" class="headerlink" title="部署節點準備"></a>部署節點準備</h3><p>當完成上述後，即可進行部署節點的相依軟體安裝，首先在<code>每台節點</code>透過以下指令更新與安裝一些套件：</p>
+<pre><code class="sh">$ sudo apt-get update -y &amp;&amp; sudo apt-get upgrade -y
 $ sudo apt-get install -y python-pip python-dev
 $ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 $ sudo timedatectl set-timezone Asia/Taipei
 </code></pre>
 <blockquote>
 <p>由於使用<code>Ubuntu server 14.04</code>，故需要更新 Kernel:</p>
-</blockquote>
-<pre><code class="language-sh">$ sudo apt-get install -y linux-image-generic-lts-wily
+<pre><code class="sh">$ sudo apt-get install -y linux-image-generic-lts-wily
 </code></pre>
+</blockquote>
 <p>接著更新 pip，並安裝 docker-python 函式庫：</p>
-<pre><code class="language-sh">$ sudo pip install -U pip docker-py
+<pre><code class="sh">$ sudo pip install -U pip docker-py
 </code></pre>
 <p>編輯每台節點的<code>/etc/default/docker</code>檔案，加入以下內容：</p>
 <pre><code>DOCKER_OPTS=&quot;--insecure-registry &lt;registry-ip&gt;:5000&quot;
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>這邊<code>{registry-ip}</code>為 Docker registry 的 IP 位址。若使用 Ubuntu Server 16.04 版本的話，需要編輯<code>/lib/systemd/system/docker.service</code>檔案，修改以下：</p>
-</blockquote>
 <pre><code>EnvironmentFile=-/etc/default/%p
 ExecStart=/usr/bin/dockerd -H fd:// \
                            $DOCKER_OPTS
+</code></pre><p>完成上述後，需要 reload service：</p>
+<pre><code class="sh">$ sudo systemctl daemon-reload
 </code></pre>
-<blockquote>
-<p>完成上述後，需要 reload service：</p>
 </blockquote>
-<pre><code class="language-sh">$ sudo systemctl daemon-reload
-</code></pre>
 <p>接著編輯每台節點的<code>/etc/rc.local</code>檔案，加入以下內容：</p>
 <pre><code>mount --make-shared /run
 
 # 在 compute 節點額外加入
 mount --make-shared /var/lib/nova/mnt
-</code></pre>
-<p>接著在<code>compute1</code>節點執行以下指令：</p>
-<pre><code class="language-sh">sudo mkdir -p /var/lib/nova/mnt /var/lib/nova/mnt1
+</code></pre><p>接著在<code>compute1</code>節點執行以下指令：</p>
+<pre><code class="sh">sudo mkdir -p /var/lib/nova/mnt /var/lib/nova/mnt1
 sudo mount --bind /var/lib/nova/mnt1 /var/lib/nova/mnt
 sudo mount --make-shared /var/lib/nova/mnt
 </code></pre>
 <p>完成後<code>重新啟動每台節點</code>。</p>
 <p>當上述步驟都完成後，進入到<code>controller1</code>的<code>root</code>使用者執行以下指令安裝與設定額外套件：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y software-properties-common
+<pre><code class="sh">$ sudo apt-get install -y software-properties-common
 $ sudo apt-add-repository -y ppa:ansible/ansible &amp;&amp; sudo apt-get update
 $ sudo apt-get install -y ansible libffi-dev libssl-dev gcc git
 </code></pre>
@@ -471,40 +460,35 @@ $ sudo apt-get install -y ansible libffi-dev libssl-dev gcc git
 <p>NTP 部分可自行設定，這邊不再說明。</p>
 </blockquote>
 <p>接著繼續在<code>controller1</code>節點的<code>root</code>使用者執行以下指令：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ cat .ssh/id_rsa.pub &gt;&gt; .ssh/authorized_keys
 </code></pre>
 <p>複製<code>controller1</code>節點的<code>root</code>底下的<code>.ssh/id_rsa.pub</code>公有金鑰到其他節點的<code>root</code>使用者底下的<code>.ssh/authorized_keys</code>。</p>
-<h2><span id="建立-openstack-kolla-docker-映像檔">建立 OpenStack Kolla Docker 映像檔</span></h2>
-<p>在使用 Kolla 部署 OpenStack 叢集之前，我們需要預先建立用於部署的映像檔，才能進行節點的部署。首先進入到<code>controller1</code>節點，並下載 Kolla 專案：</p>
-<pre><code class="language-sh">$ git clone &quot;https://github.com/openstack/kolla.git&quot; -b stable/newton
+<h2 id="建立-OpenStack-Kolla-Docker-映像檔"><a href="#建立-OpenStack-Kolla-Docker-映像檔" class="headerlink" title="建立 OpenStack Kolla Docker 映像檔"></a>建立 OpenStack Kolla Docker 映像檔</h2><p>在使用 Kolla 部署 OpenStack 叢集之前，我們需要預先建立用於部署的映像檔，才能進行節點的部署。首先進入到<code>controller1</code>節點，並下載 Kolla 專案：</p>
+<pre><code class="sh">$ git clone &quot;https://github.com/openstack/kolla.git&quot; -b stable/newton
 $ cd kolla &amp;&amp; pip install .
 $ pip install tox python-openstackclient &amp;&amp; tox -e genconfig
 $ cp -r etc/kolla /etc/
 </code></pre>
 <p>接著執行指令進行建立 Docker 映像檔，若不指定名稱預設下將建立全部映像檔，如以下：</p>
-<pre><code class="language-sh">$ kolla-build --base ubuntu --type source --registry {registry-ip}:5000 --push
+<pre><code class="sh">$ kolla-build --base ubuntu --type source --registry {registry-ip}:5000 --push
 </code></pre>
 <blockquote>
 <p>這邊<code>{registry-ip}</code>為 Docker registry 的 IP 位址。</p>
 </blockquote>
 <blockquote>
 <p>若要改變 OS 與版本，可以編輯<code>/etc/kolla/kolla-build.conf</code>檔案修改以下內容：</p>
-</blockquote>
 <pre><code>base = centos
 base_tag = 3.0.3
 push = true
 install_type = rdo
 registry = {registry-ip}:5000
-</code></pre>
-<blockquote>
-<p>可參考官方文件 <a href="http://docs.openstack.org/developer/kolla/image-building.html" target="_blank" rel="noopener">Building Container Images</a>。</p>
+</code></pre><p>可參考官方文件 <a href="http://docs.openstack.org/developer/kolla/image-building.html" target="_blank" rel="noopener">Building Container Images</a>。</p>
 </blockquote>
 <p>當映像檔建置完成後，即可查看<code>docker-regisrtry</code>節點的 UI 介面，來確認是否上傳成功。</p>
-<h2><span id="部署-openstack-節點">部署 OpenStack 節點</span></h2>
-<p>當完成映像檔建立後，即可開始進行部署 OpenStack 節點。</p>
+<h2 id="部署-OpenStack-節點"><a href="#部署-OpenStack-節點" class="headerlink" title="部署 OpenStack 節點"></a>部署 OpenStack 節點</h2><p>當完成映像檔建立後，即可開始進行部署 OpenStack 節點。</p>
 <p>首先到<code>controller1</code>進入剛下載的<code>kolla-ansible</code>專案目錄，並編輯<code>ansible/inventory/multinode</code>檔案，修改以下內容：</p>
-<pre><code class="language-sh">[control]
+<pre><code class="sh">[control]
 controller1
 
 [network]
@@ -520,7 +504,7 @@ controller1
 <p>這邊由於機器不夠，所以將 storage 也放到 controller。</p>
 </blockquote>
 <p>接著編輯<code>/etc/kolla/globals.yml</code>檔案，修改以下內容：</p>
-<pre><code class="language-yml">config_strategy: &quot;COPY_ALWAYS&quot;
+<pre><code class="yml">config_strategy: &quot;COPY_ALWAYS&quot;
 kolla_base_distro: &quot;ubuntu&quot;
 kolla_install_type: &quot;source&quot;
 openstack_release: &quot;3.0.3&quot;
@@ -538,12 +522,11 @@ cinder_volume_group: &quot;cinder-volumes&quot;
 </code></pre>
 <blockquote>
 <p>若要將 API 開放給 Public network 存取的話，需要設定以下內容：</p>
-</blockquote>
 <pre><code>kolla_external_vip_address: &quot;10.26.1.251&quot;
 kolla_external_vip_interface: &quot;eth3&quot;
-</code></pre>
+</code></pre></blockquote>
 <p>(Option)建立 Cinder LVM volume group:</p>
-<pre><code class="language-sh">$ sudo apt-get install lvm2 -y
+<pre><code class="sh">$ sudo apt-get install lvm2 -y
 $ sudo pvcreate /dev/sdb
 $ sudo vgcreate cinder-volumes /dev/sdb
 $ sudo  pvdisplay
@@ -560,10 +543,10 @@ Allocated PE          0
 PV UUID               5g01hz-Ebds-EVSF-yGm4-evNm-5Kfp-2h8kUR
 </code></pre>
 <p>然後透過以下指令產生亂數密碼：</p>
-<pre><code class="language-sh">$ kolla-genpwd
+<pre><code class="sh">$ kolla-genpwd
 </code></pre>
 <p>接著要執行預先檢查確認節點是否可以進行部署，透過以下指令：</p>
-<pre><code class="language-sh">$ kolla-ansible prechecks -i ansible/inventory/multinode
+<pre><code class="sh">$ kolla-ansible prechecks -i ansible/inventory/multinode
 
 PLAY RECAP *********************************************************************
 compute1                   : ok=8    changed=0    unreachable=0    failed=0
@@ -574,7 +557,7 @@ network1                   : ok=29   changed=0    unreachable=0    failed=0
 <p>若中途發生錯誤，請檢查錯誤訊息。</p>
 </blockquote>
 <p>確認沒問題後即可部署 OpenStack，透過以下指令進行：</p>
-<pre><code class="language-sh">$ kolla-ansible deploy -i ansible/inventory/multinode
+<pre><code class="sh">$ kolla-ansible deploy -i ansible/inventory/multinode
 PLAY RECAP *********************************************************************
 compute1                   : ok=44   changed=31   unreachable=0    failed=0
 controller1                : ok=154  changed=96   unreachable=0    failed=0
@@ -582,18 +565,17 @@ network1                   : ok=37   changed=28   unreachable=0    failed=0
 </code></pre>
 <blockquote>
 <p>P.S. 若發生映像檔無法下載，請自行透過以下指令傳到該節點：</p>
-</blockquote>
-<pre><code class="language-sh">$ docker save {image} &gt; image.tar
+<pre><code class="sh">$ docker save {image} &gt; image.tar
 $ scp image.tar network1:~/
 $ ssh network1 &quot;docker load &lt; image.tar&quot;
 </code></pre>
-<h2><span id="驗證服務">驗證服務</span></h2>
-<p>完成後，就可以產生 Credential 檔案來進行系統驗證：</p>
-<pre><code class="language-sh">$ kolla-ansible post-deploy
+</blockquote>
+<h2 id="驗證服務"><a href="#驗證服務" class="headerlink" title="驗證服務"></a>驗證服務</h2><p>完成後，就可以產生 Credential 檔案來進行系統驗證：</p>
+<pre><code class="sh">$ kolla-ansible post-deploy
 $ source /etc/kolla/admin-openrc.sh
 </code></pre>
 <p>透過 OpenStack Client 來檢查 Keystone，並查看所有使用者：</p>
-<pre><code class="language-sh">$ openstack user list
+<pre><code class="sh">$ openstack user list
 
 +----------------------------------+-------------------+
 | ID                               | Name              |
@@ -608,7 +590,7 @@ $ source /etc/kolla/admin-openrc.sh
 +----------------------------------+-------------------+
 </code></pre>
 <p>透過 OpenStack Client 檢查 Nova 的服務列表：</p>
-<pre><code class="language-sh">$ openstack compute service list
+<pre><code class="sh">$ openstack compute service list
 
 +----+------------------+-------------+----------+---------+-------+----------------------------+-----------------+
 | Id | Binary           | Host        | Zone     | Status  | State | Updated_at                 | Disabled Reason |
@@ -620,7 +602,7 @@ $ source /etc/kolla/admin-openrc.sh
 +----+------------------+-------------+----------+---------+-------+----------------------------+-----------------+
 </code></pre>
 <p>透過 OpenStack Client 檢查 Neutron 的服務列表：</p>
-<pre><code class="language-sh">$ openstack network agent list
+<pre><code class="sh">$ openstack network agent list
 +------------------+------------------+----------+-------------------+-------+----------------+------------------+
 | id               | agent_type       | host     | availability_zone | alive | admin_state_up | binary           |
 +------------------+------------------+----------+-------------------+-------+----------------+------------------+
@@ -642,14 +624,14 @@ $ source /etc/kolla/admin-openrc.sh
 +------------------+------------------+----------+-------------------+-------+----------------+------------------+
 </code></pre>
 <p>從網路上下載一個測試用映像檔<code>cirros-0.3.4-x86_64</code>，並上傳至 Glance 服務：</p>
-<pre><code class="language-sh">$ wget &quot;http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img&quot;
+<pre><code class="sh">$ wget &quot;http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img&quot;
 $ openstack image create &quot;cirros-0.3.4-x86_64&quot; \
 --file cirros-0.3.4-x86_64-disk.img \
 --disk-format qcow2 --container-format bare \
 --public
 </code></pre>
 <p>這邊可以透過 Neutron client 來查看建立外部網路：</p>
-<pre><code class="language-sh">$ openstack network create --external \
+<pre><code class="sh">$ openstack network create --external \
 --provider-physical-network physnet1 \
 --provider-network-type flat public1
 
@@ -668,24 +650,24 @@ $ openstack router add subnet admin-router admin-subnet
 $ openstack router set --external-gateway public1 admin-router
 </code></pre>
 <p>建立 flavor 來提供虛擬機樣板：</p>
-<pre><code class="language-sh">openstack flavor create --id 1 --ram 512 --disk 1 --vcpus 1 m1.tiny
+<pre><code class="sh">openstack flavor create --id 1 --ram 512 --disk 1 --vcpus 1 m1.tiny
 openstack flavor create --id 2 --ram 2048 --disk 20 --vcpus 1 m1.small
 openstack flavor create --id 3 --ram 4096 --disk 40 --vcpus 2 m1.medium
 openstack flavor create --id 4 --ram 8192 --disk 80 --vcpus 4 m1.large
 openstack flavor create --id 5 --ram 16384 --disk 160 --vcpus 8 m1.xlarge
 </code></pre>
 <p>上傳 Keypair 來提供虛擬機 SSH 登入認證用：</p>
-<pre><code class="language-sh">$ openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
+<pre><code class="sh">$ openstack keypair create --public-key ~/.ssh/id_rsa.pub mykey
 </code></pre>
 <p>開啟一台虛擬機進行測試：</p>
-<pre><code class="language-sh">$ openstack server create --image cirros-0.3.4-x86_64 \
+<pre><code class="sh">$ openstack server create --image cirros-0.3.4-x86_64 \
 --flavor m1.tiny \
 --nic net-id=admin-net \
 --key-name mykey \
 admin-instance
 </code></pre>
 <p>查看 instance 列表：</p>
-<pre><code class="language-sh">$ openstack server list
+<pre><code class="sh">$ openstack server list
 
 +--------------------------------------+----------------+--------+------------------------+---------------------+
 | ID                                   | Name           | Status | Networks               | Image Name          |
@@ -706,7 +688,7 @@ admin-instance
                     
                     
                         <li class="next">
-                            <a href="/2016/07/05/linux/ubuntu/bcache/" data-toggle="tooltip" data-placement="top" title="用 Bcache 來加速硬碟效能">Next Post &rarr;</a>
+                            <a href="/2016/07/17/data-engineer/spark-perf/" data-toggle="tooltip" data-placement="top" title="Databricks spark-perf Benchmark">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -736,7 +718,7 @@ admin-instance
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">部署 Docker Registry</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">部署節點準備</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">建立 OpenStack Kolla Docker 映像檔</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">部署 OpenStack 節點</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">驗證服務</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點配置"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部署-Docker-Registry"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">部署 Docker Registry</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#部署節點準備"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">部署節點準備</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立-OpenStack-Kolla-Docker-映像檔"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">建立 OpenStack Kolla Docker 映像檔</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-OpenStack-節點"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">部署 OpenStack 節點</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證服務"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">驗證服務</span></a></li></ol>
         
         </div>
       </aside>

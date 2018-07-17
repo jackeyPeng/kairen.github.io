@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -290,10 +290,9 @@
                 post-container">
 
                 <p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-docker" target="_blank" rel="noopener">ceph-docker</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要<code>1 Monitor</code>與<code>3 OSD</code>。另外部署 MDS 與 RGW 來進行簡單測試。</p>
-<center>![](/images/ceph/docker-ceph.jpg)</center>
+<p><img src="/images/ceph/docker-ceph.jpg" alt=""></p>
 <a id="more"></a>
-<h2><span id="節點配置">節點配置</span></h2>
-<p>本安裝採用一台虛擬機器來提供部署，可使用 VBox 或 OpenStack 等建立，其環境資源大小如下：</p>
+<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>本安裝採用一台虛擬機器來提供部署，可使用 VBox 或 OpenStack 等建立，其環境資源大小如下：</p>
 <table>
 <thead>
 <tr>
@@ -340,22 +339,19 @@
 </tr>
 </tbody>
 </table>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>首先在主機安裝 Docker Engine，可以透過以下指令進行安裝：</p>
-<pre><code class="language-sh">$ curl -fsSL https://get.docker.com/ | sh
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先在主機安裝 Docker Engine，可以透過以下指令進行安裝：</p>
+<pre><code class="sh">$ curl -fsSL https://get.docker.com/ | sh
 </code></pre>
-<h2><span id="部署-ceph-測試叢集">部署 Ceph 測試叢集</span></h2>
-<p>首先為了不與預設 Docker 網路共用，這邊額外建立一網路來提供給 Ceph 使用：</p>
-<pre><code class="language-sh">$ docker network create --driver bridge ceph-net
+<h2 id="部署-Ceph-測試叢集"><a href="#部署-Ceph-測試叢集" class="headerlink" title="部署 Ceph 測試叢集"></a>部署 Ceph 測試叢集</h2><p>首先為了不與預設 Docker 網路共用，這邊額外建立一網路來提供給 Ceph 使用：</p>
+<pre><code class="sh">$ docker network create --driver bridge ceph-net
 $ docker network inspect ceph-net
 {
     &quot;Subnet&quot;: &quot;172.18.0.0/16&quot;,
     &quot;Gateway&quot;: &quot;172.18.0.1/16&quot;
 }
 </code></pre>
-<h3><span id="建立-monitor">建立 Monitor</span></h3>
-<p>完成網路建立後，就可以開始部署 Ceph 叢集了。一開始我們必須先建立 Monitor Container：</p>
-<pre><code class="language-sh">$ cd ~ &amp;&amp; DIR=$(pwd)
+<h3 id="建立-Monitor"><a href="#建立-Monitor" class="headerlink" title="建立 Monitor"></a>建立 Monitor</h3><p>完成網路建立後，就可以開始部署 Ceph 叢集了。一開始我們必須先建立 Monitor Container：</p>
+<pre><code class="sh">$ cd ~ &amp;&amp; DIR=$(pwd)
 $ sudo docker run -d --net=ceph-net \
 -v ${DIR}/ceph:/etc/ceph \
 -v ${DIR}/lib/ceph/:/var/lib/ceph/ \
@@ -366,12 +362,12 @@ ceph/daemon mon
 </code></pre>
 <blockquote>
 <p>若發生錯誤請刪除以下目錄。如以下指令：</p>
-</blockquote>
-<pre><code class="language-sh">$ sudo rm -rf ${DIR}/etc/ceph/
+<pre><code class="sh">$ sudo rm -rf ${DIR}/etc/ceph/
 $ sudo rm -rf ${DIR}/var/lib/ceph/
 </code></pre>
+</blockquote>
 <p>檢查是否正確部署：</p>
-<pre><code class="language-sh">$ docker exec -ti mon1 ceph -v
+<pre><code class="sh">$ docker exec -ti mon1 ceph -v
 ceph version 10.2.2 (45107e21c568dd033c2f0a3107dec8f0b0e58374)
 
 $ docker exec -ti mon1 ceph -s
@@ -386,9 +382,8 @@ cluster 2c254496-e948-4abb-a6dc-9aea41bbb56a
         0 kB used, 0 kB / 0 kB avail
               64 creating
 </code></pre>
-<h3><span id="建立-osd">建立 OSD</span></h3>
-<p>上面可以看到 Monitor 建立完成，但是會有錯誤，因為目前沒有 OSD。因此這邊將建立三個 OSD Container 來模擬叢集做實際儲存的功能，透過以下方式部署：</p>
-<pre><code class="language-sh">$ cd ~ &amp;&amp; DIR=$(pwd)
+<h3 id="建立-OSD"><a href="#建立-OSD" class="headerlink" title="建立 OSD"></a>建立 OSD</h3><p>上面可以看到 Monitor 建立完成，但是會有錯誤，因為目前沒有 OSD。因此這邊將建立三個 OSD Container 來模擬叢集做實際儲存的功能，透過以下方式部署：</p>
+<pre><code class="sh">$ cd ~ &amp;&amp; DIR=$(pwd)
 $ sudo docker run -d --net=ceph-net \
 --privileged=true --pid=host \
 -v ${DIR}/ceph:/etc/ceph \
@@ -404,11 +399,11 @@ ceph/daemon osd
 <p>若要建立多個 OSD，只需要修改<code>OSD_DEVICE</code>與<code>name</code>即可，這邊建議建立三個 OSD。因為預設 pool 採用三份副本，若節點數過少需要自行修改副本數或 CRUSH Map。</p>
 </blockquote>
 <p>完成後，可以透過以下指令檢查 Device 被使用：</p>
-<pre><code class="language-sh">$ docker exec -ti osd1 df | grep &quot;osd&quot;
+<pre><code class="sh">$ docker exec -ti osd1 df | grep &quot;osd&quot;
 /dev/sdb1                     20857836   34924  20822912   1% /var/lib/ceph/osd/ceph-0
 </code></pre>
 <p>也可以直接透過 Monitor 來查看叢集安全狀態，如 PG 是否有誤等：</p>
-<pre><code class="language-sh">$ docker exec -ti mon1 ceph -s
+<pre><code class="sh">$ docker exec -ti mon1 ceph -s
 cluster 23fa3f2c-a401-46e0-abc1-d71b4625b348
  health HEALTH_OK
  monmap e2: 1 mons at {0b7ff674673f=172.18.0.2:6789/0}
@@ -420,9 +415,8 @@ cluster 23fa3f2c-a401-46e0-abc1-d71b4625b348
         101 MB used, 61005 MB / 61106 MB avail
               64 active+clean
 </code></pre>
-<h3><span id="建立-rgw">建立 RGW</span></h3>
-<p>當完成一個 RAODS(MON+OSD)叢集後，即可建立物件儲存閘道(RAODS Gateway)提供 S3 與 Swift 相容的 API，來儲存檔案到叢集中，一個 RGW Container 建立如下所示：</p>
-<pre><code class="language-sh">$ cd ~ &amp;&amp; DIR=$(pwd)
+<h3 id="建立-RGW"><a href="#建立-RGW" class="headerlink" title="建立 RGW"></a>建立 RGW</h3><p>當完成一個 RAODS(MON+OSD)叢集後，即可建立物件儲存閘道(RAODS Gateway)提供 S3 與 Swift 相容的 API，來儲存檔案到叢集中，一個 RGW Container 建立如下所示：</p>
+<pre><code class="sh">$ cd ~ &amp;&amp; DIR=$(pwd)
 $ sudo docker run -d --net=ceph-net \
 -v ${DIR}/lib/ceph/:/var/lib/ceph/ \
 -v ${DIR}/ceph:/etc/ceph \
@@ -431,16 +425,16 @@ $ sudo docker run -d --net=ceph-net \
 ceph/daemon rgw
 </code></pre>
 <p>完成後，透過 curl 工具來測試是否正確部署：</p>
-<pre><code class="language-sh">$ curl -H &quot;Content-Type: application/json&quot; &quot;http://127.0.0.1:8080&quot;
+<pre><code class="sh">$ curl -H &quot;Content-Type: application/json&quot; &quot;http://127.0.0.1:8080&quot;
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;ListAllMyBucketsResult xmlns=&quot;http://s3.amazonaws.com/doc/2006-03-01/&quot;&gt;&lt;Owner&gt;&lt;ID&gt;anonymous&lt;/ID&gt;&lt;DisplayName&gt;&lt;/DisplayName&gt;&lt;/Owner&gt;&lt;Buckets&gt;&lt;/Buckets&gt;&lt;/ListAllMyBucketsResult&gt;
 </code></pre>
 <p>透過 Python Client 進行檔案儲存，首先下載程式：</p>
-<pre><code class="language-sh">$ wget &quot;https://gist.githubusercontent.com/kairen/e0dec164fa6664f40784f303076233a5/raw/33add5a18cb7d6f18531d8d481562d017557747c/s3client&quot;
+<pre><code class="sh">$ wget &quot;https://gist.githubusercontent.com/kairen/e0dec164fa6664f40784f303076233a5/raw/33add5a18cb7d6f18531d8d481562d017557747c/s3client&quot;
 $ chmod u+x s3client
 $ sudo pip install boto
 </code></pre>
 <p>接著透過以下指令建立一個使用者：</p>
-<pre><code class="language-sh">$ docker exec -ti rgw1 radosgw-admin user create --uid=&quot;test&quot; --display-name=&quot;I'm Test account&quot; --email=&quot;test@example.com&quot;
+<pre><code class="sh">$ docker exec -ti rgw1 radosgw-admin user create --uid=&quot;test&quot; --display-name=&quot;I&#39;m Test account&quot; --email=&quot;test@example.com&quot;
 
 &quot;keys&quot;: [
         {
@@ -451,34 +445,33 @@ $ sudo pip install boto
     ],
 </code></pre>
 <p>建立一個放置環境參數的檔案<code>s3key.sh</code>：</p>
-<pre><code class="language-sh">export S3_ACCESS_KEY=&quot;PFMKGXCFD77L8X4CF0T4&quot;
+<pre><code class="sh">export S3_ACCESS_KEY=&quot;PFMKGXCFD77L8X4CF0T4&quot;
 export S3_SECRET_KEY=&quot;SA8RpGO7SoN4TIdRxYtxloc5kRSLQvhOihJdDGG3&quot;
 export S3_HOST=&quot;127.0.0.1&quot;
 export S3_PORT=&quot;8080&quot;
 </code></pre>
 <p>然後 source 檔案，並嘗試執行列出 bucket 指令：</p>
-<pre><code class="language-sh">$ . s3key.sh
+<pre><code class="sh">$ . s3key.sh
 $ ./s3client list
 ---------- Bucket List ----------
 </code></pre>
 <p>建立一個 Bucket，並上傳檔案：</p>
-<pre><code class="language-sh">$ ./s3client create files
+<pre><code class="sh">$ ./s3client create files
 Create [files] success ...
 
 $ ./s3client upload files s3key.sh /
 Upload [s3key.sh] success ...
 </code></pre>
 <p>完成後，即可透過 list 與 download 來查看與下載：</p>
-<pre><code class="language-sh">$ ./s3client list files
+<pre><code class="sh">$ ./s3client list files
 ---------- [files] ----------
-s3key.sh            	157                 	2016-07-26T06:48:14.327Z
+s3key.sh                157                     2016-07-26T06:48:14.327Z
 
 $ ./s3client download files s3key.sh
 Download [s3key.sh] success ...
 </code></pre>
-<h3><span id="建立-mds">建立 MDS</span></h3>
-<p>當系統需要使用到 CephFS 時，我們將必須建立 MDS(Metadata Server) 來提供詮釋資料的儲存，一個 MDS 容器部署如下：</p>
-<pre><code class="language-sh">$ cd ~ &amp;&amp; DIR=$(pwd)
+<h3 id="建立-MDS"><a href="#建立-MDS" class="headerlink" title="建立 MDS"></a>建立 MDS</h3><p>當系統需要使用到 CephFS 時，我們將必須建立 MDS(Metadata Server) 來提供詮釋資料的儲存，一個 MDS 容器部署如下：</p>
+<pre><code class="sh">$ cd ~ &amp;&amp; DIR=$(pwd)
 $ sudo docker run -d --net=ceph-net \
 -v ${DIR}/lib/ceph/:/var/lib/ceph/ \
 -v ${DIR}/ceph:/etc/ceph \
@@ -487,7 +480,7 @@ $ sudo docker run -d --net=ceph-net \
 ceph/daemon mds
 </code></pre>
 <p>透過以下指令檢查是否建立無誤：</p>
-<pre><code class="language-sh">$ docker exec -ti mds1 ceph mds stat
+<pre><code class="sh">$ docker exec -ti mds1 ceph mds stat
 e5: 1/1/1 up {0=mds-aea2f53de13a=up:active}
 
 $ docker exec -ti mds1 ceph fs ls
@@ -536,7 +529,7 @@ name: cephfs, metadata pool: cephfs_metadata, data pools: [cephfs_data ]
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Ceph 測試叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Monitor</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">建立 OSD</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">建立 RGW</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">建立 MDS</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點配置"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署-Ceph-測試叢集"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">部署 Ceph 測試叢集</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Monitor"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Monitor</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-OSD"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">建立 OSD</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-RGW"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">建立 RGW</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-MDS"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">建立 MDS</span></a></li></ol></li></ol>
         
         </div>
       </aside>

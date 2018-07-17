@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -300,16 +300,14 @@
 <li>支援滾動升級(Rolling Update)。</li>
 </ul>
 <a id="more"></a>
-<h2><span id="基本架構">基本架構</span></h2>
-<p>Docker Swarm 具備基本叢集功能，能讓多個 Docker 組合成一個群組，來提供容器服務。Docker 採用標準 Docker API 來管理容器的生命週期，而 Swarm 最主要核心是處理容器如何選擇一台主機來啟動容器這件事。以下為 Docker Swarm 架構：</p>
+<h2 id="基本架構"><a href="#基本架構" class="headerlink" title="基本架構"></a>基本架構</h2><p>Docker Swarm 具備基本叢集功能，能讓多個 Docker 組合成一個群組，來提供容器服務。Docker 採用標準 Docker API 來管理容器的生命週期，而 Swarm 最主要核心是處理容器如何選擇一台主機來啟動容器這件事。以下為 Docker Swarm 架構：</p>
 <p><img src="/images/docker/docker-swarm-architecture.png" alt="Docker"></p>
 <p>Docker Swarm 一般分為兩個角色<code>Manager</code>與<code>Worker</code>，兩者主要工作如下：</p>
 <ul>
 <li><strong>Manager</strong>: 主要負責排程 Task，Task 可以表示為 Swarm 節點中的 Node 上啟動的容器。同時還負責編配容器與叢集管理功能，簡單說就是 Manager 具備管理 Node 的工作，除了以上外，Manager 還會維護叢集狀態。另外 Manager 也具備 Worker 的功能，當然也可以設定只做管理 Node 的職務。</li>
 <li><strong>Worker</strong>: Worker 主要接收來自 Manager 的 Task 指派，並依據指派內容啟動 Docker 容器服務，並在完成後向 Manager 匯報 Task 執行狀態。</li>
 </ul>
-<h2><span id="預先準備資訊">預先準備資訊</span></h2>
-<p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
+<h2 id="預先準備資訊"><a href="#預先準備資訊" class="headerlink" title="預先準備資訊"></a>預先準備資訊</h2><p>本教學將以下列節點數與規格來進行部署 Kubernetes 叢集，作業系統可採用<code>Ubuntu 16.x</code>與<code>CentOS 7.x</code>：</p>
 <table>
 <thead>
 <tr>
@@ -348,24 +346,22 @@
 <li>所有節點彼此網路互通，並且不需要 SSH 密碼即可登入。</li>
 <li>所有防火牆與 SELinux 已關閉。如 CentOS：</li>
 </ul>
-<pre><code class="language-sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
+<pre><code class="sh">$ systemctl stop firewalld &amp;&amp; systemctl disable firewalld
 $ setenforce 0
 </code></pre>
 <ul>
 <li>所有節點需要設定<code>/etc/host</code>解析到所有主機。</li>
 <li>所有節點需要安裝<code>Docker</code>引擎，安裝方式如下：</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 </code></pre>
 <blockquote>
-<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>
-CentOS 安裝完成後，需要再執行以下指令：</p>
-</blockquote>
-<pre><code class="language-sh">$ systemctl enable docker &amp;&amp; systemctl start docker
+<p>不管是在 <code>Ubuntu</code> 或 <code>CentOS</code> 都只需要執行該指令就會自動安裝最新版 Docker。<br>CentOS 安裝完成後，需要再執行以下指令：</p>
+<pre><code class="sh">$ systemctl enable docker &amp;&amp; systemctl start docker
 </code></pre>
-<h2><span id="manager-節點建置">Manager 節點建置</span></h2>
-<p>當我們完成安裝 Docker Engine 後，就可以透過 Docker 指令來初始化 Manager 節點：</p>
-<pre><code class="language-sh">$ docker swarm init --advertise-addr 172.16.35.12
+</blockquote>
+<h2 id="Manager-節點建置"><a href="#Manager-節點建置" class="headerlink" title="Manager 節點建置"></a>Manager 節點建置</h2><p>當我們完成安裝 Docker Engine 後，就可以透過 Docker 指令來初始化 Manager 節點：</p>
+<pre><code class="sh">$ docker swarm init --advertise-addr 172.16.35.12
 
 Swarm initialized: current node (olluuvvz340ze64zhjpw03uke) is now a manager.
 
@@ -373,31 +369,30 @@ To add a worker to this swarm, run the following command:
 
     docker swarm join --token SWMTKN-1-0q0ohnexs40lb9z4kmvqb6zcrmp22hul9tmh6zpfztxzv5cv61-73yubitun1ufm0yhwx7h38p85 172.16.35.12:2377
 
-To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+To add a manager to this swarm, run &#39;docker swarm join-token manager&#39; and follow the instructions.
 </code></pre>
 <p>當看到上述內容，表示 Manager 初始化完成，這時候可以透過以下指令檢查：</p>
-<pre><code class="language-sh">$ docker info
+<pre><code class="sh">$ docker info
 $ docker node ls
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
 olluuvvz340ze64zhjpw03uke *   manager             Ready               Active              Leader
 </code></pre>
 <p>接著建立 Docker swarm network 來提供容器跨節點的溝通：</p>
-<pre><code class="language-sh"># Deploy network
+<pre><code class="sh"># Deploy network
 $ docker network create --driver=overlay --attachable cnblogs
 
 # Docker flow proxy network
 $ docker network create --driver overlay proxy
 </code></pre>
 <p>檢查 Docker 網路狀態：</p>
-<pre><code class="language-sh">$ docker network ls | grep swarm
+<pre><code class="sh">$ docker network ls | grep swarm
 NETWORK ID          NAME                DRIVER              SCOPE
 57nq0rux7akh        cnblogs             overlay             swarm
 ihyg6uixeiov        ingress             overlay             swarm
 b8vqturisod8        proxy               overlay             swarm
 </code></pre>
-<h2><span id="worker-節點建置">Worker 節點建置</span></h2>
-<p>完成 Manager 初始化後，就可以透過以下指令來將節點加入叢集：</p>
-<pre><code class="language-sh">$ docker swarm join --token SWMTKN-1-0q0ohnexs40lb9z4kmvqb6zcrmp22hul9tmh6zpfztxzv5cv61-73yubitun1ufm0yhwx7h38p85 172.16.35.12:2377
+<h2 id="Worker-節點建置"><a href="#Worker-節點建置" class="headerlink" title="Worker 節點建置"></a>Worker 節點建置</h2><p>完成 Manager 初始化後，就可以透過以下指令來將節點加入叢集：</p>
+<pre><code class="sh">$ docker swarm join --token SWMTKN-1-0q0ohnexs40lb9z4kmvqb6zcrmp22hul9tmh6zpfztxzv5cv61-73yubitun1ufm0yhwx7h38p85 172.16.35.12:2377
 
 This node joined a swarm as a worker.
 </code></pre>
@@ -405,21 +400,20 @@ This node joined a swarm as a worker.
 <p>P.S. 其他節點一樣請用上述指令加入。</p>
 </blockquote>
 <p>在<code>Manager</code>節點，查看節點狀態：</p>
-<pre><code class="language-sh">$ docker node ls
+<pre><code class="sh">$ docker node ls
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
 cwkta4o37daxed3otrqab9zdq     node2               Ready               Active
 olluuvvz340ze64zhjpw03uke *   manager             Ready               Active              Leader
 sfs49249kv8mad2qzr4ev4fy0     node1               Ready               Active
 </code></pre>
 <p>(option)將節點改為 Manager：</p>
-<pre><code class="language-sh">$ docker node promote &lt;HOSTNAME&gt;
+<pre><code class="sh">$ docker node promote &lt;HOSTNAME&gt;
 </code></pre>
 <blockquote>
 <p>另外降級為<code>docker node demote &lt;HOSTNAME&gt;</code>。</p>
 </blockquote>
-<h2><span id="透過指令建立簡單服務">透過指令建立簡單服務</span></h2>
-<p>要建立 Docker 服務，可以使用<code>docker service</code>指令來達成，如下指令：</p>
-<pre><code class="language-sh">$ docker service create --replicas 1 --name ping alpine ping 8.8.8.8
+<h2 id="透過指令建立簡單服務"><a href="#透過指令建立簡單服務" class="headerlink" title="透過指令建立簡單服務"></a>透過指令建立簡單服務</h2><p>要建立 Docker 服務，可以使用<code>docker service</code>指令來達成，如下指令：</p>
+<pre><code class="sh">$ docker service create --replicas 1 --name ping alpine ping 8.8.8.8
 $ docker service logs ping
 ping.1.auqefe3iq9yk@node2    | PING 8.8.8.8 (8.8.8.8): 56 data bytes
 ping.1.auqefe3iq9yk@node2    | 64 bytes from 8.8.8.8: seq=0 ttl=61 time=7.042 ms
@@ -428,19 +422,18 @@ ping.1.auqefe3iq9yk@node2    | 64 bytes from 8.8.8.8: seq=2 ttl=61 time=7.668 m
 ...
 </code></pre>
 <p>建立兩份副本數的應用，如以下指令：</p>
-<pre><code class="language-sh">$ docker service create --replicas 2 --name redis redis
+<pre><code class="sh">$ docker service create --replicas 2 --name redis redis
 $ docker service ps redis
 ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
 ngtegx9vk4gu        redis.1             redis:latest        node1               Running             Running 43 seconds ago
 n95vu3dzewu7        redis.2             redis:latest        manager             Running             Running 44 seconds ago
 </code></pre>
 <p>完成後，想要刪除可以使用以下指令：</p>
-<pre><code class="language-sh">$ docker service rm ping
+<pre><code class="sh">$ docker service rm ping
 $ docker service rm redis
 </code></pre>
-<h2><span id="部署簡單的-stack">部署簡單的 Stack</span></h2>
-<p>這邊利用簡單範例來部署應用程式於 Swarm 叢集中，首先新增<code>stack.yml</code>檔案，並加入以下內容：</p>
-<pre><code class="language-yaml">version: '3.2'
+<h2 id="部署簡單的-Stack"><a href="#部署簡單的-Stack" class="headerlink" title="部署簡單的 Stack"></a>部署簡單的 Stack</h2><p>這邊利用簡單範例來部署應用程式於 Swarm 叢集中，首先新增<code>stack.yml</code>檔案，並加入以下內容：</p>
+<pre><code class="yaml">version: &#39;3.2&#39;
 services:
   api:
     image: open-api:latest
@@ -463,7 +456,7 @@ networks:
     external: true
 </code></pre>
 <p>完成後，透過以下指令來進行部署：</p>
-<pre><code class="language-sh">$ docker stack deploy -c stack.yml openapi
+<pre><code class="sh">$ docker stack deploy -c stack.yml openapi
 </code></pre>
 
                 
@@ -508,7 +501,7 @@ networks:
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">基本架構</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">預先準備資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Manager 節點建置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Worker 節點建置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">透過指令建立簡單服務</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">部署簡單的 Stack</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#基本架構"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">基本架構</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#預先準備資訊"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">預先準備資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Manager-節點建置"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Manager 節點建置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Worker-節點建置"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Worker 節點建置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#透過指令建立簡單服務"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">透過指令建立簡單服務</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署簡單的-Stack"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">部署簡單的 Stack</span></a></li></ol>
         
         </div>
       </aside>

@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -289,9 +289,8 @@
 
                 <p>本節將介紹如何透過 <a href="https://github.com/ceph/ceph-deploy" target="_blank" rel="noopener">ceph-deploy</a> 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台<code>Monitor</code>與三台<code>OSD</code>。而 MDS 則是當使用到 CephFS 的時候才需要部署。</p>
 <a id="more"></a>
-<h2><span id="環境準備">環境準備</span></h2>
-<p>在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：</p>
-<pre><code class="language-sh">                           +------------------+
+<h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>在開始部署 Ceph 叢集之前，我們需要在每個節點做一些基本的準備，來確保叢集安裝的過程是流暢的，本次安裝會擁有 6 台節點，叢集拓樸圖如下所示：</p>
+<pre><code class="sh">                           +------------------+
                            | [ Deploy  Node ] |
                            |   10.21.20.99    |
                            | Ceph deploy tool |
@@ -315,8 +314,7 @@
 +------------------+       +------------------+       +------------------+
 </code></pre>
 <blockquote>
-<p>P.S. 上面磁碟分為兩個，因為這邊教學不將 journal 分開來，故一顆當作系統使用，一顆為資料儲存與 journal 使用。<br>
-P.S. 這邊網路建議設定為<code>static</code>，若有支援 Jumbo frame 也可以開啟。</p>
+<p>P.S. 上面磁碟分為兩個，因為這邊教學不將 journal 分開來，故一顆當作系統使用，一顆為資料儲存與 journal 使用。<br>P.S. 這邊網路建議設定為<code>static</code>，若有支援 Jumbo frame 也可以開啟。</p>
 </blockquote>
 <p>首先在每一台節點新增以下內容到<code>/etc/hosts</code>：</p>
 <pre><code>127.0.0.1 localhost
@@ -327,24 +325,21 @@ P.S. 這邊網路建議設定為<code>static</code>，若有支援 Jumbo frame �
 10.21.20.121 ceph-osd1
 10.21.20.122 ceph-osd2
 10.21.20.123 ceph-osd3
-</code></pre>
-<p>然後在每台節點執行以下指令來使<code>sudo</code>不需要輸入密碼：</p>
-<pre><code class="language-sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu
+</code></pre><p>然後在每台節點執行以下指令來使<code>sudo</code>不需要輸入密碼：</p>
+<pre><code class="sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu &amp;&amp; sudo chmod 440 /etc/sudoers.d/ubuntu
 </code></pre>
 <blockquote>
-<p>上面 <code>ubuntu</code> 是節點的使用者名稱，這邊都是一樣。<br>
-P.S. 當然若要注意安全考量，而不讓該使用者直接使用有權限的資源，可以使用 root user。</p>
+<p>上面 <code>ubuntu</code> 是節點的使用者名稱，這邊都是一樣。<br>P.S. 當然若要注意安全考量，而不讓該使用者直接使用有權限的資源，可以使用 root user。</p>
 </blockquote>
 <p>接著在設定<code>Deploy</code>節點能夠以無密碼方式進行 SSH 登入其他節點，請依照以下執行：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ ssh-copy-id ceph-mon1
 $ ssh-copy-id ceph-mds
 ...
 </code></pre>
 <blockquote>
 <p>若 Deploy 節點的使用者與其他不同的話，編輯<code>~/.ssh/config</code>加入以下內容：</p>
-</blockquote>
-<pre><code class="language-sh">Host ceph-admin
+<pre><code class="sh">Host ceph-admin
     Hostname ceph-admin
     User ubuntu
 Host ceph-mds
@@ -352,51 +347,50 @@ Host ceph-mds
     User mds
 ...
 </code></pre>
+</blockquote>
 <p>之後在<code>Deploy</code>節點安裝部署工具，首先安裝基本相依套件，使用<code>apt-get</code>來進行安裝，再透過<code>python-pip</code>進行安裝部署工具：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y python-pip
+<pre><code class="sh">$ sudo apt-get install -y python-pip
 $ sudo pip install ceph-deploy
 </code></pre>
 <blockquote>
 <p>P.S. ceph-deploy 所安裝的 ceph 版本，會受到 ceph-deply 工具版本不同而有所差異。</p>
 </blockquote>
 <p>完成後即可開始部署 Ceph 環境。</p>
-<h3><span id="環境部署">環境部署</span></h3>
-<p>首先建立一個名稱為<code>mycluster</code>的目錄，並進入該目錄：</p>
+<h3 id="環境部署"><a href="#環境部署" class="headerlink" title="環境部署"></a>環境部署</h3><p>首先建立一個名稱為<code>mycluster</code>的目錄，並進入該目錄：</p>
 <pre><code>$ sudo mkdir mycluster
 $ cd mycluster
-</code></pre>
-<p>採用 ceph-deploy 工具部署環境時，需要依照以下步驟進行，首先建立要當任 Monitor 的節點，透過以下方式：</p>
-<pre><code class="language-sh">$ ceph-deploy new ceph-mon1 &lt;other_nodes&gt;
+</code></pre><p>採用 ceph-deploy 工具部署環境時，需要依照以下步驟進行，首先建立要當任 Monitor 的節點，透過以下方式：</p>
+<pre><code class="sh">$ ceph-deploy new ceph-mon1 &lt;other_nodes&gt;
 </code></pre>
 <blockquote>
 <p>當執行該指令時，不是直接讓 ceph-mon1 節點安裝成為 Monitor，而只是新增一個<code>conf</code>，並標示誰是 Monitor，當在初始化階段時，才將該設定檔給對應節點，讓它啟動是設定為 Monitor 角色。</p>
 </blockquote>
 <p>接著我們需要先讓每個節點（ceph-deploy除外）安裝 ceph-common 套件，透過以下方式安裝：</p>
-<pre><code class="language-sh">$ ceph-deploy install ceph-admin ceph-mds &lt;other_nodes&gt;
+<pre><code class="sh">$ ceph-deploy install ceph-admin ceph-mds &lt;other_nodes&gt;
 </code></pre>
 <p>當完成安裝後，才能開始真正的部署節點的角色，第一先將 Monitor 都完成部署，才能讓叢集先正常被運作，透過以下指令來將 Monitors 初始化：</p>
-<pre><code class="language-sh">$ ceph-deploy mon create-initial
+<pre><code class="sh">$ ceph-deploy mon create-initial
 </code></pre>
 <p>上述沒有問題後，就可以開始部署實際作為儲存的 OSD 節點，我們可以透過以下指令進行：</p>
-<pre><code class="language-sh">$ ceph-deploy osd prepare ceph-osd1:/dev/sdb &lt;other_nodes&gt;:&lt;data_disk&gt;
+<pre><code class="sh">$ ceph-deploy osd prepare ceph-osd1:/dev/sdb &lt;other_nodes&gt;:&lt;data_disk&gt;
 </code></pre>
 <blockquote>
 <p>若要將 journal 分離，可以使用以下方式：</p>
-</blockquote>
-<pre><code class="language-sh">$ ceph-deploy osd prepare ceph-osd1:/dev/sdb:/dev/sdc &lt;other_nodes&gt;:&lt;data_disk&gt;:&lt;journal_disk&gt;
+<pre><code class="sh">$ ceph-deploy osd prepare ceph-osd1:/dev/sdb:/dev/sdc &lt;other_nodes&gt;:&lt;data_disk&gt;:&lt;journal_disk&gt;
 </code></pre>
+</blockquote>
 <p>部署沒有問題的話，即可啟用該 OSD：</p>
-<pre><code class="language-sh">$ ceph-deploy osd activate ceph-osd1:/dev/sdb &lt;other_nodes&gt;:&lt;data_disk&gt;
+<pre><code class="sh">$ ceph-deploy osd activate ceph-osd1:/dev/sdb &lt;other_nodes&gt;:&lt;data_disk&gt;
 </code></pre>
 <blockquote>
 <p>P.S. 較新的版本該指令可以省略，因為在準備期間就會幫你直接啟動。</p>
 </blockquote>
 <p>這樣一個簡單的叢集就部署完成了，這時候我們可以隨需求加入<code>admin</code>與<code>MDS</code>節點，可以透過以下方式進行：</p>
-<pre><code class="language-sh">$ ceph-deploy admin ceph-admin
+<pre><code class="sh">$ ceph-deploy admin ceph-admin
 $ ceph-deploy mds create ceph-mds
 </code></pre>
 <p>完成後，可以透過以下指令檢查 ceph 叢集狀態：</p>
-<pre><code class="language-sh">$ ceph health
+<pre><code class="sh">$ ceph health
 HEALTH_OK
 
 $ ceph status
@@ -413,20 +407,16 @@ cluster e2432059-e219-4555-8d37-c32d5b16e4a4
 <blockquote>
 <ul>
 <li>如果出現<code>ERROR: missing keyring, cannot use cephx for authentication</code>，請注意這個檔案<code>/etc/ceph/ceph.client.admin.keyring</code>是否有權限讀取。</li>
-</ul>
-</blockquote>
-<ul>
 <li>如果出現<code>too few PGs per</code>，修改<code>pg_num</code>與<code>pgp_num</code>。範例如下：</li>
 </ul>
-<blockquote></blockquote>
+</blockquote>
 <pre><code>$ ceph osd pool set rbd pg_num 128
 $ ceph osd pool set rbd pgp_num 128
-</code></pre>
-<p>若要檢查 mds 可以使用以下指令：</p>
-<pre><code class="language-sh">$ ceph mds stat
+</code></pre><p>若要檢查 mds 可以使用以下指令：</p>
+<pre><code class="sh">$ ceph mds stat
 </code></pre>
 <p>若想檢查 OSDs 的目前狀態可以使用以下幾個指令：</p>
-<pre><code class="language-sh">$ ceph osd stat
+<pre><code class="sh">$ ceph osd stat
 osdmap e119: 3 osds: 3 up, 3 in
        flags sortbitwise
 
@@ -477,7 +467,7 @@ $ ceph osd tree
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境準備</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">環境部署</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#環境準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境準備</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#環境部署"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">環境部署</span></a></li></ol></li></ol>
         
         </div>
       </aside>

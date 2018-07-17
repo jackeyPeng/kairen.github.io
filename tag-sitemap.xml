@@ -2,48 +2,6 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-        <loc>https://kairen.github.io/tags/GPU/</loc>
-        <lastmod>2018-07-09T17:15:26.131Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/DL-ML/</loc>
-        <lastmod>2018-07-09T17:15:26.131Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/TensorFlow/</loc>
-        <lastmod>2018-07-09T17:15:32.914Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Machine-Learning/</loc>
-        <lastmod>2018-07-09T17:15:32.914Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Git/</loc>
-        <lastmod>2018-07-09T17:15:43.228Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Python/</loc>
-        <lastmod>2018-07-09T17:15:43.228Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/DevStack/</loc>
         <lastmod>2018-07-09T17:15:43.230Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -86,41 +44,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/SSD/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Load-Balancer/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/High-Availability/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/PXE/</loc>
-        <lastmod>2018-07-09T17:16:15.645Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Bare-Metal/</loc>
-        <lastmod>2018-07-09T17:16:15.645Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/HTTP-Server/</loc>
         <lastmod>2018-07-09T17:16:22.189Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -128,56 +51,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Solidity/</loc>
-        <lastmod>2018-07-09T17:16:44.858Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Smart-Contract/</loc>
-        <lastmod>2018-07-09T17:16:44.858Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Ethereum/</loc>
-        <lastmod>2018-07-09T17:16:44.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Blockchain/</loc>
-        <lastmod>2018-07-09T17:16:44.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Go-lang/</loc>
-        <lastmod>2018-07-09T17:16:44.859Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/OpenStack/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Container/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -191,84 +65,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Moby/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Microkernel/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Concurrent/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Spark/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Database/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/NoSQL/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Maven/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/DC-OS/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Mesos/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Kafka/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Message-Queue/</loc>
-        <lastmod>2018-07-09T17:16:56.740Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/HDFS/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -282,22 +79,8 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Helm/</loc>
-        <lastmod>2018-07-09T17:16:56.752Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Keystone/</loc>
         <lastmod>2018-07-09T17:16:56.758Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Linux-Container/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -310,28 +93,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/AWS/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Kubernetes-RBAC/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Ubuntu/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/CentOS/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -352,49 +114,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/LDAP/</loc>
-        <lastmod>2018-07-09T17:16:56.760Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/CoreOS/</loc>
-        <lastmod>2018-07-09T17:16:56.763Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Vagrant/</loc>
-        <lastmod>2018-07-09T17:16:56.763Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/SPDK/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/File-System/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Java/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Logging/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -403,48 +123,6 @@
     <url>
         <loc>https://kairen.github.io/tags/Visualization/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Data-Collect/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Puppet/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Ceph/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Storage/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Distribution-System/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Linux/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -464,20 +142,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/BlueStore/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Monitoring/</loc>
-        <lastmod>2018-07-09T17:17:05.519Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/CNCF/</loc>
         <lastmod>2018-07-09T17:17:05.519Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -492,43 +156,386 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/DevOps/</loc>
-        <lastmod>2018-07-09T17:17:05.521Z</lastmod>
+        <loc>https://kairen.github.io/tags/AWS/</loc>
+        <lastmod>2018-07-16T08:37:17.424Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Automation-Engine/</loc>
-        <lastmod>2018-07-09T17:17:05.521Z</lastmod>
+        <loc>https://kairen.github.io/tags/CoreOS/</loc>
+        <lastmod>2018-07-16T08:37:34.485Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Vagrant/</loc>
+        <lastmod>2018-07-16T08:37:34.485Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Kafka/</loc>
+        <lastmod>2018-07-16T09:14:30.052Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Message-Queue/</loc>
+        <lastmod>2018-07-16T09:14:30.052Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Java/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Concurrent/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Moby/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Database/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/NoSQL/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Distribution-System/</loc>
+        <lastmod>2018-07-16T09:14:30.202Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/HDFS/</loc>
+        <lastmod>2018-07-16T09:14:30.202Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Git/</loc>
+        <lastmod>2018-07-16T09:14:30.202Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Python/</loc>
+        <lastmod>2018-07-16T09:14:30.202Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Ansible/</loc>
-        <lastmod>2018-07-09T17:17:05.521Z</lastmod>
+        <lastmod>2018-07-16T09:14:30.202Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2018-07-11T16:26:51.812Z</lastmod>
+        <loc>https://kairen.github.io/tags/High-Availability/</loc>
+        <lastmod>2018-07-16T09:18:21.415Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-07-11T16:26:51.812Z</lastmod>
+        <loc>https://kairen.github.io/tags/Load-Balancer/</loc>
+        <lastmod>2018-07-16T09:19:12.858Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/PXE/</loc>
+        <lastmod>2018-07-16T09:21:08.653Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Bare-Metal/</loc>
+        <lastmod>2018-07-16T09:21:08.653Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Benchmark/</loc>
+        <lastmod>2018-07-16T09:41:48.314Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/CentOS/</loc>
+        <lastmod>2018-07-17T07:50:37.646Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Ethereum/</loc>
+        <lastmod>2018-07-17T07:58:01.028Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Blockchain/</loc>
+        <lastmod>2018-07-17T07:58:01.028Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Solidity/</loc>
+        <lastmod>2018-07-17T07:58:01.028Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Smart-Contract/</loc>
+        <lastmod>2018-07-17T07:58:01.028Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/File-System/</loc>
+        <lastmod>2018-07-17T08:02:25.058Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Ceph/</loc>
+        <lastmod>2018-07-17T08:06:21.600Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/BlueStore/</loc>
+        <lastmod>2018-07-17T08:06:21.600Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/GPU/</loc>
+        <lastmod>2018-07-17T08:09:43.130Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/DL-ML/</loc>
+        <lastmod>2018-07-17T08:09:43.130Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/LDAP/</loc>
+        <lastmod>2018-07-17T09:30:23.987Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/kubeadm/</loc>
+        <lastmod>2018-07-17T13:03:37.292Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Calico/</loc>
-        <lastmod>2018-07-11T16:26:51.812Z</lastmod>
+        <lastmod>2018-07-17T13:03:37.292Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Helm/</loc>
+        <lastmod>2018-07-17T13:07:57.872Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/TensorFlow/</loc>
+        <lastmod>2018-07-17T13:10:29.227Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Machine-Learning/</loc>
+        <lastmod>2018-07-17T13:10:29.227Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Ubuntu/</loc>
+        <lastmod>2018-07-17T13:10:29.227Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Linux-Container/</loc>
+        <lastmod>2018-07-17T13:11:42.050Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Docker-registry/</loc>
+        <lastmod>2018-07-17T13:11:42.050Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Kubernetes/</loc>
+        <lastmod>2018-07-17T13:14:18.134Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/DC-OS/</loc>
+        <lastmod>2018-07-17T13:17:43.795Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Mesos/</loc>
+        <lastmod>2018-07-17T13:17:43.795Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Docker/</loc>
+        <lastmod>2018-07-17T13:19:14.536Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/OpenStack/</loc>
+        <lastmod>2018-07-17T13:19:14.536Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Storage/</loc>
+        <lastmod>2018-07-17T13:20:26.574Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Linux/</loc>
+        <lastmod>2018-07-17T13:20:26.574Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/SSD/</loc>
+        <lastmod>2018-07-17T13:20:26.574Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Spark/</loc>
+        <lastmod>2018-07-17T13:21:51.862Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Logging/</loc>
+        <lastmod>2018-07-17T13:21:51.862Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Puppet/</loc>
+        <lastmod>2018-07-17T13:23:59.460Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Automation-Engine/</loc>
+        <lastmod>2018-07-17T13:24:33.598Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/DevOps/</loc>
+        <lastmod>2018-07-17T13:25:45.961Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Monitoring/</loc>
+        <lastmod>2018-07-17T13:25:45.961Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Data-Collect/</loc>
+        <lastmod>2018-07-17T13:25:45.961Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

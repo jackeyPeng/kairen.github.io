@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -304,11 +304,10 @@
 <li>可作為 HBase 的即時查詢快取。</li>
 </ul>
 <a id="more"></a>
-<center>![](/images/spark/cassandra_arch.png)</center>
-<p>若要瞭解更多 Cassandra 可以閱讀 <a href="http://wiki.apache.org/cassandra/GettingStarted" target="_blank" rel="noopener">Cassandra Wiki<br>
+<p><img src="/images/spark/cassandra_arch.png" alt=""></p>
+<p>若要瞭解更多 Cassandra 可以閱讀 <a href="http://wiki.apache.org/cassandra/GettingStarted" target="_blank" rel="noopener">Cassandra Wiki
 </a>。</p>
-<h2><span id="部署多節點叢集">部署多節點叢集</span></h2>
-<p>本節將安裝一個簡單的 Cassandra 叢集，來提供 NoSQL 資料庫以存取資料，以下為節點配置：</p>
+<h2 id="部署多節點叢集"><a href="#部署多節點叢集" class="headerlink" title="部署多節點叢集"></a>部署多節點叢集</h2><p>本節將安裝一個簡單的 Cassandra 叢集，來提供 NoSQL 資料庫以存取資料，以下為節點配置：</p>
 <table>
 <thead>
 <tr>
@@ -338,18 +337,17 @@ $ sudo apt-get update
 $ echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 $ echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 $ sudo apt-get -y install oracle-java7-installer
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>若要安裝<code>java8</code>請修改成<code>oracle-java8-installer</code>。</p>
 </blockquote>
 <p>接著在各節點安裝 Cassandra 套件，這邊採用<code>apt-get</code>安裝，首先加入 Repository：</p>
-<pre><code class="language-sh">$ echo &quot;deb http://www.apache.org/dist/cassandra/debian 22x main&quot; | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list  
+<pre><code class="sh">$ echo &quot;deb http://www.apache.org/dist/cassandra/debian 22x main&quot; | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list  
 </code></pre>
 <blockquote>
 <p>這邊安裝<code>2.2.x</code>版本，若要其他版本則修改<code>22x</code>，如改為<code>21x</code>。</p>
 </blockquote>
 <p>為了避免軟體套件更新軟體時有簽證警告，需加入 Apache 基金會與套件資源庫相關的三個公有金鑰：</p>
-<pre><code class="language-sh">$ gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
+<pre><code class="sh">$ gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
 $ gpg --export --armor F758CE318D77295D | sudo apt-key add -
 $ gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
 $ gpg --export --armor 2B5C1B00 | sudo apt-key add -
@@ -357,16 +355,15 @@ $ gpg --keyserver pgp.mit.edu --recv-keys 0353B12C
 $ gpg --export --armor 0353B12C | sudo apt-key add -
 </code></pre>
 <p>完成後更新 apt-get Repository：</p>
-<pre><code class="language-sh">$ sudo apt-get update
+<pre><code class="sh">$ sudo apt-get update
 </code></pre>
 <p>安裝 Cassandra NoSQL 於每個節點上：</p>
 <pre><code>$ sudo apt-get install -y cassandra
-</code></pre>
-<p>完成後，我們必須開始配置各節點來組成一個叢集，先把每個節點的 Cassandra 服務關閉：</p>
-<pre><code class="language-sh">$ sudo service cassandra stop
+</code></pre><p>完成後，我們必須開始配置各節點來組成一個叢集，先把每個節點的 Cassandra 服務關閉：</p>
+<pre><code class="sh">$ sudo service cassandra stop
 </code></pre>
 <p>關閉後，在每個節點編輯<code>/etc/cassandra/cassandra.yaml</code>檔案，並修改一下內容：</p>
-<pre><code class="language-sh">cluster_name: 'examples'  
+<pre><code class="sh">cluster_name: &#39;examples&#39;  
 num_tokens: 256  
 seed_provider:  
     - class_name: org.apache.cassandra.locator.SimpleSeedProvider
@@ -382,18 +379,18 @@ broadcast_rpc_address: 172.17.0.2
 <p>P.S. 這邊要注意不同節點會有不同，如<code>listen_address</code>與<code>seeds</code>等。</p>
 </blockquote>
 <p>都完成設定檔後，就可以重啟每台的 Cassandra 服務：</p>
-<pre><code class="language-sh">$ sudo service cassandra restart
+<pre><code class="sh">$ sudo service cassandra restart
 </code></pre>
 <p>當確認所有節點重新啟動後，在<code>其中一個節點</code>建立 keyspaces 來做 replication：</p>
-<pre><code class="language-sh">$ cqlsh
-cqlsh&gt; create keyspace Spark_smack WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : '3' };  
+<pre><code class="sh">$ cqlsh
+cqlsh&gt; create keyspace Spark_smack WITH REPLICATION = { &#39;class&#39; : &#39;SimpleStrategy&#39;, &#39;replication_factor&#39; : &#39;3&#39; };  
 exit
 </code></pre>
 <blockquote>
 <p><code>Spark_smack</code> 該值是可以依個人名稱修改。</p>
 </blockquote>
 <p>建立完成後，可以使用<code>nodetool</code>指令來檢查是否成功：</p>
-<pre><code class="language-sh">$ nodetool status spark_smack
+<pre><code class="sh">$ nodetool status spark_smack
 
 Datacenter: datacenter1
 =======================
@@ -404,16 +401,15 @@ UN  172.17.0.3  255.68 KB  256          100.0%            9c9eb117-f787-47bd-825
 UN  172.17.0.2  252.03 KB  256          100.0%            7a4adb77-42d1-402f-b57b-4a40ad013e2c  rack1
 UN  172.17.0.4  127.2 KB   256          100.0%            5823fd78-45f2-4328-9470-f1053bb3fc3b  rack1
 </code></pre>
-<h2><span id="驗證系統">驗證系統</span></h2>
-<p>我們透過 Client 程式來連到<code>cassandra-1</code>節點來驗證叢集是否建立成功：</p>
-<pre><code class="language-sh">$ cqlsh
+<h2 id="驗證系統"><a href="#驗證系統" class="headerlink" title="驗證系統"></a>驗證系統</h2><p>我們透過 Client 程式來連到<code>cassandra-1</code>節點來驗證叢集是否建立成功：</p>
+<pre><code class="sh">$ cqlsh
 cqlsh&gt; use &lt;keyspace name&gt;;
 </code></pre>
 <blockquote>
 <p>這邊<code>&lt;keyspace name&gt;</code>範例為 spark_smack。</p>
 </blockquote>
 <p>然後建立一個資料表：</p>
-<pre><code class="language-sql">CREATE TABLE emp(  
+<pre><code class="sql">CREATE TABLE emp(  
    emp_id int PRIMARY KEY,
    emp_name text,
    emp_city text,
@@ -422,11 +418,11 @@ cqlsh&gt; use &lt;keyspace name&gt;;
    );
 </code></pre>
 <p>接著插入一筆資料到資料表：</p>
-<pre><code class="language-sql">INSERT INTO emp (emp_id, emp_name, emp_city )  
-  VALUES(1, 'Kyle', 'Taichung' );
+<pre><code class="sql">INSERT INTO emp (emp_id, emp_name, emp_city )  
+  VALUES(1, &#39;Kyle&#39;, &#39;Taichung&#39; );
 </code></pre>
 <p>若都沒有任何錯誤的話，現在連接到其他節點來檢查是否有同步資料：</p>
-<pre><code class="language-sh">$ cqlsh
+<pre><code class="sh">$ cqlsh
 cqlsh&gt; use spark_smack;
 cqlsh&gt; select * from emp;
 
@@ -437,15 +433,14 @@ cqlsh&gt; select * from emp;
 </code></pre>
 <blockquote>
 <p>P.S 若發生如以下錯誤，請依照指示解決：</p>
-</blockquote>
-<pre><code class="language-sh">Connection error: ('Unable to connect to any servers', {'127.0.0.1': error(111, &quot;Tried connecting to [('127.0.0.1', 9042)]. Last error: Connection refused&quot;)})
+<pre><code class="sh">Connection error: (&#39;Unable to connect to any servers&#39;, {&#39;127.0.0.1&#39;: error(111, &quot;Tried connecting to [(&#39;127.0.0.1&#39;, 9042)]. Last error: Connection refused&quot;)})
 </code></pre>
+</blockquote>
 <blockquote>
 <p>首先檢查設定檔<code>/etc/cassandra/cassandra.yaml</code>裡面的<code>rpc_address</code>是否為<code>0.0.0.0</code>。</p>
 </blockquote>
 <p>最後，若要復原與備份可以閱讀 <a href="http://blog.powerupcloud.com/2015/09/13/cassandra-backup-and-recovery/" target="_blank" rel="noopener">Cassandra Backup and Recovery</a>。</p>
-<h2><span id="參考資源">參考資源</span></h2>
-<ul>
+<h2 id="參考資源"><a href="#參考資源" class="headerlink" title="參考資源"></a>參考資源</h2><ul>
 <li><a href="https://www.byvoid.com/blog/cassandra-intro" target="_blank" rel="noopener">Cassandra简介</a></li>
 <li><a href="http://blog.powerupcloud.com/2016/01/10/install-and-configure-a-3-node-cassandra-cluster-on-ubuntu-14-04/" target="_blank" rel="noopener">Install and Configure a 3 node Cassandra Cluster on Ubuntu 14.04</a></li>
 <li><a href="http://www.infoq.com/cn/articles/cassandra-mythology" target="_blank" rel="noopener">關於 Cassandra 的錯誤觀點</a></li>
@@ -493,7 +488,7 @@ cqlsh&gt; select * from emp;
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">部署多節點叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">驗證系統</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">參考資源</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#部署多節點叢集"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">部署多節點叢集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#驗證系統"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">驗證系統</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考資源"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">參考資源</span></a></li></ol>
         
         </div>
       </aside>

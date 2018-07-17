@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -289,8 +289,7 @@
 
                 <p>本節將說明如何透過 mvn 與 sbt 來建置 Spark 最新版的相關檔案，透過提供最新版本來觀看 API 的變動。</p>
 <a id="more"></a>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>首先準備一台裝有 Ubuntu 14.04 LTS Server 的主機或 Docker 容器，然後在裡面安裝相依套件：</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>首先準備一台裝有 Ubuntu 14.04 LTS Server 的主機或 Docker 容器，然後在裡面安裝相依套件：</p>
 <pre><code>sudo apt-get purge openjdk*
 sudo apt-get -y autoremove
 sudo apt-get install -y software-properties-common
@@ -299,50 +298,46 @@ sudo apt-get update
 echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
 echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
 sudo apt-get -y install oracle-java8-installer git
-</code></pre>
-<p>接著安裝 maven 3.3.1 + 工具：</p>
-<pre><code class="language-sh">wget http://ftp.tc.edu.tw/pub/Apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+</code></pre><p>接著安裝 maven 3.3.1 + 工具：</p>
+<pre><code class="sh">wget http://ftp.tc.edu.tw/pub/Apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
 tar -zxf apache-maven-3.3.9-bin.tar.gz
 sudo cp -R apache-maven-3.3.9 /usr/local/
 sudo ln -s /usr/local/apache-maven-3.3.9/bin/mvn /usr/bin/mvn
 mvn --version
 </code></pre>
 <p>安裝 Scala 語言：</p>
-<pre><code class="language-sh">wget www.scala-lang.org/files/archive/scala-2.11.7.deb
+<pre><code class="sh">wget www.scala-lang.org/files/archive/scala-2.11.7.deb
 sudo dpkg -i scala-2.11.7.deb
 </code></pre>
 <p>安裝 sbt 工具：</p>
-<pre><code class="language-sh">echo &quot;deb http://dl.bintray.com/sbt/debian /&quot; | sudo tee /etc/apt/sources.list.d/sbt.list
+<pre><code class="sh">echo &quot;deb http://dl.bintray.com/sbt/debian /&quot; | sudo tee /etc/apt/sources.list.d/sbt.list
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
 sudo apt-get update
 sudo apt-get install sbt
 </code></pre>
 <p>安裝 Python 2.7 語言：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y python
+<pre><code class="sh">$ sudo apt-get install -y python
 </code></pre>
 <p>透過 Git 指令取得 Spark 最新原始碼：</p>
-<pre><code class="language-sh">$ git clone https://github.com/apache/spark.git
+<pre><code class="sh">$ git clone https://github.com/apache/spark.git
 </code></pre>
-<h2><span id="使用-sbt-來建置-spark">使用 sbt 來建置 spark</span></h2>
-<p>sbt 的 spark 建置指令如下所示，若使用 sbt 需要大約 10 分鐘時間：：</p>
-<pre><code class="language-sh">$ ./build/sbt -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Phive -Phive-thriftserver -DskipTests clean assembly
-</code></pre>
-<p>當建置完成後，可以透過 spark-shell 查看版本：</p>
-<pre><code class="language-sh">$ ./bin/spark-shell --version
-</code></pre>
-<h2><span id="使用-apache-maven-來建置-spark">使用 Apache Maven 來建置 spark</span></h2>
-<p>Apache Maven 的 spark 建置指令如下所示:</p>
-<pre><code class="language-sh">$ ./build/mvn -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Phive -Phive-thriftserver -DskipTests clean install
+<h2 id="使用-sbt-來建置-spark"><a href="#使用-sbt-來建置-spark" class="headerlink" title="使用 sbt 來建置 spark"></a>使用 sbt 來建置 spark</h2><p>sbt 的 spark 建置指令如下所示，若使用 sbt 需要大約 10 分鐘時間：：</p>
+<pre><code class="sh">$ ./build/sbt -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Phive -Phive-thriftserver -DskipTests clean assembly
 </code></pre>
 <p>當建置完成後，可以透過 spark-shell 查看版本：</p>
-<pre><code class="language-sh">$ ./bin/spark-shell --version
+<pre><code class="sh">$ ./bin/spark-shell --version
 </code></pre>
-<h2><span id="making-distribution">Making Distribution</span></h2>
-<p><a href="http://make-distribution.sh" target="_blank" rel="noopener">make-distribution.sh</a> 是一個 shell 腳本用於建立分散式應用。它使用跟 sbt 與 mvn 一樣的配置檔案。首先新增 Java 環境參數：</p>
-<pre><code class="language-sh">$ export JAVA_HOME=&quot;/usr/lib/jvm/java-8-oracle&quot;
+<h2 id="使用-Apache-Maven-來建置-spark"><a href="#使用-Apache-Maven-來建置-spark" class="headerlink" title="使用 Apache Maven 來建置 spark"></a>使用 Apache Maven 來建置 spark</h2><p>Apache Maven 的 spark 建置指令如下所示:</p>
+<pre><code class="sh">$ ./build/mvn -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Phive -Phive-thriftserver -DskipTests clean install
+</code></pre>
+<p>當建置完成後，可以透過 spark-shell 查看版本：</p>
+<pre><code class="sh">$ ./bin/spark-shell --version
+</code></pre>
+<h2 id="Making-Distribution"><a href="#Making-Distribution" class="headerlink" title="Making Distribution"></a>Making Distribution</h2><p>make-distribution.sh 是一個 shell 腳本用於建立分散式應用。它使用跟 sbt 與 mvn 一樣的配置檔案。首先新增 Java 環境參數：</p>
+<pre><code class="sh">$ export JAVA_HOME=&quot;/usr/lib/jvm/java-8-oracle&quot;
 </code></pre>
 <p>使用<code>--tgz</code>選項建立一個 tar gz 的 Spark 分散檔案：</p>
-<pre><code class="language-sh">$ ./dev/make-distribution.sh --tgz -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Phive -Phive-thriftserver -DskipTests
+<pre><code class="sh">$ ./dev/make-distribution.sh --tgz -Pyarn -Phadoop-2.6 -Dhadoop.version=2.6.0 -Phive -Phive-thriftserver -DskipTests
 </code></pre>
 <blockquote>
 <p>一旦完成後，你會在當前目錄看到檔案，名稱會是<code>spark-2.0.0-SNAPSHOT-bin-2.6.0.tgz</code>。</p>
@@ -390,7 +385,7 @@ sudo apt-get install sbt
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">使用 sbt 來建置 spark</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">使用 Apache Maven 來建置 spark</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Making Distribution</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#使用-sbt-來建置-spark"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">使用 sbt 來建置 spark</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#使用-Apache-Maven-來建置-spark"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">使用 Apache Maven 來建置 spark</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Making-Distribution"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Making Distribution</span></a></li></ol>
         
         </div>
       </aside>

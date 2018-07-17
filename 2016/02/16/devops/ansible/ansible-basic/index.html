@@ -142,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -289,8 +289,7 @@
 
                 <p>Ansible 是最近越來越夯多 DevOps 自動化組態管理軟體，從 2013 年發起的專案，由於該架構為無 agent 程式的架構，以部署靈活與程式碼易讀而受到矚目。Ansible 除了有開源版本之外，還針對企業用戶推出 Ansible Tower 版本，已有許多知名企業採用，如 Apple、Twitter 等。</p>
 <p>Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與私有雲或 CMDB（組態管理資料庫）中的主機，其中 Ansible 編排是由<code>Inventory(主機與群組規則)</code>、<code>API</code>、<code>Modules(模組)</code>與<code>Plugins(插件)</code>組合而成。</p>
-<center>![](/images/devops/ansible-arch.jpg)</center>
-<a id="more"></a>
+<p><img src="/images/devops/ansible-arch.jpg" alt=""><br><a id="more"></a></p>
 <p><a href="https://github.com/ansible/ansible" target="_blank" rel="noopener">Ansible</a> 與其他管理工具最大差異在於不需要任何 Agent，預設使用 SSH 來做遠端操控與配置，並採用 YAML 格式來描述配置資訊。</p>
 <blockquote>
 <p>Ansible 提供了一個 Playbook 分享平台，可以讓管理與開發者上傳自己的功能與角色配置的 Playbook，該網址為 <a href="https://galaxy.ansible.com/intro" target="_blank" rel="noopener">Ansible Galaxy</a>。</p>
@@ -311,71 +310,64 @@
 <li>Web UI 需要收費。</li>
 <li>官方資料都比較淺顯。</li>
 </ul>
-<h2><span id="ansible-安裝與基本操作">Ansible 安裝與基本操作</span></h2>
-<p>Ansible 有許多種安裝方式，如使用 Github 來透過 Source Code 安裝，也可以透過 python-pip 來安裝，甚至是使用作業系統的套件管理系統安裝，以下使用 Ubuntu APT 來進行安裝：</p>
-<pre><code class="language-sh">$ sudo apt-get install software-properties-common
+<h2 id="Ansible-安裝與基本操作"><a href="#Ansible-安裝與基本操作" class="headerlink" title="Ansible 安裝與基本操作"></a>Ansible 安裝與基本操作</h2><p>Ansible 有許多種安裝方式，如使用 Github 來透過 Source Code 安裝，也可以透過 python-pip 來安裝，甚至是使用作業系統的套件管理系統安裝，以下使用 Ubuntu APT 來進行安裝：</p>
+<pre><code class="sh">$ sudo apt-get install software-properties-common
 $ sudo apt-add-repository ppa:ansible/ansible
 $ sudo apt-get update
 $ sudo apt-get install ansible
 </code></pre>
 <p>也可以使用 Python-pip 來進行安裝：</p>
-<pre><code class="language-sh">$ sudo easy_install pip
+<pre><code class="sh">$ sudo easy_install pip
 $ sudo pip install -U pip
 $ sudo pip install ansible
 </code></pre>
-<h3><span id="節點準備">節點準備</span></h3>
-<p>首先我們要在各節點先安裝 SSH Server ，並配置需要的相關環境：</p>
-<pre><code class="language-sh">$ sudo apt-get install openssh-server
+<h3 id="節點準備"><a href="#節點準備" class="headerlink" title="節點準備"></a>節點準備</h3><p>首先我們要在各節點先安裝 SSH Server ，並配置需要的相關環境：</p>
+<pre><code class="sh">$ sudo apt-get install openssh-server
 </code></pre>
 <p>設定特權模式不需要輸入密碼：</p>
-<pre><code class="language-sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu
+<pre><code class="sh">$ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ubuntu
 $ sudo chmod 440 /etc/sudoers.d/ubuntu
 </code></pre>
 <blockquote>
 <p>這邊 User 為<code>ubuntu</code>，若使用者不一樣請更換。</p>
 </blockquote>
 <p>建立 SSH Key，並複製 Key 使之不用密碼登入：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ ssh-copy-id localhost
 </code></pre>
 <p>新增各節點 Domain name 至<code>/etc/hosts</code>檔案：</p>
-<pre><code class="language-sh">172.16.1.205 ansible-master
+<pre><code class="sh">172.16.1.205 ansible-master
 172.16.1.206 ansible-slave-1
 172.16.1.207 ansible-slave-2
 172.16.1.208 ansible-slave-3
 </code></pre>
 <p>並在 Master 節點複製所有 Slave 的 SSH Key：</p>
-<pre><code class="language-sh">$ ssh-copy-id ubuntu@ansible-slave-1
+<pre><code class="sh">$ ssh-copy-id ubuntu@ansible-slave-1
 $ ssh-copy-id ubuntu@ansible-slave-2
 ...
 </code></pre>
-<h3><span id="設定-invetory-file">設定 Invetory File</span></h3>
-<p>Ansible 能夠在同一時間工作於多個基礎設施的系統中。透過作用於 Ansible 的 Inventory 檔案所列出的主機與群組，該檔案預設被存在<code>/etc/ansible/hosts</code>。</p>
+<h3 id="設定-Invetory-File"><a href="#設定-Invetory-File" class="headerlink" title="設定 Invetory File"></a>設定 Invetory File</h3><p>Ansible 能夠在同一時間工作於多個基礎設施的系統中。透過作用於 Ansible 的 Inventory 檔案所列出的主機與群組，該檔案預設被存在<code>/etc/ansible/hosts</code>。</p>
 <p><code>/etc/ansible/hosts</code> 是一個 INI-like  的檔案格式，如以下內容：</p>
 <pre><code>ansible-slave-1
 ansible-slave-2
 ansible-slave-3
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>也可以建立成 Groups，如以下內容：</p>
-</blockquote>
-<pre><code class="language-sh">[openstack]
+<pre><code class="sh">[openstack]
 ansible-slave-1
 ansible-slave-2
 ansible-slave-3
 </code></pre>
-<blockquote>
 <p>若要參考更多資訊，可看 <a href="http://docs.ansible.com/ansible/intro_inventory.html" target="_blank" rel="noopener">Invetory File</a>。</p>
 </blockquote>
-<h3><span id="基本功能操作">基本功能操作</span></h3>
-<p>Ansible 基本操作如以下指令：</p>
-<pre><code class="language-sh">$ ansible &lt;pattern_goes_here&gt; -m &lt;module_name&gt; -a &lt;arguments&gt;
+<h3 id="基本功能操作"><a href="#基本功能操作" class="headerlink" title="基本功能操作"></a>基本功能操作</h3><p>Ansible 基本操作如以下指令：</p>
+<pre><code class="sh">$ ansible &lt;pattern_goes_here&gt; -m &lt;module_name&gt; -a &lt;arguments&gt;
 </code></pre>
 <blockquote>
 <p><code>&lt;pattern_goes_here&gt;</code>部分可以參考 <a href="http://docs.ansible.com/ansible/intro_patterns.html" target="_blank" rel="noopener">Patterns</a>。</p>
 </blockquote>
 <p>比如我們可以用 Ping 模組來測試是否連線成功：</p>
-<pre><code class="language-sh">$ ansible all -m ping
+<pre><code class="sh">$ ansible all -m ping
 
 ansible-slave-2 | SUCCESS =&gt; {
     &quot;changed&quot;: false,
@@ -394,28 +386,26 @@ ansible-slave-1 | SUCCESS =&gt; {
 <p>其中<code>all</code>為所有 Invetory 的主機，<code>-m</code>為使用的模組。若使用指定的 Inventory 檔案可以使用<code>-i</code>。</p>
 </blockquote>
 <p>也可以執行指定指令：</p>
-<pre><code class="language-sh">$ ansible all -a &quot;/bin/echo hello&quot;
+<pre><code class="sh">$ ansible all -a &quot;/bin/echo hello&quot;
 </code></pre>
 <blockquote>
 <p><code>-a</code> 後面為要執行的指令。</p>
 </blockquote>
 <p>若要指定登入的使用者，且執行特權模式，可以使用以下指令：</p>
-<pre><code class="language-sh">$ ansible all -a &quot;apt-get update&quot; -u vagrant -b
+<pre><code class="sh">$ ansible all -a &quot;apt-get update&quot; -u vagrant -b
 </code></pre>
 <blockquote>
 <p><code>-u</code>為登入使用者，<code>-b</code> 為切換成特權模式（root），早期版本為<code>--sudo</code>。</p>
 </blockquote>
-<h3><span id="主機的-ssh-key-檢查">主機的 SSH Key 檢查</span></h3>
-<p>在 Ansible 1.2.1 與之後的版本預設都需要做主機 SSH key 檢查。</p>
+<h3 id="主機的-SSH-Key-檢查"><a href="#主機的-SSH-Key-檢查" class="headerlink" title="主機的 SSH Key 檢查"></a>主機的 SSH Key 檢查</h3><p>在 Ansible 1.2.1 與之後的版本預設都需要做主機 SSH key 檢查。</p>
 <p>如果一台主機重新安裝或者在 ‘known_hosts’  有不同的 SSH Key 的話，將會導致錯誤發生，但不希望這樣的問題影響 Ansible 使用，可以在 <code>/etc/ansible/ansible.cfg</code> 或者<code>~/.ansible.cfg</code>檔案關閉檢查。</p>
-<pre><code class="language-sh">[defaults]
+<pre><code class="sh">[defaults]
 host_key_checking = False
 </code></pre>
 <p>也可以代替為設定環境變數：</p>
-<pre><code class="language-sh">$ export ANSIBLE_HOST_KEY_CHECKING=False
+<pre><code class="sh">$ export ANSIBLE_HOST_KEY_CHECKING=False
 </code></pre>
-<p>還要注意在 paramiko 模式主機金鑰檢查緩慢是合理的<br>
-，因此建議切換使用 SSH。</p>
+<p>還要注意在 paramiko 模式主機金鑰檢查緩慢是合理的<br>，因此建議切換使用 SSH。</p>
 <p>Ansible 會在遠端系統上記錄有關模組參數的一些資訊存於 syslog，除非該執行任務有標示 ‘no_log: True’。</p>
 
                 
@@ -460,7 +450,7 @@ host_key_checking = False
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Ansible 安裝與基本操作</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">節點準備</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">設定 Invetory File</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">基本功能操作</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">主機的 SSH Key 檢查</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Ansible-安裝與基本操作"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Ansible 安裝與基本操作</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#節點準備"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">節點準備</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#設定-Invetory-File"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">設定 Invetory File</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#基本功能操作"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">基本功能操作</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#主機的-SSH-Key-檢查"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">主機的 SSH Key 檢查</span></a></li></ol></li></ol>
         
         </div>
       </aside>

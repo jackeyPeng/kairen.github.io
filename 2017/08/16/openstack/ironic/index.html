@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -295,15 +295,14 @@
 <ul>
 <li>OpenStack Pike</li>
 <li>DevStack Pike</li>
-<li>Pike Pike Pike …</li>
+<li>Pike Pike Pike ….</li>
 </ul>
 <a id="more"></a>
 <p><img src="/images/openstack/openstack-ironic.png" alt=""></p>
 <blockquote>
 <p>P.S. 這邊因為我的 Manage net 已經有 MAAS 的服務，所以才用其他張網卡進行部署。</p>
 </blockquote>
-<h2><span id="節點資訊">節點資訊</span></h2>
-<p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
+<h2 id="節點資訊"><a href="#節點資訊" class="headerlink" title="節點資訊"></a>節點資訊</h2><p>本次安裝作業系統採用<code>Ubuntu 16.04 Server</code>，測試環境為實體主機：</p>
 <table>
 <thead>
 <tr>
@@ -331,11 +330,10 @@
 <p>網卡若是實體主機，請設定為固定 IP，如以下：</p>
 <pre><code>auto eth0
 iface eth0 inet static
-       	address 172.20.3.93/24
-       	gateway	172.20.3.1
-       	dns-nameservers 8.8.8.8
-</code></pre>
-<blockquote>
+           address 172.20.3.93/24
+           gateway    172.20.3.1
+           dns-nameservers 8.8.8.8
+</code></pre><blockquote>
 <p>若想修改主機的網卡名稱，可以編輯<code>/etc/udev/rules.d/70-persistent-net.rules</code>。</p>
 </blockquote>
 <p>其中<code>controller</code>的<code>eth2</code>需設定為以下：</p>
@@ -343,37 +341,34 @@ iface eth0 inet static
 iface &lt;ethx&gt; inet manual
         up ip link set dev $IFACE up
         down ip link set dev $IFACE down
-</code></pre>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>安裝前需要確認叢集滿足以下幾點：</p>
+</code></pre><h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>安裝前需要確認叢集滿足以下幾點：</p>
 <ul>
 <li>確認所有節點網路可以溝通。</li>
 <li>Bare-node IPMI 設定完成。包含 Address、User 與 Password。</li>
 <li>修改 Controller 的 <code>/etc/apt/sources.list</code>，使用<code>tw.archive.ubuntu.com</code>。</li>
 </ul>
-<h2><span id="安裝-openstack-服務">安裝 OpenStack 服務</span></h2>
-<p>這邊採用 DevStack 來部署測試環境，首先透過以下指令取得 DevStack：</p>
-<pre><code class="language-sh">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+<h2 id="安裝-OpenStack-服務"><a href="#安裝-OpenStack-服務" class="headerlink" title="安裝 OpenStack 服務"></a>安裝 OpenStack 服務</h2><p>這邊採用 DevStack 來部署測試環境，首先透過以下指令取得 DevStack：</p>
+<pre><code class="sh">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
 $ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
 $ sudo su - stack
 $ git clone https://git.openstack.org/openstack-dev/devstack
 $ cd devstack
 </code></pre>
 <p>接著撰寫 local.conf 來描述部署過程所需的服務：</p>
-<pre><code class="language-sh">$ wget https://kairen.github.io/files/devstack/ironic-local.conf -O local.conf
-$ sed -i 's/HOST_IP=.*/HOST_IP=172.22.132.93/g' local.conf
+<pre><code class="sh">$ wget https://kairen.github.io/files/devstack/ironic-local.conf -O local.conf
+$ sed -i &#39;s/HOST_IP=.*/HOST_IP=172.22.132.93/g&#39; local.conf
 </code></pre>
 <blockquote>
 <p><code>HOST_IP</code>請更換為自己環境 IP。有其他 Driver 請記得加入。</p>
 </blockquote>
 <p>完成後執行部署腳本進行建置：</p>
-<pre><code class="language-sh">$ ./stack.sh
+<pre><code class="sh">$ ./stack.sh
 </code></pre>
 <blockquote>
 <p>大約經過 15 min 就可以完成整個環境安裝。</p>
 </blockquote>
 <p>測試 OpenStack 環境：</p>
-<pre><code class="language-sh">$ source openrc admin
+<pre><code class="sh">$ source openrc admin
 $ openstack user list
 +----------------------------------+----------------+
 | ID                               | Name           |
@@ -395,7 +390,7 @@ $ openstack user list
 +----------------------------------+----------------+
 </code></pre>
 <p>測試 ironic 是否正常運行：</p>
-<pre><code class="language-sh">$ ironic driver-list
+<pre><code class="sh">$ ironic driver-list
 +---------------------+----------------+
 | Supported driver(s) | Active host(s) |
 +---------------------+----------------+
@@ -405,8 +400,7 @@ $ openstack user list
 | pxe_ipmitool        | ironic-dev     |
 +---------------------+----------------+
 </code></pre>
-<h3><span id="建立-bare-metal-網路">建立 Bare metal 網路</span></h3>
-<p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="noopener">Configure the Networking service for bare metal provisioning</a>。</p>
+<h3 id="建立-Bare-metal-網路"><a href="#建立-Bare-metal-網路" class="headerlink" title="建立 Bare metal 網路"></a>建立 Bare metal 網路</h3><p>首先我們需要設定一個網路來提供 DHCP, PXE 與其他需求使用，這部分會說明如何建立一個 Flat network 來提供裸機配置用。詳細可參考 <a href="https://docs.openstack.org/ironic/latest/install/configure-networking.html" target="_blank" rel="noopener">Configure the Networking service for bare metal provisioning</a>。</p>
 <p>首先編輯<code>/etc/neutron/plugins/ml2/ml2_conf.ini</code>修改以下內容：</p>
 <pre><code>[ml2_type_flat]
 flat_networks = public, physnet1
@@ -416,17 +410,16 @@ datapath_type = system
 bridge_mappings = public:br-ex, physnet1:br-eth2
 tunnel_bridge = br-tun
 local_ip = 172.22.132.93
-</code></pre>
-<p>接著建立 bridge 來處理實體網路與 OpenStack 之間的溝通：</p>
-<pre><code class="language-sh">$ sudo ovs-vsctl add-br br-eth2
+</code></pre><p>接著建立 bridge 來處理實體網路與 OpenStack 之間的溝通：</p>
+<pre><code class="sh">$ sudo ovs-vsctl add-br br-eth2
 $ sudo ovs-vsctl add-port br-eth2 eth2
 </code></pre>
 <p>完成後重新啟動 Neutron server 與 agent：</p>
-<pre><code class="language-sh">$ sudo systemctl restart devstack@q-svc.service
+<pre><code class="sh">$ sudo systemctl restart devstack@q-svc.service
 $ sudo systemctl restart devstack@q-agt.service
 </code></pre>
 <p>建立完成後，OVS bridges 會類似如下：</p>
-<pre><code class="language-sh">$ sudo ovs-vsctl show
+<pre><code class="sh">$ sudo ovs-vsctl show
 
     Bridge br-int
         fail_mode: secure
@@ -449,7 +442,7 @@ $ sudo systemctl restart devstack@q-agt.service
                 type: internal
 </code></pre>
 <p>接著建立 Neutron flat 網路來提供使用：</p>
-<pre><code class="language-sh">$ neutron net-create sharednet1 \
+<pre><code class="sh">$ neutron net-create sharednet1 \
                      --shared \
                      --provider:network_type flat \
                      --provider:physical_network physnet1
@@ -463,9 +456,8 @@ $ neutron subnet-create sharednet1 172.22.132.0/24 \
 <blockquote>
 <p>P.S. neutron-client 在未來會被移除，故請轉用 <a href="https://docs.openstack.org/install-guide/launch-instance-networks-provider.html" target="_blank" rel="noopener">Provider network</a>。</p>
 </blockquote>
-<h3><span id="設定-ironic-cleaning-network">設定 Ironic cleaning network</span></h3>
-<p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="noopener">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
-<pre><code class="language-sh">$ openstack network list
+<h3 id="設定-Ironic-cleaning-network"><a href="#設定-Ironic-cleaning-network" class="headerlink" title="設定 Ironic cleaning network"></a>設定 Ironic cleaning network</h3><p>當使用到 <a href="http://docs.openstack.org/ironic/latest/admin/cleaning.html#node-cleaning" target="_blank" rel="noopener">Node cleaning</a> 時，我們必須設定<code>cleaning_network</code>選項來提供使用。首先取得 Network 資訊，透過以下指令：</p>
+<pre><code class="sh">$ openstack network list
 +--------------------------------------+------------+----------------------------------------------------------------------------+
 | ID                                   | Name       | Subnets                                                                    |
 +--------------------------------------+------------+----------------------------------------------------------------------------+
@@ -477,25 +469,23 @@ $ neutron subnet-create sharednet1 172.22.132.0/24 \
 <p>編輯<code>/etc/ironic/ironic.conf</code>修改一下內容：</p>
 <pre><code>[neutron]
 cleaning_network = sharednet1
-</code></pre>
-<p>完成後，重新啟動 Ironic 服務：</p>
-<pre><code class="language-sh">$ sudo systemctl restart devstack@ir-api.service
+</code></pre><p>完成後，重新啟動 Ironic 服務：</p>
+<pre><code class="sh">$ sudo systemctl restart devstack@ir-api.service
 $ sudo systemctl restart devstack@ir-cond.service
 </code></pre>
-<h3><span id="建立-deploy-與-user-映像檔">建立 Deploy 與 User 映像檔</span></h3>
-<p>裸機服務在配置時需要兩組映像檔，分別為 <code>Deploy</code> 與 <code>User</code> 映像檔，其功能如下：</p>
+<h3 id="建立-Deploy-與-User-映像檔"><a href="#建立-Deploy-與-User-映像檔" class="headerlink" title="建立 Deploy 與 User 映像檔"></a>建立 Deploy 與 User 映像檔</h3><p>裸機服務在配置時需要兩組映像檔，分別為 <code>Deploy</code> 與 <code>User</code> 映像檔，其功能如下：</p>
 <ul>
 <li><code>Deploy images</code>: 用來準備裸機服務機器以進行實際的作業系統部署，在 Cleaning 等階段會使用到。</li>
 <li><code>User images</code>:最後安裝至裸機服務提供給使用者使用的作業系統映像檔。</li>
 </ul>
 <p>由於 DevStack 預設會建立一組 Deploy 映像檔，這邊只針對 User 映像檔做手動建構說明，若要建構 Deploy 映像檔可以參考 <a href="https://docs.openstack.org/ironic/latest/install/deploy-ramdisk.html#deploy-ramdisk" target="_blank" rel="noopener">Building or downloading a deploy ramdisk image</a>。</p>
 <p>首先我們必須先安裝<code>disk-image-builder</code>工具來提供建構映像檔：</p>
-<pre><code class="language-sh">$ virtualenv dib
+<pre><code class="sh">$ virtualenv dib
 $ source dib/bin/activate
 (dib) $ pip install diskimage-builder
 </code></pre>
 <p>接著執行以下指令來進行建構映像檔：</p>
-<pre><code class="language-sh">$ cat &lt;&lt;EOF &gt; k8s.repo
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; k8s.repo
 [kubernetes]
 name=Kubernetes
 baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
@@ -525,11 +515,11 @@ Converting image using qemu-img convert
 Image file k8s.qcow2 created...
 </code></pre>
 <p>完成後會看到以下檔案：</p>
-<pre><code class="language-sh">$ ls
+<pre><code class="sh">$ ls
 dib  k8s.d  k8s.initrd  k8s.qcow2  k8s.repo  k8s.vmlinuz
 </code></pre>
 <p>上傳至 Glance 以提供使用：</p>
-<pre><code class="language-sh"># 上傳 Kernel
+<pre><code class="sh"># 上傳 Kernel
 $ openstack image create k8s.kernel \
                       --public \
                       --disk-format aki \
@@ -540,8 +530,8 @@ $ openstack image create k8s.initrd \
                       --disk-format ari \
                       --container-format ari &lt; k8s.initrd
 # 上傳 Qcow2
-$ export MY_VMLINUZ_UUID=$(openstack image list | awk '/k8s.kernel/ { print $2 }')
-$ export MY_INITRD_UUID=$(openstack image list | awk '/k8s.initrd/ { print $2 }')
+$ export MY_VMLINUZ_UUID=$(openstack image list | awk &#39;/k8s.kernel/ { print $2 }&#39;)
+$ export MY_INITRD_UUID=$(openstack image list | awk &#39;/k8s.initrd/ { print $2 }&#39;)
 $ openstack image create k8s \
                       --public \
                       --disk-format qcow2 \
@@ -549,9 +539,8 @@ $ openstack image create k8s \
                       --property kernel_id=$MY_VMLINUZ_UUID \
                       --property ramdisk_id=$MY_INITRD_UUID &lt; k8s.qcow2
 </code></pre>
-<h2><span id="建立-ironic-節點">建立 Ironic 節點</span></h2>
-<p>在所有服務配置都完成後，這時候要註冊實體機器資訊，來提供給 Compute 服務部署時使用。首先確認 Ironic 的 Driver 是否有資源機器的 Power driver：</p>
-<pre><code class="language-sh">$ ironic driver-list
+<h2 id="建立-Ironic-節點"><a href="#建立-Ironic-節點" class="headerlink" title="建立 Ironic 節點"></a>建立 Ironic 節點</h2><p>在所有服務配置都完成後，這時候要註冊實體機器資訊，來提供給 Compute 服務部署時使用。首先確認 Ironic 的 Driver 是否有資源機器的 Power driver：</p>
+<pre><code class="sh">$ ironic driver-list
 +---------------------+----------------+
 | Supported driver(s) | Active host(s) |
 +---------------------+----------------+
@@ -565,8 +554,8 @@ $ openstack image create k8s \
 <p>若有缺少的話，請參考 <a href="https://docs.openstack.org/ironic/latest/install/setup-drivers.html" target="_blank" rel="noopener">Set up the drivers for the Bare Metal service</a>。</p>
 </blockquote>
 <p>確認有支援後，透過以下指令來建立 Node，並進行註冊：</p>
-<pre><code class="language-sh">$ export DEPLOY_VMLINUZ_UUID=$(openstack image list | awk '/ipmitool.kernel/ { print $2 }')
-$ export DEPLOY_INITRD_UUID=$(openstack image list | awk '/ipmitool.initramfs/ { print $2 }')
+<pre><code class="sh">$ export DEPLOY_VMLINUZ_UUID=$(openstack image list | awk &#39;/ipmitool.kernel/ { print $2 }&#39;)
+$ export DEPLOY_INITRD_UUID=$(openstack image list | awk &#39;/ipmitool.initramfs/ { print $2 }&#39;)
 $ ironic node-create -d agent_ipmitool \
                      -n bare-node-1 \
                      -i ipmi_address=172.20.3.194 \
@@ -580,7 +569,7 @@ $ ironic node-create -d agent_ipmitool \
 <p>若使用 Console 的話，要加入<code>-i ipmi_terminal_port=9000</code>，可參考 <a href="https://docs.openstack.org/ironic/latest/admin/console.html" target="_blank" rel="noopener">Configuring Web or Serial Console</a>。</p>
 </blockquote>
 <p>接著更新機器資訊，這邊透過手動方式來更新資訊：</p>
-<pre><code class="language-sh">$ export NODE_UUID=$(ironic node-list | awk '/bare-node-1/ { print $2 }')
+<pre><code class="sh">$ export NODE_UUID=$(ironic node-list | awk &#39;/bare-node-1/ { print $2 }&#39;)
 $ ironic node-update $NODE_UUID add \
                      properties/cpus=4 \
                      properties/memory_mb=8192 \
@@ -598,24 +587,23 @@ dhcp-match=ipxe,175
 dhcp-boot=tag:!ipxe,undionly.kpxe
 dhcp-boot=tag:ipxe,http://172.22.132.93:3928/ironic-inspector.ipxe
 dhcp-sequential-ip
-</code></pre>
-<blockquote>
-<p>完成後，透過 systemctl 重新啟動背景服務<code>devstack@ironic-inspector-dhcp.service</code>與<code>devstack@ironic-inspector.service</code>。</p>
+</code></pre><blockquote>
+<p>完成後，透過 systemctl 重新啟動背景服務<a href="mailto:`devstack@ironic-inspector-dhcp.service" target="_blank" rel="noopener">`devstack@ironic-inspector-dhcp.service</a><code>與</code><a href="mailto:devstack@ironic-inspector.service" target="_blank" rel="noopener">devstack@ironic-inspector.service</a>`。</p>
 </blockquote>
 <p>透過 port create 來把 Node 的所有網路資訊進行註冊：</p>
-<pre><code class="language-sh">$ ironic port-create -n $NODE_UUID -a NODE_MAC_ADDRESS
+<pre><code class="sh">$ ironic port-create -n $NODE_UUID -a NODE_MAC_ADDRESS
 </code></pre>
 <blockquote>
 <p>這邊<code>NODE_MAC_ADDRESS</code>是指<code>bare-node-1</code>節點的 PXE(eth1)網卡 Mac Address，如 54:a0:50:85:d5:fa。</p>
 </blockquote>
 <p>完成後透過 validate 指令來檢查：</p>
-<pre><code class="language-sh">$ ironic node-validate $NODE_UUID
+<pre><code class="sh">$ ironic node-validate $NODE_UUID
 +------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Interface  | Result | Reason                                                                                                                                                                                                |
 +------------+--------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| boot       | False  | Cannot validate image information for node 8e6fd86a-8eed-4e24-a510-3f5ebb0a336a because one or more parameters are missing from its instance_info. Missing are: ['ramdisk', 'kernel', 'image_source'] |
-| console    | False  | Missing 'ipmi_terminal_port' parameter in node\'s driver_info.                                                                                                                                         |
-| deploy     | False  | Cannot validate image information for node 8e6fd86a-8eed-4e24-a510-3f5ebb0a336a because one or more parameters are missing from its instance_info. Missing are: ['ramdisk', 'kernel', 'image_source'] |
+| boot       | False  | Cannot validate image information for node 8e6fd86a-8eed-4e24-a510-3f5ebb0a336a because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
+| console    | False  | Missing &#39;ipmi_terminal_port&#39; parameter in node\&#39;s driver_info.                                                                                                                                         |
+| deploy     | False  | Cannot validate image information for node 8e6fd86a-8eed-4e24-a510-3f5ebb0a336a because one or more parameters are missing from its instance_info. Missing are: [&#39;ramdisk&#39;, &#39;kernel&#39;, &#39;image_source&#39;] |
 | inspect    | True   |                                                                                                                                                                                                       |
 | management | True   |                                                                                                                                                                                                       |
 | network    | True   |                                                                                                                                                                                                       |
@@ -628,7 +616,7 @@ dhcp-sequential-ip
 <p>P.S. 這邊<code>boot</code>與<code>deploy</code>的錯誤若是如上所示的話，可以直接忽略，這是因為使用 Nova 來管理 baremetal 會出現的問題。</p>
 </blockquote>
 <p>最後利用 provision 指令來測試節點是否能夠提供服務：</p>
-<pre><code class="language-sh">$ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID manage
+<pre><code class="sh">$ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID manage
 $ ironic --ironic-api-version 1.34 node-set-provision-state $NODE_UUID provide
 $ ironic node-list
 +--------------------------------------+--------+---------------+-------------+--------------------+-------------+
@@ -641,21 +629,20 @@ $ ironic node-list
 <p>這時候機器會進行 clean 過程，經過一點時間就會完成，若順利完成則該節點就可以進行部署了。若要了解細節狀態，可以參考 <a href="https://docs.openstack.org/ironic/latest/contributor/states.html" target="_blank" rel="noopener">Ironic’s State Machine</a>。</p>
 </blockquote>
 <p><img src="/images/openstack/ironic-clean.png" alt=""></p>
-<h2><span id="透過-nova-部署-baremetal-機器">透過 Nova 部署 baremetal 機器</span></h2>
-<p>最後我們要透過 Nova API 來部署裸機，在開始前要建立一個 flavor 跟上傳 keypair 來提供使用：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<h2 id="透過-Nova-部署-baremetal-機器"><a href="#透過-Nova-部署-baremetal-機器" class="headerlink" title="透過 Nova 部署 baremetal 機器"></a>透過 Nova 部署 baremetal 機器</h2><p>最後我們要透過 Nova API 來部署裸機，在開始前要建立一個 flavor 跟上傳 keypair 來提供使用：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ openstack keypair create --public-key ~/.ssh/id_rsa.pub default
 $ openstack flavor create --vcpus 4 --ram 8192 --disk 100 baremetal.large
 </code></pre>
 <p>完成後，即可透過以下指令進行部署：</p>
-<pre><code class="language-sh">$ NET_ID=$(openstack network list | awk '/sharednet1/ { print $2 }')
+<pre><code class="sh">$ NET_ID=$(openstack network list | awk &#39;/sharednet1/ { print $2 }&#39;)
 $ openstack server create --flavor baremetal.large \
                           --nic net-id=$NET_ID \
                           --image k8s \
                           --key-name default k8s-01
 </code></pre>
 <p>經過一段時間後，就會看到部署完成，這時候可以透過以下指令來確認部署結果：</p>
-<pre><code class="language-sh">$ openstack server list
+<pre><code class="sh">$ openstack server list
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
 | ID                                   | Name   | Status | Networks                  | Image | Flavor          |
 +--------------------------------------+--------+--------+---------------------------+-------+-----------------+
@@ -670,7 +657,7 @@ $ openstack baremetal list
 +--------------------------------------+--------+--------------------------------------+-------------+--------------------+-------------+
 </code></pre>
 <p>最後透過 ssh 來進入部署機器來建立應用：</p>
-<pre><code class="language-sh">$ ssh kyle@172.22.132.187
+<pre><code class="sh">$ ssh kyle@172.22.132.187
 [kyle@host-172-22-132-187 ~]$ sudo systemctl start kubelet.service
 [kyle@host-172-22-132-187 ~]$ sudo systemctl start docker.service
 [kyle@host-172-22-132-187 ~]$ sudo kubeadm init --service-cidr 10.96.0.0/12 \
@@ -682,8 +669,7 @@ $ openstack baremetal list
 <blockquote>
 <p>整合<code>Magnum</code>有空再寫，先簡單玩玩吧。</p>
 </blockquote>
-<p>若是懶人可以用 Dashboard 來部署，另外本教學的 DevStack 有使用 Ironic UI，因此可以在以下頁面看到 node 資訊。<br>
-<img src="/images/openstack/ironic-ui.png" alt=""></p>
+<p>若是懶人可以用 Dashboard 來部署，另外本教學的 DevStack 有使用 Ironic UI，因此可以在以下頁面看到 node 資訊。<br><img src="/images/openstack/ironic-ui.png" alt=""></p>
 
                 
 
@@ -727,7 +713,7 @@ $ openstack baremetal list
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝 OpenStack 服務</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Bare metal 網路</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">設定 Ironic cleaning network</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">建立 Deploy 與 User 映像檔</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">建立 Ironic 節點</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">透過 Nova 部署 baremetal 機器</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點資訊"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點資訊</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-OpenStack-服務"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">安裝 OpenStack 服務</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Bare-metal-網路"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">建立 Bare metal 網路</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#設定-Ironic-cleaning-network"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">設定 Ironic cleaning network</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#建立-Deploy-與-User-映像檔"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">建立 Deploy 與 User 映像檔</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立-Ironic-節點"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">建立 Ironic 節點</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#透過-Nova-部署-baremetal-機器"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">透過 Nova 部署 baremetal 機器</span></a></li></ol>
         
         </div>
       </aside>

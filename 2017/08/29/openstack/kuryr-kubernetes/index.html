@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -294,13 +294,11 @@
 <a id="more"></a>
 <p>Kuryr-Kubernetes 整合有兩個主要組成部分：</p>
 <ol>
-<li><strong>Kuryr Controller</strong>:<br>
-Controller 主要目的是監控 Kubernetes API 的來獲取 Kubernetes 資源的變化，然後依據 Kubernetes 資源的需求來執行子資源的分配和資源管理。</li>
+<li><strong>Kuryr Controller</strong>:<br>Controller 主要目的是監控 Kubernetes API 的來獲取 Kubernetes 資源的變化，然後依據 Kubernetes 資源的需求來執行子資源的分配和資源管理。</li>
 <li><strong>Kuryr CNI</strong>：主要是依據 Kuryr Controller 分配的資源來綁定網路至 Pods 上。</li>
 </ol>
 <p>本篇我們將說明如何利用<code>DevStack</code>與<code>Kubespray</code>建立一個簡單的測試環境。</p>
-<h2><span id="環境資源與事前準備">環境資源與事前準備</span></h2>
-<p>準備兩台實體機器，這邊測試的作業系統為<code>CentOS 7.x</code>，該環境將在扁平的網路下進行。</p>
+<h2 id="環境資源與事前準備"><a href="#環境資源與事前準備" class="headerlink" title="環境資源與事前準備"></a>環境資源與事前準備</h2><p>準備兩台實體機器，這邊測試的作業系統為<code>CentOS 7.x</code>，該環境將在扁平的網路下進行。</p>
 <table>
 <thead>
 <tr>
@@ -320,26 +318,25 @@ Controller 主要目的是監控 Kubernetes API 的來獲取 Kubernetes 資源�
 </tbody>
 </table>
 <p>更新每台節點的 CentOS 7.x packages:</p>
-<pre><code class="language-shell=">$ sudo yum --enablerepo=cr update -y
+<pre><code class="shell=">$ sudo yum --enablerepo=cr update -y
 </code></pre>
 <p>然後關閉 firewalld 以及 SELinux 來避免實現發生問題：</p>
-<pre><code class="language-shell=">$ sudo setenforce 0
+<pre><code class="shell=">$ sudo setenforce 0
 $ sudo systemctl disable firewalld &amp;&amp; sudo systemctl stop firewalld
 </code></pre>
-<h2><span id="openstack-controller-安裝">OpenStack Controller 安裝</span></h2>
-<p>首先進入<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
+<h2 id="OpenStack-Controller-安裝"><a href="#OpenStack-Controller-安裝" class="headerlink" title="OpenStack Controller 安裝"></a>OpenStack Controller 安裝</h2><p>首先進入<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
 <p>然後執行以下指令來建立 DevStack 專用使用者：</p>
-<pre><code class="language-shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+<pre><code class="shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
 $ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
 </code></pre>
 <blockquote>
 <p>選用 DevStack 是因為現在都是用 Systemd 來管理服務，不用再用 screen 了，雖然都很方便。</p>
 </blockquote>
 <p>接著切換至該使用者環境來建立 OpenStack：</p>
-<pre><code class="language-shell=">$ sudo su - stack
+<pre><code class="shell=">$ sudo su - stack
 </code></pre>
 <p>下載 DevStack 安裝套件：</p>
-<pre><code class="language-shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
+<pre><code class="shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
 $ cd devstack
 </code></pre>
 <p>新增<code>local.conf</code>檔案，來描述部署資訊：</p>
@@ -353,28 +350,25 @@ RABBIT_PASSWORD=passwd
 SERVICE_PASSWORD=passwd
 SERVICE_TOKEN=passwd
 MULTI_HOST=1
-</code></pre>
-<blockquote>
-<p>[color=#fc9fca]Tips:<br>
-修改 HOST_IP 為自己的 IP 位置。</p>
+</code></pre><blockquote>
+<p>[color=#fc9fca]Tips:<br>修改 HOST_IP 為自己的 IP 位置。</p>
 </blockquote>
 <p>完成後，執行以下指令開始部署：</p>
-<pre><code class="language-shell=">$ ./stack.sh
+<pre><code class="shell=">$ ./stack.sh
 </code></pre>
-<h2><span id="openstack-compute-安裝">Openstack Compute 安裝</span></h2>
-<p>進入到<code>172.24.0.80（compute）</code>，並且執行以下指令。</p>
+<h2 id="Openstack-Compute-安裝"><a href="#Openstack-Compute-安裝" class="headerlink" title="Openstack Compute 安裝"></a>Openstack Compute 安裝</h2><p>進入到<code>172.24.0.80（compute）</code>，並且執行以下指令。</p>
 <p>然後執行以下指令來建立 DevStack 專用使用者：</p>
-<pre><code class="language-shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
+<pre><code class="shell=">$ sudo useradd -s /bin/bash -d /opt/stack -m stack
 $ echo &quot;stack ALL=(ALL) NOPASSWD: ALL&quot; | sudo tee /etc/sudoers.d/stack
 </code></pre>
 <blockquote>
 <p>選用 DevStack 是因為現在都是用 Systemd 來管理服務，不用再用 screen 了，雖然都很方便。</p>
 </blockquote>
 <p>接著切換至該使用者環境來建立 OpenStack：</p>
-<pre><code class="language-shell=">$ sudo su - stack
+<pre><code class="shell=">$ sudo su - stack
 </code></pre>
 <p>下載 DevStack 安裝套件：</p>
-<pre><code class="language-shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
+<pre><code class="shell=">$ git clone https://git.openstack.org/openstack-dev/devstack
 $ cd devstack
 </code></pre>
 <p>新增<code>local.conf</code>檔案，來描述部署資訊：</p>
@@ -398,30 +392,26 @@ NOVA_VNC_ENABLED=True
 NOVNCPROXY_URL=&quot;http://$SERVICE_HOST:6080/vnc_auto.html&quot;
 VNCSERVER_LISTEN=$HOST_IP
 VNCSERVER_PROXYCLIENT_ADDRESS=$VNCSERVER_LISTEN
-</code></pre>
-<blockquote>
-<p>Tips:<br>
-修改 HOST_IP 為自己的主機位置。<br>
-修改 SERVICE_HOST 為 Master 的IP位置。</p>
+</code></pre><blockquote>
+<p>Tips:<br>修改 HOST_IP 為自己的主機位置。<br>修改 SERVICE_HOST 為 Master 的IP位置。</p>
 </blockquote>
 <p>完成後，執行以下指令開始部署：</p>
-<pre><code class="language-shell=">$ ./stack.sh
+<pre><code class="shell=">$ ./stack.sh
 </code></pre>
-<h2><span id="建立-kubernetes-叢集環境">建立 Kubernetes 叢集環境</span></h2>
-<p>首先確認所有節點之間不需要 SSH 密碼即可登入，接著進入到<code>172.24.0.34（k8s-master）</code>並且執行以下指令。</p>
+<h2 id="建立-Kubernetes-叢集環境"><a href="#建立-Kubernetes-叢集環境" class="headerlink" title="建立 Kubernetes 叢集環境"></a>建立 Kubernetes 叢集環境</h2><p>首先確認所有節點之間不需要 SSH 密碼即可登入，接著進入到<code>172.24.0.34（k8s-master）</code>並且執行以下指令。</p>
 <p>接著安裝所需要的套件：</p>
-<pre><code class="language-shell=">$ sudo yum -y install software-properties-common ansible git gcc python-pip python-devel libffi-devel openssl-devel
+<pre><code class="shell=">$ sudo yum -y install software-properties-common ansible git gcc python-pip python-devel libffi-devel openssl-devel
 $ sudo pip install -U kubespray
 </code></pre>
 <p>完成後，新增 kubespray 設定檔：</p>
-<pre><code class="language-shell=">$ cat &lt;&lt;EOF &gt;  ~/.kubespray.yml
+<pre><code class="shell=">$ cat &lt;&lt;EOF &gt;  ~/.kubespray.yml
 kubespray_git_repo: &quot;https://github.com/kubernetes-incubator/kubespray.git&quot;
 # Logging options
 loglevel: &quot;info&quot;
 EOF
 </code></pre>
 <p>然後利用 kubespray-cli 快速產生環境的<code>inventory</code>檔，並修改部分內容：</p>
-<pre><code class="language-shell=">$ sudo -i
+<pre><code class="shell=">$ sudo -i
 $ kubespray prepare --masters master --etcds master --nodes node1
 </code></pre>
 <p>編輯<code>/root/.kubespray/inventory/inventory.cfg</code>，修改以下內容：</p>
@@ -442,12 +432,11 @@ master
 [k8s-cluster:children]
 kube-node1
 kube-master
-</code></pre>
-<p>完成後，即可利用 kubespray-cli 指令來進行部署：</p>
-<pre><code class="language-shell=">$ kubespray deploy --verbose -u root -k .ssh/id_rsa -n calico
+</code></pre><p>完成後，即可利用 kubespray-cli 指令來進行部署：</p>
+<pre><code class="shell=">$ kubespray deploy --verbose -u root -k .ssh/id_rsa -n calico
 </code></pre>
 <p>經過一段時間後就會部署完成，這時候檢查節點是否正常：</p>
-<pre><code class="language-shell=">$ kubectl get no
+<pre><code class="shell=">$ kubectl get no
 NAME      STATUS         AGE       VERSION
 master    Ready,master   2m        v1.7.4
 node1     Ready          2m        v1.7.4
@@ -455,22 +444,19 @@ node1     Ready          2m        v1.7.4
 <p>接著為了方便讓 Kuryr Controller 簡單取得 K8s API Server，這邊修改<code>/etc/kubernetes/manifests/kube-apiserver.yml</code>檔案，加入以下內容：</p>
 <pre><code>- &quot;--insecure-bind-address=0.0.0.0&quot;
 - &quot;--insecure-port=8080&quot;
-</code></pre>
-<blockquote>
-<p>Tips:<br>
-將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
+</code></pre><blockquote>
+<p>Tips:<br>將 insecure 綁定到 0.0.0.0 之上，以及開啟 8080 Port。</p>
 </blockquote>
-<h2><span id="安裝-openstack-kuryr">安裝 Openstack Kuryr</span></h2>
-<p>進入到<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
+<h2 id="安裝-Openstack-Kuryr"><a href="#安裝-Openstack-Kuryr" class="headerlink" title="安裝 Openstack Kuryr"></a>安裝 Openstack Kuryr</h2><p>進入到<code>172.24.0.34（controller）</code>，並且執行以下指令。</p>
 <p>首先在節點安裝所需要的套件：</p>
-<pre><code class="language-shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel install python-pip
+<pre><code class="shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel install python-pip
 </code></pre>
 <p>然後下載 kuryr-kubernetes 並進行安裝：</p>
-<pre><code class="language-shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
+<pre><code class="shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
 $ pip install -e kuryr-kubernetes
 </code></pre>
 <p>新增<code>kuryr.conf</code>至<code>/etc/kuryr</code>目錄：</p>
-<pre><code class="language-shell=">$ cd kuryr-kubernetes
+<pre><code class="shell=">$ cd kuryr-kubernetes
 $ ./tools/generate_config_file_samples.sh
 $ sudo mkdir -p /etc/kuryr/
 $ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
@@ -506,21 +492,19 @@ pod_security_groups = {id_of_secuirity_group_for_pods}
 pod_subnet = {id_of_subnet_for_pods}
 project = {id_of_project}
 service_subnet = {id_of_subnet_for_k8s_services}
+</code></pre><p>完成後執行 kuryr-k8s-controller：</p>
+<pre><code class="shell=">$ kuryr-k8s-controller --config-file /etc/kuryr/kuryr.conf
 </code></pre>
-<p>完成後執行 kuryr-k8s-controller：</p>
-<pre><code class="language-shell=">$ kuryr-k8s-controller --config-file /etc/kuryr/kuryr.conf
-</code></pre>
-<h2><span id="安裝-kuryr-cni">安裝 Kuryr-CNI</span></h2>
-<p>進入到<code>172.24.0.80（node1）</code>並且執行以下指令。</p>
+<h2 id="安裝-Kuryr-CNI"><a href="#安裝-Kuryr-CNI" class="headerlink" title="安裝 Kuryr-CNI"></a>安裝 Kuryr-CNI</h2><p>進入到<code>172.24.0.80（node1）</code>並且執行以下指令。</p>
 <p>首先在節點安裝所需要的套件：</p>
-<pre><code class="language-shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel python-pip
+<pre><code class="shell=">$ sudo yum -y install  gcc libffi-devel python-devel openssl-devel python-pip
 </code></pre>
 <p>然後安裝 Kuryr-CNI 來提供給 kubelet 使用：</p>
-<pre><code class="language-shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
+<pre><code class="shell=">$ git clone http://git.openstack.org/openstack/kuryr-kubernetes
 $ sudo pip install -e kuryr-kubernetes
 </code></pre>
 <p>新增<code>kuryr.conf</code>至<code>/etc/kuryr</code>目錄：</p>
-<pre><code class="language-shell=">$ cd kuryr-kubernetes
+<pre><code class="shell=">$ cd kuryr-kubernetes
 $ ./tools/generate_config_file_samples.sh
 $ sudo mkdir -p /etc/kuryr/
 $ sudo cp etc/kuryr.conf.sample /etc/kuryr/kuryr.conf
@@ -531,9 +515,8 @@ use_stderr = true
 bindir = /usr/local/libexec/kuryr
 [kubernetes]
 api_root = http://172.24.0.34:8080
-</code></pre>
-<p>建立 CNI bin 與 Conf 目錄：</p>
-<pre><code class="language-shell=">$ sudo mkdir -p /opt/cni/bin
+</code></pre><p>建立 CNI bin 與 Conf 目錄：</p>
+<pre><code class="shell=">$ sudo mkdir -p /opt/cni/bin
 $ sudo ln -s $(which kuryr-cni) /opt/cni/bin/
 $ sudo mkdir -p /etc/cni/net.d/
 </code></pre>
@@ -545,17 +528,13 @@ $ sudo mkdir -p /etc/cni/net.d/
     &quot;kuryr_conf&quot;: &quot;/etc/kuryr/kuryr.conf&quot;,
     &quot;debug&quot;: true
 }
-</code></pre>
-<p>完成後，更新 oslo 與 vif python 函式庫：</p>
-<pre><code class="language-shell=">
-$ sudo pip install 'oslo.privsep&gt;=1.20.0' 'os-vif&gt;=1.5.0'
+</code></pre><p>完成後，更新 oslo 與 vif python 函式庫：</p>
+<pre><code class="shell=">$ sudo pip install &#39;oslo.privsep&gt;=1.20.0&#39; &#39;os-vif&gt;=1.5.0&#39;
 </code></pre>
 <p>最後重新啟動相關服務：</p>
-<pre><code>sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet.service
+<pre><code class="shell=">$ sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet.service
 </code></pre>
-<h2><span id="測試結果">測試結果</span></h2>
-<p>我們這邊開一個 Pod 與 OpenStack VM 來進行溝通：<br>
-<img src="https://i.imgur.com/UYXdKud.png" alt=""></p>
+<h2 id="測試結果"><a href="#測試結果" class="headerlink" title="測試結果"></a>測試結果</h2><p>我們這邊開一個 Pod 與 OpenStack VM 來進行溝通：<br><img src="https://i.imgur.com/UYXdKud.png" alt=""></p>
 <p><img src="https://i.imgur.com/dwoEytW.png" alt=""></p>
 
                 
@@ -600,7 +579,7 @@ $ sudo pip install 'oslo.privsep&gt;=1.20.0' 'os-vif&gt;=1.5.0'
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境資源與事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">OpenStack Controller 安裝</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Openstack Compute 安裝</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">建立 Kubernetes 叢集環境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">安裝 Openstack Kuryr</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">安裝 Kuryr-CNI</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">測試結果</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#環境資源與事前準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境資源與事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#OpenStack-Controller-安裝"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">OpenStack Controller 安裝</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Openstack-Compute-安裝"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Openstack Compute 安裝</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立-Kubernetes-叢集環境"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">建立 Kubernetes 叢集環境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Openstack-Kuryr"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">安裝 Openstack Kuryr</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝-Kuryr-CNI"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">安裝 Kuryr-CNI</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試結果"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">測試結果</span></a></li></ol>
         
         </div>
       </aside>

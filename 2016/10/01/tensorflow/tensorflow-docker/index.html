@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -290,11 +290,10 @@
                 post-container">
 
                 <p>本篇主要整理使用 Docker 來執行 TensorFlow 的一些問題，這邊 Google 官方已經提供了相關的映像檔提供使用，因此會簡單說明安裝過程與需求。</p>
-<center>![](/images/tf/docker-tf.png)</center>
+<p><img src="/images/tf/docker-tf.png" alt=""></p>
 <a id="more"></a>
-<br>
-## 環境準備
-環境採用 Ubuntu 16.04 Desktop 作業系統，然後顯卡是撿朋友不要的來使用，環境硬體資源如下：
+<p><br></p>
+<h2 id="環境準備"><a href="#環境準備" class="headerlink" title="環境準備"></a>環境準備</h2><p>環境採用 Ubuntu 16.04 Desktop 作業系統，然後顯卡是撿朋友不要的來使用，環境硬體資源如下：</p>
 <table>
 <thead>
 <tr>
@@ -317,18 +316,17 @@
 </tr>
 </tbody>
 </table>
-<h2><span id="事前準備">事前準備</span></h2>
-<p>開始進行 TensorFlow on Docker 之前，需要確認環境已經安裝以下驅動與軟體等。</p>
+<h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始進行 TensorFlow on Docker 之前，需要確認環境已經安裝以下驅動與軟體等。</p>
 <ul>
 <li>系統安裝了 Docker Engine：</li>
 </ul>
-<pre><code class="language-sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
+<pre><code class="sh">$ curl -fsSL &quot;https://get.docker.com/&quot; | sh
 $ sudo iptables -P FORWARD ACCEPT
 </code></pre>
 <ul>
 <li>安裝最新版本 NVIDIA Driver 軟體：</li>
 </ul>
-<pre><code class="language-sh">$ sudo add-apt-repository -y ppa:graphics-drivers/ppa
+<pre><code class="sh">$ sudo add-apt-repository -y ppa:graphics-drivers/ppa
 $ sudo apt-get update
 $ sudo apt-get install -y nvidia-367
 $ sudo dpkg -l | grep nvidia-367
@@ -337,7 +335,7 @@ $ sudo dpkg -l | grep nvidia-367
 <ul>
 <li>編譯與安裝 nvidia-modprobe：</li>
 </ul>
-<pre><code class="language-sh">$ sudo apt-get install -y m4
+<pre><code class="sh">$ sudo apt-get install -y m4
 $ git clone &quot;https://github.com/NVIDIA/nvidia-modprobe.git&quot;
 $ cd nvidia-modprobe
 $ make &amp;&amp; sudo make install
@@ -346,7 +344,7 @@ $ sudo nvidia-modprobe -u -c=0
 <ul>
 <li>安裝 Nvidia Docker Plugin:</li>
 </ul>
-<pre><code class="language-sh">$ wget -P /tmp &quot;https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb&quot;
+<pre><code class="sh">$ wget -P /tmp &quot;https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.1/nvidia-docker_1.0.1-1_amd64.deb&quot;
 $ sudo dpkg -i /tmp/nvidia-docker*.deb &amp;&amp; rm /tmp/nvidia-docker*.deb
 $ sudo systemctl start nvidia-docker.service
 $ sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
@@ -366,9 +364,8 @@ $ sudo nvidia-docker run --rm nvidia/cuda nvidia-smi
 |  GPU       PID  Type  Process name                               Usage      |
 |=============================================================================|
 </code></pre>
-<h2><span id="利用-docker-執行-tensorflow">利用 Docker 執行 TensorFlow</span></h2>
-<p>TensorFlow on Docker 官方已經提供了相關映像檔，這邊透過單一指令就可以取得該映像檔，並啟動提供使用，以下為只有 CPU 的版本：</p>
-<pre><code class="language-sh">$ docker run -d -p 8888:8888 --name tf-cpu tensorflow/tensorflow
+<h2 id="利用-Docker-執行-TensorFlow"><a href="#利用-Docker-執行-TensorFlow" class="headerlink" title="利用 Docker 執行 TensorFlow"></a>利用 Docker 執行 TensorFlow</h2><p>TensorFlow on Docker 官方已經提供了相關映像檔，這邊透過單一指令就可以取得該映像檔，並啟動提供使用，以下為只有 CPU 的版本：</p>
+<pre><code class="sh">$ docker run -d -p 8888:8888 --name tf-cpu tensorflow/tensorflow
 $ docker logs tf-cpu
 ...
 to login with a token:
@@ -378,22 +375,21 @@ to login with a token:
 <p>這時候就可以登入 <a href="http://localhost:8888" target="_blank" rel="noopener">Jupyter notebook</a>，這邊登入需要<code>token</code>後面的值。</p>
 </blockquote>
 <p>若要支援 GPU(CUDA) 的容器的話，可以透過以下指令來提供：</p>
-<pre><code class="language-sh">$ nvidia-docker run -d -p 8888:8888 --name tf-gpu tensorflow/tensorflow:latest-gpu
+<pre><code class="sh">$ nvidia-docker run -d -p 8888:8888 --name tf-gpu tensorflow/tensorflow:latest-gpu
 $ docker logs tf-cpu
 </code></pre>
 <blockquote>
 <p>其他版本可以參考 <a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="noopener">tags</a>。</p>
 </blockquote>
-<h2><span id="利用-docker-提供-serving">利用 Docker 提供 Serving</span></h2>
-<p>TensorFlow Serving 是靈活、高效能的機器學習模型服務系統，是專門為生產環境而設計的，它可以很簡單部署新的演算法與實驗來提供同樣的架構與 API 進行服務。</p>
+<h2 id="利用-Docker-提供-Serving"><a href="#利用-Docker-提供-Serving" class="headerlink" title="利用 Docker 提供 Serving"></a>利用 Docker 提供 Serving</h2><p>TensorFlow Serving 是靈活、高效能的機器學習模型服務系統，是專門為生產環境而設計的，它可以很簡單部署新的演算法與實驗來提供同樣的架構與 API 進行服務。</p>
 <p>首先我們下載官方寫好的 <a href="https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel" target="_blank" rel="noopener">Dockerfile </a> 來進行建置：</p>
-<pre><code class="language-sh">$ mkdir serving &amp;&amp; cd serving
+<pre><code class="sh">$ mkdir serving &amp;&amp; cd serving
 $ wget &quot;https://raw.githubusercontent.com/tensorflow/serving/master/tensorflow_serving/tools/docker/Dockerfile.devel&quot;
-$ sed -i 's/BAZEL_VERSION.*0.4.2/BAZEL_VERSION 0.4.5/g' Dockerfile.devel
+$ sed -i &#39;s/BAZEL_VERSION.*0.4.2/BAZEL_VERSION 0.4.5/g&#39; Dockerfile.devel
 $ docker build --pull -t kyle/serving:0.1.0 -f Dockerfile.devel .
 </code></pre>
 <p>建置完成映像檔後，透過以下指令執行，並在容器內建置 Serving：</p>
-<pre><code class="language-sh">$ docker run -itd --name=tf-serving kyle/serving:0.1.0
+<pre><code class="sh">$ docker run -itd --name=tf-serving kyle/serving:0.1.0
 $ docker exec -ti tf-serving bash
 root@459a89a3cf5a$ git clone --recurse-submodules &quot;https://github.com/tensorflow/serving&quot;
 root@459a89a3cf5a$ cd serving/tensorflow
@@ -401,15 +397,15 @@ root@459a89a3cf5a$ ./configure
 root@459a89a3cf5a$ cd .. &amp;&amp; bazel build -c opt tensorflow_serving/...
 </code></pre>
 <p>當建置完 Serving 後，就可以透過以下指令來確認是否正確：</p>
-<pre><code class="language-sh">root@459a89a3cf5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
+<pre><code class="sh">root@459a89a3cf5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
 usage: bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server
 Flags:
-	--port=8500                      	int32	port to listen on
-	--enable_batching=false
+    --port=8500                          int32    port to listen on
+    --enable_batching=false
 ...
 </code></pre>
 <p>接著使用 Inception v3 模型來提供服務，透過以下步驟來完成：</p>
-<pre><code class="language-sh">root@459a89a3cf5a$ curl -O &quot;http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz&quot;
+<pre><code class="sh">root@459a89a3cf5a$ curl -O &quot;http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz&quot;
 root@459a89a3cf5a$ tar xzf inception-v3-2016-03-01.tar.gz
 root@459a89a3cf5a$ ls inception-v3
 README.txt  checkpoint  model.ckpt-157585
@@ -421,19 +417,19 @@ root@459a89a3cf5a$ ls inception-export
 1
 </code></pre>
 <p>當完成匯入後離開容器，並 commit 成新版本映像檔：</p>
-<pre><code class="language-sh">$ docker commit tf-serving kyle/serving-inception:0.1.0
+<pre><code class="sh">$ docker commit tf-serving kyle/serving-inception:0.1.0
 $ docker images
 REPOSITORY               TAG                 IMAGE ID            CREATED             SIZE
 kyle/serving-inception   0.1.0               1d866ff60d38        3 minutes ago       5.55 GB
 </code></pre>
 <p>接著執行剛 commit 的映像檔，並啟動 Serving 服務：</p>
-<pre><code class="language-sh">$ docker run -it kyle/serving-inception:0.1.0
+<pre><code class="sh">$ docker run -it kyle/serving-inception:0.1.0
 root@5b9a89eeef5a$ cd serving
 root@5b9a89eeef5a$ bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server --port=9000 --model_name=inception --model_base_path=inception-export &amp;&gt; inception_log &amp;
 [1] 15
 </code></pre>
 <p>最後透過 <code>inception_client.py</code> 來測試功能：</p>
-<pre><code class="language-sh">root@5b9a89eeef5a$ curl &quot;https://s-media-cache-ak0.pinimg.com/736x/32/00/3b/32003bd128bebe99cb8c655a9c0f00f5.jpg&quot; --output rabbit.jpg
+<pre><code class="sh">root@5b9a89eeef5a$ curl &quot;https://s-media-cache-ak0.pinimg.com/736x/32/00/3b/32003bd128bebe99cb8c655a9c0f00f5.jpg&quot; --output rabbit.jpg
 root@5b9a89eeef5a$ bazel-bin/tensorflow_serving/example/inception_client --server=localhost:9000 --image=rabbit.jpg
 
 outputs {
@@ -518,7 +514,7 @@ outputs {
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">利用 Docker 執行 TensorFlow</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">利用 Docker 提供 Serving</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#環境準備"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">環境準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#事前準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">事前準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#利用-Docker-執行-TensorFlow"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">利用 Docker 執行 TensorFlow</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#利用-Docker-提供-Serving"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">利用 Docker 提供 Serving</span></a></li></ol>
         
         </div>
       </aside>

@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,26 +291,25 @@
 
                 <p>Bcache 是按照固態硬碟特性來設計的技術，只按擦除 Bucket 的大小進行分配，並使用 btree 和 journal 混合方法來追蹤快取資料，快取資料可以是 Bucket 上的任意一個 Sector。Bcache 最大程度上減少了隨機寫入的代價，它按循序的方式填充一個 Bucket，重新使用時只需將 Bucket 設置為無效即可。Bcache 也支援了類似 Flashcache 的快取策略，如write-back、write-through 與 write-around。</p>
 <a id="more"></a>
-<h2><span id="安裝與設定">安裝與設定</span></h2>
-<p>首先要先安裝 bcache-tools，這邊採用 ubuntu 的<code>apt-get</code>來進行安裝：</p>
-<pre><code class="language-sh">$ sudo add-apt-repository ppa:g2p/storage
+<h2 id="安裝與設定"><a href="#安裝與設定" class="headerlink" title="安裝與設定"></a>安裝與設定</h2><p>首先要先安裝 bcache-tools，這邊採用 ubuntu 的<code>apt-get</code>來進行安裝：</p>
+<pre><code class="sh">$ sudo add-apt-repository ppa:g2p/storage
 $ sudo apt-get update
 $ sudo apt-get install -y bcache-tools
 </code></pre>
 <p>完成安裝後，要準備一顆 SSD 與 HDD，並安裝於同一台主機上，如以下硬碟結構：</p>
-<pre><code class="language-sh">+-------+----------+       +--------+---------+       
+<pre><code class="sh">+-------+----------+       +--------+---------+       
 | [ 固態硬碟(SSD)]  |       |  [ 傳統硬碟(HDD)]  |       
 |  System   disk   +-------+  System   disk   +
 |    (/dev/sdb)    |       |    (/dev/sdc)    |
 +------------------+       +------------------+
 </code></pre>
 <p>當確認以上都沒問題後，即可用 bcache 指令來建立快取，首先建立後端儲存裝置：</p>
-<pre><code class="language-sh">$ sudo make-bcache -B /dev/sdc
-UUID:			3b62c662-c739-4621-aca3-80efbf5e1da2
-Set UUID:		67828232-2427-46d3-a473-e92e1f213f87
-version:		1
-block_size:		1
-data_offset:		16
+<pre><code class="sh">$ sudo make-bcache -B /dev/sdc
+UUID:            3b62c662-c739-4621-aca3-80efbf5e1da2
+Set UUID:        67828232-2427-46d3-a473-e92e1f213f87
+version:        1
+block_size:        1
+data_offset:        16
 </code></pre>
 <blockquote>
 <ul>
@@ -321,27 +320,27 @@ data_offset:		16
 <li><code>--writeback</code>為使用 writeback 模式，預設為 writethrough。</li>
 </ul>
 <p>P.S 如果有任何錯誤，請使用以下指令：</p>
-<pre><code class="language-sh">$ sudo wipefs -a /dev/sdb
+<pre><code class="sh">$ sudo wipefs -a /dev/sdb
 </code></pre>
 </blockquote>
 <p>之後在透過指令建立快取儲存裝置，如以下：</p>
-<pre><code class="language-sh">$ sudo make-bcache --block 4k --bucket 2M -C /dev/sdb -B /dev/sdc --wipe-bcache
-UUID:			192dfaf6-fd2a-4246-b4be-f159c3346850
-Set UUID:		ed865522-96a7-43e5-8dab-e8c024fe85db
-version:		0
-nbuckets:		228946
-block_size:		1
-bucket_size:		1024
-nr_in_set:		1
-nr_this_dev:		0
-first_bucket:		1
+<pre><code class="sh">$ sudo make-bcache --block 4k --bucket 2M -C /dev/sdb -B /dev/sdc --wipe-bcache
+UUID:            192dfaf6-fd2a-4246-b4be-f159c3346850
+Set UUID:        ed865522-96a7-43e5-8dab-e8c024fe85db
+version:        0
+nbuckets:        228946
+block_size:        1
+bucket_size:        1024
+nr_in_set:        1
+nr_this_dev:        0
+first_bucket:        1
 </code></pre>
 <p>完成後，可以用<code>bcache-super-show</code>指令確認是否有建立，並取得 UUID：</p>
-<pre><code class="language-sh">$ sudo bcache-super-show /dev/sdb | grep cset.uuid
-cset.uuid		b6295aac-34c3-4630-8872-9aa18618daea
+<pre><code class="sh">$ sudo bcache-super-show /dev/sdb | grep cset.uuid
+cset.uuid        b6295aac-34c3-4630-8872-9aa18618daea
 </code></pre>
 <p>也可以用其他指令查看儲存建立狀況：</p>
-<pre><code class="language-sh">$ lsblk
+<pre><code class="sh">$ lsblk
 NAME      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
 sda         8:0    0 232.9G  0 disk
 └─sda1      8:1    0 232.9G  0 part /
@@ -351,16 +350,16 @@ sdc         8:32   0 465.8G  0 disk
 └─bcache0 251:0    0 465.8G  0 disk
 </code></pre>
 <p>接著將快取儲存裝置附加到後端儲存裝置：</p>
-<pre><code class="language-sh">$ echo &quot;&lt;cset.uuid&gt;&quot; &gt; /sys/block/bcache0/bcache/attach
+<pre><code class="sh">$ echo &quot;&lt;cset.uuid&gt;&quot; &gt; /sys/block/bcache0/bcache/attach
 </code></pre>
 <blockquote>
 <p><code>bcache0</code>會隨建立的不同而改變。</p>
 </blockquote>
 <p>之後可以依需求設定 cache mode，透過以下方式：</p>
-<pre><code class="language-sh">$ echo writeback &gt; /sys/block/bcache0/bcache/cache_mode
+<pre><code class="sh">$ echo writeback &gt; /sys/block/bcache0/bcache/cache_mode
 </code></pre>
 <p>一切完成後，可以透過以下方式來檢查 Cache 狀態：</p>
-<pre><code class="language-sh">$ cat /sys/block/bcache0/bcache/state
+<pre><code class="sh">$ cat /sys/block/bcache0/bcache/state
 clean
 </code></pre>
 <blockquote>
@@ -371,9 +370,8 @@ clean
 <li><code>inconsistent</code>：這表示後端是不被同步的高速快取儲存裝置。記得換爛一點。</li>
 </ul>
 </blockquote>
-<h2><span id="測試寫入速度">測試寫入速度</span></h2>
-<p>這邊採用 Linux 的 dd 工具來看寫入速度：</p>
-<pre><code class="language-sh">$ dd if=/dev/zero of=/dev/bcache0 bs=1G count=1 oflag=direct
+<h2 id="測試寫入速度"><a href="#測試寫入速度" class="headerlink" title="測試寫入速度"></a>測試寫入速度</h2><p>這邊採用 Linux 的 dd 工具來看寫入速度：</p>
+<pre><code class="sh">$ dd if=/dev/zero of=/dev/bcache0 bs=1G count=1 oflag=direct
 </code></pre>
 
                 
@@ -383,7 +381,7 @@ clean
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/07/21/openstack/kolla-ansible/" data-toggle="tooltip" data-placement="top" title="OpenStack Kolla 初體驗">&larr; Previous Post</a>
+                            <a href="/2016/07/17/data-engineer/spark-perf/" data-toggle="tooltip" data-placement="top" title="Databricks spark-perf Benchmark">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -418,7 +416,7 @@ clean
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">測試寫入速度</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#安裝與設定"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#測試寫入速度"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">測試寫入速度</span></a></li></ol>
         
         </div>
       </aside>

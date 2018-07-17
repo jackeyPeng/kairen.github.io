@@ -144,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -291,8 +291,7 @@
 
                 <p>Pacemaker 與 Corosync 是 Linux 中現今較常用的高可靠性叢集系統組合。Pacemaker 自身提供了很多常用的應用管理功能，不過若要使用 Pacemaker 來管理自己實作的服務，或是一些特別的東西時，就必須要自己實作管理資源。</p>
 <a id="more"></a>
-<h2><span id="節點配置">節點配置</span></h2>
-<p>本安裝將使用三台實體主機與一台虛擬機器，主機規格如以下所示：</p>
+<h2 id="節點配置"><a href="#節點配置" class="headerlink" title="節點配置"></a>節點配置</h2><p>本安裝將使用三台實體主機與一台虛擬機器，主機規格如以下所示：</p>
 <table>
 <thead>
 <tr>
@@ -314,13 +313,12 @@
 <blockquote>
 <p>作業系統皆為 <code>Ubuntu 14.04 Server</code>。</p>
 </blockquote>
-<h2><span id="進行安裝與設定">進行安裝與設定</span></h2>
-<p>首先要在所有節點之間設定無密碼 ssh 登入，透過以下方式：</p>
-<pre><code class="language-sh">$ ssh-keygen -t rsa
+<h2 id="進行安裝與設定"><a href="#進行安裝與設定" class="headerlink" title="進行安裝與設定"></a>進行安裝與設定</h2><p>首先要在所有節點之間設定無密碼 ssh 登入，透過以下方式：</p>
+<pre><code class="sh">$ ssh-keygen -t rsa
 $ ssh-copy-id pacemaker1
 </code></pre>
 <p>安裝相關套件軟體：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y corosync pacemaker heartbeat resource-agents fence-agents apache2
+<pre><code class="sh">$ sudo apt-get install -y corosync pacemaker heartbeat resource-agents fence-agents apache2
 </code></pre>
 <p>完成後，在<code>pacemaker1</code>進行以下步驟，首先編輯<code>/etc/corosync/corosync.conf</code>設定檔，修改一下內容：</p>
 <pre><code># Please read the openais.conf.5 manual page
@@ -406,24 +404,23 @@ service {
     ver: 1
     name: pacemaker
 }
-</code></pre>
-<p>接著產生節點之間的溝通時的認證金鑰文件：</p>
-<pre><code class="language-sh">$ corosync-keygen -l
+</code></pre><p>接著產生節點之間的溝通時的認證金鑰文件：</p>
+<pre><code class="sh">$ corosync-keygen -l
 </code></pre>
 <p>然後將設定檔與金鑰複製到<code>pacemaker2</code>上：</p>
-<pre><code class="language-sh">$ cd /etc/corosync/
+<pre><code class="sh">$ cd /etc/corosync/
 $ scp -p corosync.conf authkey pacemaker2:/etc/corosync/
 </code></pre>
 <p>接著分別在<code>兩個</code>節點上編輯<code>/etc/default/corosync</code>檔案，修改以下：</p>
-<pre><code class="language-sh"># start corosync at boot [yes|no]
+<pre><code class="sh"># start corosync at boot [yes|no]
 START=yes
 </code></pre>
 <p>接著將 Corosync 與 Pacemaker 服務啟動：</p>
-<pre><code class="language-sh">$ sudo service corosync start
+<pre><code class="sh">$ sudo service corosync start
 $ sudo service pacemaker start
 </code></pre>
 <p>完成後透過 crm 指令來查看狀態：</p>
-<pre><code class="language-sh">$ crm status
+<pre><code class="sh">$ crm status
 
 Last updated: Tue Dec 27 03:12:07 2016
 Last change: Tue Dec 27 02:35:18 2016 via cibadmin on pacemaker1
@@ -437,23 +434,22 @@ Version: 1.1.10-42f2063
 Online: [ pacemaker1 pacemaker2 ]
 </code></pre>
 <p>關閉 corosync 預設啟動的 stonith 與 quorum 在兩台節點之問題：</p>
-<pre><code class="language-sh">$ crm configure property stonith-enabled=false
+<pre><code class="sh">$ crm configure property stonith-enabled=false
 $ crm configure property no-quorum-policy=ignore
 </code></pre>
 <p>完成後，透過指令檢查：</p>
-<pre><code class="language-sh">$ crm configure show
+<pre><code class="sh">$ crm configure show
 
 node $id=&quot;739255050&quot; pacemaker1
 node $id=&quot;739255051&quot; pacemaker2
 property $id=&quot;cib-bootstrap-options&quot; \
-	dc-version=&quot;1.1.10-42f2063&quot; \
-	cluster-infrastructure=&quot;corosync&quot; \
-	stonith-enabled=&quot;false&quot; \
-	no-quorum-policy=&quot;ignore&quot;
+    dc-version=&quot;1.1.10-42f2063&quot; \
+    cluster-infrastructure=&quot;corosync&quot; \
+    stonith-enabled=&quot;false&quot; \
+    no-quorum-policy=&quot;ignore&quot;
 </code></pre>
-<h2><span id="設定資源">設定資源</span></h2>
-<p>Corosync 支援了多種資源代理，如 heartbeat、LSB(Linux Standard Base)與 OCF(Open Cluster Framework) 等。而 Corosync 也可以透過指令來查詢：</p>
-<pre><code class="language-sh">$ crm ra classes
+<h2 id="設定資源"><a href="#設定資源" class="headerlink" title="設定資源"></a>設定資源</h2><p>Corosync 支援了多種資源代理，如 heartbeat、LSB(Linux Standard Base)與 OCF(Open Cluster Framework) 等。而 Corosync 也可以透過指令來查詢：</p>
+<pre><code class="sh">$ crm ra classes
 
 lsb
 ocf / heartbeat pacemaker redhat
@@ -463,13 +459,13 @@ upstart
 </code></pre>
 <blockquote>
 <p>而更細部的資訊可以透過以下查詢：</p>
-</blockquote>
-<pre><code class="language-sh">$ crm ra list lsb
+<pre><code class="sh">$ crm ra list lsb
 $ crm ra list ocf heartbeat
 $ crm ra info ocf:heartbeat:IPaddr
 </code></pre>
+</blockquote>
 <p>首先新增一個 heartbeat 資源：</p>
-<pre><code class="language-shell">$ crm configure
+<pre><code class="shell">$ crm configure
 # 設定 VIP
 crm(live)configure# primitive vip ocf:heartbeat:IPaddr params ip=172.16.35.20 nic=eth2 cidr_netmask=24 op monitor interval=10s timeout=20s on-fail=restart
 
@@ -479,10 +475,10 @@ crm(live)configure# exit
 There are changes pending. Do you want to commit them? yes
 </code></pre>
 <p>設定 Group 來將 httpd 與 vip 資源放一起：</p>
-<pre><code class="language-sh">crm(live)configure# group webservice vip httpd
+<pre><code class="sh">crm(live)configure# group webservice vip httpd
 </code></pre>
 <p>完成後，透過 crm 指令查詢狀態：</p>
-<pre><code class="language-sh">$ crm status
+<pre><code class="sh">$ crm status
 
 Last updated: Tue Dec 27 03:52:21 2016
 Last change: Tue Dec 27 03:52:20 2016 via cibadmin on pacemaker1
@@ -496,8 +492,8 @@ Version: 1.1.10-42f2063
 Online: [ pacemaker1 pacemaker2 ]
 
  Resource Group: webservice
-     vip	(ocf::heartbeat:IPaddr):	Started pacemaker1
-     httpd	(lsb:apache2):	Started pacemaker2
+     vip    (ocf::heartbeat:IPaddr):    Started pacemaker1
+     httpd    (lsb:apache2):    Started pacemaker2
 </code></pre>
 <p>最後就可以在<code>pacemaker1</code>或<code>pacemaker2</code>關閉服務來確認是否正常執行。</p>
 
@@ -543,7 +539,7 @@ Online: [ pacemaker1 pacemaker2 ]
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">進行安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">設定資源</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#節點配置"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">節點配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#進行安裝與設定"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">進行安裝與設定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#設定資源"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">設定資源</span></a></li></ol>
         
         </div>
       </aside>

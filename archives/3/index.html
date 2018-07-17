@@ -132,14 +132,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -284,6 +284,38 @@
 
 <div class="post-preview">
 
+    <a href="/2017/08/29/openstack/kuryr-kubernetes/">
+        <h2 class="post-title">
+            利用 Kuryr 整合 OpenStack 與 Kubernetes 網路
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Kubernetes Kuryr 是 OpenStack Neutron 的子專案，其主要目標是透過該專案來整合 OpenStack 與 Kubernetes 的網路。該專案在 Kubernetes 中實作了原生 Neutron-based 的網路，因此使用 Kuryr-Kubernetes 可以讓你的 OpenStack VM 與 Kubernetes Pods 能夠選擇在同一個子網路上運......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2017-08-29
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#OpenStack" title="OpenStack">OpenStack</a>
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2017/08/16/openstack/ironic/">
         <h2 class="post-title">
             利用 OpenStack Ironic 提供裸機部署服務
@@ -399,8 +431,7 @@ Kubernetes v1.7.2(2017-08-07......
             Browser Solidity 是一個 Web-based 的 Solidity 編譯器與 IDE。本節將說明如何安裝於 Linux 與 Docker 中。
 這邊可以連結官方的 https://ethereum.github.io/browser-solidity 來使用; 該網站會是該專案的最新版本預覽。
 
-Ubuntu Server 手動安裝
-首先安裝 Browser Solidity......
+Ubuntu Server 手動安裝首先安裝 Browser Solidity ......
         </div>
     </a>
     
@@ -437,8 +468,7 @@ Ubuntu Server 手動安裝
             Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。
 這邊可以連結官方的 https://ethstats.net/ 來查看主節點網路的狀態。
 
-Ubuntu Server 手動安裝
-本部分說明如何手動安裝 et......
+Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
         </div>
     </a>
     
@@ -451,8 +481,6 @@ Ubuntu Server 手動安裝
               <a href="/tags/#Ethereum" title="Ethereum">Ethereum</a>
             
               <a href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
-            
-              <a href="/tags/#Go lang" title="Go lang">Go lang</a>
             
         </div>
     
@@ -483,8 +511,6 @@ Ubuntu Server 手動安裝
               <a href="/tags/#Ethereum" title="Ethereum">Ethereum</a>
             
               <a href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
-            
-              <a href="/tags/#Go lang" title="Go lang">Go lang</a>
             
         </div>
     
@@ -535,9 +561,12 @@ Ubuntu Server 手動安裝
         </h3>
         <div class="post-content-preview">
             LinuxKit 是 DockerCon 2017 中推出的工具之一，其主要是以 Container 來建立最小、不可變的 Linux 作業系統映像檔框架，Docker 公司一直透過 LinuxKit 來建立相關產品，如 Docker for Mac 等。由於要最快的了解功能，因此這邊透過建立簡單的映像檔來學習。
-![](/images/docker/linux-kit.png)
 
-在開始前......
+
+在開始前需要準備完成一些事情：
+
+安裝 Git client。
+安裝 Do......
         </div>
     </a>
     
@@ -586,43 +615,6 @@ Ubuntu Server 手動安裝
               <a href="/tags/#Machine Learning" title="Machine Learning">Machine Learning</a>
             
               <a href="/tags/#Ubuntu" title="Ubuntu">Ubuntu</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2017/03/25/kubernetes/helm-quickstart/">
-        <h2 class="post-title">
-            Kuberentes Helm 介紹
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Helm 是 Kubernetes Chart 的管理工具，Kubernetes Chart 是一套預先組態的 Kubernetes 資源套件。使用 Helm 有以下幾個好處：
-
-查詢與使用熱門的 Kubernetes Chart 軟體套件。
-以 Kuberntes Chart 來分享自己的應用程式。
-可利用 Chart 來重複建立應用程式。
-智能地管理 Kubernetes manifes......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2017-03-25
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Helm" title="Helm">Helm</a>
             
         </div>
     
@@ -736,6 +728,10 @@ Ubuntu Server 手動安裝
     <ul>
       
         <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
@@ -751,10 +747,6 @@ Ubuntu Server 手動安裝
           <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
-        <li>
-          <a href="/2018/06/10/devops/prometheus-intro/">Prometheus 介紹與基礎入門</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -766,8 +758,6 @@ Ubuntu Server 手動安裝
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
         
@@ -795,6 +785,10 @@ Ubuntu Server 手動安裝
         
             
             <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            
+        
+            
+        
             
         
             
@@ -836,8 +830,6 @@ Ubuntu Server 手動安裝
             
         
             
-        
-            
             <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
@@ -852,7 +844,9 @@ Ubuntu Server 手動安裝
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="30">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            
+        
             
         
             

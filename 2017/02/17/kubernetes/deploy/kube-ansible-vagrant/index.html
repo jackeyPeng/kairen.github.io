@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          使用 HAProxy 進行負載平衡 - KaiRen&#39;s Blog
+          kube-ansible 快速部署 HA 測試環境 - KaiRen&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://kairen.github.io/2016/03/28/linux/ubuntu/haproxy/">
+    <link rel="canonical" href="https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -86,16 +86,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
+                              <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
                             
-                              <a class="tag" href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                              <a class="tag" href="/tags/#Ansible" title="Ansible">Ansible</a>
                             
                         </div>
-                        <h1>使用 HAProxy 進行負載平衡</h1>
+                        <h1>kube-ansible 快速部署 HA 測試環境</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by Kyle Bai on
-                            2016-03-28
+                            2017-02-17
                         </span>
                     </div>
                 
@@ -142,14 +144,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -287,114 +289,119 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>HAProxy 提供了高可靠性、負載平衡（Load Balancing）、基於 TCP 以及 HTTP 的應用程式代理，更支援了虛擬機的使用。HAProxy 是一個開放式原始碼，免費、快速以及非常可靠，根據官方測試結果，該軟體最高能夠支援到 10G 的並行傳輸，因此特別適合使用在負載很大的 Web 伺服器，且這些伺服器通常需要保持 Session 或者 Layer 7 網路的處理，但這些都可以使用 HAProxy 來完成。</p>
-<p>HAProxy 具有以下幾個優點：</p>
+                <p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
+<p>kube-ansible 提供了以下幾項功能：</p>
 <ul>
-<li>開放式原始碼，因此免費，且穩定性高</li>
-<li>能夠負荷 10G 網路的並行傳輸</li>
-<li>支援連線拒絕功能</li>
-<li>支援全透明化的代理</li>
-<li>擁有內建的監控狀態儀表板</li>
-<li>支援虛擬機的使用</li>
+<li>Kubernetes 1.8.0+.</li>
+<li>Ceph on Kubernetes cluster.</li>
+<li>Common addons.</li>
 </ul>
 <a id="more"></a>
-<h3><span id="haproxy-安裝">HAProxy 安裝</span></h3>
-<p>本教學會使用到一台 Proxy 節點與兩台 Web 節點，如下：</p>
-<table>
-<thead>
-<tr>
-<th>IP Address</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>172.17.0.2</td>
-<td>proxy</td>
-</tr>
-<tr>
-<td>172.17.0.3</td>
-<td>web-1</td>
-</tr>
-<tr>
-<td>172.17.0.4</td>
-<td>web-2</td>
-</tr>
-</tbody>
-</table>
-<p>本篇採用 Ubuntu 作業系統，因此可透過 apt 直接安裝，以下範例是在 Ubuntu Server 環境中操作：</p>
-<pre><code class="language-sh">$ sudo apt-get install software-properties-common python-software-properties
-$ sudo apt-add-repository ppa:vbernat/haproxy-1.5
-$ sudo apt-get update
-$ sudo apt-get install haproxy
+<p>而在 OS 部分以支援<code>Ubuntu 16.x</code>及<code>CentOS 7.x</code>的虛擬機與實體機部署。未來會以 Python 工具形式來提供使用。</p>
+<h2 id="快速開始"><a href="#快速開始" class="headerlink" title="快速開始"></a>快速開始</h2><p>kube-ansible 支援了 Vagrant 腳本來快速提供 VirtualBox 環境，若想單一主機模擬 Kubernetes 叢集的話，主機需要安裝以下軟體工具：</p>
+<ul>
+<li><a href="https://www.vagrantup.com/downloads.html" target="_blank" rel="noopener">Vagrant</a> &gt;= 1.7.0</li>
+<li><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">VirtualBox</a> &gt;= 5.0.0</li>
+</ul>
+<p>當主機確認安裝完成後，即可透過 Git 下載最新版本程式，並使用<code>setup-vagrant</code>腳本：</p>
+<pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
+$ cd kube-ansible
+$ ./tools/setup -h
+Usage : setup-vagrant [options]
+
+ -b|--boss         Number of master.
+ -w|--worker       Number of worker.
+ -c|--cpu          Number of cores per vm.
+ -m|--memory       Memory size per vm.
+ -p|--provider     Virtual machine provider(virtualbox, libvirt).
+ -o|--os-image     Virtual machine operation system(ubuntu16, centos7).
+ -i|--interface    Network bind interface.
+ -n|--network      Container Network plugin.
+ -f|--force        Force deployment.
+ --combine-master  Combine number of worker into masters.
+ --combine-etcd    Combine number of worker into etcds.
 </code></pre>
-<blockquote>
-<p>若要安裝其他版本，可以修改成以下：</p>
-<pre><code class="language-sh">sudo apt-add-repository ppa:vbernat/haproxy-1.6
+<p>這邊執行以下指令來建立三台 Master 與三台 Node 的環境：</p>
+<pre><code class="sh">$ ./tools/setup -m 2048 -n calico -i eth1
+Cluster Size: 1 master, 2 worker.
+     VM Size: 1 vCPU, 2048 MB
+     VM Info: ubuntu16, virtualbox
+         CNI: calico, Binding iface: eth1
+Start deploying?(y): y
 </code></pre>
-</blockquote>
-<h3><span id="haproxy-設定">HAProxy 設定</span></h3>
-<p>完成安裝後，要透過編輯<code>/etc/haproxy/haproxy.cfg</code>設定檔來配置 Proxy：</p>
-<pre><code class="language-sh">global
-	log /dev/log	local0
-	log /dev/log	local1 notice
-	chroot /var/lib/haproxy
-	stats socket /run/haproxy/admin.sock mode 660 level admin
-	stats timeout 30s
-	user haproxy
-	group haproxy
-	daemon
-        maxconn 1024
-
-	ca-base /etc/ssl/certs
-	crt-base /etc/ssl/private
-
-	ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
-	ssl-default-bind-options no-sslv3
-
-defaults
-	log	global
-	mode	http
-	option	httplog
-	option	dontlognull
-        timeout connect 5000
-        timeout client  50000
-        timeout server  50000
-	errorfile 400 /etc/haproxy/errors/400.http
-	errorfile 403 /etc/haproxy/errors/403.http
-	errorfile 408 /etc/haproxy/errors/408.http
-	errorfile 500 /etc/haproxy/errors/500.http
-	errorfile 502 /etc/haproxy/errors/502.http
-	errorfile 503 /etc/haproxy/errors/503.http
-	errorfile 504 /etc/haproxy/errors/504.http
-
-frontend nginxs_proxy
-    bind 172.17.0.2:80
-    mode http
-    default_backend nginx_servers
-
-backend nginx_servers
-    mode http
-    balance roundrobin
-    option forwardfor
-    http-request set-header X-Forwarded-Port %[dst_port]
-    http-request add-header X-Forwarded-Proto https if { ssl_fc }
-    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
-    server web1 172.17.0.3:80 check cookie s1
-    server web2 172.17.0.4:80 check cookie s2
-
-listen haproxy_stats
-    bind 0.0.0.0:8080
-    stats enable
-    stats hide-version
-    stats refresh 30s
-    stats show-node
-    stats auth username:password
-    stats uri  /stats
+<p>執行後需要等一點時間，當完成後就可以進入任何一台 Master 進行操作：</p>
+<pre><code class="sh">$ kubectl -n kube-system get po
+NAME                                        READY     STATUS    RESTARTS   AGE
+calico-node-657hv                           2/2       Running   0          57s
+calico-node-gmd8b                           2/2       Running   0          57s
+calico-node-w7nj8                           2/2       Running   0          57s
+calico-policy-controller-55dfcd9c69-t8s8z   1/1       Running   0          57s
+haproxy-master1                             1/1       Running   0          22s
+haproxy-node2                               1/1       Running   0          1m
+keepalived-master1                          1/1       Running   0          30s
+keepalived-node2                            1/1       Running   0          1m
+kube-apiserver-master1                      1/1       Running   0          23s
+kube-apiserver-node2                        1/1       Running   0          1m
+kube-controller-manager-master1             1/1       Running   0          17s
+kube-controller-manager-node2               1/1       Running   0          1m
+kube-dns-6cb549f55f-8mgsd                   3/3       Running   0          46s
+kube-proxy-l54d7                            1/1       Running   0          1m
+kube-proxy-rm4nn                            1/1       Running   0          1m
+kube-proxy-tvfs7                            1/1       Running   0          1m
+kube-scheduler-master1                      1/1       Running   0          39s
+kube-scheduler-node2                        1/1       Running   0          1m
 </code></pre>
-<p>完成設定後，需重啟服務：</p>
-<pre><code class="language-sh">$ sudo service haproxy restart
+<p>這樣一個 HA 叢集就部署完成了，可以試著將一台 Master 關閉來驗證可靠性，若 Master 是三台的話，即表示可容忍最多一台故障。</p>
+<h2 id="簡單部署-Nginx-服務"><a href="#簡單部署-Nginx-服務" class="headerlink" title="簡單部署 Nginx 服務"></a>簡單部署 Nginx 服務</h2><p>當完成部署後，可以透過簡單的應用程式部署來驗證系統是否正常運作：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; deploy.yml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+EOF
+
+$ kubectl create -f deploy.yml
+$ kubectl get po
+NAME                     READY     STATUS    RESTARTS   AGE
+nginx-4087004473-g6635   1/1       Running   0          15s
 </code></pre>
+<p>然後透過建置 Service 來提供外部存取 Nginx HTTP 伺服器服務：</p>
+<pre><code class="sh">$ cat &lt;&lt;EOF &gt; service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    nodePort: 30000
+  selector:
+    app: nginx
+EOF
+
+$ kubectl create -f service.yml
+$ kubectl get svc
+NAME            CLUSTER-IP        EXTERNAL-IP   PORT(S)        AGE
+kubernetes      192.160.0.1       &lt;none&gt;        443/TCP        15m
+nginx-service   192.173.165.220   &lt;nodes&gt;       80:30000/TCP   11s
+</code></pre>
+<p>由於範例使用 NodePort 的類型，所以任何一台節點都可以透過 TCP 30000 Port 來存取服務，包含 VIP 172.16.35.9 也可以存取。</p>
+<p>最後，我們可以關閉 master1 來測試是否有 HA 效果。</p>
 
                 
 
@@ -403,12 +410,12 @@ listen haproxy_stats
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2016/03/29/linux/ubuntu/keepalived/" data-toggle="tooltip" data-placement="top" title="利用 Keepalived 提供 VIP">&larr; Previous Post</a>
+                            <a href="/2017/02/19/kubernetes/deploy/kube-ansible-baremetal/" data-toggle="tooltip" data-placement="top" title="kube-ansible 快速部署實體機 HA 叢集">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/2016/02/24/kubernetes/deploy/official-ansible/" data-toggle="tooltip" data-placement="top" title="透過官方 Ansible 部署 Kubernetes(Unrecommended)">Next Post &rarr;</a>
+                            <a href="/2016/12/16/kubernetes/deploy/manual-v1.6/" data-toggle="tooltip" data-placement="top" title="Kubernetes v1.6.x 全手動苦工安裝教學">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -438,7 +445,7 @@ listen haproxy_stats
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">HAProxy 安裝</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">HAProxy 設定</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#快速開始"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">快速開始</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#簡單部署-Nginx-服務"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">簡單部署 Nginx 服務</span></a></li></ol>
         
         </div>
       </aside>
@@ -458,9 +465,11 @@ listen haproxy_stats
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Linux" title="Linux">Linux</a>
+                          <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
                         
-                          <a class="tag" href="/tags/#Load Balancer" title="Load Balancer">Load Balancer</a>
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                          <a class="tag" href="/tags/#Ansible" title="Ansible">Ansible</a>
                         
                     </div>
                 </section>
@@ -489,8 +498,8 @@ listen haproxy_stats
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "k2r2bai";
-    var disqus_identifier = "https://kairen.github.io/2016/03/28/linux/ubuntu/haproxy/";
-    var disqus_url = "https://kairen.github.io/2016/03/28/linux/ubuntu/haproxy/";
+    var disqus_identifier = "https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/";
+    var disqus_url = "https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

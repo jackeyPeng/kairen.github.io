@@ -90,8 +90,6 @@
                             
                               <a class="tag" href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
                             
-                              <a class="tag" href="/tags/#Go lang" title="Go lang">Go lang</a>
-                            
                         </div>
                         <h1>監控 Go Ethereum 的區塊鏈狀況</h1>
                         <h2 class="subheading"></h2>
@@ -144,14 +142,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -292,38 +290,33 @@
                 <p>Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。</p>
 <p>這邊可以連結官方的 <a href="https://ethstats.net/" target="_blank" rel="noopener">https://ethstats.net/</a> 來查看主節點網路的狀態。</p>
 <a id="more"></a>
-<h3><span id="ubuntu-server-手動安裝">Ubuntu Server 手動安裝</span></h3>
-<p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
+<h3 id="Ubuntu-Server-手動安裝"><a href="#Ubuntu-Server-手動安裝" class="headerlink" title="Ubuntu Server 手動安裝"></a>Ubuntu Server 手動安裝</h3><p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
 <ul>
 <li><a href="#monitoring-site">Monitoring site</a></li>
 <li><a href="#client-side">Client side</a></li>
 </ul>
-<h4><span id="monitoring-site">Monitoring site</span></h4>
-<p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y make g++ git
+<h4 id="Monitoring-site"><a href="#Monitoring-site" class="headerlink" title="Monitoring site"></a>Monitoring site</h4><p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
+<pre><code class="sh">$ sudo apt-get install -y make g++ git
 </code></pre>
 <p>接著安裝 node.js 平台，來建置 App：</p>
-<pre><code class="language-sh">$ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+<pre><code class="sh">$ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 $ sudo apt-get install nodejs
 </code></pre>
 <p>然後透過 git 將專案抓到 local 端，並進入目錄：</p>
-<pre><code class="language-sh">$ git clone https://github.com/cubedro/eth-netstats
+<pre><code class="sh">$ git clone https://github.com/cubedro/eth-netstats
 $ cd eth-netstats
 </code></pre>
 <p>安裝相依套件與建置應用程式，並啟動服務：</p>
-<pre><code class="language-sh">$ sudo npm install
+<pre><code class="sh">$ sudo npm install
 $ sudo npm install -g grunt-cli
 $ grunt
 $ PORT=&quot;3000&quot; WS_SECRET=&quot;admin&quot; npm start
 </code></pre>
 <blockquote>
-<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。</p>
-</blockquote>
-<blockquote>
-<p>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
+<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。<br>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
 </blockquote>
 <p>撰寫一個腳本<code>eth-netstats.sh</code>放置到背景服務執行：</p>
-<pre><code class="language-sh">#!/bin/bash
+<pre><code class="sh">#!/bin/bash
 # History:
 # 2016/05/22 Kyle Bai Release
 #
@@ -334,30 +327,29 @@ echo &quot;Starting private eth-netstats ...&quot;
 screen -dmS netstats /usr/bin/npm start
 </code></pre>
 <p>透過以下方式執行：</p>
-<pre><code class="language-sh">$ chmod u+x eth-netstats.sh
+<pre><code class="sh">$ chmod u+x eth-netstats.sh
 $ ./eth-netstats.sh
 Starting private eth-netstats ...
 </code></pre>
 <blockquote>
 <p>透過<code>screen -x netstats</code>取得當前畫面。</p>
 </blockquote>
-<h4><span id="client-side">Client side</span></h4>
-<p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
-<pre><code class="language-sh">$ sudo apt-get install -y make g++ git
+<h4 id="Client-side"><a href="#Client-side" class="headerlink" title="Client side"></a>Client side</h4><p>首先安裝 Browser Solidity 要使用到的相關套件：</p>
+<pre><code class="sh">$ sudo apt-get install -y make g++ git
 </code></pre>
 <p>接著安裝 node.js 平台，來建置 App：</p>
-<pre><code class="language-sh">$ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+<pre><code class="sh">$ curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 $ sudo apt-get install nodejs
 </code></pre>
 <p>然後透過 git 將專案抓到 local 端，並進入目錄：</p>
-<pre><code class="language-sh">$ git clone https://github.com/cubedro/eth-net-intelligence-api
+<pre><code class="sh">$ git clone https://github.com/cubedro/eth-net-intelligence-api
 $ cd eth-net-intelligence-api
 </code></pre>
 <p>安裝相依套件與建置應用程式：</p>
-<pre><code class="language-sh">$ sudo npm install &amp;&amp; sudo npm install -g pm2
+<pre><code class="sh">$ sudo npm install &amp;&amp; sudo npm install -g pm2
 </code></pre>
 <p>編輯<code>app.json</code>設定檔，並修改以下內容：</p>
-<pre><code class="language-sh">[
+<pre><code class="sh">[
   {
     &quot;name&quot;        : &quot;mynode&quot;,
     &quot;cwd&quot;         : &quot;.&quot;,
@@ -382,55 +374,33 @@ $ cd eth-net-intelligence-api
 <blockquote>
 <ul>
 <li><code>RPC_HOST</code>為 ethereum 的 rpc ip address。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
 <li><code>RPC_PORT</code>為 ethereum 的 rpc port。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
 <li><code>INSTANCE_NAME</code>為 ethereum 的監控實例名稱。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
 <li><code>WS_SERVER</code>為 eth-netstats 的 URL。</li>
-</ul>
-</blockquote>
-<blockquote>
-<ul>
 <li><code>WS_SECRET</code>為 eth-netstats 的 secret。</li>
 </ul>
 </blockquote>
 <p>確認完成後，即可啟動服務：</p>
-<pre><code class="language-sh">$ pm2 start app.json
+<pre><code class="sh">$ pm2 start app.json
 $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
 </code></pre>
-<h3><span id="docker-快速安裝">Docker 快速安裝</span></h3>
-<p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
+<h3 id="Docker-快速安裝"><a href="#Docker-快速安裝" class="headerlink" title="Docker 快速安裝"></a>Docker 快速安裝</h3><p>本部分說明如何手動安裝 eth-netstats 服務，其中會包含以下兩個部分：</p>
 <ul>
 <li><a href="#docker-monitoring-site">Docker Monitoring site</a></li>
 <li><a href="#docker-client-side">Docker Client side</a></li>
 </ul>
-<h4><span id="docker-monitoring-site">Docker Monitoring site</span></h4>
-<p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethstats/" target="_blank" rel="noopener">DockerHub</a> 找到，建議直接執行以下指令來啟動 eth-netstats 容器：</p>
-<pre><code class="language-sh">$ docker run -d \
+<h4 id="Docker-Monitoring-site"><a href="#Docker-Monitoring-site" class="headerlink" title="Docker Monitoring site"></a>Docker Monitoring site</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethstats/" target="_blank" rel="noopener">DockerHub</a> 找到，建議直接執行以下指令來啟動 eth-netstats 容器：</p>
+<pre><code class="sh">$ docker run -d \
             -p 3000:3000 \
             -e WS_SECRET=&quot;admin&quot; \
             --name ethstats \
             kairen/ethstats
 </code></pre>
 <blockquote>
-<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。</p>
+<p>接著就可以開啟 <a href="http://localhost:3000" target="_blank" rel="noopener">eth-netstats</a>。<br>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
 </blockquote>
-<blockquote>
-<p>在沒有任何 Clinet 節點連上情況下，會是一個空的網頁。</p>
-</blockquote>
-<h4><span id="docker-client-side">Docker Client side</span></h4>
-<p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethnetintel/" target="_blank" rel="noopener">DockerHub</a> 找到，也推薦透過執行以下指令來啟動 eth-netintel 容器：</p>
-<pre><code class="language-sh">$ docker run -d \
+<h4 id="Docker-Client-side"><a href="#Docker-Client-side" class="headerlink" title="Docker Client side"></a>Docker Client side</h4><p>自動建置的映像檔現在可以在 <a href="https://hub.docker.com/r/kairen/ethnetintel/" target="_blank" rel="noopener">DockerHub</a> 找到，也推薦透過執行以下指令來啟動 eth-netintel 容器：</p>
+<pre><code class="sh">$ docker run -d \
             -p 30303:30303 \
             -p 30303:30303/udp \
             -e NAME_PREFIX=&quot;geth-1&quot; \
@@ -487,7 +457,7 @@ $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Ubuntu Server 手動安裝</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Monitoring site</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Client side</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Docker 快速安裝</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Docker Monitoring site</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#undefined"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Docker Client side</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Ubuntu-Server-手動安裝"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Ubuntu Server 手動安裝</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Monitoring-site"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">Monitoring site</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Client-side"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">Client side</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Docker-快速安裝"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Docker 快速安裝</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Docker-Monitoring-site"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">Docker Monitoring site</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#Docker-Client-side"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Docker Client side</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -510,8 +480,6 @@ $ sudo tail -f $HOME/.pm2/logs/mynode-out-0.log
                           <a class="tag" href="/tags/#Ethereum" title="Ethereum">Ethereum</a>
                         
                           <a class="tag" href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
-                        
-                          <a class="tag" href="/tags/#Go lang" title="Go lang">Go lang</a>
                         
                     </div>
                 </section>
