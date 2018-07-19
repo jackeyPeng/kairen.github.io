@@ -284,6 +284,43 @@
 
 <div class="post-preview">
 
+    <a href="/2015/11/24/linux/ubuntu/nfs/">
+        <h2 class="post-title">
+            NFS 簡單安裝與使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            網路檔案系統(Network FileSystem，NFS)是早期由 SUN 公司所開發出來的分散式檔案系統協定。主要透過 RPC Service 使檔案能夠共享於網路中，NFS 的好處是它支援了不同系統與機器的溝通能力，使資料能夠很輕易透過網路共享給別人。
+
+安裝與設定首先在 NFS 節點安裝以下套件：
+$ sudo apt-get -y install nfs-kernel-server......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2015-11-24
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#File System" title="File System">File System</a>
+            
+              <a href="/tags/#OpenStack" title="OpenStack">OpenStack</a>
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2015/11/21/ceph/cephfs/">
         <h2 class="post-title">
             Ceph FS 基本操作
@@ -577,41 +614,6 @@ $ echo &quot;ubuntu ALL = (root) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/ub
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2015/10/13/data-engineer/kafka-install/">
-        <h2 class="post-title">
-            Apache Kafka 叢集
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Apache Kafka 是一個分散式的訊息佇列框架，是由 LinkedIn 公司使用 Scala 語言開發的系統，被廣泛用來處理高吞吐量與容易水平擴展，目前許多巨量資料運算框架以都有整合 Kafka，諸如：Spark、Cloudera、Apache Storm等，
-Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
-
-在 TB 級以上資料也能確保常數時間複......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2015-10-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Spark" title="Spark">Spark</a>
-            
-              <a href="/tags/#Kafka" title="Kafka">Kafka</a>
-            
-              <a href="/tags/#Message Queue" title="Message Queue">Message Queue</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -718,7 +720,11 @@ Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
     <ul>
       
         <li>
-          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+          <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
         <li>
@@ -731,10 +737,6 @@ Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
       
         <li>
           <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
     </ul>
@@ -788,11 +790,11 @@ Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -834,7 +836,9 @@ Kafka 是基於Publish/Subscribe的訊息系統，主要設計由以下特點：
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            
+        
             
         
             

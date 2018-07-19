@@ -284,6 +284,48 @@
 
 <div class="post-preview">
 
+    <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">
+        <h2 class="post-title">
+            Vagrant CoreOS 部署 Kubernetes 測試叢集
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本節將透過 Vagrant 與 CoreOS 來部署單機多節點的 Kubernetes 虛擬叢集，並使用 Kubernetest CLI 工具與 API 進行溝通。
+本次安裝版本為：
+
+CoreOS alpha.
+Kubernetes v1.5.4.
+
+
+事前準備首先必須在主機上安裝Vagrant工具，點選該 Vagrant downloads 頁面抓取當前系統的版本，並完成安裝。
+接著在主......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-02-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+              <a href="/tags/#CoreOS" title="CoreOS">CoreOS</a>
+            
+              <a href="/tags/#Vagrant" title="Vagrant">Vagrant</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/02/18/devops/ansible/ansible-playbook/">
         <h2 class="post-title">
             Ansible Playbooks
@@ -593,53 +635,6 @@ Saltstack 採用集中化管理，我們一般可以理解為 Pupp......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/02/11/ceph/deploy/ceph-docker/">
-        <h2 class="post-title">
-            Docker 快速部署 Ceph 測試叢集
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本節將介紹如何透過 ceph-docker 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要1 Monitor與3 OSD。另外部署 MDS 與 RGW 來進行簡單測試。
-
-
-節點配置本安裝採用一台虛擬機器來提供部署，可使用 VBox 或 OpenStack 等建立，其環境資源大小如下：
-
-
-
-hostname
-CPUs
-RAM
-
-
-
-
-ceph-aio
-2vCPU......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-02-11
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -746,7 +741,11 @@ ceph-aio
     <ul>
       
         <li>
-          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+          <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
         <li>
@@ -759,10 +758,6 @@ ceph-aio
       
         <li>
           <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
     </ul>
@@ -816,11 +811,11 @@ ceph-aio
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -862,7 +857,9 @@ ceph-aio
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            
+        
             
         
             

@@ -284,7 +284,40 @@
 
 <div class="post-preview">
 
-    <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">
+    <a href="/2018/07/19/kubernetes/k8s-external-dns/">
+        <h2 class="post-title">
+            以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇說明如何透過 CoreDNS 自建一套 DNS 服務，並利用 Kubernetes ExternalDNS 同步 Kubernetes 的 Ingress 與 Service API object 中的域名(Domain Name)來產生資源紀錄(Record Resources)，讓使用者能夠透過自建 DNS 服務來導向到 Kubernetes 上的應用服務。
+
+使用元件功能介紹
+Co......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-07-19
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+              <a href="/tags/#CoreDNS" title="CoreDNS">CoreDNS</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">
         <h2 class="post-title">
             利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集
         </h2>
@@ -595,36 +628,6 @@ US West(Oregon) 叢集，也是 Federatio......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2018/04/15/kubernetes/k8s-integration-ldap/">
-        <h2 class="post-title">
-            整合 Open LDAP 進行 Kubernetes 身份認證
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本文將說明如何整合 OpenLDAP 來提供給 Kubernetes 進行使用者認證。Kubernetes 官方並沒有提供針對 LDAP 與 AD 的整合，但是可以藉由 Webhook Token Authentication 以及 Authenticating Proxy 來達到整合功能。概念是開發一個 HTTP Server 提供 POST Method 來塞入 Bearer Token......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2018-04-15
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#LDAP" title="LDAP">LDAP</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -727,7 +730,11 @@ US West(Oregon) 叢集，也是 Federatio......
     <ul>
       
         <li>
-          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+          <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
         <li>
@@ -740,10 +747,6 @@ US West(Oregon) 叢集，也是 Federatio......
       
         <li>
           <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
     </ul>
@@ -797,11 +800,11 @@ US West(Oregon) 叢集，也是 Federatio......
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -843,7 +846,9 @@ US West(Oregon) 叢集，也是 Federatio......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            
+        
             
         
             

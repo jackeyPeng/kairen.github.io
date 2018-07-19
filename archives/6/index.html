@@ -284,6 +284,40 @@
 
 <div class="post-preview">
 
+    <a href="/2016/05/27/linux/ubuntu/flashcache/">
+        <h2 class="post-title">
+            用 Flashcache 建立高容量與高效能儲存
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Flashcache 是 Facebook 的一個開源專案，主要被用於資料庫加速。基本結構為在硬碟（HDD）前面加了一層快取，即採用固態硬碟（SSD）裝置，把熱資料保存於快取中，寫入的過程也是先寫到 SSD，然後由 SSD 同步到傳統硬碟，最後的資料將保存於硬碟中，這樣可以不用擔心 SSD 損壞造成資料遺失問題，同時又可以有大容量、高效能的儲存。
+
+安裝本教學採用 Ubuntu 14.04 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-05-27
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+              <a href="/tags/#SSD" title="SSD">SSD</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/05/26/linux/ubuntu/corosync-pacemaker/">
         <h2 class="post-title">
             Pacemaker + Corosync 做服務 HA
@@ -601,48 +635,6 @@ Kubernete......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/02/23/kubernetes/deploy/vagrant-multi-install/">
-        <h2 class="post-title">
-            Vagrant CoreOS 部署 Kubernetes 測試叢集
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本節將透過 Vagrant 與 CoreOS 來部署單機多節點的 Kubernetes 虛擬叢集，並使用 Kubernetest CLI 工具與 API 進行溝通。
-本次安裝版本為：
-
-CoreOS alpha.
-Kubernetes v1.5.4.
-
-
-事前準備首先必須在主機上安裝Vagrant工具，點選該 Vagrant downloads 頁面抓取當前系統的版本，並完成安裝。
-接著在主......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-02-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#CoreOS" title="CoreOS">CoreOS</a>
-            
-              <a href="/tags/#Vagrant" title="Vagrant">Vagrant</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -749,7 +741,11 @@ Kubernetes v1.5.4.
     <ul>
       
         <li>
-          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+          <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
         <li>
@@ -762,10 +758,6 @@ Kubernetes v1.5.4.
       
         <li>
           <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
     </ul>
@@ -819,11 +811,11 @@ Kubernetes v1.5.4.
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -865,7 +857,9 @@ Kubernetes v1.5.4.
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            
+        
             
         
             

@@ -284,6 +284,53 @@
 
 <div class="post-preview">
 
+    <a href="/2016/02/11/ceph/deploy/ceph-docker/">
+        <h2 class="post-title">
+            Docker 快速部署 Ceph 測試叢集
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本節將介紹如何透過 ceph-docker 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要1 Monitor與3 OSD。另外部署 MDS 與 RGW 來進行簡單測試。
+
+
+節點配置本安裝採用一台虛擬機器來提供部署，可使用 VBox 或 OpenStack 等建立，其環境資源大小如下：
+
+
+
+hostname
+CPUs
+RAM
+
+
+
+
+ceph-aio
+2vCPU......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-02-11
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/02/11/devops/graphite/">
         <h2 class="post-title">
             利用 Graphite 監控系統資料
@@ -609,43 +656,6 @@ LogstashLogstash 可以簡單、有效、快速的處理Log資料，不過Logsta
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2015/11/24/linux/ubuntu/nfs/">
-        <h2 class="post-title">
-            NFS 簡單安裝與使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            網路檔案系統(Network FileSystem，NFS)是早期由 SUN 公司所開發出來的分散式檔案系統協定。主要透過 RPC Service 使檔案能夠共享於網路中，NFS 的好處是它支援了不同系統與機器的溝通能力，使資料能夠很輕易透過網路共享給別人。
-
-安裝與設定首先在 NFS 節點安裝以下套件：
-$ sudo apt-get -y install nfs-kernel-server......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2015-11-24
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#File System" title="File System">File System</a>
-            
-              <a href="/tags/#OpenStack" title="OpenStack">OpenStack</a>
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -752,7 +762,11 @@ $ sudo apt-get -y install nfs-kernel-server......
     <ul>
       
         <li>
-          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+          <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
         <li>
@@ -765,10 +779,6 @@ $ sudo apt-get -y install nfs-kernel-server......
       
         <li>
           <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
     </ul>
@@ -822,11 +832,11 @@ $ sudo apt-get -y install nfs-kernel-server......
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -868,7 +878,9 @@ $ sudo apt-get -y install nfs-kernel-server......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            
+        
             
         
             

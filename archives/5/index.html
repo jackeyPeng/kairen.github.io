@@ -284,6 +284,45 @@
 
 <div class="post-preview">
 
+    <a href="/2016/10/23/kubernetes/deploy/minikube/">
+        <h2 class="post-title">
+            Minikube 部署 Local 測試環境
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Minikube 是提供簡單與快速部署本地 Kubernetes 環境的工具，透過執行虛擬機來執行單節點 Kubernetes 叢集，以便開發者使用 Kubernetes 與開發用。
+本環境安裝資訊：
+
+Minikube v0.22.3
+Kubernetes v1.7.5
+
+
+事前準備安裝前需要確認叢集滿足以下幾點：
+
+安裝 xhyve driver, VirtualBox 或 VMware......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-10-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/10/01/tensorflow/tensorflow-docker/">
         <h2 class="post-title">
             TensorFlow on Docker
@@ -637,40 +676,6 @@ Rol......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/05/27/linux/ubuntu/flashcache/">
-        <h2 class="post-title">
-            用 Flashcache 建立高容量與高效能儲存
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Flashcache 是 Facebook 的一個開源專案，主要被用於資料庫加速。基本結構為在硬碟（HDD）前面加了一層快取，即採用固態硬碟（SSD）裝置，把熱資料保存於快取中，寫入的過程也是先寫到 SSD，然後由 SSD 同步到傳統硬碟，最後的資料將保存於硬碟中，這樣可以不用擔心 SSD 損壞造成資料遺失問題，同時又可以有大容量、高效能的儲存。
-
-安裝本教學採用 Ubuntu 14.04 ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-05-27
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-              <a href="/tags/#SSD" title="SSD">SSD</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -777,7 +782,11 @@ Rol......
     <ul>
       
         <li>
-          <a href="/2018/07/17/kubernetes/deploy/kubeadm-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
+          <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
         <li>
@@ -790,10 +799,6 @@ Rol......
       
         <li>
           <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a>
         </li>
       
     </ul>
@@ -847,11 +852,11 @@ Rol......
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -893,7 +898,9 @@ Rol......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="31">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            
+        
             
         
             
