@@ -938,7 +938,7 @@ k8s-m3    NotReady   master    20m       v1.11.0
 <h3 id="Kubernetes-Proxy"><a href="#Kubernetes-Proxy" class="headerlink" title="Kubernetes Proxy"></a>Kubernetes Proxy</h3><p><a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/kube-proxy" target="_blank" rel="noopener">kube-proxy</a> 是實現 Kubernetes Service 資源功能的關鍵元件，這個元件會透過 DaemonSet 在每台節點上執行，然後監聽 API Server 的 Service 與 Endpoint 資源物件的事件，並依據資源預期狀態透過 iptables 或 ipvs 來實現網路轉發，而本次安裝採用 ipvs。</p>
 <p>在<code>k8s-m1</code>透過 kubeclt 執行下面指令來建立，並檢查是否部署成功：</p>
 <pre><code class="sh">$ export KUBE_APISERVER=https://172.22.132.9:6443
-$ sed -i &quot;s/\${KUBE_APISERVER}/${KUBE_APISERVER}/g&quot;
+$ sed -i &quot;s/\${KUBE_APISERVER}/${KUBE_APISERVER}/g&quot; addons/kube-proxy/kube-proxy-cm.yml
 $ kubectl -f addons/kube-proxy/
 
 $ kubectl -n kube-system get po -l k8s-app=kube-proxy

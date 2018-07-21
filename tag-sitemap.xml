@@ -198,13 +198,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Concurrent/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -213,6 +206,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Concurrent/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -528,21 +528,21 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2018-07-21T18:55:29.309Z</lastmod>
+        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-07-21T18:55:29.309Z</lastmod>
+        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Calico/</loc>
-        <lastmod>2018-07-21T18:55:29.309Z</lastmod>
+        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
