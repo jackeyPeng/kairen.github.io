@@ -966,7 +966,7 @@ TCP  10.96.0.1:443 rr
 <h3 id="CoreDNS"><a href="#CoreDNS" class="headerlink" title="CoreDNS"></a>CoreDNS</h3><p>本節將透過 CoreDNS 取代 <a href="https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/dns" target="_blank" rel="noopener">Kube DNS</a> 作為叢集服務發現元件，由於 Kubernetes 需要讓 Pod 與 Pod 之間能夠互相溝通，然而要能夠溝通需要知道彼此的 IP 才行，而這種做法通常是透過 Kubernetes API 來取得達到，但是 Pod IP 會因為生命週期變化而改變，因此這種做法無法彈性使用，且還會增加 API Server 負擔，基於此問題 Kubernetes 提供了 DNS 服務來作為查詢，讓 Pod 能夠以 Service 名稱作為域名來查詢 IP 位址，因此使用者就再不需要關切實際 Pod IP，而 DNS 也會根據 Pod 變化更新資源紀錄(Record resources)。</p>
 <p><a href="https://github.com/coredns/coredns" target="_blank" rel="noopener">CoreDNS</a> 是由 CNCF 維護的開源 DNS 專案，該專案前身是 SkyDNS，其採用了 Caddy 的一部分來開發伺服器框架，使其能夠建構一套快速靈活的 DNS，而 CoreDNS 每個功能都可以被實作成一個插件的中介軟體，如 Log、Cache、Kubernetes 等功能，甚至能夠將源紀錄儲存至 Redis、Etcd 中。</p>
 <p>在<code>k8s-m1</code>透過 kubeclt 執行下面指令來建立，並檢查是否部署成功：</p>
-<pre><code class="sh">$ kubectl create -f coredns/
+<pre><code class="sh">$ kubectl create -f addons/coredns/
 
 $ kubectl -n kube-system get po -l k8s-app=kube-dns
 NAME                       READY     STATUS    RESTARTS   AGE

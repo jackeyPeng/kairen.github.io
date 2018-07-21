@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/07/09/kubernetes/deploy/manual-v1.11/</loc>
+        <lastmod>2018-07-21T18:55:29.309Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/07/19/kubernetes/k8s-external-dns/</loc>
         <lastmod>2018-07-21T12:57:50.681Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -319,7 +327,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
+        <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -327,7 +335,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
+        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -407,15 +415,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/07/09/kubernetes/deploy/manual-v1.11/</loc>
-        <lastmod>2018-07-16T08:27:17.185Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-dynamic-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -423,7 +423,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-dynamic-inventory/</loc>
+        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -447,7 +447,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/12/devops/saltstack-basic/</loc>
+        <loc>https://kairen.github.io/2016/08/19/golang/go-install/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -455,7 +455,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/08/19/golang/go-install/</loc>
+        <loc>https://kairen.github.io/2016/02/12/devops/saltstack-basic/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -647,7 +647,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -655,7 +655,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
