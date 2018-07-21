@@ -69,7 +69,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('undefined')
+            background-image: url('/images/kube/bg.png')
             /*post*/
         
     }
@@ -295,10 +295,10 @@
 <blockquote class="colorquote info"><p>由於市面上大多以 Bind9 作為 DNS，但是 Bind9 並不支援插件與 REST API 功能，雖然效能高又穩定，但是在一些場景並不靈活。</p>
 </blockquote>
 <ul>
-<li><strong><a href="https://github.com/coreos/etcd" target="_blank" rel="noopener">Etcd</a></strong>：用來儲存 CoreDNS 資源紀錄，並提供給整合的元件查詢與儲存使用。Etcd 是一套分散式鍵值(Key/Value)儲存系統，其功能類似 ZooKeeper，而 Etcd 在一致性演算法採用了 Raft 來處理多節點高可靠性問題，Etcd 好處是支援了 REST API、JSON 格式、SSL 與高效能等，而目前 Etcd  被應用在 Kubernetes 與 Cloud Foundry 等專案中。</li>
+<li><strong>Etcd</strong>：用來儲存 CoreDNS 資源紀錄，並提供給整合的元件查詢與儲存使用。Etcd 是一套分散式鍵值(Key/Value)儲存系統，其功能類似 ZooKeeper，而 Etcd 在一致性演算法採用了 Raft 來處理多節點高可靠性問題，Etcd 好處是支援了 REST API、JSON 格式、SSL 與高效能等，而目前 Etcd  被應用在 Kubernetes 與 Cloud Foundry 等專案中。</li>
 <li><p><strong>ExternalDNS</strong>：用於定期同步 Kubernetes Service 與 Ingress 資源，並依據 Kubernetes 資源內容產生 DNS 資源紀錄來設定 CoreDNS，架構中採用 Etcd 作為兩者溝通中介，一旦有資源紀錄產生就儲存至 Etcd 中，以提供給 CoreDNS 作為資源紀錄來確保服務辨識導向。ExternalDNS 是 Kubernetes 社區的專案，目前被用於同步 Kubernetes 自動設定公有雲 DNS 服務的資源紀錄。</p>
 </li>
-<li><p><strong><a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">Ingress Controller</a></strong>：提供 Kubernetes Service 能夠以 Domain Name 方式提供外部的存取。Ingress Controller 會監聽 Kubernetes API Server 的 Ingress 與 Service 抽象資源，並依據對應資訊產生組態檔來設定到一個以 NGINX 為引擎的後端，當使用者存取對應服務時，會透過 NGINX 後端進入，這時會依據設定檔的 Domain Name 來轉送給對應 Kubernetes Service。</p>
+<li><p><strong>Ingress Controller</strong>：提供 Kubernetes Service 能夠以 Domain Name 方式提供外部的存取。Ingress Controller 會監聽 Kubernetes API Server 的 Ingress 與 Service 抽象資源，並依據對應資訊產生組態檔來設定到一個以 NGINX 為引擎的後端，當使用者存取對應服務時，會透過 NGINX 後端進入，這時會依據設定檔的 Domain Name 來轉送給對應 Kubernetes Service。</p>
 </li>
 </ul>
 <blockquote class="colorquote info"><p>Ingress Controller 除了社區提供的專案外，還可以使用 <a href="https://docs.traefik.io/user-guide/kubernetes/" target="_blank" rel="noopener">Traefik</a>、<a href="https://github.com/Kong/kubernetes-ingress-controller" target="_blank" rel="noopener">Kong</a> 等專案。</p>
