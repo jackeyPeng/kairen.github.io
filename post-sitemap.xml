@@ -8,7 +8,7 @@
 
     <url>
         <loc>https://kairen.github.io/2018/07/22/kubernetes/deploy/minikube-multi-node/</loc>
-        <lastmod>2018-07-22T05:39:23.704Z</lastmod>
+        <lastmod>2018-07-22T05:45:20.520Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -583,7 +583,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
+        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -599,7 +599,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
+        <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -655,7 +655,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -663,7 +663,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -703,7 +703,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -711,7 +711,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
+        <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -743,7 +743,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
+        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -751,7 +751,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
+        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
