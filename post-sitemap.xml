@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/</loc>
+        <lastmod>2018-07-22T06:11:08.764Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/07/22/kubernetes/deploy/minikube-multi-node/</loc>
         <lastmod>2018-07-22T05:45:20.520Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -25,14 +33,6 @@
     <url>
         <loc>https://kairen.github.io/2018/07/19/kubernetes/k8s-external-dns/</loc>
         <lastmod>2018-07-21T12:57:50.681Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/</loc>
-        <lastmod>2018-07-18T09:55:50.292Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -287,7 +287,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</loc>
+        <loc>https://kairen.github.io/2016/10/01/tensorflow/tensorflow-docker/</loc>
         <lastmod>2018-07-16T09:14:30.202Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -295,7 +295,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/10/01/tensorflow/tensorflow-docker/</loc>
+        <loc>https://kairen.github.io/2016/04/01/openstack/how-to-contribute/</loc>
         <lastmod>2018-07-16T09:14:30.202Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -655,7 +655,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -663,7 +663,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -703,7 +703,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
+        <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -711,7 +711,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -743,7 +743,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
+        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -751,7 +751,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
+        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
