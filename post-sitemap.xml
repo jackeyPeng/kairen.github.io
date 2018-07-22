@@ -7,8 +7,16 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/07/20/kubernetes/deploy/minikube-multi-node/</loc>
+        <lastmod>2018-07-22T05:36:23.127Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/07/09/kubernetes/deploy/manual-v1.11/</loc>
-        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
+        <lastmod>2018-07-22T05:12:41.350Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -703,6 +711,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -712,14 +728,6 @@
 
     <url>
         <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

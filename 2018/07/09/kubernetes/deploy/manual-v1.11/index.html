@@ -500,7 +500,7 @@ $ ls ${PKI_DIR}/ca*.pem
 <p><code>KUBE_APISERVER</code>這邊設定為 VIP 位址。</p>
 </blockquote>
 <p>接著依照以下小節來建立各元件的 TLS 憑證。</p>
-<h4 id="API-Server"><a href="#API-Server" class="headerlink" title="API Server"></a>API Server</h4><p>透過以下指令產生 Kubernetes API Server 憑證：</p>
+<h4 id="API-Server"><a href="#API-Server" class="headerlink" title="API Server"></a>API Server</h4><p>此憑證將被用於 API Server 與 Kubelet Client 溝通使用。首先透過以下指令產生 Kubernetes API Server 憑證：</p>
 <pre><code class="sh">$ cfssl gencert \
   -ca=${PKI_DIR}/ca.pem \
   -ca-key=${PKI_DIR}/ca-key.pem \
@@ -975,14 +975,14 @@ coredns-589dd74cb6-d42ft   0/1       Pending   0          3m
 </code></pre>
 <p>這邊會發現 Pod 處於<code>Pending</code>狀態，這是由於 Kubernetes 的叢集網路沒有建立，因此所有節點會處於<code>NotReady</code>狀態，而這也導致 Kubernetes Scheduler 無法替 Pod 找到適合節點而處於<code>Pending</code>，為了解決這個問題，下節將說明與建立 Kubernetes 叢集網路。</p>
 <blockquote>
-<p>若 Pod 是被 DaemonSet 管理的話，則不會 Pending，不過若沒有設定<code>hostNetwork</code>則會出問題。</p>
+<p>若 Pod 是被 DaemonSet 管理，且設定使用<code>hostNetwork</code>的話，則不會處於<code>Pending</code>狀態。</p>
 </blockquote>
 <h2 id="Kubernetes-叢集網路"><a href="#Kubernetes-叢集網路" class="headerlink" title="Kubernetes 叢集網路"></a>Kubernetes 叢集網路</h2><p>Kubernetes 在預設情況下與 Docker 的網路有所不同。在 Kubernetes 中有四個問題是需要被解決的，分別為：</p>
 <ul>
 <li><strong>高耦合的容器到容器溝通</strong>：透過 Pods 與 Localhost 的溝通來解決。</li>
 <li><strong>Pod 到 Pod 的溝通</strong>：透過實現網路模型來解決。</li>
-<li><strong>Pod 到 Service 溝通</strong>：由 Services object 結合 kube-proxy 解決。</li>
-<li><strong>外部到 Service 溝通</strong>：一樣由 Services object 結合 kube-proxy 解決。</li>
+<li><strong>Pod 到 Service 溝通</strong>：由 Service objects 結合 kube-proxy 解決。</li>
+<li><strong>外部到 Service 溝通</strong>：一樣由 Service objects 結合 kube-proxy 解決。</li>
 </ul>
 <p>而 Kubernetes 對於任何網路的實現都需要滿足以下基本要求(除非是有意調整的網路分段策略)：</p>
 <ul>
@@ -996,7 +996,7 @@ coredns-589dd74cb6-d42ft   0/1       Pending   0          3m
 <li><strong>Kubenet plugin</strong>：使用 CNI plugins 的 bridge 與 host-local 來實現基本的 cbr0。這通常被用在公有雲服務上的 Kubernetes 叢集網路。</li>
 </ul>
 <blockquote>
-<p>如果了解如何選擇可以閱讀 Chris Love 的 <a href="https://chrislovecnm.com/kubernetes/cni/choosing-a-cni-provider/" target="_blank" rel="noopener">Choosing a CNI Network Provider for Kubernetes</a> 文章。</p>
+<p>如果想了解如何選擇可以閱讀 Chris Love 的 <a href="https://chrislovecnm.com/kubernetes/cni/choosing-a-cni-provider/" target="_blank" rel="noopener">Choosing a CNI Network Provider for Kubernetes</a> 文章。</p>
 </blockquote>
 <h3 id="網路部署與設定"><a href="#網路部署與設定" class="headerlink" title="網路部署與設定"></a>網路部署與設定</h3><p>從上述了解 Kubernetes 有多種網路能夠選擇，而本教學選擇了 <a href="https://www.projectcalico.org/" target="_blank" rel="noopener">Calico</a> 作為叢集網路的使用。Calico 是一款純 Layer 3 的網路，其好處是它整合了各種雲原生平台(Docker、Mesos 與 OpenStack 等)，且 Calico 不採用 vSwitch，而是在每個 Kubernetes 節點使用 vRouter 功能，並透過 Linux Kernel 既有的 L3 forwarding 功能，而當資料中心複雜度增加時，Calico 也可以利用 BGP route reflector 來達成。</p>
 <blockquote>
@@ -1210,6 +1210,8 @@ eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW5
 <p>首先在<code>k8s-m1</code>執行下述指令來部署所有 Prometheus 需要的元件：</p>
 <pre><code class="sh">$ kubectl apply -f addons/prometheus/
 $ kubectl apply -f addons/prometheus/operator/
+
+# 這邊要等 operator 起來並建立好 CRDs 才能進行
 $ kubectl apply -f addons/prometheus/alertmanater/
 $ kubectl apply -f addons/prometheus/node-exporter/
 $ kubectl apply -f addons/prometheus/kube-state-metrics/
@@ -1253,7 +1255,7 @@ ingress.extensions/prometheus-ing   prometheus.monitoring.k8s.local   172.22.132
 <blockquote>
 <p>另外這邊也推薦用 <a href="https://github.com/weaveworks/scope" target="_blank" rel="noopener">Weave Scope</a> 來監控容器的網路 Flow 拓樸圖。</p>
 </blockquote>
-<h3 id="Metrics-Server"><a href="#Metrics-Server" class="headerlink" title="Metrics Server"></a>Metrics Server</h3><p><a href="https://github.com/kubernetes-incubator/metrics-server" target="_blank" rel="noopener">Metrics Server</a> 是實現了資源 Metrics API 的元件，其目標是取代 Heapster 作為 Pod 與 Node 提供資源的 Usage metrics，該元件會從每個 Kubernetes 節點上的 Kubelet 所公開的 Summary API 中收集 Metrics。</p>
+<h3 id="Metrics-Server"><a href="#Metrics-Server" class="headerlink" title="Metrics Server"></a>Metrics Server</h3><p><a href="https://github.com/kubernetes-incubator/metrics-server" target="_blank" rel="noopener">Metrics Server</a> 是實現了 Metrics API 的元件，其目標是取代 Heapster 作為 Pod 與 Node 提供資源的 Usage metrics，該元件會從每個 Kubernetes 節點上的 Kubelet 所公開的 Summary API 中收集 Metrics。</p>
 <p>首先在<code>k8s-m1</code>測試一下 kubectl top 指令：</p>
 <pre><code class="sh">$ kubectl top node
 error: metrics not available yet

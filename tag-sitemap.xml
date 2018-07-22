@@ -527,22 +527,29 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/Calico/</loc>
+        <lastmod>2018-07-22T05:12:41.350Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
+        <lastmod>2018-07-22T05:36:23.127Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
+        <lastmod>2018-07-22T05:36:23.127Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Calico/</loc>
-        <lastmod>2018-07-21T18:56:38.694Z</lastmod>
+        <loc>https://kairen.github.io/tags/Flannel/</loc>
+        <lastmod>2018-07-22T05:36:23.127Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

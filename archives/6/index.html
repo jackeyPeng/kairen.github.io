@@ -284,6 +284,43 @@
 
 <div class="post-preview">
 
+    <a href="/2016/06/02/openstack/kuryr-install/">
+        <h2 class="post-title">
+            Docker 串接 OpenStack Neutron Kuryr 網路
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Kuryr 是 Docker network plugin 之一，主要是使用 Neutron 來提供網路服務給不同主機的 Docker 容器使用，目前也提供了容器化的 Neutron plugin 容器映像檔。
+本篇說明如何透過 CentOS 來部署簡單的 Kuryr 與 Docker 串接。
+
+節點配置OpenStack Kuryr 我們使用到三台節點，以下為本次安裝的規格：
+
+
+
+Rol......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-06-02
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#OpenStack" title="OpenStack">OpenStack</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/05/27/linux/ubuntu/flashcache/">
         <h2 class="post-title">
             用 Flashcache 建立高容量與高效能儲存
@@ -599,42 +636,6 @@ $ sudo blockde......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/02/24/kubernetes/deploy/official-ansible/">
-        <h2 class="post-title">
-            透過官方 Ansible 部署 Kubernetes
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Kubernetes 提供了許多雲端平台與作業系統的安裝方式，本篇將使用官方 Ansible Playbook 來部署 Kubernetes 到 CentOS 7 系統上，其中 Kubernetes 將額外部署 Dashboard 與 DNS 等 Add-ons。其他更多平台的部署可以參考 Creating a Kubernetes Cluster。
-
-本次安裝版本為：
-
-Kubernete......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-02-24
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Ansible" title="Ansible">Ansible</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -751,6 +752,10 @@ Kubernete......
     <ul>
       
         <li>
+          <a href="/2018/07/20/kubernetes/deploy/minikube-multi-node/">透過 Minikube 建立多節點 Kubernetes 叢集(不要懷疑!)</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
         </li>
       
@@ -764,10 +769,6 @@ Kubernete......
       
         <li>
           <a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a>
-        </li>
-      
-        <li>
-          <a href="/2018/06/25/kubernetes/k8x-exec-api/">Kubernetes exec API 串接分析</a>
         </li>
       
     </ul>
@@ -807,7 +808,7 @@ Kubernete......
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="30">Docker</a>
+            <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
             
         
             
@@ -867,7 +868,9 @@ Kubernete......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="32">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="33">Kubernetes</a>
+            
+        
             
         
             
