@@ -284,6 +284,50 @@
 
 <div class="post-preview">
 
+    <a href="/2018/04/21/kubernetes/aws-k8s-federation/">
+        <h2 class="post-title">
+            在 AWS 上建立跨地區的 Kubernetes Federation 叢集
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇延續先前 On-premises Federation 與 Kops 經驗來嘗試在 AWS 上建立 Federaion 叢集，這邊架構如下圖所示：
+
+
+本次安裝的軟體版本：
+
+Kubernetes v1.9.3
+kops v1.9.0
+kubefed v1.10
+
+節點資訊測試環境為 AWS EC2 虛擬機器，共有三組叢集：
+US West(Oregon) 叢集，也是 Federatio......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-04-21
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+              <a href="/tags/#AWS" title="AWS">AWS</a>
+            
+              <a href="/tags/#Kops" title="Kops">Kops</a>
+            
+              <a href="/tags/#Federation" title="Federation">Federation</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2018/04/18/kubernetes/deploy/kops-aws/">
         <h2 class="post-title">
             使用 Kops 部署 Kubernetes 至公有雲(AWS)
@@ -573,36 +617,6 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2017/12/20/openstack/stackube/">
-        <h2 class="post-title">
-            多租戶 Kubernetes 部署方案 Stackube
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Stackube是一個 Kubernetes-centric 的 OpenStack 發行版本(架構如下圖所示)，該專案結合 Kubernetes 與 OpenStack 的技術來達到真正的 Kubernetes 租戶隔離，如租戶實例採用 Frakti 來進行隔離、網路採用 Neutron OVS 達到每個 Namespace 擁有獨立的網路資源等。本篇會簡單介紹如何用 DevStack 建......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2017-12-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Openstack" title="Openstack">Openstack</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -719,6 +733,10 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
     <ul>
       
         <li>
+          <a href="/2018/07/27/kubernetes/knative-intro/">初探 Knative 基本功能與概念</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/22/kubernetes/deploy/minikube-multi-node/">透過 Minikube 建立多虛擬機節點的 Kubernetes 叢集(不要懷疑!)</a>
         </li>
       
@@ -734,10 +752,6 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
-        <li>
-          <a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -749,6 +763,20 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
+        
+            
+        
+            
+            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
         
             
         
@@ -776,16 +804,6 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
         
             
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
             
         
             
@@ -835,7 +853,7 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="33">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
             
         
             
@@ -936,6 +954,8 @@ Service accountService account 一般使用情境方便是 Pod 中的行程呼�
         <li><a href="https://ellis-wu.github.io" target="_blank">跟我一樣可悲的同事</a></li>
     
         <li><a href="https://blog.pichuang.com.tw" target="_blank">小飛機的部落格</a></li>
+    
+        <li><a href="https://bestsamina.github.io/" target="_blank">超猛姍蓉的部落格</a></li>
     
 </ul>
 

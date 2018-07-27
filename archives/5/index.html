@@ -284,6 +284,54 @@
 
 <div class="post-preview">
 
+    <a href="/2016/11/28/ceph/deploy/ceph-deploy-bluestore/">
+        <h2 class="post-title">
+            Using bluestore in Kraken
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇說明如何安裝 Kraken 版本的 Ceph，並將 objectstore backend 修改成 Bluestore，過程包含建立 RBD 等操作。
+
+硬體規格說明本安裝由於實體機器數量受到限制，故只進行一台 MON 與兩台 OSD，而 OSD 數量則總共兩顆，硬體規格如下所示：
+
+
+
+Role
+RAM
+CPUs
+Disk
+IP Address
+
+
+
+
+mon1(deploy)
+4 G......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-11-28
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#BlueStore" title="BlueStore">BlueStore</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/11/16/container/docker-swarm/">
         <h2 class="post-title">
             簡單部署 Docker Swarm 測試叢集
@@ -623,46 +671,11 @@ $ git clone https://github.com/databricks/spark-perf
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
               <a href="/tags/#Storage" title="Storage">Storage</a>
             
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
               <a href="/tags/#SSD" title="SSD">SSD</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/06/24/data-engineer/build-spark/">
-        <h2 class="post-title">
-            Building Spark Source Code
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本節將說明如何透過 mvn 與 sbt 來建置 Spark 最新版的相關檔案，透過提供最新版本來觀看 API 的變動。
-
-事前準備首先準備一台裝有 Ubuntu 14.04 LTS Server 的主機或 Docker 容器，然後在裡面安裝相依套件：
-sudo apt-get purge openjdk*
-sudo apt-get -y autoremove
-sudo apt-get ins......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-06-24
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Spark" title="Spark">Spark</a>
-            
-              <a href="/tags/#Maven" title="Maven">Maven</a>
             
         </div>
     
@@ -786,6 +799,10 @@ sudo apt-get ins......
     <ul>
       
         <li>
+          <a href="/2018/07/27/kubernetes/knative-intro/">初探 Knative 基本功能與概念</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/22/kubernetes/deploy/minikube-multi-node/">透過 Minikube 建立多虛擬機節點的 Kubernetes 叢集(不要懷疑!)</a>
         </li>
       
@@ -801,10 +818,6 @@ sudo apt-get ins......
           <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
-        <li>
-          <a href="/2018/06/29/devops/prometheus-federation/">了解 Prometheus Federation 功能</a>
-        </li>
-      
     </ul>
   </div>
 
@@ -816,6 +829,20 @@ sudo apt-get ins......
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
+        
+            
+        
+            
+            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
         
             
         
@@ -843,16 +870,6 @@ sudo apt-get ins......
         
             
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
             
         
             
@@ -902,7 +919,7 @@ sudo apt-get ins......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="33">Kubernetes</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
             
         
             
@@ -1003,6 +1020,8 @@ sudo apt-get ins......
         <li><a href="https://ellis-wu.github.io" target="_blank">跟我一樣可悲的同事</a></li>
     
         <li><a href="https://blog.pichuang.com.tw" target="_blank">小飛機的部落格</a></li>
+    
+        <li><a href="https://bestsamina.github.io/" target="_blank">超猛姍蓉的部落格</a></li>
     
 </ul>
 
