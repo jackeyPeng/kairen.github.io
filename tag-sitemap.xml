@@ -23,13 +23,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/iOS/</loc>
-        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Programming/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -38,6 +31,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/OOP/</loc>
+        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -191,13 +191,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Java/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -206,6 +199,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Java/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -443,14 +443,14 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Storage/</loc>
+        <loc>https://kairen.github.io/tags/Linux/</loc>
         <lastmod>2018-07-17T13:20:26.574Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Linux/</loc>
+        <loc>https://kairen.github.io/tags/Storage/</loc>
         <lastmod>2018-07-17T13:20:26.574Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -549,21 +549,21 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-07-27T17:08:26.396Z</lastmod>
+        <lastmod>2018-07-28T00:29:20.017Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Serverless/</loc>
-        <lastmod>2018-07-27T17:08:26.396Z</lastmod>
+        <lastmod>2018-07-28T00:29:20.017Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Istio/</loc>
-        <lastmod>2018-07-27T17:08:26.396Z</lastmod>
+        <lastmod>2018-07-28T00:29:20.017Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

@@ -422,7 +422,7 @@ spec:
 </ul>
 <h3 id="Eventing"><a href="#Eventing" class="headerlink" title="Eventing"></a>Eventing</h3><p><a href="https://github.com/knative/eventing" target="_blank" rel="noopener">Eventing</a> 提供用於 Consuming 以及 Producing 的事件建構區塊，並遵守著 <a href="https://github.com/cloudevents" target="_blank" rel="noopener">CloudEvents</a> 規範來實現，而該元件目標是對事件進行抽象處理，以讓開發者不需要關注後端相關具體細節，這樣開發者就不需要思考使用哪一套訊息佇列系統。</p>
 <p><img src="/images/kube/knative-event-arch.png" alt=""></p>
-<p>而 Knative Eventing 也透過 Kubernetes CRD 定義了新資源，這些資源被用在事件的 Producing 與 Consuming 上，而這類資源主要分成以下：</p>
+<p>而 Knative Eventing 也透過 Kubernetes CRD 定義了一組新資源，這些資源被用在事件的 Producing 與 Consuming 上，而這類資源主要分成以下：</p>
 <ul>
 <li><p><strong>Channels</strong></p>
 <ul>
@@ -649,7 +649,7 @@ success
 </code></pre>
 <p>若成功的話，可以查看 Slack channel 是否有傳送訊息：</p>
 <p><img src="/images/kube/slack-send-msg.png" alt=""></p>
-<p>最後由於 Knative Serving 是 Request-driven，因此經過長時間沒有任何 request 時，將會自動縮減至 0 副本，直到再次需到 request 才會再次啟動一個實例，這邊可以透過 Prometheus 來觀察狀態變化。</p>
+<p>最後由於 Knative Serving 是 Request-driven，因此經過長時間沒有任何 request 時，將會自動縮減至 0 副本，直到再次收到 request 才會再次啟動一個實例，然而 Knative 也將大多資訊以 Prometheus 進行監控，因此我們能透過 Prometheus 來觀察狀態變化。</p>
 <p>首先透過 kubectl 取得 Grafana NodePort 資訊：</p>
 <pre><code class="sh">$ kubectl -n monitoring get svc
 NAME                          TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)               AGE
