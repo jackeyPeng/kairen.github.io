@@ -8,7 +8,7 @@
 
     <url>
         <loc>https://kairen.github.io/2018/07/27/kubernetes/knative-intro/</loc>
-        <lastmod>2018-07-28T16:41:56.050Z</lastmod>
+        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -351,7 +351,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
+        <loc>https://kairen.github.io/2015/11/17/data-engineer/apache-cassandra/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -359,7 +359,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2015/11/17/data-engineer/apache-cassandra/</loc>
+        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -567,7 +567,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
+        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -575,7 +575,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
+        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -591,7 +591,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
+        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -599,7 +599,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
+        <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -663,7 +663,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -671,7 +671,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -719,14 +719,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -736,6 +728,14 @@
 
     <url>
         <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
+        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

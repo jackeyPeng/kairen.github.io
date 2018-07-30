@@ -205,20 +205,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Moby/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Microkernel/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Database/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -227,6 +213,20 @@
 
     <url>
         <loc>https://kairen.github.io/tags/NoSQL/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Moby/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Microkernel/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -549,21 +549,21 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-07-28T16:41:56.050Z</lastmod>
+        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Serverless/</loc>
-        <lastmod>2018-07-28T16:41:56.050Z</lastmod>
+        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Istio/</loc>
-        <lastmod>2018-07-28T16:41:56.050Z</lastmod>
+        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
