@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/07/01/devops/prometheus-ha/</loc>
+        <lastmod>2018-08-03T13:04:40.077Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/07/27/kubernetes/knative-intro/</loc>
         <lastmod>2018-07-30T14:52:17.598Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -343,6 +351,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -352,14 +368,6 @@
 
     <url>
         <loc>https://kairen.github.io/2015/11/17/data-engineer/apache-cassandra/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -519,7 +527,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/03/devops/elk/</loc>
+        <loc>https://kairen.github.io/2018/06/29/devops/prometheus-federation/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -527,7 +535,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/06/29/devops/prometheus-federation/</loc>
+        <loc>https://kairen.github.io/2016/01/03/devops/elk/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -559,6 +567,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
+        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/06/25/kubernetes/k8x-exec-api/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -568,14 +584,6 @@
 
     <url>
         <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -663,7 +671,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -671,7 +679,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -727,7 +735,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -735,7 +743,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -751,7 +759,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
+        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -759,7 +767,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
+        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

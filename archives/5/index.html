@@ -284,6 +284,44 @@
 
 <div class="post-preview">
 
+    <a href="/2016/12/03/ceph/ceph-spdk/">
+        <h2 class="post-title">
+            Ceph 使用 SPDK 加速 NVMe SSD
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            SPDK(Storage Performance Development Kit) 是 Intel 釋出的儲存效能開發工具，主要提供一套撰寫高效能、可擴展與 User-mode 的儲存應用程式工具與函式庫，而中國公司 XSKY 藉由該開發套件來加速 Ceph 在 NVMe SSD 的效能。
+
+首先進入 root，並 clone 專案到 local：
+$ sudo su -
+$ git clo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-12-03
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#Distribution System" title="Distribution System">Distribution System</a>
+            
+              <a href="/tags/#SPDK" title="SPDK">SPDK</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/11/28/ceph/deploy/ceph-deploy-bluestore/">
         <h2 class="post-title">
             Using bluestore in Kraken
@@ -651,38 +689,6 @@ $ git clone https://github.com/databricks/spark-perf
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/07/05/linux/ubuntu/bcache/">
-        <h2 class="post-title">
-            用 Bcache 來加速硬碟效能
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Bcache 是按照固態硬碟特性來設計的技術，只按擦除 Bucket 的大小進行分配，並使用 btree 和 journal 混合方法來追蹤快取資料，快取資料可以是 Bucket 上的任意一個 Sector。Bcache 最大程度上減少了隨機寫入的代價，它按循序的方式填充一個 Bucket，重新使用時只需將 Bucket 設置為無效即可。Bcache 也支援了類似 Flashcache 的快......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-07-05
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-              <a href="/tags/#SSD" title="SSD">SSD</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -869,12 +875,6 @@ $ git clone https://github.com/databricks/spark-perf
             
         
             
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
             
         
@@ -883,7 +883,7 @@ $ git clone https://github.com/databricks/spark-perf
             
         
             
-        
+            <a href="/tags/#DevOps" title="DevOps" rel="14">DevOps</a>
             
         
             
@@ -900,8 +900,6 @@ $ git clone https://github.com/databricks/spark-perf
         
             
         
-            
-            <a href="/tags/#DevOps" title="DevOps" rel="13">DevOps</a>
             
         
             
@@ -1002,6 +1000,14 @@ $ git clone https://github.com/databricks/spark-perf
         
             
         
+            
+        
+            
+        
+            
+        
+            
+        
     </div>
 </section>
 
@@ -1013,7 +1019,7 @@ $ git clone https://github.com/databricks/spark-perf
 <ul class="list-inline">
 
     
-        <li><a href="http://hwchiu.com" target="_blank">威猛邱牛</a></li>
+        <li><a href="http://blog.hwchiu.com" target="_blank">威猛邱牛</a></li>
     
         <li><a href="http://www.evanlin.com" target="_blank">吃草爸爸的部落格</a></li>
     
