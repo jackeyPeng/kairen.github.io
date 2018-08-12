@@ -417,7 +417,7 @@ grafana_user: &quot;admin&quot;
 grafana_password: &quot;p@ssw0rd&quot;
 </code></pre>
 <blockquote>
-<p>上面綁定網卡若沒有輸入會使用節點預設網卡。</p>
+<p>上面綁定網卡若沒有輸入，通常會使用節點預設網卡(一般來說是第一張網卡)。</p>
 </blockquote>
 <p>完成設定<code>group_vars/all.yml</code>檔案後，就可以先透過 Ansible 來檢查叢集狀態：</p>
 <pre><code class="sh">$ ansible -i inventory/hosts.ini all -m ping
