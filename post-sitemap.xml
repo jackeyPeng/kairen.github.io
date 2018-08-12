@@ -7,6 +7,38 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/08/12/kubernetes/deploy/k8s-ansible-ha/</loc>
+        <lastmod>2018-08-12T15:58:36.870Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/</loc>
+        <lastmod>2018-08-12T15:55:58.686Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2018/07/27/kubernetes/knative-intro/</loc>
+        <lastmod>2018-08-12T14:50:27.242Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/</loc>
+        <lastmod>2018-08-11T17:16:13.649Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/07/01/devops/prometheus-ha/</loc>
         <lastmod>2018-08-03T13:14:43.829Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -15,24 +47,8 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/07/27/kubernetes/knative-intro/</loc>
-        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2018/07/22/kubernetes/deploy/minikube-multi-node/</loc>
         <lastmod>2018-07-23T13:18:50.951Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/</loc>
-        <lastmod>2018-07-22T06:11:08.764Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -399,14 +415,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/02/19/kubernetes/deploy/kube-ansible-baremetal/</loc>
-        <lastmod>2018-07-16T08:38:10.796Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2016/02/23/kubernetes/deploy/vagrant-multi-install/</loc>
         <lastmod>2018-07-16T08:37:34.485Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -503,6 +511,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</loc>
+        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2016/12/03/ceph/ceph-spdk/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -512,14 +528,6 @@
 
     <url>
         <loc>https://kairen.github.io/2016/05/15/ceph/rados-java/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -575,14 +583,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -591,7 +591,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/</loc>
+        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -607,7 +607,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
+        <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -615,7 +615,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
+        <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -719,14 +719,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -735,7 +727,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -744,6 +736,14 @@
 
     <url>
         <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

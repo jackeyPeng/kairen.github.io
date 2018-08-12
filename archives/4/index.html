@@ -284,6 +284,39 @@
 
 <div class="post-preview">
 
+    <a href="/2017/05/26/blockchain/geth-monitoring/">
+        <h2 class="post-title">
+            監控 Go Ethereum 的區塊鏈狀況
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。
+這邊可以連結官方的 https://ethstats.net/ 來查看主節點網路的狀態。
+
+Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2017-05-26
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ethereum" title="Ethereum">Ethereum</a>
+            
+              <a href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2017/05/25/blockchain/multi-node-geth/">
         <h2 class="post-title">
             建立 Go Ethereum 私有網路鏈
@@ -530,48 +563,6 @@ CU......
 
 <div class="post-preview">
 
-    <a href="/2017/02/19/kubernetes/deploy/kube-ansible-baremetal/">
-        <h2 class="post-title">
-            kube-ansible 快速部署實體機 HA 叢集
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            本篇說明如何透過 kube-ansible 部署多節點實體機 Kubernetes 叢集。
-本安裝各軟體版本如下：
-
-Kubernetes v1.8.3
-Etcd v3.2.9
-Docker v1.13.0+
-
-
-而在 OS 部分以支援Ubuntu 16.x及CentOS 7.x的虛擬機與實體機部署。
-節點資訊本次安裝作業系統採用Ubuntu 16.04 Server，測試環境為實體主機：
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2017-02-19
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Ansible" title="Ansible">Ansible</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/">
         <h2 class="post-title">
             kube-ansible 快速部署 HA 測試環境
@@ -580,7 +571,7 @@ Docker v1.13.0+
             
         </h3>
         <div class="post-content-preview">
-            kube-ansible 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。
+            kube-ansible 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存給 Pod 應用程式掛載使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。
 kube-ansible 提供了以下幾項功能：
 
 Kubernetes 1.8.0+.
@@ -758,6 +749,10 @@ Docker v17.05.0......
     <ul>
       
         <li>
+          <a href="/2018/08/12/kubernetes/deploy/k8s-ansible-ha/">開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/27/kubernetes/knative-intro/">初探 Knative 基本功能與概念</a>
         </li>
       
@@ -771,10 +766,6 @@ Docker v17.05.0......
       
         <li>
           <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
-        </li>
-      
-        <li>
-          <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
     </ul>
@@ -812,9 +803,11 @@ Docker v17.05.0......
             
         
             
+            <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
+            
         
             
-            <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
+        
             
         
             
@@ -872,17 +865,15 @@ Docker v17.05.0......
             
         
             
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
+            
+        
+            
+        
+            
+        
+            
+        
             
         
             

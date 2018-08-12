@@ -77,15 +77,15 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Kubernetes/</loc>
-        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
+        <loc>https://kairen.github.io/categories/DevOps/</loc>
+        <lastmod>2018-08-03T13:14:43.829Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/DevOps/</loc>
-        <lastmod>2018-08-03T13:14:43.829Z</lastmod>
+        <loc>https://kairen.github.io/categories/Kubernetes/</loc>
+        <lastmod>2018-08-12T15:58:36.870Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

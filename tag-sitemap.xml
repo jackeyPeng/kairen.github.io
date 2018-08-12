@@ -247,13 +247,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Ansible/</loc>
-        <lastmod>2018-07-16T09:14:30.202Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/High-Availability/</loc>
         <lastmod>2018-07-16T09:18:21.415Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -492,50 +485,8 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/kubeadm/</loc>
-        <lastmod>2018-07-22T06:11:08.764Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Calico/</loc>
-        <lastmod>2018-07-22T06:11:08.764Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2018-07-23T13:18:50.951Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Flannel/</loc>
         <lastmod>2018-07-23T13:18:50.951Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Serverless/</loc>
-        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Istio/</loc>
-        <lastmod>2018-07-30T14:52:17.598Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
@@ -564,6 +515,55 @@
     <url>
         <loc>https://kairen.github.io/tags/Prometheus/</loc>
         <lastmod>2018-08-03T13:14:43.829Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Serverless/</loc>
+        <lastmod>2018-08-12T14:50:27.242Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Istio/</loc>
+        <lastmod>2018-08-12T14:50:27.242Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/kubeadm/</loc>
+        <lastmod>2018-08-12T15:55:58.686Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Calico/</loc>
+        <lastmod>2018-08-12T15:55:58.686Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Docker/</loc>
+        <lastmod>2018-08-12T15:58:36.870Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Kubernetes/</loc>
+        <lastmod>2018-08-12T15:58:36.870Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Ansible/</loc>
+        <lastmod>2018-08-12T15:58:36.870Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

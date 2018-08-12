@@ -284,6 +284,36 @@
 
 <div class="post-preview">
 
+    <a href="/2018/02/11/ceph/luminous-crush-issue/">
+        <h2 class="post-title">
+            Ceph Luminous CRUSH map 400000000000000 問題
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            在 Ceph Luminous(v12) 版本中，預設開啟了一些 Kernel 特性，其中首先遇到的一般是 400000000000000 問題，即CEPH_FEATURE_NEW_OSDOPREPLY_ENCODING特性(可以從對照表得知CEPH_FEATURE Table and Kernel Version)，剛問題需要在 Kernel 4.5+ 才能夠被支援，但如果不想升級可以依據......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-02-11
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2018/01/08/kubernetes/rbac-sa-kubectl/">
         <h2 class="post-title">
             利用 RBAC + SA 進行 Kubectl 權限控管
@@ -597,39 +627,6 @@ Ubuntu Server 手動安裝首先安裝 Browser Solidity ......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2017/05/26/blockchain/geth-monitoring/">
-        <h2 class="post-title">
-            監控 Go Ethereum 的區塊鏈狀況
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Ethereum 提供了一個 Web-based 的監控儀表板，可以部署該儀表板，並透過 Clinet 端傳送 Ethereum 節點的資訊，來查看整個區塊鏈狀態。本節將說明如何安裝監控儀表板於 Linux 與 Docker 容器中。
-這邊可以連結官方的 https://ethstats.net/ 來查看主節點網路的狀態。
-
-Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2017-05-26
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Ethereum" title="Ethereum">Ethereum</a>
-            
-              <a href="/tags/#Blockchain" title="Blockchain">Blockchain</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -746,6 +743,10 @@ Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
     <ul>
       
         <li>
+          <a href="/2018/08/12/kubernetes/deploy/k8s-ansible-ha/">開發 Ansible Playbooks 部署 Kubernetes v1.11.x HA 叢集</a>
+        </li>
+      
+        <li>
           <a href="/2018/07/27/kubernetes/knative-intro/">初探 Knative 基本功能與概念</a>
         </li>
       
@@ -759,10 +760,6 @@ Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
       
         <li>
           <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
-        </li>
-      
-        <li>
-          <a href="/2018/07/09/kubernetes/deploy/manual-v1.11/">Kubernetes v1.11.x HA 全手動苦工安裝教學(TL;DR)</a>
         </li>
       
     </ul>
@@ -800,9 +797,11 @@ Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
             
         
             
+            <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
+            
         
             
-            <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
+        
             
         
             
@@ -860,17 +859,15 @@ Ubuntu Server 手動安裝本部分說明如何手動安裝 eth......
             
         
             
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
+            
+        
+            
+        
+            
+        
+            
+        
             
         
             

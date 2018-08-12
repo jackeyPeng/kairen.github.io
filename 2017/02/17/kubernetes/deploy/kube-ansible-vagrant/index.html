@@ -289,7 +289,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存系統給 Pod 應用程式使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
+                <p><a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 提供自動化部署 Kubernetes High Availability 叢集於虛擬機與實體機上，並且支援部署 Ceph 叢集於 Kubernetes 中提供共享式儲存給 Pod 應用程式掛載使用。該專案最主要是想要快速建立測試環境來進行 Kubernetes 練習與驗證。</p>
 <p>kube-ansible 提供了以下幾項功能：</p>
 <ul>
 <li>Kubernetes 1.8.0+.</li>
@@ -306,28 +306,28 @@
 <p>當主機確認安裝完成後，即可透過 Git 下載最新版本程式，並使用<code>setup-vagrant</code>腳本：</p>
 <pre><code class="sh">$ git clone &quot;https://github.com/kairen/kube-ansible.git&quot;
 $ cd kube-ansible
-$ ./tools/setup -h
+$ ./hack/setup-vms -h
 Usage : setup-vagrant [options]
 
  -b|--boss         Number of master.
  -w|--worker       Number of worker.
  -c|--cpu          Number of cores per vm.
  -m|--memory       Memory size per vm.
- -p|--provider     Virtual machine provider(virtualbox, libvirt).
+ -p|--provider     Virtual machine provider(virtualbox, libvirt, hyperv).
  -o|--os-image     Virtual machine operation system(ubuntu16, centos7).
  -i|--interface    Network bind interface.
- -n|--network      Container Network plugin.
  -f|--force        Force deployment.
+ -d|--deploy       Auto deploy cluster.
  --combine-master  Combine number of worker into masters.
  --combine-etcd    Combine number of worker into etcds.
 </code></pre>
 <p>這邊執行以下指令來建立三台 Master 與三台 Node 的環境：</p>
-<pre><code class="sh">$ ./tools/setup -m 2048 -n calico -i eth1
+<pre><code class="sh">$ ./hack/setup-vms
 Cluster Size: 1 master, 2 worker.
-     VM Size: 1 vCPU, 2048 MB
-     VM Info: ubuntu16, virtualbox
-         CNI: calico, Binding iface: eth1
-Start deploying?(y): y
+  VM Size: 1 vCPU, 2048 MB
+  VM Info: ubuntu16, virtualbox
+  CNI binding iface: eth1
+Start to deploy?(y): y
 </code></pre>
 <p>執行後需要等一點時間，當完成後就可以進入任何一台 Master 進行操作：</p>
 <pre><code class="sh">$ kubectl -n kube-system get po
@@ -410,7 +410,7 @@ nginx-service   192.173.165.220   &lt;nodes&gt;       80:30000/TCP   11s
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/2017/02/19/kubernetes/deploy/kube-ansible-baremetal/" data-toggle="tooltip" data-placement="top" title="kube-ansible 快速部署實體機 HA 叢集">&larr; Previous Post</a>
+                            <a href="/2017/03/12/tensorflow/install-source/" data-toggle="tooltip" data-placement="top" title="Ubuntu 16.04 安裝 TensorFlow GPU GTX 1060">&larr; Previous Post</a>
                         </li>
                     
                     
