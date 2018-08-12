@@ -8,7 +8,7 @@
 
     <url>
         <loc>https://kairen.github.io/2018/08/12/kubernetes/deploy/k8s-ansible-ha/</loc>
-        <lastmod>2018-08-12T15:58:36.870Z</lastmod>
+        <lastmod>2018-08-12T16:00:53.778Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -511,7 +511,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</loc>
+        <loc>https://kairen.github.io/2016/12/03/ceph/ceph-spdk/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -519,7 +519,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/12/03/ceph/ceph-spdk/</loc>
+        <loc>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -583,7 +583,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
+        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -591,7 +591,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
+        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
