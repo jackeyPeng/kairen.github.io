@@ -7,6 +7,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/07/22/kubernetes/deploy/minikube-multi-node/</loc>
+        <lastmod>2018-08-15T06:13:37.062Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/08/12/kubernetes/deploy/k8s-ansible-ha/</loc>
         <lastmod>2018-08-12T16:07:32.288Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -41,14 +49,6 @@
     <url>
         <loc>https://kairen.github.io/2018/07/01/devops/prometheus-ha/</loc>
         <lastmod>2018-08-03T13:14:43.829Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/07/22/kubernetes/deploy/minikube-multi-node/</loc>
-        <lastmod>2018-07-23T13:18:50.951Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -367,7 +367,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
+        <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -375,7 +375,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
+        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -575,14 +575,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2018/06/25/kubernetes/k8x-exec-api/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -599,7 +591,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
+        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -608,6 +600,14 @@
 
     <url>
         <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
+        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -679,7 +679,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -687,7 +687,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -727,7 +727,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -743,7 +743,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <loc>https://kairen.github.io/2016/04/01/linux/ubuntu/drbd/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
