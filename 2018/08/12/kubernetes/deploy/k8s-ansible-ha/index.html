@@ -290,7 +290,7 @@
                 post-container">
 
                 <p>本篇將介紹如何透過 Ansible Playbooks 來快速部署多節點 Kubernetes，一般自建 Kubernetes 叢集時，很多初步入門都會透過 kubeadm 或腳本來部署，雖然 kubeadm 簡化了很多流程，但是還是需要很多手動操作過程，這使得當節點超過 5 - 8 台時就覺得很麻煩，因此許多人會撰寫腳本來解決這個問題，但是腳本的靈活性不佳，一旦設定過程過於龐大時也會造成其複雜性增加，因此這邊採用 Ansible 來完成許多重複的部署過程，並提供相關變數來調整叢集部署的元件、Container Runtime 等等。</p>
-<p>這邊我將利用自己撰寫的 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 來部署一組 Kubernetes HA 叢集，而該 Playbooks 的 HA 是透過 HAProxy + Keepalived 來完成，這邊也會將 docker 取代成 containerd 來提供更輕量的 container runtime，另外該 Ansible 會採用全二進制檔案(kube-apiserver 等除外)方式進行 Kubernetes 與相關元件。</p>
+<p>這邊我將利用自己撰寫的 <a href="https://github.com/kairen/kube-ansible" target="_blank" rel="noopener">kube-ansible</a> 來部署一組 Kubernetes HA 叢集，而該 Playbooks 的 HA 是透過 HAProxy + Keepalived 來完成，這邊也會將 docker 取代成 containerd 來提供更輕量的 container runtime，另外該 Ansible 會採用全二進制檔案(kube-apiserver 等除外)方式進行安裝。</p>
 <p>本次 Kubernetes 安裝版本：</p>
 <ul>
 <li>Kubernetes v1.11.2</li>
