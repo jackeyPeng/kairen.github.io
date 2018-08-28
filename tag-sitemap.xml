@@ -23,13 +23,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/iOS/</loc>
-        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Programming/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -38,6 +31,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/OOP/</loc>
+        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -541,29 +541,29 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Flannel/</loc>
-        <lastmod>2018-08-15T06:13:37.062Z</lastmod>
+        <loc>https://kairen.github.io/tags/Ansible/</loc>
+        <lastmod>2018-08-15T06:35:50.742Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2018-08-15T06:35:50.742Z</lastmod>
+        <lastmod>2018-08-28T03:41:45.475Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-08-15T06:35:50.742Z</lastmod>
+        <lastmod>2018-08-28T03:41:45.475Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Ansible/</loc>
-        <lastmod>2018-08-15T06:35:50.742Z</lastmod>
+        <loc>https://kairen.github.io/tags/Flannel/</loc>
+        <lastmod>2018-08-28T03:41:45.475Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
