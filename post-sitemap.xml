@@ -359,14 +359,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2015/11/09/container/docker/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -376,6 +368,14 @@
 
     <url>
         <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -455,7 +455,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
+        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -463,7 +463,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -575,6 +575,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
+        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/06/25/kubernetes/k8x-exec-api/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -591,7 +599,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
+        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -608,14 +616,6 @@
 
     <url>
         <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -647,7 +647,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2015/09/18/data-engineer/spark-standalone/</loc>
+        <loc>https://kairen.github.io/2015/09/19/data-engineer/spark-yarn/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -655,7 +655,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2015/09/19/data-engineer/spark-yarn/</loc>
+        <loc>https://kairen.github.io/2015/09/18/data-engineer/spark-standalone/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -679,7 +679,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -687,7 +687,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -727,7 +727,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -735,7 +735,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

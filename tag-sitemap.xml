@@ -184,13 +184,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Concurrent/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -199,6 +192,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Concurrent/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -401,14 +401,14 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/DC-OS/</loc>
+        <loc>https://kairen.github.io/tags/Mesos/</loc>
         <lastmod>2018-07-17T13:17:43.795Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Mesos/</loc>
+        <loc>https://kairen.github.io/tags/DC-OS/</loc>
         <lastmod>2018-07-17T13:17:43.795Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
