@@ -132,7 +132,7 @@
 
                         
                         <li>
-                            <a href="/tags/">tags</a>
+                            <a href="/about/">About Me</a>
                         </li>
                         
                     
@@ -146,7 +146,7 @@
 
                         
                         <li>
-                            <a href="/about/">About Me</a>
+                            <a href="/tags/">tags</a>
                         </li>
                         
                     
@@ -284,6 +284,38 @@
 
 <div class="post-preview">
 
+    <a href="/2016/04/01/linux/ubuntu/drbd/">
+        <h2 class="post-title">
+            DRBD 進行跨節點的區塊儲存備份
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            DRBD（Distributed Replicated BlockDevice）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。
+
+安裝 DRBD本教學將使用以下主......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-04-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/04/01/openstack/how-to-contribute/">
         <h2 class="post-title">
             OpenStack 貢獻基本流程
@@ -315,38 +347,6 @@
               <a href="/tags/#Git" title="Git">Git</a>
             
               <a href="/tags/#Python" title="Python">Python</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2016/04/01/linux/ubuntu/drbd/">
-        <h2 class="post-title">
-            DRBD 進行跨節點的區塊儲存備份
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            DRBD（Distributed Replicated BlockDevice）是一個分散式區塊裝置備份系統，DRBD 是由 Kernel 模組與相關腳本組成，被用來建置高可靠的叢集服務。實現方式是透過網路來 mirror 整個區塊裝置，一般可作為是網路 RAID 的一類。DRBD 允許使用者在遠端機器上建立一個 Local 區塊裝置的即時 mirror。
-
-安裝 DRBD本教學將使用以下主......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-04-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Storage" title="Storage">Storage</a>
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -502,16 +502,18 @@ Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部�
 
 <div class="post-preview">
 
-    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
+    <a href="/2016/02/17/devops/ansible/ansible-inventory/">
         <h2 class="post-title">
-            Ansible Ad-Hoc 指令與 Modules
+            Ansible Inventory
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
-模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
+            Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於/etc/ansible/hosts。
+IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
+
+Hosts ......
         </div>
     </a>
     
@@ -535,18 +537,16 @@ Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部�
 
 <div class="post-preview">
 
-    <a href="/2016/02/17/devops/ansible/ansible-inventory/">
+    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
         <h2 class="post-title">
-            Ansible Inventory
+            Ansible Ad-Hoc 指令與 Modules
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於/etc/ansible/hosts。
-IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
-
-Hosts ......
+            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
+模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
         </div>
     </a>
     
@@ -816,11 +816,9 @@ mon......
             
         
             
+        
+            
             <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
-            
-        
-            
-        
             
         
             
@@ -878,9 +876,11 @@ mon......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
+        
             
         
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
             
         
             
