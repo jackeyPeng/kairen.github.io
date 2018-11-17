@@ -367,6 +367,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2016/04/06/data-engineer/akka-intro/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -376,14 +384,6 @@
 
     <url>
         <loc>https://kairen.github.io/2015/11/17/data-engineer/apache-cassandra/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2017/04/23/container/linuxkit/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -455,7 +455,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
+        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -463,7 +463,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -519,7 +519,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</loc>
+        <loc>https://kairen.github.io/2016/05/15/ceph/rados-java/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -527,7 +527,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/15/ceph/rados-java/</loc>
+        <loc>https://kairen.github.io/2018/02/11/ceph/luminous-crush-issue/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -575,6 +575,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
+        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2018/06/25/kubernetes/k8x-exec-api/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -591,7 +599,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
+        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -600,14 +608,6 @@
 
     <url>
         <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -671,6 +671,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
+        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -680,14 +688,6 @@
 
     <url>
         <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -727,7 +727,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -735,7 +735,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -759,7 +759,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
+        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -767,7 +767,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2014/06/03/msic/oop/</loc>
+        <loc>https://kairen.github.io/2013/11/03/msic/ios-code-style/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
