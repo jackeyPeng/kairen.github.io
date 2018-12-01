@@ -290,9 +290,9 @@
     
       <category term="CNCF" scheme="https://kairen.github.io/tags/CNCF/"/>
     
-      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
-    
       <category term="Prometheus" scheme="https://kairen.github.io/tags/Prometheus/"/>
+    
+      <category term="Kubernetes" scheme="https://kairen.github.io/tags/Kubernetes/"/>
     
   </entry>
   
