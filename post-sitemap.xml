@@ -455,7 +455,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
+        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -463,7 +463,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -479,7 +479,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/12/devops/saltstack-basic/</loc>
+        <loc>https://kairen.github.io/2016/08/19/golang/go-install/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -487,7 +487,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/08/19/golang/go-install/</loc>
+        <loc>https://kairen.github.io/2016/02/12/devops/saltstack-basic/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -535,7 +535,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/06/10/devops/prometheus-intro/</loc>
+        <loc>https://kairen.github.io/2016/01/03/devops/elk/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -543,7 +543,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/03/devops/elk/</loc>
+        <loc>https://kairen.github.io/2018/06/10/devops/prometheus-intro/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -583,7 +583,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
+        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -591,7 +591,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/01/08/kubernetes/rbac-sa-kubectl/</loc>
+        <loc>https://kairen.github.io/2018/03/01/kubernetes/nvidia-device-plugin/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -679,7 +679,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
+        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -687,7 +687,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
+        <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -727,7 +727,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
+        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -735,7 +735,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/04/21/linux/ubuntu/dm-cache/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
