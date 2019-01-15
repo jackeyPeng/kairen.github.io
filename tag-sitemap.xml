@@ -51,14 +51,14 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Container/</loc>
+        <loc>https://kairen.github.io/tags/Docker-Swarm/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Docker-Swarm/</loc>
+        <loc>https://kairen.github.io/tags/Container/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -184,6 +184,20 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/Moby/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Concurrent/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -199,20 +213,6 @@
 
     <url>
         <loc>https://kairen.github.io/tags/NoSQL/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Moby/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Microkernel/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -415,13 +415,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/OpenStack/</loc>
-        <lastmod>2018-07-17T13:19:14.536Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Storage/</loc>
         <lastmod>2018-07-17T13:20:26.574Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -548,22 +541,29 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Docker/</loc>
+        <loc>https://kairen.github.io/tags/Flannel/</loc>
         <lastmod>2018-08-28T03:41:45.475Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Docker/</loc>
+        <lastmod>2019-01-15T06:13:27.468Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/OpenStack/</loc>
+        <lastmod>2019-01-15T06:13:27.468Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2018-08-28T03:41:45.475Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Flannel/</loc>
-        <lastmod>2018-08-28T03:41:45.475Z</lastmod>
+        <lastmod>2019-01-15T06:13:27.468Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

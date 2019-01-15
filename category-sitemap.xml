@@ -56,13 +56,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/OpenStack/</loc>
-        <lastmod>2018-07-17T13:19:14.536Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/categories/Linux/</loc>
         <lastmod>2018-07-17T13:20:26.574Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -86,6 +79,13 @@
     <url>
         <loc>https://kairen.github.io/categories/Kubernetes/</loc>
         <lastmod>2018-08-28T03:41:45.475Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/OpenStack/</loc>
+        <lastmod>2019-01-15T06:13:27.468Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

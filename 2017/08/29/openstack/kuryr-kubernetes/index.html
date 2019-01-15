@@ -294,11 +294,11 @@
 <a id="more"></a>
 <p>Kuryr-Kubernetes 整合有兩個主要組成部分：</p>
 <ol>
-<li><strong>Kuryr Controller</strong>:<br>Controller 主要目的是監控 Kubernetes API 的來獲取 Kubernetes 資源的變化，然後依據 Kubernetes 資源的需求來執行子資源的分配和資源管理。</li>
+<li><strong>Kuryr Controller</strong>:<br>Controller 主要目的是監控 Kubernetes API 來獲取 Kubernetes 資源的變化，然後依據 Kubernetes 資源的需求來執行子資源的分配和資源管理。</li>
 <li><strong>Kuryr CNI</strong>：主要是依據 Kuryr Controller 分配的資源來綁定網路至 Pods 上。</li>
 </ol>
 <p>本篇我們將說明如何利用<code>DevStack</code>與<code>Kubespray</code>建立一個簡單的測試環境。</p>
-<h2 id="環境資源與事前準備"><a href="#環境資源與事前準備" class="headerlink" title="環境資源與事前準備"></a>環境資源與事前準備</h2><p>準備兩台實體機器，這邊測試的作業系統為<code>CentOS 7.x</code>，該環境將在扁平的網路下進行。</p>
+<h2 id="環境資源與事前準備"><a href="#環境資源與事前準備" class="headerlink" title="環境資源與事前準備"></a>環境資源與事前準備</h2><p>準備兩台實體機器，這邊測試的作業系統為<code>CentOS 7.x</code>，該環境將在扁平(flat)的網路下進行。</p>
 <table>
 <thead>
 <tr>
