@@ -163,13 +163,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Java/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -178,6 +171,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/Java/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -471,6 +471,13 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/OpenStack/</loc>
+        <lastmod>2019-02-04T20:05:27.766Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Ceph/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -493,13 +500,6 @@
 
     <url>
         <loc>https://kairen.github.io/tags/SPDK/</loc>
-        <lastmod>2019-02-04T20:05:27.766Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/OpenStack/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -542,21 +542,21 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2019-02-04T20:12:49.507Z</lastmod>
+        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2019-02-04T20:12:49.507Z</lastmod>
+        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Calico/</loc>
-        <lastmod>2019-02-04T20:12:49.507Z</lastmod>
+        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

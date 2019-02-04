@@ -8,7 +8,7 @@
 
     <url>
         <loc>https://kairen.github.io/2019/01/22/kubernetes/deploy/minikube-multi-node/</loc>
-        <lastmod>2019-02-04T20:12:49.507Z</lastmod>
+        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -479,7 +479,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -487,7 +487,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/02/18/devops/ansible/ansible-playbook/</loc>
+        <loc>https://kairen.github.io/2016/02/17/devops/ansible/ansible-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -647,7 +647,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2015/09/19/data-engineer/spark-yarn/</loc>
+        <loc>https://kairen.github.io/2015/09/18/data-engineer/spark-standalone/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -655,7 +655,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2015/09/18/data-engineer/spark-standalone/</loc>
+        <loc>https://kairen.github.io/2015/09/19/data-engineer/spark-yarn/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
