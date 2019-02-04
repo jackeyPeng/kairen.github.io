@@ -23,13 +23,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/iOS/</loc>
-        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Programming/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -38,6 +31,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/OOP/</loc>
+        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -163,6 +163,13 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/Java/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -171,13 +178,6 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Microkernel/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Java/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -471,13 +471,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/OpenStack/</loc>
-        <lastmod>2019-02-04T20:05:27.766Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/Ceph/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -500,6 +493,13 @@
 
     <url>
         <loc>https://kairen.github.io/tags/SPDK/</loc>
+        <lastmod>2019-02-04T20:05:27.766Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/tags/OpenStack/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
