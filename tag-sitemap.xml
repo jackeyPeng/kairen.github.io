@@ -23,6 +23,13 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/iOS/</loc>
+        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Programming/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -31,13 +38,6 @@
 
     <url>
         <loc>https://kairen.github.io/tags/OOP/</loc>
-        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -114,13 +114,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/tags/Golang/</loc>
-        <lastmod>2018-07-09T17:17:05.516Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/tags/OS-X/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -170,6 +163,13 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/Concurrent/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -178,13 +178,6 @@
 
     <url>
         <loc>https://kairen.github.io/tags/Microkernel/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/tags/Concurrent/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -541,22 +534,29 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/tags/Golang/</loc>
+        <lastmod>2019-02-05T15:36:44.054Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/tags/Docker/</loc>
-        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
+        <lastmod>2019-02-05T15:46:45.830Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Kubernetes/</loc>
-        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
+        <lastmod>2019-02-05T15:46:45.830Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
         <loc>https://kairen.github.io/tags/Calico/</loc>
-        <lastmod>2019-02-04T20:12:50.156Z</lastmod>
+        <lastmod>2019-02-05T15:46:45.830Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>

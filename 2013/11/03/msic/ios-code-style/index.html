@@ -2,13 +2,13 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="keyword"  content="">
+    <meta name="keyword" content="">
     <link rel="shortcut icon" href="/images/favicon.png">
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -76,7 +76,7 @@
     
 </style>
 
-<header class="intro-header" >
+<header class="intro-header">
     <!-- Signature -->
     <div id="signature">
         <div class="container">
@@ -86,9 +86,9 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Programming" title="Programming">Programming</a>
-                            
                               <a class="tag" href="/tags/#iOS" title="iOS">iOS</a>
+                            
+                              <a class="tag" href="/tags/#Programming" title="Programming">Programming</a>
                             
                         </div>
                         <h1>NYTime Objective-C 程式規範</h1>
@@ -601,7 +601,7 @@ if (isAwesome == YES) // 絕對不要這麼做
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#點語法"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">點語法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#間距"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">間距</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#條件判斷"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">條件判斷</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#三元運算式"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">三元運算式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Switch-case"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Switch case</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#錯誤處理"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">錯誤處理</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#方法"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#變數"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">變數</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#變數屬性限制"><span class="toc-nav-number">7.0.1.</span> <span class="toc-nav-text">變數屬性限制</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#命名"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">命名</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#註解"><span class="toc-nav-number">7.2.</span> <span class="toc-nav-text">註解</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#init-和-dealloc"><span class="toc-nav-number">7.3.</span> <span class="toc-nav-text">init 和 dealloc</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#字面變數"><span class="toc-nav-number">7.4.</span> <span class="toc-nav-text">字面變數</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CGRect函式"><span class="toc-nav-number">7.5.</span> <span class="toc-nav-text">CGRect函式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#常數"><span class="toc-nav-number">7.6.</span> <span class="toc-nav-text">常數</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#枚舉類型"><span class="toc-nav-number">7.7.</span> <span class="toc-nav-text">枚舉類型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#位元碼"><span class="toc-nav-number">7.8.</span> <span class="toc-nav-text">位元碼</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#私有屬性"><span class="toc-nav-number">7.9.</span> <span class="toc-nav-text">私有屬性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#圖片命名"><span class="toc-nav-number">7.10.</span> <span class="toc-nav-text">圖片命名</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#布林"><span class="toc-nav-number">7.11.</span> <span class="toc-nav-text">布林</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#單一實例"><span class="toc-nav-number">7.12.</span> <span class="toc-nav-text">單一實例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Xcode"><span class="toc-nav-number">7.13.</span> <span class="toc-nav-text">Xcode</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#其他Objective-C風格指南"><span class="toc-nav-number">7.14.</span> <span class="toc-nav-text">其他Objective-C風格指南</span></a></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#點語法"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">點語法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#間距"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">間距</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#條件判斷"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">條件判斷</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#三元運算式"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">三元運算式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Switch-case"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Switch case</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#錯誤處理"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">錯誤處理</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#方法"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#變數"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">變數</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#變數屬性限制"><span class="toc-nav-number">7.0.1.</span> <span class="toc-nav-text">變數屬性限制</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#命名"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">命名</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#註解"><span class="toc-nav-number">7.2.</span> <span class="toc-nav-text">註解</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#init-和-dealloc"><span class="toc-nav-number">7.3.</span> <span class="toc-nav-text">init 和 dealloc</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#字面變數"><span class="toc-nav-number">7.4.</span> <span class="toc-nav-text">字面變數</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CGRect函式"><span class="toc-nav-number">7.5.</span> <span class="toc-nav-text">CGRect函式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#常數"><span class="toc-nav-number">7.6.</span> <span class="toc-nav-text">常數</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#枚舉類型"><span class="toc-nav-number">7.7.</span> <span class="toc-nav-text">枚舉類型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#位元碼"><span class="toc-nav-number">7.8.</span> <span class="toc-nav-text">位元碼</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#私有屬性"><span class="toc-nav-number">7.9.</span> <span class="toc-nav-text">私有屬性</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#圖片命名"><span class="toc-nav-number">7.10.</span> <span class="toc-nav-text">圖片命名</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#布林"><span class="toc-nav-number">7.11.</span> <span class="toc-nav-text">布林</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#單一實例"><span class="toc-nav-number">7.12.</span> <span class="toc-nav-text">單一實例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Xcode"><span class="toc-nav-number">7.13.</span> <span class="toc-nav-text">Xcode</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#其他Objective-C風格指南"><span class="toc-nav-number">7.14.</span> <span class="toc-nav-text">其他Objective-C風格指南</span></a></li></ol>
         
         </div>
       </aside>
@@ -621,9 +621,9 @@ if (isAwesome == YES) // 絕對不要這麼做
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Programming" title="Programming">Programming</a>
-                        
                           <a class="tag" href="/tags/#iOS" title="iOS">iOS</a>
+                        
+                          <a class="tag" href="/tags/#Programming" title="Programming">Programming</a>
                         
                     </div>
                 </section>
@@ -756,7 +756,7 @@ if (isAwesome == YES) // 絕對不要這麼做
 
                 
                     <li>
-                        <a target="_blank"  href="https://github.com/kairen">
+                        <a target="_blank" href="https://github.com/kairen">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -767,7 +767,7 @@ if (isAwesome == YES) // 絕對不要這麼做
 
                 
                     <li>
-                        <a target="_blank"  href="https://www.linkedin.com/in/k2r2bai">
+                        <a target="_blank" href="https://www.linkedin.com/in/k2r2bai">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
@@ -785,10 +785,7 @@ if (isAwesome == YES) // 絕對不要這麼做
                         <i class="fa fa-heart"></i>
                     </span>
                     re-Ported by <a href="http://beantech.org">BeanTech</a> |
-                    <iframe
-                        style="margin-left: 2px; margin-bottom:-5px;"
-                        frameborder="0" scrolling="0" width="91px" height="20px"
-                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
                     </iframe>
                 </p>
             </div>
@@ -851,8 +848,7 @@ if (isAwesome == YES) // 絕對不要這麼做
 
 
 <!-- Highlight.js -->
-<link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>
     hljs.initHighlightingOnLoad();

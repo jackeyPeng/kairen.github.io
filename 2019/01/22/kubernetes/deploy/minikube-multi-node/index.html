@@ -2,13 +2,13 @@
 <html lang="en">
 
 <!-- Head tag -->
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <meta name="keyword"  content="">
+    <meta name="keyword" content="">
     <link rel="shortcut icon" href="/images/favicon.png">
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
@@ -76,7 +76,7 @@
     
 </style>
 
-<header class="intro-header" >
+<header class="intro-header">
     <!-- Signature -->
     <div id="signature">
         <div class="container">
@@ -351,8 +351,8 @@ storage-provisioner              1/1     Running   0          6m30s   192.168.99
 </blockquote>
 <p>完成後，確認 k8s-m1 節點處於 Ready 狀態：</p>
 <pre><code class="bash">$ kubectl get no
-NAME     STATUS   ROLES    AGE     VERSION
-k8s-m1   Ready    master   8m21s   v1.13.2
+NAME     STATUS   ROLES    AGE    VERSION
+k8s-m1   Ready    master   2m8s   v1.13.2
 </code></pre>
 <h3 id="Node-節點"><a href="#Node-節點" class="headerlink" title="Node 節點"></a>Node 節點</h3><p>確認 Master 完成後，這邊接著透過 Minikube 開啟新的節點來加入：</p>
 <pre><code class="bash">$ minikube --profile k8s-n1 start --network-plugin=cni --node
@@ -389,9 +389,9 @@ Run &#39;kubectl get nodes&#39; on the master to see this node join the cluster.
 Switched to context &quot;k8s-m1&quot;.
 
 $ kubectl get no
-NAME     STATUS   ROLES    AGE    VERSION
-k8s-m1   Ready    master   17m    v1.13.2
-k8s-n1   Ready    &lt;none&gt;   107s   v1.13.2
+NAME     STATUS   ROLES    AGE     VERSION
+k8s-m1   Ready    master   3m44s   v1.13.2
+k8s-n1   Ready    &lt;none&gt;   80s     v1.13.2
 
 $ kubectl get csr
 NAME                                                   AGE    REQUESTOR                 CONDITION
@@ -399,21 +399,21 @@ node-csr-Ut1k5mLXpXVsyZwjn2z2-fpie9HHyTkMU7wnrjDnD3E   118s   system:bootstrap:3
 
 $ kubectl -n kube-system get po -o wide
 NAME                             READY   STATUS    RESTARTS   AGE     IP               NODE     NOMINATED NODE   READINESS GATES
-calico-node-8cbc6                2/2     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-calico-node-rx68s                2/2     Running   0          8m13s   192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
-coredns-86c58d9df4-4nzlx         1/1     Running   0          23m     10.244.0.3       k8s-m1   &lt;none&gt;           &lt;none&gt;
-coredns-86c58d9df4-9879v         1/1     Running   0          23m     10.244.0.2       k8s-m1   &lt;none&gt;           &lt;none&gt;
-etcd-k8s-m1                      1/1     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-kube-addon-manager-k8s-m1        1/1     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-kube-addon-manager-k8s-n1        1/1     Running   0          7m28s   192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
-kube-apiserver-k8s-m1            1/1     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-kube-controller-manager-k8s-m1   1/1     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-kube-proxy-p9hr9                 1/1     Running   0          8m13s   192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
-kube-proxy-qnq25                 1/1     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-kube-scheduler-k8s-m1            1/1     Running   0          23m     192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
-storage-provisioner              1/1     Running   1          23m     192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
+calico-node-qxkw5                2/2     Running   0          86s     192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
+calico-node-srhlk                2/2     Running   0          3m24s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+coredns-86c58d9df4-826nz         1/1     Running   0          3m27s   10.244.0.3       k8s-m1   &lt;none&gt;           &lt;none&gt;
+coredns-86c58d9df4-9z7mr         1/1     Running   0          3m27s   10.244.0.2       k8s-m1   &lt;none&gt;           &lt;none&gt;
+etcd-k8s-m1                      1/1     Running   0          2m40s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+kube-addon-manager-k8s-m1        1/1     Running   0          3m48s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+kube-addon-manager-k8s-n1        1/1     Running   0          86s     192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
+kube-apiserver-k8s-m1            1/1     Running   0          2m36s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+kube-controller-manager-k8s-m1   1/1     Running   0          2m50s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+kube-proxy-768w8                 1/1     Running   0          86s     192.168.99.101   k8s-n1   &lt;none&gt;           &lt;none&gt;
+kube-proxy-b7ndj                 1/1     Running   0          3m27s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+kube-scheduler-k8s-m1            1/1     Running   0          2m46s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
+storage-provisioner              1/1     Running   0          3m17s   192.168.99.100   k8s-m1   &lt;none&gt;           &lt;none&gt;
 </code></pre>
-<p>這樣一個 Kubernetes 叢集就完成了，速度快一點不到 5 分鐘就可以建立好了。</p>
+<p>這樣一個 Kubernetes 叢集就完成了，速度快一點不到 10 分鐘就可以建立好了。</p>
 <h2 id="刪除虛擬機與檔案"><a href="#刪除虛擬機與檔案" class="headerlink" title="刪除虛擬機與檔案"></a>刪除虛擬機與檔案</h2><p>最後若想清除環境的話，直接刪除虛擬機即可：</p>
 <pre><code class="bash">$ minikube --profile &lt;node_name&gt; delete
 </code></pre>
@@ -424,6 +424,10 @@ storage-provisioner              1/1     Running   1          23m     192.168.99
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/02/05/kubernetes/k8s-leader-election/" data-toggle="tooltip" data-placement="top" title="了解與實作 Kubernetes Leader Election 功能">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">
@@ -614,7 +618,7 @@ storage-provisioner              1/1     Running   1          23m     192.168.99
 
                 
                     <li>
-                        <a target="_blank"  href="https://github.com/kairen">
+                        <a target="_blank" href="https://github.com/kairen">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-github fa-stack-1x fa-inverse"></i>
@@ -625,7 +629,7 @@ storage-provisioner              1/1     Running   1          23m     192.168.99
 
                 
                     <li>
-                        <a target="_blank"  href="https://www.linkedin.com/in/k2r2bai">
+                        <a target="_blank" href="https://www.linkedin.com/in/k2r2bai">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
@@ -643,10 +647,7 @@ storage-provisioner              1/1     Running   1          23m     192.168.99
                         <i class="fa fa-heart"></i>
                     </span>
                     re-Ported by <a href="http://beantech.org">BeanTech</a> |
-                    <iframe
-                        style="margin-left: 2px; margin-bottom:-5px;"
-                        frameborder="0" scrolling="0" width="91px" height="20px"
-                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
                     </iframe>
                 </p>
             </div>
@@ -709,8 +710,7 @@ storage-provisioner              1/1     Running   1          23m     192.168.99
 
 
 <!-- Highlight.js -->
-<link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>
     hljs.initHighlightingOnLoad();
