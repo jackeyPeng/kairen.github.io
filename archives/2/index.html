@@ -284,47 +284,6 @@
 
 <div class="post-preview">
 
-    <a href="/2018/06/23/devops/prometheus-operator/">
-        <h2 class="post-title">
-            Prometheus Operator 介紹與安裝
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Prometheus Operator 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：
-
-
-架構中的每一個部分都執行於 Kubernetes 的資源，這些資源分別負責不同作用與意義：
-
-Operator：Operator 是整個系統的主要控制器，會以 Deploym......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2018-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#DevOps" title="DevOps">DevOps</a>
-            
-              <a href="/tags/#Monitoring" title="Monitoring">Monitoring</a>
-            
-              <a href="/tags/#CNCF" title="CNCF">CNCF</a>
-            
-              <a href="/tags/#Prometheus" title="Prometheus">Prometheus</a>
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/2018/06/10/devops/prometheus-intro/">
         <h2 class="post-title">
             Prometheus 介紹與基礎入門
@@ -628,6 +587,38 @@ Etcd v3.1......
 </div>
 <hr>
 
+<div class="post-preview">
+
+    <a href="/2018/02/17/container/docker-nvidia-install/">
+        <h2 class="post-title">
+            安裝 NVIDIA Docker 2 來讓容器使用 GPU
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本篇主要介紹如何使用 NVIDIA Docker v2 來讓容器使用 GPU，過去 NVIDIA Docker v1 需要使用 nvidia-docker 來取代 Docker 執行 GPU image，或是透過手動掛載 NVIDIA driver 與 CUDA 來使 Docker 能夠編譯與執行 GPU 應用程式 image，而新版本的 Docker 則可以透過 –runtime 來選擇使......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-02-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+              <a href="/tags/#Container" title="Container">Container</a>
+            
+              <a href="/tags/#NVIDIA GPU" title="NVIDIA GPU">NVIDIA GPU</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
 
 
 <!-- Pager -->
@@ -744,10 +735,6 @@ Etcd v3.1......
     <ul>
       
         <li>
-          <a href="/2019/02/05/kubernetes/k8s-leader-election/">了解與實作 Kubernetes Leader Election 功能</a>
-        </li>
-      
-        <li>
           <a href="/2019/01/22/kubernetes/deploy/minikube-multi-node/">利用 Minikube 快速建立測試用 Kubernetes 叢集</a>
         </li>
       
@@ -761,6 +748,10 @@ Etcd v3.1......
       
         <li>
           <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
     </ul>
@@ -814,11 +805,11 @@ Etcd v3.1......
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -860,11 +851,11 @@ Etcd v3.1......
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="35">Kubernetes</a>
+        
             
         
             

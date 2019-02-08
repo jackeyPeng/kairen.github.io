@@ -284,36 +284,6 @@
 
 <div class="post-preview">
 
-    <a href="/2016/04/04/data-engineer/apache-flume/">
-        <h2 class="post-title">
-            Apache Flume 快速上手
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Apache Flume 是一個分散式日誌收集系統，是由 Cloudera 公司開發的一款高效能、高可靠性和高恢復性的系統。它能從不同來源的大量日誌資料進行高效收集、聚合、移動，最後儲存到一個資料中心儲存系統當中。架構經過重構後，從原來的 Flume OG 到現在的 Flume NG。Flume NG 更像一個輕量化的小套件，簡單使用且容易適應不同方式收集日誌，且支援 Failover 和 ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2016-04-04
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Spark" title="Spark">Spark</a>
-            
-              <a href="/tags/#Logging" title="Logging">Logging</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/2016/04/01/openstack/how-to-contribute/">
         <h2 class="post-title">
             OpenStack 貢獻基本流程
@@ -532,18 +502,16 @@ Ansible 提供了 Dynamic Inventory 檔案，這個檔案是透過呼叫外部�
 
 <div class="post-preview">
 
-    <a href="/2016/02/17/devops/ansible/ansible-inventory/">
+    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
         <h2 class="post-title">
-            Ansible Inventory
+            Ansible Ad-Hoc 指令與 Modules
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於/etc/ansible/hosts。
-IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
-
-Hosts ......
+            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
+模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
         </div>
     </a>
     
@@ -567,16 +535,18 @@ Hosts ......
 
 <div class="post-preview">
 
-    <a href="/2016/02/17/devops/ansible/ansible-adhoc/">
+    <a href="/2016/02/17/devops/ansible/ansible-inventory/">
         <h2 class="post-title">
-            Ansible Ad-Hoc 指令與 Modules
+            Ansible Inventory
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            ad-hoc command（特設指令）簡單說就是直接執行指令，這些指令不需要要被保存在日後使用。在進行 Ansible 的 Playbook 語言之前，了解 ad-hoc 指令也可以幫助我們做一些快速的事情，不一定要寫出一個完整的 Playbooks 指令。
-模組（也被稱為Task plugins或是Library plugins）是 Ansible 中實際執行的功能，它們會在每個 Pla......
+            Ansible 在同一時間能夠工作於多個系統，透過在 inventory file 所列舉的主機與群組來執行對應的指令，該檔案預設存於/etc/ansible/hosts。
+IT 人員不只能夠使用預設的檔案，也能夠在同一時間使用多個檔案，甚至來抓取來至雲端的 inventory 檔案，這是一個是動態的 inventory ，這部分可以參考 Dynamic Inventory。
+
+Hosts ......
         </div>
     </a>
     
@@ -622,6 +592,53 @@ Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與...
               <a href="/tags/#DevOps" title="DevOps">DevOps</a>
             
               <a href="/tags/#Automation Engine" title="Automation Engine">Automation Engine</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/2016/02/15/ceph/deploy/ceph-ansible/">
+        <h2 class="post-title">
+            Ceph Ansible 自動化建立 Ceph 叢集
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本節將介紹如何透過 ceph-ansible 工具安裝一個測試的 Ceph 環境，一個最簡單的 Ceph 儲存叢集至少要一台 Monitor與三台 OSD。而 MDS 則是當使用到 CephFS 的時候才需要部署。
+
+節點資訊本安裝將使用四台虛擬機器作為部署主機，虛擬機器採用 OpenStack，其規格為以下：
+
+
+
+Role
+RAM
+CPUs
+Disk
+IP Address
+
+
+
+
+mon......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2016-02-15
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Ceph" title="Ceph">Ceph</a>
+            
+              <a href="/tags/#Storage" title="Storage">Storage</a>
+            
+              <a href="/tags/#Ansible" title="Ansible">Ansible</a>
             
         </div>
     
@@ -745,10 +762,6 @@ Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與...
     <ul>
       
         <li>
-          <a href="/2019/02/05/kubernetes/k8s-leader-election/">了解與實作 Kubernetes Leader Election 功能</a>
-        </li>
-      
-        <li>
           <a href="/2019/01/22/kubernetes/deploy/minikube-multi-node/">利用 Minikube 快速建立測試用 Kubernetes 叢集</a>
         </li>
       
@@ -762,6 +775,10 @@ Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與...
       
         <li>
           <a href="/2018/07/19/kubernetes/k8s-external-dns/">以 ExternalDNS 自動同步 Kubernetes Ingress 與 Service DNS 資源紀錄</a>
+        </li>
+      
+        <li>
+          <a href="/2018/07/17/kubernetes/deploy/kubeadm-v1.11-ha/">利用 kubeadm 部署 Kubernetes v1.11.x HA 叢集</a>
         </li>
       
     </ul>
@@ -815,11 +832,11 @@ Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與...
             
         
             
-        
-            
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
             
         
             
@@ -861,11 +878,11 @@ Ansible 架構圖如下所示，使用者透過 Ansible 編配操控公有與...
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="34">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="35">Kubernetes</a>
+        
             
         
             
