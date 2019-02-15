@@ -553,6 +553,39 @@ Prometheus Federation 允許一台 Prometheus Server 從另一台 Prometheus Ser
 
 <div class="post-preview">
 
+    <a href="/2018/06/27/devops/prometheus-storage/">
+        <h2 class="post-title">
+            Prometheus 儲存系統解析
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Prometheus 系統包含了 Local on-disk storage 與 Remote storage，本節將說明兩者差異，以了解作為實現資料儲存可靠性的基礎。
+Time Series Database時間序列資料庫(Time Series Database, TSDB) 是經過優化後，專門用來儲存與管理時間序列資料(Time Series Data)的資料庫系統，目標是提供一套高效......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by Kyle Bai on
+            2018-06-27
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Monitoring" title="Monitoring">Monitoring</a>
+            
+              <a href="/tags/#CNCF" title="CNCF">CNCF</a>
+            
+              <a href="/tags/#Prometheus" title="Prometheus">Prometheus</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2018/06/25/kubernetes/k8x-exec-api/">
         <h2 class="post-title">
             Kubernetes exec API 串接分析
@@ -570,47 +603,6 @@ Prometheus Federation 允許一台 Prometheus Server 從另一台 Prometheus Ser
             2018-06-25
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/2018/06/23/devops/prometheus-operator/">
-        <h2 class="post-title">
-            Prometheus Operator 介紹與安裝
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Prometheus Operator 是 CoreOS 開源的一套用於管理在 Kubernetes 上的 Prometheus 控制器，目標當然就是簡化部署與維護 Prometheus 上的事情，其架構如下所示：
-
-
-架構中的每一個部分都執行於 Kubernetes 的資源，這些資源分別負責不同作用與意義：
-
-Operator：Operator 是整個系統的主要控制器，會以 Deploym......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by Kyle Bai on
-            2018-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#DevOps" title="DevOps">DevOps</a>
-            
-              <a href="/tags/#Monitoring" title="Monitoring">Monitoring</a>
-            
-              <a href="/tags/#CNCF" title="CNCF">CNCF</a>
-            
-              <a href="/tags/#Prometheus" title="Prometheus">Prometheus</a>
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
@@ -774,20 +766,6 @@ Operator：Operator 是整個系統的主要控制器，會以 Deploym......
             
         
             
-            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
             <a href="/tags/#Docker" title="Docker" rel="31">Docker</a>
             
         
@@ -803,6 +781,20 @@ Operator：Operator 是整個系統的主要控制器，會以 Deploym......
         
             
             <a href="/tags/#Linux" title="Linux" rel="14">Linux</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#Storage" title="Storage" rel="15">Storage</a>
+            
+        
+            
+        
             
         
             

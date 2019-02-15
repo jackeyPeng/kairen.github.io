@@ -7,6 +7,46 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/06/27/devops/prometheus-storage/</loc>
+        <lastmod>2019-02-15T08:00:58.683Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2018/06/29/devops/prometheus-federation/</loc>
+        <lastmod>2019-02-15T07:57:30.225Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2018/06/10/devops/prometheus-intro/</loc>
+        <lastmod>2019-02-15T07:57:24.222Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2018/07/01/devops/prometheus-ha/</loc>
+        <lastmod>2019-02-15T07:57:22.776Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/2018/06/23/devops/prometheus-operator/</loc>
+        <lastmod>2019-02-15T07:57:18.922Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2019/01/22/kubernetes/deploy/minikube-multi-node/</loc>
         <lastmod>2019-02-05T15:46:45.830Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -89,14 +129,6 @@
     <url>
         <loc>https://kairen.github.io/2017/02/17/kubernetes/deploy/kube-ansible-vagrant/</loc>
         <lastmod>2018-08-11T17:16:13.649Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/07/01/devops/prometheus-ha/</loc>
-        <lastmod>2018-08-03T13:14:43.829Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -495,14 +527,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/06/23/devops/prometheus-operator/</loc>
-        <lastmod>2018-07-09T17:17:05.519Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2016/02/12/devops/saltstack-basic/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -559,22 +583,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2018/06/29/devops/prometheus-federation/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/06/10/devops/prometheus-intro/</loc>
-        <lastmod>2018-07-09T17:17:05.515Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/2016/10/23/kubernetes/deploy/minikube/</loc>
         <lastmod>2018-07-09T17:16:56.761Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -607,7 +615,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
+        <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -615,7 +623,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
+        <loc>https://kairen.github.io/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -671,6 +679,14 @@
     </url>
 
     <url>
+        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
+        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://kairen.github.io/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -680,14 +696,6 @@
 
     <url>
         <loc>https://kairen.github.io/2016/11/16/container/docker-swarm/</loc>
-        <lastmod>2018-07-09T17:16:56.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://kairen.github.io/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -719,7 +727,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
+        <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -727,7 +735,7 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/2016/07/05/linux/ubuntu/bcache/</loc>
+        <loc>https://kairen.github.io/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>

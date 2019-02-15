@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/images/favicon.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Prometheus 儲存系統解析 - KaiRen&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://kairen.github.io/2018/06/27/devops/prometheus-storage/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/images/blog-bg4.png')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header">
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Monitoring" title="Monitoring">Monitoring</a>
+                            
+                              <a class="tag" href="/tags/#CNCF" title="CNCF">CNCF</a>
+                            
+                              <a class="tag" href="/tags/#Prometheus" title="Prometheus">Prometheus</a>
+                            
+                        </div>
+                        <h1>Prometheus 儲存系統解析</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Kyle Bai on
+                            2018-06-27
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">KaiRen&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About Me</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>Prometheus 系統包含了 Local on-disk storage 與 Remote storage，本節將說明兩者差異，以了解作為實現資料儲存可靠性的基礎。</p>
+<h2 id="Time-Series-Database"><a href="#Time-Series-Database" class="headerlink" title="Time Series Database"></a>Time Series Database</h2><p><a href="https://en.wikipedia.org/wiki/Time_series_database" target="_blank" rel="noopener">時間序列資料庫(Time Series Database, TSDB)</a> 是經過優化後，專門用來儲存與管理時間序列資料(Time Series Data)的資料庫系統，目標是提供一套高效能讀寫的資料庫系統。時間序列資料庫一般在資料中以時間作為索引(index)。</p>
+<p>TSDB 通常會具備以下特點：</p>
+<ul>
+<li>系統主要以寫入為主。</li>
+<li>寫入資料時是依序新增，並且大多數時間做資料排序。</li>
+<li>不會頻繁更新資料，且寫入時間通常非常短，約幾秒內完成。</li>
+<li>資料以區塊為單位進行刪除，很少單除某時間的資料。</li>
+<li>讀取一般以升冪或降冪做循序讀取。</li>
+<li>支援高並行與叢集式。</li>
+</ul>
+<p>常見的 TSDB 可以查看 <a href="https://github.com/search?o=desc&amp;q=Time+Series+Database&amp;s=stars&amp;type=Repositories" target="_blank" rel="noopener">TSDB Projects</a>。</p>
+<h2 id="Local-Storage"><a href="#Local-Storage" class="headerlink" title="Local Storage"></a>Local Storage</h2><h3 id="On-disk-Layout"><a href="#On-disk-Layout" class="headerlink" title="On-disk Layout"></a>On-disk Layout</h3><p>Prometheus 從 2.0 版本開始引入自定義儲存格式，來將拉取的時間序列資料保存到 Local on-disk。其中存在 Local 的資料樣本會以<code>兩小時(預設)為一個區塊</code>被儲存(表示一個 Sliding Window)，而每個區塊會包含該 Sliding Window 的所有<code>樣本資料(Chunks)</code>、<code>詮釋資料檔案(meta.json)</code>與<code>索引檔案(index)</code>。</p>
+<p><img src="https://i.imgur.com/ax4OA0H.png" alt=""></p>
+<p>而 Prometheus 透過 <a href="https://zh.wikipedia.org/wiki/%E9%A2%84%E5%86%99%E5%BC%8F%E6%97%A5%E5%BF%97" target="_blank" rel="noopener">write-ahead-log(WAL)</a> 機制來防止當前區塊在收集樣本資料(剛抓取的資料會保存在記憶體中)時，發生伺服器錯誤或重啟等問題。一旦 Promethesu 重新啟動時，將依據 WAL 進行恢復資料，並以此重播(replayed)。然而當在這期間透過 API 刪除時間序列資料時，刪除紀錄將被儲存在<code>單獨的邏輯檔案(tombstone)</code>中(不是立即從區塊檔案中刪除資料)。</p>
+<p>Prometheus 的資料目錄結構如下所示：</p>
+<pre><code># 透過以下指令觀察
+$ ./prometheus --storage.tsdb.min-block-duration=5m
+
+# 當經過 5m 後，用 tree 查看 data 結構
+$ tree data
+data
+├── 01CGDH53DJXHE1M1971QM0NHMD
+│   ├── chunks
+│   │   └── 000001
+│   ├── index
+│   ├── meta.json
+│   └── tombstones
+├── lock
+└── wal
+    ├── 000001
+    └── 000003
+</code></pre><blockquote>
+<p>TSDB 的儲存格式可以參考 <a href="https://github.com/prometheus/tsdb/tree/master/docs/format" target="_blank" rel="noopener">TSDB format</a>。</p>
+</blockquote>
+<p>可以看到每五分鐘會產生一個區塊的 Sliding Window，透過這種形式來保存所有樣本資料，可以有效提升 Prometheus 的查詢效率，比如說要查詢某個時間範圍內的資料，只需要查詢該時間範圍的區塊資料即可。</p>
+<p>另外這種儲存方式也能夠簡化歷史資料的刪除，只要某一個區塊的時間範圍落在設置的保留範圍外，就會將該區塊丟棄。</p>
+<p><img src="https://i.imgur.com/JMWECmy.png" alt=""></p>
+<p>而 Prometheus 的每個樣本大約為 1 - 2 位元組(byte)，因此規劃 Prometheus 伺服器容量可以使用以下公式來做簡單計算：</p>
+<pre><code>needed_disk_space = retention_time_seconds * ingested_samples_per_second * bytes_per_sample
+</code></pre><p>因此在規劃時若想降低儲存容量需求的話，要依據上述規則來計算估計，如 retention_time_seconds 與 bytes_per_sample 不變下，就只能對 ingested_samples_per_second 做處理。</p>
+<blockquote class="colorquote warning"><p>注意! Local on-disk 方式雖然能夠提供高效能的查詢與檢索，但也存在著侷限性問題，因為儲存資料並不會被叢集同步或進行複製等功能，這表示當磁碟出錯或節點故障時，將有可能遺失儲存的時間序列資料。然而若本身對於這問題不嚴謹的話，依然能夠使用 Local on-disk 方式來儲存樣本資料。</p>
+</blockquote>
+<h3 id="Memory-Usage"><a href="#Memory-Usage" class="headerlink" title="Memory Usage"></a>Memory Usage</h3><p>Prometheus <code>2.0</code> 版本以前會在記憶體中儲存當前使用的所有 Chunks，並且會盡可能使用最近使用過的 Chunks。由於可能會使用到很多記憶體來快取資料，因此 Prometheus 可以透過設定 Heap memory size(bytes) 來確保不會發生 OOM(Out of memory)。而設定 Heap size 時要注意 Prometheus 使用的實體記憶體是 Go runtime 與作業系統的複雜溝通結果，因此很難精準預定大小，因此建議設定實體記憶體的 <code>2/3</code>大小(預設為 2G)。</p>
+<p>假設設定 Heap size 為 2G，這表示 Prometheus 真正使用的實體記憶體約為 3G 左右。</p>
+<h2 id="Remote-Storage"><a href="#Remote-Storage" class="headerlink" title="Remote Storage"></a>Remote Storage</h2><p>Prometheus 的 Local storage 可擴展性與耐用性會受到單節點限制，然而 Prometheus 並沒有實作自身的叢集式儲存，而是以一套 gRPC 介面來實作遠程儲存系統(Remote Storage)的整合。</p>
+<p><img src="https://i.imgur.com/9W32KWT.png" alt=""></p>
+<p>Prometheus 透過兩種方式來整合遠端儲存系統，分別為：</p>
+<ul>
+<li><p><strong>Remote write</strong>: Prometheus 能夠以標準的格式<code>寫入</code>樣本到遠程的 URL。使用者能夠在 組態檔案設定指定 Remote write 的 URL，一但設定後 Prometheus 將樣本資料透過 HTTP 形式發送給 Adaptor。而使用者則可以在 Adaptor 中串接外部任意服務，其中外部服務可以是分散式儲存系統、公有雲儲存服務，或是是 Message Queue 等等。</p>
+</li>
+<li><p><strong>Remote read</strong>: Prometheus 能夠以標準的格式從遠端 URL <code>讀取(返回)</code>樣本資料。如 Remote write 類似，Remote read 也能夠透過 Adaptor 來實作與儲存服務的整合，在 Remote read 中，當使用者發送查詢請求後，Prometheus 將向 remote_read 中設定的 URL 發起查詢請求(mathchers, ranges)，而 Adaptor 將根據請求條件從第三方儲存服務中取得響應的資料，同時將資料轉換成 Prometheus 的原始樣本資料(Raw samples)傳給 Prometheus Server。</p>
+</li>
+</ul>
+<p>從 Prometheus 原始碼中，可以找到 Remote storage gRPC 的 ProtoBuff 的定義資訊，開發者能夠透過實作這些介面來串接儲存服務：</p>
+<pre><code class="go">syntax = &quot;proto3&quot;;
+package prometheus;
+
+option go_package = &quot;prompb&quot;;
+
+import &quot;types.proto&quot;;
+
+message WriteRequest {
+  repeated prometheus.TimeSeries timeseries = 1;
+}
+
+message ReadRequest {
+  repeated Query queries = 1;
+}
+
+message ReadResponse {
+  // In same order as the request&#39;s queries.
+  repeated QueryResult results = 1;
+}
+
+message Query {
+  int64 start_timestamp_ms = 1;
+  int64 end_timestamp_ms = 2;
+  repeated prometheus.LabelMatcher matchers = 3;
+  prometheus.ReadHints hints = 4;
+}
+
+message QueryResult {
+  // Samples within a time series must be ordered by time.
+  repeated prometheus.TimeSeries timeseries = 1;
+}
+</code></pre>
+<p>由於 Prometheus 的 Remote storage 能夠自行實作資料處理邏輯，因此當接收到 remote_write 的 HTTP 服務時，能夠將內容轉換成 WriteRequests 再由開發者自行處理。舉例下列範例：</p>
+<pre><code class="go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;io/ioutil&quot;
+    &quot;net/http&quot;
+
+    &quot;github.com/gogo/protobuf/proto&quot;
+    &quot;github.com/golang/snappy&quot;
+    &quot;github.com/prometheus/common/model&quot;
+
+    &quot;github.com/prometheus/prometheus/prompb&quot;
+)
+
+func main() {
+    http.HandleFunc(&quot;/receive&quot;, func(w http.ResponseWriter, r *http.Request) {
+        compressed, err := ioutil.ReadAll(r.Body)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        reqBuf, err := snappy.Decode(nil, compressed)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        var req prompb.WriteRequest
+        if err := proto.Unmarshal(reqBuf, &amp;req); err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        for _, ts := range req.Timeseries {
+            m := make(model.Metric, len(ts.Labels))
+            for _, l := range ts.Labels {
+                m[model.LabelName(l.Name)] = model.LabelValue(l.Value)
+            }
+            fmt.Println(m)
+
+            for _, s := range ts.Samples {
+                fmt.Printf(&quot;  %f %d\n&quot;, s.Value, s.Timestamp)
+            }
+        }
+    })
+
+    http.ListenAndServe(&quot;:1234&quot;, nil)
+}
+</code></pre>
+<p>下面是一個 Remote storage 的設定檔案，可以在<code>prometheus.yml</code> 設定檔加入：</p>
+<pre><code class="yaml">remote_write:
+    url: &lt;string&gt;
+    [ remote_timeout: &lt;duration&gt; | default = 30s ]
+    write_relabel_configs:
+    [ - &lt;relabel_config&gt; ... ]
+    basic_auth:
+    [ username: &lt;string&gt; ]
+    [ password: &lt;string&gt; ]
+    [ bearer_token: &lt;string&gt; ]
+    [ bearer_token_file: /path/to/bearer/token/file ]
+    tls_config:
+    [ &lt;tls_config&gt; ]
+    [ proxy_url: &lt;string&gt; ]
+
+remote_read:
+    url: &lt;string&gt;
+    required_matchers:
+    [ &lt;labelname&gt;: &lt;labelvalue&gt; ... ]
+    [ remote_timeout: &lt;duration&gt; | default = 30s ]
+    [ read_recent: &lt;boolean&gt; | default = false ]
+    basic_auth:
+    [ username: &lt;string&gt; ]
+    [ password: &lt;string&gt; ]
+    [ bearer_token: &lt;string&gt; ]
+    [ bearer_token_file: /path/to/bearer/token/file ]
+    [ &lt;tls_config&gt; ]
+    [ proxy_url: &lt;string&gt; ]
+</code></pre>
+<p>而 Prometheus 官方也列出了目前已整合的第三方儲存服務，可以到 <a href="https://prometheus.io/docs/operating/integrations/#remote-endpoints-and-storage" target="_blank" rel="noopener">Remote Endpoints and Storage</a> 中查看。</p>
+<blockquote class="colorquote warning"><p>需注意不同的儲存服務能提供的 Write 與 Read 實作都不同，有些可能只能進行寫入操作，而有些只能做讀取操作，因此要注意選擇時是否滿足需求。</p>
+</blockquote>
+<h2 id="Prometheus-Storage-Flags"><a href="#Prometheus-Storage-Flags" class="headerlink" title="Prometheus Storage Flags"></a>Prometheus Storage Flags</h2><p>Prometheus 支援針對儲存的 Flags：</p>
+<table>
+<thead>
+<tr>
+<th>Flags</th>
+<th>預設值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>–storage.tsdb.path</td>
+<td>data/</td>
+<td>Metrics 儲存路徑</td>
+</tr>
+<tr>
+<td>–storage.tsdb.retention</td>
+<td>15d</td>
+<td>儲存的資料樣本會保留多長的時間</td>
+</tr>
+<tr>
+<td>–storage.tsdb.min-block-duration</td>
+<td>2h</td>
+<td>一個資料區塊的最小持續時間</td>
+</tr>
+<tr>
+<td>–storage.tsdb.max-block-duration</td>
+<td>36h</td>
+<td>壓縮區塊的最大持續時間(預設為 retention period 的 10% 時間)</td>
+</tr>
+<tr>
+<td>–storage.tsdb.no-lockfile</td>
+<td>false</td>
+<td>設定是否建立 lockfile 在資料目錄下</td>
+</tr>
+<tr>
+<td>–storage.remote.flush-deadline</td>
+<td>1m</td>
+<td>在關機或者組態重新讀取時，清除樣本的等待時間</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Refers"><a href="#Refers" class="headerlink" title="Refers"></a>Refers</h2><ul>
+<li><a href="http://liubin.org/blog/2016/02/18/tsdb-intro/" target="_blank" rel="noopener">http://liubin.org/blog/2016/02/18/tsdb-intro/</a></li>
+<li><a href="https://www.hi-linux.com/posts/25047.html" target="_blank" rel="noopener">https://www.hi-linux.com/posts/25047.html</a></li>
+<li><a href="https://prometheus.io/docs/prometheus/latest/storage/" target="_blank" rel="noopener">https://prometheus.io/docs/prometheus/latest/storage/</a></li>
+<li><a href="https://caicloud.io/article_detail/5a5db4203255f5063f2bd462" target="_blank" rel="noopener">https://caicloud.io/article_detail/5a5db4203255f5063f2bd462</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/06/29/devops/prometheus-federation/" data-toggle="tooltip" data-placement="top" title="了解 Prometheus Federation 功能">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/06/25/kubernetes/k8x-exec-api/" data-toggle="tooltip" data-placement="top" title="Kubernetes exec API 串接分析">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Time-Series-Database"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Time Series Database</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Local-Storage"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">Local Storage</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#On-disk-Layout"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">On-disk Layout</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Memory-Usage"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">Memory Usage</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Remote-Storage"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">Remote Storage</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Prometheus-Storage-Flags"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Prometheus Storage Flags</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Refers"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Refers</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Monitoring" title="Monitoring">Monitoring</a>
+                        
+                          <a class="tag" href="/tags/#CNCF" title="CNCF">CNCF</a>
+                        
+                          <a class="tag" href="/tags/#Prometheus" title="Prometheus">Prometheus</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://hwchiu.com" target="_blank">威猛邱牛的部落格</a></li>
+                    
+                        <li><a href="http://www.evanlin.com" target="_blank">吃草爸爸的部落格</a></li>
+                    
+                        <li><a href="https://ellis-wu.github.io" target="_blank">跟我一樣可悲的同事部落格</a></li>
+                    
+                        <li><a href="https://blog.pichuang.com.tw" target="_blank">小飛機的部落格</a></li>
+                    
+                        <li><a href="https://bestsamina.github.io/" target="_blank">超猛姍蓉的部落格</a></li>
+                    
+                        <li><a href="https://igene.tw" target="_blank">郭大俠的部落格</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "k2r2bai";
+    var disqus_identifier = "https://kairen.github.io/2018/06/27/devops/prometheus-storage/";
+    var disqus_url = "https://kairen.github.io/2018/06/27/devops/prometheus-storage/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/atom.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://github.com/kairen">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/k2r2bai">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Kyle Bai 2019
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> |
+                    <iframe style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0" width="91px" height="20px" src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://kairen.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://kairen.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

@@ -56,13 +56,6 @@
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/DevOps/</loc>
-        <lastmod>2018-08-03T13:14:43.829Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://kairen.github.io/categories/Ceph/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -86,6 +79,13 @@
     <url>
         <loc>https://kairen.github.io/categories/Kubernetes/</loc>
         <lastmod>2019-02-05T15:46:45.830Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://kairen.github.io/categories/DevOps/</loc>
+        <lastmod>2019-02-15T08:00:58.683Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
