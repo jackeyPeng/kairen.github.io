@@ -511,7 +511,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/02/18/devops/ansible/ansible-playbook/</loc>
+        <loc>https://k2r2.bai/2016/02/17/devops/ansible/ansible-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -519,7 +519,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <loc>https://k2r2.bai/2016/02/18/devops/ansible/ansible-playbook/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -559,7 +559,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/05/15/ceph/rados-java/</loc>
+        <loc>https://k2r2.bai/2018/02/11/ceph/luminous-crush-issue/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -567,7 +567,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2018/02/11/ceph/luminous-crush-issue/</loc>
+        <loc>https://k2r2.bai/2016/05/15/ceph/rados-java/</loc>
         <lastmod>2018-07-09T17:17:05.515Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -607,6 +607,14 @@
     </url>
 
     <url>
+        <loc>https://k2r2.bai/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
+        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://k2r2.bai/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -616,14 +624,6 @@
 
     <url>
         <loc>https://k2r2.bai/2017/07/22/kubernetes/deploy/linuxkit-k8s/</loc>
-        <lastmod>2018-07-09T17:16:56.759Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>https://k2r2.bai/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -687,7 +687,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/11/16/container/docker-swarm/</loc>
+        <loc>https://k2r2.bai/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -695,7 +695,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/01/02/container/docker-registry/</loc>
+        <loc>https://k2r2.bai/2016/11/16/container/docker-swarm/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
