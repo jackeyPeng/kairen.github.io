@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://kairen.github.io/2018/07/09/kubernetes/deploy/manual-v1.11/">
+    <link rel="canonical" href="https://k2r2.bai/2018/07/09/kubernetes/deploy/manual-v1.11/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -1206,7 +1206,7 @@ eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW5
 <p>複製<code>token</code>然後貼到 Kubernetes dashboard。注意這邊一般來說要針對不同 User 開啟特定存取權限。</p>
 </blockquote>
 <p><img src="/images/kube/kubernetes-dashboard.png" alt=""></p>
-<h3 id="Prometheus"><a href="#Prometheus" class="headerlink" title="Prometheus"></a>Prometheus</h3><p>由於 <a href="https://github.com/kubernetes/heapster/blob/master/docs/deprecation.md" target="_blank" rel="noopener">Heapster</a> 將要被移棄，因此這邊選用 <a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a> 作為第三方的叢集監控方案。而本次安裝採用 CoreOS 開發的 <a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 用於管理在 Kubernetes 上的 Prometheus 叢集與資源，更多關於 Prometheus Operator 的資訊可以參考小弟的 <a href="https://kairen.github.io/2018/06/23/devops/prometheus-operator/">Prometheus Operator 介紹與安裝</a> 文章。</p>
+<h3 id="Prometheus"><a href="#Prometheus" class="headerlink" title="Prometheus"></a>Prometheus</h3><p>由於 <a href="https://github.com/kubernetes/heapster/blob/master/docs/deprecation.md" target="_blank" rel="noopener">Heapster</a> 將要被移棄，因此這邊選用 <a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a> 作為第三方的叢集監控方案。而本次安裝採用 CoreOS 開發的 <a href="https://github.com/coreos/prometheus-operator" target="_blank" rel="noopener">Prometheus Operator</a> 用於管理在 Kubernetes 上的 Prometheus 叢集與資源，更多關於 Prometheus Operator 的資訊可以參考小弟的 <a href="https://kairen.github.io/2018/06/23/devops/prometheus-operator/" target="_blank" rel="noopener">Prometheus Operator 介紹與安裝</a> 文章。</p>
 <p>首先在<code>k8s-m1</code>執行下述指令來部署所有 Prometheus 需要的元件：</p>
 <pre><code class="sh">$ kubectl apply -f addons/prometheus/
 $ kubectl apply -f addons/prometheus/operator/
@@ -1453,8 +1453,8 @@ nginx     1/1       Running   0          22s
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "k2r2bai";
-    var disqus_identifier = "https://kairen.github.io/2018/07/09/kubernetes/deploy/manual-v1.11/";
-    var disqus_url = "https://kairen.github.io/2018/07/09/kubernetes/deploy/manual-v1.11/";
+    var disqus_identifier = "https://k2r2.bai/2018/07/09/kubernetes/deploy/manual-v1.11/";
+    var disqus_url = "https://k2r2.bai/2018/07/09/kubernetes/deploy/manual-v1.11/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -1610,7 +1610,7 @@ nginx     1/1       Running   0          22s
 <script>
     // only load tagcloud.js in tag.html
     if($('#tag_cloud').length !== 0){
-        async("https://kairen.github.io/js/jquery.tagcloud.js",function(){
+        async("https://k2r2.bai/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 //size: {start: 1, end: 1, unit: 'em'},
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -1652,7 +1652,7 @@ nginx     1/1       Running   0          22s
 	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
     <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
 <!-- Image to hack wechat -->
-<img src="https://kairen.github.io/img/icon_wechat.png" width="0" height="0" />
+<img src="https://k2r2.bai/img/icon_wechat.png" width="0" height="0" />
 <!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>

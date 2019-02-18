@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://kairen.github.io/2018/03/15/tensorflow/kubeflow/">
+    <link rel="canonical" href="https://k2r2.bai/2018/03/15/tensorflow/kubeflow/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -343,7 +343,7 @@
 </table>
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>使用 Kubeflow 之前，需要確保以下條件達成：</p>
 <ul>
-<li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker，請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/">安裝 Nvidia Docker 2</a>。</li>
+<li>所有節點正確安裝指定版本的 NVIDIA driver、CUDA、Docker、NVIDIA Docker，請參考 <a href="https://kairen.github.io/2018/02/17/container/docker-nvidia-install/" target="_blank" rel="noopener">安裝 Nvidia Docker 2</a>。</li>
 <li>(option)所有 GPU 節點安裝 cuDNN v7.1.2 for CUDA 9.1，請至 <a href="https://developer.nvidia.com/cudnn" target="_blank" rel="noopener">NVIDIA cuDNN</a> 下載。</li>
 </ul>
 <pre><code class="sh">$ tar xvf cudnn-9.1-linux-x64-v7.1.tgz
@@ -351,8 +351,8 @@ $ sudo cp cuda/include/cudnn.h /usr/local/cuda/include/
 $ sudo cp cuda/lib64/libcudnn* /usr/local/cuda/lib64/
 </code></pre>
 <ul>
-<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集，請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
-<li>Kubernetes 叢集需要安裝 NVIDIA Device Plugins，請參考 <a href="https://kairen.github.io/2018/03/01/kubernetes/k8s-device-plugin/">安裝 Kubernetes NVIDIA Device Plugins</a>。</li>
+<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集，請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/" target="_blank" rel="noopener">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
+<li>Kubernetes 叢集需要安裝 NVIDIA Device Plugins，請參考 <a href="https://kairen.github.io/2018/03/01/kubernetes/k8s-device-plugin/" target="_blank" rel="noopener">安裝 Kubernetes NVIDIA Device Plugins</a>。</li>
 <li>建立 NFS server 並在 Kubernetes 節點安裝 NFS common，然後利用 Kubernetes 建立 PV 提供給 Kubeflow 使用：</li>
 </ul>
 <pre><code class="sh"># 在 master 執行
@@ -611,8 +611,8 @@ example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "k2r2bai";
-    var disqus_identifier = "https://kairen.github.io/2018/03/15/tensorflow/kubeflow/";
-    var disqus_url = "https://kairen.github.io/2018/03/15/tensorflow/kubeflow/";
+    var disqus_identifier = "https://k2r2.bai/2018/03/15/tensorflow/kubeflow/";
+    var disqus_url = "https://k2r2.bai/2018/03/15/tensorflow/kubeflow/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -768,7 +768,7 @@ example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
 <script>
     // only load tagcloud.js in tag.html
     if($('#tag_cloud').length !== 0){
-        async("https://kairen.github.io/js/jquery.tagcloud.js",function(){
+        async("https://k2r2.bai/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 //size: {start: 1, end: 1, unit: 'em'},
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -810,7 +810,7 @@ example-job-worker-qq6x-0-m5fm5   1/1       Running   0          5m
 	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
     <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
 <!-- Image to hack wechat -->
-<img src="https://kairen.github.io/img/icon_wechat.png" width="0" height="0" />
+<img src="https://k2r2.bai/img/icon_wechat.png" width="0" height="0" />
 <!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>

@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://kairen.github.io</loc>
+        <loc>https://k2r2.bai</loc>
         <changefreq>daily</changefreq>
         <priority>1</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Programming/</loc>
+        <loc>https://k2r2.bai/categories/Programming/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/iOS/</loc>
+        <loc>https://k2r2.bai/categories/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Golang/</loc>
+        <loc>https://k2r2.bai/categories/Golang/</loc>
         <lastmod>2018-07-09T17:17:05.516Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Blockchain/</loc>
+        <loc>https://k2r2.bai/categories/Blockchain/</loc>
         <lastmod>2018-07-17T07:58:01.028Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Container/</loc>
+        <loc>https://k2r2.bai/categories/Container/</loc>
         <lastmod>2018-07-17T13:11:42.050Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Linux/</loc>
+        <loc>https://k2r2.bai/categories/Linux/</loc>
         <lastmod>2018-07-17T13:20:26.574Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Spark/</loc>
+        <loc>https://k2r2.bai/categories/Spark/</loc>
         <lastmod>2018-07-17T13:21:51.862Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Ceph/</loc>
+        <loc>https://k2r2.bai/categories/Ceph/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/OpenStack/</loc>
+        <loc>https://k2r2.bai/categories/OpenStack/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/TensorFlow/</loc>
+        <loc>https://k2r2.bai/categories/TensorFlow/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/Kubernetes/</loc>
+        <loc>https://k2r2.bai/categories/Kubernetes/</loc>
         <lastmod>2019-02-05T15:46:45.830Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://kairen.github.io/categories/DevOps/</loc>
+        <loc>https://k2r2.bai/categories/DevOps/</loc>
         <lastmod>2019-02-15T08:00:58.683Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>

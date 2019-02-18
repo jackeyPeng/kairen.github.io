@@ -18,7 +18,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://kairen.github.io/2018/04/15/kubernetes/k8s-integration-ldap/">
+    <link rel="canonical" href="https://k2r2.bai/2018/04/15/kubernetes/k8s-integration-ldap/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -330,7 +330,7 @@
 <ul>
 <li>這邊<code>m</code>為 K8s master，<code>n</code>為 K8s node。</li>
 <li>所有操作全部用<code>root</code>使用者進行(方便用)，以 SRE 來說不推薦。</li>
-<li>可以下載 <a href="https://kairen.github.io/files/k8s-ldap/Vagrantfile">Vagrantfile</a> 來建立 Virtualbox 虛擬機叢集。不過需要注意機器資源是否足夠。</li>
+<li>可以下載 <a href="https://kairen.github.io/files/k8s-ldap/Vagrantfile" target="_blank" rel="noopener">Vagrantfile</a> 來建立 Virtualbox 虛擬機叢集。不過需要注意機器資源是否足夠。</li>
 </ul>
 </blockquote>
 <h2 id="事前準備"><a href="#事前準備" class="headerlink" title="事前準備"></a>事前準備</h2><p>開始安裝前需要確保以下條件已達成：</p>
@@ -345,7 +345,7 @@
 </code></pre>
 </blockquote>
 <ul>
-<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
+<li>所有節點以 kubeadm 部署成 Kubernetes v1.9+ 叢集。請參考 <a href="https://kairen.github.io/2016/09/29/kubernetes/deploy/kubeadm/" target="_blank" rel="noopener">用 kubeadm 部署 Kubernetes 叢集</a>。</li>
 </ul>
 <h2 id="OpenLDAP-與-phpLDAPadmin"><a href="#OpenLDAP-與-phpLDAPadmin" class="headerlink" title="OpenLDAP 與 phpLDAPadmin"></a>OpenLDAP 與 phpLDAPadmin</h2><p>本節將說明如何部署、設定與操作 OpenLDAP。</p>
 <h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>進入<code>ldap-server</code>節點透過 Docker 來進行部署：</p>
@@ -779,8 +779,8 @@ Error from server (Forbidden): pods is forbidden: User &quot;user1&quot; cannot 
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "k2r2bai";
-    var disqus_identifier = "https://kairen.github.io/2018/04/15/kubernetes/k8s-integration-ldap/";
-    var disqus_url = "https://kairen.github.io/2018/04/15/kubernetes/k8s-integration-ldap/";
+    var disqus_identifier = "https://k2r2.bai/2018/04/15/kubernetes/k8s-integration-ldap/";
+    var disqus_url = "https://k2r2.bai/2018/04/15/kubernetes/k8s-integration-ldap/";
 
     (function() {
         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -936,7 +936,7 @@ Error from server (Forbidden): pods is forbidden: User &quot;user1&quot; cannot 
 <script>
     // only load tagcloud.js in tag.html
     if($('#tag_cloud').length !== 0){
-        async("https://kairen.github.io/js/jquery.tagcloud.js",function(){
+        async("https://k2r2.bai/js/jquery.tagcloud.js",function(){
             $.fn.tagcloud.defaults = {
                 //size: {start: 1, end: 1, unit: 'em'},
                 color: {start: '#bbbbee', end: '#0085a1'},
@@ -978,7 +978,7 @@ Error from server (Forbidden): pods is forbidden: User &quot;user1&quot; cannot 
 	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
     <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
 <!-- Image to hack wechat -->
-<img src="https://kairen.github.io/img/icon_wechat.png" width="0" height="0" />
+<img src="https://k2r2.bai/img/icon_wechat.png" width="0" height="0" />
 <!-- Migrate from head to bottom, no longer block render and still work -->
 
 </body>
