@@ -310,7 +310,7 @@ I0625 10:39:33.716271   93099 round_trippers.go:383] POST https://xxx.xxx.xxx.xx
 </code></pre>
 <p>從上述得知 exec API 結構大致如下圖所示：</p>
 <p><img src="https://i.imgur.com/wMcqqMe.png" alt=""></p>
-<p>其中 API 中的 Querys 又可細分以下資訊：</p>
+<p>其中 API 中的 Queries 又可細分以下資訊：</p>
 <ul>
 <li><strong>command</strong>：將被執行的指令。若指令為<code>ping 8.8.8.8</code>，則 API 為<code>command=ping&amp;command=8.8.8.8</code>。類型為<code>string</code>值。</li>
 <li><strong>container</strong>：哪個容器將被執行指令。若 Pod 只有一個容器，一般會用 API 找出名稱塞到該參數中，若多個則選擇讓人輸入名稱。類型為<code>string</code>值。</li>

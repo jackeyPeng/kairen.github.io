@@ -170,13 +170,6 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Concurrent/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://k2r2.bai/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -185,6 +178,13 @@
 
     <url>
         <loc>https://k2r2.bai/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://k2r2.bai/tags/Concurrent/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -380,14 +380,14 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Spark/</loc>
+        <loc>https://k2r2.bai/tags/Logging/</loc>
         <lastmod>2018-07-17T13:21:51.862Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Logging/</loc>
+        <loc>https://k2r2.bai/tags/Spark/</loc>
         <lastmod>2018-07-17T13:21:51.862Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -527,13 +527,6 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Kubernetes/</loc>
-        <lastmod>2019-02-15T07:57:18.922Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://k2r2.bai/tags/DevOps/</loc>
         <lastmod>2019-02-15T07:57:30.225Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -557,6 +550,13 @@
     <url>
         <loc>https://k2r2.bai/tags/Prometheus/</loc>
         <lastmod>2019-02-15T08:00:58.683Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://k2r2.bai/tags/Kubernetes/</loc>
+        <lastmod>2019-03-06T09:34:46.438Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
