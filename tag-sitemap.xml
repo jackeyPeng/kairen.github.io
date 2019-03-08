@@ -23,6 +23,13 @@
     </url>
 
     <url>
+        <loc>https://k2r2.bai/tags/iOS/</loc>
+        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://k2r2.bai/tags/Programming/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -31,13 +38,6 @@
 
     <url>
         <loc>https://k2r2.bai/tags/OOP/</loc>
-        <lastmod>2018-07-09T17:16:07.489Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://k2r2.bai/tags/iOS/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -163,13 +163,6 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Java/</loc>
-        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>https://k2r2.bai/tags/Moby/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -178,6 +171,13 @@
 
     <url>
         <loc>https://k2r2.bai/tags/Microkernel/</loc>
+        <lastmod>2018-07-16T09:14:30.201Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://k2r2.bai/tags/Java/</loc>
         <lastmod>2018-07-16T09:14:30.201Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -380,14 +380,14 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Logging/</loc>
+        <loc>https://k2r2.bai/tags/Spark/</loc>
         <lastmod>2018-07-17T13:21:51.862Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://k2r2.bai/tags/Spark/</loc>
+        <loc>https://k2r2.bai/tags/Logging/</loc>
         <lastmod>2018-07-17T13:21:51.862Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
@@ -443,6 +443,13 @@
     </url>
 
     <url>
+        <loc>https://k2r2.bai/tags/OpenStack/</loc>
+        <lastmod>2019-02-04T20:05:27.766Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
         <loc>https://k2r2.bai/tags/Ceph/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -465,13 +472,6 @@
 
     <url>
         <loc>https://k2r2.bai/tags/SPDK/</loc>
-        <lastmod>2019-02-04T20:05:27.766Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://k2r2.bai/tags/OpenStack/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>

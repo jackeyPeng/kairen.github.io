@@ -87,7 +87,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2017/08/29/openstack/kuryr-kubernetes/</loc>
+        <loc>https://k2r2.bai/2017/04/10/tensorflow/intro/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -95,7 +95,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2017/04/10/tensorflow/intro/</loc>
+        <loc>https://k2r2.bai/2017/08/29/openstack/kuryr-kubernetes/</loc>
         <lastmod>2019-02-04T20:05:27.766Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -375,7 +375,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/04/01/openstack/how-to-contribute/</loc>
+        <loc>https://k2r2.bai/2016/10/01/tensorflow/tensorflow-docker/</loc>
         <lastmod>2018-07-16T09:14:30.202Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -383,7 +383,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/10/01/tensorflow/tensorflow-docker/</loc>
+        <loc>https://k2r2.bai/2016/04/01/openstack/how-to-contribute/</loc>
         <lastmod>2018-07-16T09:14:30.202Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -503,14 +503,6 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/02/18/devops/ansible/ansible-playbook/</loc>
-        <lastmod>2018-07-09T17:17:05.521Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://k2r2.bai/2016/02/17/devops/ansible/ansible-dynamic-inventory/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -520,6 +512,14 @@
 
     <url>
         <loc>https://k2r2.bai/2016/02/17/devops/ansible/ansible-inventory/</loc>
+        <lastmod>2018-07-09T17:17:05.521Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>https://k2r2.bai/2016/02/18/devops/ansible/ansible-playbook/</loc>
         <lastmod>2018-07-09T17:17:05.521Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -607,7 +607,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
+        <loc>https://k2r2.bai/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -615,7 +615,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2017/03/17/kubernetes/deploy/kubespray-baremetal/</loc>
+        <loc>https://k2r2.bai/2016/01/16/kubernetes/deploy/kubeup-deploy/</loc>
         <lastmod>2018-07-09T17:16:56.759Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -655,7 +655,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2015/09/19/data-engineer/spark-yarn/</loc>
+        <loc>https://k2r2.bai/2015/09/18/data-engineer/spark-standalone/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -663,7 +663,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2015/09/18/data-engineer/spark-standalone/</loc>
+        <loc>https://k2r2.bai/2015/09/19/data-engineer/spark-yarn/</loc>
         <lastmod>2018-07-09T17:16:56.740Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -679,7 +679,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/01/02/container/docker-registry/</loc>
+        <loc>https://k2r2.bai/2018/02/17/container/docker-nvidia-install/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -687,7 +687,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2018/02/17/container/docker-nvidia-install/</loc>
+        <loc>https://k2r2.bai/2016/01/02/container/docker-registry/</loc>
         <lastmod>2018-07-09T17:16:56.739Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -735,6 +735,14 @@
     </url>
 
     <url>
+        <loc>https://k2r2.bai/2016/04/01/linux/ubuntu/drbd/</loc>
+        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>https://k2r2.bai/2016/05/26/linux/ubuntu/corosync-pacemaker/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -751,14 +759,6 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2016/04/01/linux/ubuntu/drbd/</loc>
-        <lastmod>2018-07-09T17:16:15.644Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
         <loc>https://k2r2.bai/2015/11/24/linux/ubuntu/nfs/</loc>
         <lastmod>2018-07-09T17:16:15.644Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -767,7 +767,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2014/06/03/msic/oop/</loc>
+        <loc>https://k2r2.bai/2013/11/03/msic/ios-code-style/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
@@ -775,7 +775,7 @@
     </url>
 
     <url>
-        <loc>https://k2r2.bai/2013/11/03/msic/ios-code-style/</loc>
+        <loc>https://k2r2.bai/2014/06/03/msic/oop/</loc>
         <lastmod>2018-07-09T17:16:07.489Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
